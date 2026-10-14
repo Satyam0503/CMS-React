@@ -2,7 +2,6 @@ import {
   AddRounded,
   BadgeOutlined,
   CheckCircleRounded,
-  CloudUploadRounded,
   ExpandMoreRounded,
   FolderOffOutlined,
   GroupsOutlined,
@@ -69,7 +68,6 @@ import {
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { toast } from "react-toastify";
 import { currencyFormatter } from "../../../../utils/common";
-import { EmployeeSalaryImportPanel } from "./EmployeeSalaryImportPanel";
 import { getAllEmployees } from "../../employees/employeeServices";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { PayrollPolicyFields } from "./PayrollPolicyFields";
@@ -187,8 +185,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  const [activeTab, setActiveTab] = useState<"policy" | "components" | "groups" | "templates" | "assignments" | "salary-import">("policy");
-  const [pendingSalaryApprovalCount, setPendingSalaryApprovalCount] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"policy" | "components" | "groups" | "templates" | "assignments">("policy");
 
   // Statutory Policy State
   const [policyConfig, setPolicyConfig] = useState<PayrollDivisorPolicyConfig>(defaultPolicy);
@@ -968,7 +965,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
             />
           </Stack>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.825rem", mt: 0.35 }}>
-            Configure organization calculation policies, statutory compliance (EPF, ESIC, TDS), pay groups, and salary structures.
+            Configure organization calculation policies, statutory compliance (EPF, ESIC, TDS), pay groups, and salary structures. To import employee CTCs or review salary approvals, visit <strong>PayRoll &rarr; Payroll Settings &rarr; Import &amp; Salary Approvals</strong>.
           </Typography>
         </Box>
 
@@ -1048,21 +1045,6 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
           }}
         >
           <Tab
-            value="salary-import"
-            icon={<CloudUploadRounded sx={{ fontSize: 17 }} />}
-            iconPosition="start"
-            label={(
-              <Stack direction="row" spacing={0.85} alignItems="center" sx={{ whiteSpace: "nowrap" }}>
-                <span>Salary Import &amp; Review</span>
-                {pendingSalaryApprovalCount !== null && pendingSalaryApprovalCount > 0 && (
-                  <Box component="span" sx={{ px: 0.75, py: 0.1, borderRadius: "999px", bgcolor: "warning.main", color: "warning.contrastText", fontSize: "0.68rem", lineHeight: 1.5, fontWeight: 750 }}>
-                    {pendingSalaryApprovalCount} pending
-                  </Box>
-                )}
-              </Stack>
-            )}
-          />
-          <Tab
             value="policy"
             icon={<TuneRounded sx={{ fontSize: 17 }} />}
             iconPosition="start"
@@ -1132,10 +1114,6 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
       {/* ========================================================================= */}
       {/* TAB 1: STATUTORY & CALCULATION POLICY ENGINE                              */}
       {/* ========================================================================= */}
-      {activeTab === "salary-import" && (
-        <EmployeeSalaryImportPanel canEdit={canEdit} canApprove={canApproveEmployeeSalary} onPendingCountChange={setPendingSalaryApprovalCount} />
-      )}
-
       {activeTab === "policy" && (
         <Stack spacing={3}>
           <AppAlert

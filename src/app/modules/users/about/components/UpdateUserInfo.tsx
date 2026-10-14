@@ -69,7 +69,6 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
   const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
   const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
-  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(userData.department ?? null);
   const [accessRoles, setAccessRoles] = useState<RoleModel[]>([]);
   const [allCustomAttributes, setAllCustomAttributes] = useState<CompanyCustomAttributeModel[]>([])
   const { currentLanguage } = useAppLang();
@@ -195,19 +194,10 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   }, [])
 
   useEffect(() => {
-    setSelectedDepartment(userData.department ?? null);
-  }, [userData.department]);
-
-  useEffect(() => {
-    if (!selectedDepartment) {
-      setJobTitleList([]);
-      return;
-    }
-
-    getJobTitles(true, selectedDepartment)
+    getJobTitles(true)
       .then(({ data }) => setJobTitleList(data.success ? data.methodResults : []))
       .catch((error) => console.log(error));
-  }, [selectedDepartment]);
+  }, []);
 
   return (
     <>
@@ -339,12 +329,12 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <Autocomplete
                       id="job_title"
                       size="small"
-                      disabled={!canEditEmploymentDetails || !values.department}
+                      disabled={!canEditEmploymentDetails}
                       value={jobTitleList.find(
                         (jt) => jt.jobTitleId === values.jobRole
                       ) || null}
                       options={jobTitleList}
-                      noOptionsText={values.department ? "No job roles are configured for this department." : "Select a department first."}
+                      noOptionsText="No job roles found."
                       onChange={(event, value) => {
                         setFieldTouched("jobRole", true);
                         setFieldValue(
@@ -424,11 +414,6 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                       name="department"
                       label={i({ id: "FORM.DEPARTMENT" })}
                       disabled={!canEditEmploymentDetails}
-                      onValueChange={(departmentId) => {
-                        setSelectedDepartment(departmentId);
-                        setFieldTouched("jobRole", true);
-                        setFieldValue("jobRole", "");
-                      }}
                     >
                       {departments.map((dep) => (
                         <MenuItem

@@ -22,7 +22,7 @@ export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
 export const APP_THEME_MODE = "theme-mode";
 export const I18N_CONFIG_KEY =
   import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
-export const DEFAULT_USER_AVATAR = "/media/avatars/default-user-avatar.png";
+export const DEFAULT_USER_AVATAR = "/media/avatars/default-user-avatar.png?v=3";
 export const DEFAULT_COMPANY_LOGO = "/media/logos/default_logo.png";
 
 export const ServiceUrl = {

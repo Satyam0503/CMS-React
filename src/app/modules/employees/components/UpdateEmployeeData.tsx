@@ -60,7 +60,6 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
     const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
     const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
     const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
-    const [selectedDepartment, setSelectedDepartment] = useState<string | null>(employeeData.department ?? null);
     const { formatMessage: i } = useIntl();
     const { currentLanguage } = useAppLang();
     const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
@@ -124,15 +123,10 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
     }, [])
 
     useEffect(() => {
-        if (!selectedDepartment) {
-            setJobTitleList([]);
-            return;
-        }
-
-        getJobTitles(true, selectedDepartment)
+        getJobTitles(true)
             .then(({ data }) => setJobTitleList(data.success ? data.methodResults : []))
             .catch((error) => console.log(error));
-    }, [selectedDepartment]);
+    }, []);
 
     return (
         <Stack spacing={2} sx={{ p: 1, }}>
@@ -227,11 +221,6 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                 name="department"
                                                 label={i({ id: "FORM.DEPARTMENT" })}
                                                 required={true}
-                                                onValueChange={(departmentId) => {
-                                                    setSelectedDepartment(departmentId);
-                                                    setFieldTouched("jobRole", true);
-                                                    setFieldValue("jobRole", "");
-                                                }}
                                             >
                                                 {departmentList.map((dep) => (
                                                     <MenuItem
@@ -270,12 +259,11 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                             <Autocomplete
                                                 id="job_title"
                                                 size="small"
-                                                disabled={!values.department}
                                                 value={jobTitleList.find(
                                                     (jt) => jt.jobTitleId === values.jobRole
                                                 ) || null}
                                                 options={jobTitleList}
-                                                noOptionsText={values.department ? "No job roles are configured for this department." : "Select a department first."}
+                                                noOptionsText="No job roles found."
                                                 onChange={(event, value) => {
                                                     setFieldTouched("jobRole", true);
                                                     setFieldValue(

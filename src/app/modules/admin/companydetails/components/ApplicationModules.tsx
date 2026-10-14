@@ -80,13 +80,36 @@ export const ApplicationModules: FC = () => {
     }
   };
 
-  const updateBulkModules = async (modules: ModulesInfoModel[]) => {
+  const updateBulkModules = async (
+    modules: ModulesInfoModel[],
+    targetEnable: boolean
+  ) => {
     if (isUpdating) return;
 
     try {
       setIsUpdating(true);
 
-      await Promise.all(modules.map((m) => updateModuleAccessApi(m.moduleId)));
+      const modulesToUpdate = modules.filter(
+        (m) => Boolean(m.isAccessible) !== targetEnable
+      );
+
+      let latestPermissions: string[] | null = null;
+      for (const m of modulesToUpdate) {
+        const response = await updateModuleAccessApi(m.moduleId);
+        const { success, methodResult } = response.data;
+        if (success && Array.isArray(methodResult)) {
+          latestPermissions = methodResult;
+        }
+      }
+
+      if (latestPermissions) {
+        dispatch(
+          setCurrentUser({
+            ...user,
+            modulePermission: [...latestPermissions],
+          })
+        );
+      }
 
       setRefresh((prev) => !prev);
     } catch {
@@ -124,11 +147,11 @@ export const ApplicationModules: FC = () => {
           break;
 
         case "PAYROLL":
-          await updateBulkModules(payrollModules);
+          await updateBulkModules(payrollModules, option);
           break;
 
         case "RECRUITMENT":
-          await updateBulkModules(recruitmentModules);
+          await updateBulkModules(recruitmentModules, option);
           break;
       }
     } finally {
@@ -170,7 +193,8 @@ export const ApplicationModules: FC = () => {
         const remaining = methodResults.filter(
           (m: ModulesInfoModel) =>
             !payrollValues.includes(m.moduleConstant) &&
-            !recruitmentValues.includes(m.moduleConstant),
+            !recruitmentValues.includes(m.moduleConstant) &&
+            m.moduleConstant !== "Dashboard",
         );
 
         setPayrollModules(payroll);

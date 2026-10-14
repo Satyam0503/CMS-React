@@ -3,21 +3,26 @@ import {
   Card,
   Chip,
   Stack,
+  Tab,
+  Tabs,
+  Typography,
 } from "@mui/material";
-import { LockOutlined, LockOpenOutlined } from "@mui/icons-material";
+import { LockOutlined, LockOpenOutlined, CloudUploadRounded, PaymentsOutlined } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePageData } from "../../Context/PageDataProvider";
 import { useIntl } from "react-intl";
-import { hasModuleFeaturePermission } from "../../../utils/common";
+import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../utils/common";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { useAppSelector } from "../../Redux/hooks";
-import { ModulesName, Permission } from "../../../utils/enums";
+import { UnAuthorizedAccess } from "../../shared/components/UnAuthorizedAccess";
+import { ModulesName, Permission, Roles } from "../../../utils/enums";
 import { SalaryTable } from "./components/SalaryTable";
 import { CompanySalaryResponseModel } from "./model";
 import dayjs, { Dayjs } from "dayjs";
 import { getCompanySalaries, processPayroll } from "./services";
 import { AddUpdateEmployeeSalary } from "./components/AddUpdateEmployeeSalary";
+import { EmployeeSalaryImportPanel } from "./components/EmployeeSalaryImportPanel";
 import CustomisedDatePicker from "../../shared/components/C_DatePicker";
 import CustomisedButton from "../../shared/components/C_Button";
 import { ConfirmationModal } from "../../shared/components/ConfirmModal";
@@ -81,9 +86,24 @@ export default function PayrollSettings() {
     version: 1,
   });
 
+  const [activeTab, setActiveTab] = useState<"salaries" | "import">("salaries");
+  const [pendingSalaryApprovalCount, setPendingSalaryApprovalCount] = useState<number | null>(null);
+
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
-  const hasProcessPermission = hasModuleFeaturePermission(
+  const userRoleType = useAppSelector((state) => state.user.userData?.roleType);
+  const isAdministrator = userRoleType === Roles.Administrator;
+  const canEdit = isAdministrator || hasModuleFeaturePermission(
+    ModulesName.PayrollSettings,
+    Permission.Edit,
+    userModulesPermissions,
+  );
+  const canApprove = isAdministrator || hasModuleFeaturePermission(
+    ModulesName.PayrollSettings,
+    Permission.Approve,
+    userModulesPermissions,
+  );
+  const hasProcessPermission = isAdministrator || hasModuleFeaturePermission(
     ModulesName.PayrollSettings,
     Permission.Create,
     userModulesPermissions,
@@ -121,7 +141,7 @@ export default function PayrollSettings() {
     let cancelled = false;
     setAttendanceLocked(false);
     setPolicyLoadError(false);
-    if (!processMonth) {
+    if (!canAccessHrManagement(userRoleType) || !processMonth) {
       setIsCheckingLock(false);
       setIsLoadingPolicy(false);
       return;
@@ -178,6 +198,7 @@ export default function PayrollSettings() {
   }, [processMonth]);
 
   useEffect(() => {
+    if (!canAccessHrManagement(userRoleType)) return;
     (async () => {
       try {
         const { data } = await getCompanySalaries({ employeeName: search });
@@ -196,9 +217,16 @@ export default function PayrollSettings() {
               employee.payrollStatus ?? "Active",
             ]),
           );
+          const joiningByUserId = new Map(
+            (employeeResponse.data.methodResults ?? []).map((employee) => [
+              employee.userId,
+              employee.dateOfJoining,
+            ]),
+          );
           setSalaryData(
             salaries.map((salary) => ({
               ...salary,
+              dateOfJoining: salary.dateOfJoining || joiningByUserId.get(salary.userId) || null,
               lifecyclePayrollStatus: lifecycleByUserId.get(salary.userId) ?? "Active",
             })),
           );
@@ -219,6 +247,7 @@ export default function PayrollSettings() {
               userId: employee.userId,
               employeeId: employee.employeeId,
               employeeName: employee.fullName,
+              dateOfJoining: employee.dateOfJoining || null,
               jobTitle: employee.jobRole,
               activeSalary: null,
             })),
@@ -317,6 +346,10 @@ export default function PayrollSettings() {
     !isLocking &&
     (attendanceLocked || !policyConfig.requireAttendanceLock);
 
+  if (!canAccessHrManagement(userRoleType)) {
+    return <UnAuthorizedAccess type="unauthorise" />;
+  }
+
   return (
     <>
 
@@ -343,104 +376,207 @@ export default function PayrollSettings() {
               : "0 14px 34px -6px rgba(15, 23, 42, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.025), inset 0 1px 0 rgba(255, 255, 255, 0.95)",
         })}
       >
-        <Stack
-          direction={{ xs: "column", lg: "row" }}
-          justifyContent="space-between"
-          alignItems={{ xs: "stretch", lg: "center" }}
-          spacing={1.5}
-          useFlexGap
+        <Box
           sx={(theme) => ({
-            mb: 2.5,
-            p: { xs: 1.25, sm: 1.5 },
-            borderRadius: 3,
+            display: "inline-flex",
+            p: "4px",
+            borderRadius: "10px",
+            bgcolor: theme.palette.mode === "dark" ? "rgba(30, 41, 59, 0.7)" : "#F1F5F9",
             border: "1px solid",
-            borderColor: "divider",
-            bgcolor:
-              theme.palette.mode === "dark"
-                ? "rgba(30, 41, 59, 0.45)"
-                : "rgba(241, 245, 249, 0.65)",
-            backdropFilter: "blur(12px)",
+            borderColor: theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
+            mb: 3,
+            maxWidth: "100%",
+            overflowX: "auto",
           })}
         >
-          <Box sx={{ width: { xs: "100%", lg: 280 }, flexShrink: 0, minWidth: 0 }}>
-            <SearchInput search={search} setSearch={handleSearchChange} sx={{ width: "100%" }} />
-          </Box>
-          {hasProcessPermission && (
+          <Tabs
+            value={activeTab}
+            onChange={(_, val) => setActiveTab(val)}
+            sx={{
+              minHeight: 38,
+              "& .MuiTabs-indicator": { display: "none" },
+              "& .MuiTabs-flexContainer": { gap: 0.5 },
+              "& .MuiTab-root": {
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: "0.835rem",
+                minHeight: 36,
+                py: 0.65,
+                px: 2,
+                borderRadius: "8px",
+                color: "text.secondary",
+                transition: "all 0.15s ease",
+                "&.Mui-selected": {
+                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(15, 23, 42, 0.95)" : "#FFFFFF"),
+                  color: "text.primary",
+                  boxShadow: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "0 2px 8px rgba(0, 0, 0, 0.4)"
+                      : "0 1px 4px rgba(15, 23, 42, 0.08)",
+                  border: "1px solid",
+                  borderColor: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.12)"
+                      : "rgba(226, 232, 240, 0.9)",
+                },
+                "&:hover:not(.Mui-selected)": {
+                  color: "text.primary",
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.04)"
+                      : "rgba(255, 255, 255, 0.5)",
+                },
+              },
+            }}
+          >
+            <Tab
+              value="salaries"
+              icon={<PaymentsOutlined sx={{ fontSize: 17 }} />}
+              iconPosition="start"
+              label="Active Salaries & Register"
+            />
+            <Tab
+              value="import"
+              icon={<CloudUploadRounded sx={{ fontSize: 17 }} />}
+              iconPosition="start"
+              label={
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <span>Import &amp; Salary Approvals</span>
+                  {pendingSalaryApprovalCount !== null && pendingSalaryApprovalCount > 0 && (
+                    <Box
+                      component="span"
+                      sx={{
+                        px: 0.85,
+                        py: 0.1,
+                        borderRadius: "999px",
+                        bgcolor: "#FEF3C7",
+                        color: "#92400E",
+                        fontSize: "0.7rem",
+                        fontWeight: 700,
+                        border: "1px solid #FDE68A",
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {pendingSalaryApprovalCount} pending
+                    </Box>
+                  )}
+                </Stack>
+              }
+            />
+          </Tabs>
+        </Box>
+
+        {activeTab === "salaries" ? (
+          <>
             <Stack
-              direction="row"
-              spacing={1.25}
+              direction={{ xs: "column", lg: "row" }}
+              justifyContent="space-between"
+              alignItems={{ xs: "stretch", lg: "center" }}
+              spacing={1.5}
               useFlexGap
-              sx={{
-                alignItems: "center",
-                flexWrap: "wrap",
-                justifyContent: { xs: "stretch", lg: "flex-end" },
-              }}
+              sx={(theme) => ({
+                mb: 2.5,
+                p: { xs: 1.25, sm: 1.5 },
+                borderRadius: 3,
+                border: "1px solid",
+                borderColor: "divider",
+                bgcolor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(30, 41, 59, 0.45)"
+                    : "rgba(241, 245, 249, 0.65)",
+                backdropFilter: "blur(12px)",
+              })}
             >
-              <Chip
-                size="small"
-                icon={attendanceLocked ? <LockOutlined fontSize="small" /> : <LockOpenOutlined fontSize="small" />}
-                color={
-                  attendanceLocked
-                    ? "success"
-                    : !policyConfig.requireAttendanceLock
-                      ? "info"
-                      : "warning"
-                }
-                variant={attendanceLocked ? "filled" : "outlined"}
-                label={
-                  isCheckingLock
-                    ? "Checking Lock..."
-                    : attendanceLocked
-                      ? "Attendance Locked"
-                      : !policyConfig.requireAttendanceLock
-                        ? "Lock Optional"
-                        : "Attendance Unlocked"
-                }
-                sx={{
-                  height: 38,
-                  px: 1,
-                  borderRadius: 999,
-                  fontWeight: 600,
-                }}
-              />
-              <Box sx={{ width: { xs: "100%", sm: 195 }, flexShrink: 0 }}>
-                <CustomisedDatePicker
-                  label={i({ id: "PAYROLL_SETTINGS.PROCESS_MONTH" })}
-                  views={["month", "year"]}
-                  value={processMonth}
-                  maxDate={dayjs()}
-                  setValue={handleProcessMonthChange}
-                />
+              <Box sx={{ width: { xs: "100%", lg: 280 }, flexShrink: 0, minWidth: 0 }}>
+                <SearchInput search={search} setSearch={handleSearchChange} sx={{ width: "100%" }} />
               </Box>
-              <CustomisedButton
-                label="Sample Template"
-                variant="outlined"
-                handleClick={() => downloadPayrollBulkSampleTemplate(salaryData)}
-                sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
-              />
-              <CustomisedButton
-                label="Validate & Lock Attendance"
-                variant="outlined"
-                handleClick={() => void handleValidateAndLock()}
-                disabled={!processMonth}
-                loading={isLocking}
-                sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
-              />
-              <CustomisedButton
-                label={i({ id: "PAYROLL_SETTINGS.PROCESS_SALARY" })}
-                handleClick={() => setConfirmOpen(true)}
-                disabled={!canRunDraftGeneration}
-                loading={isProcessing}
-                sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
-              />
+              {hasProcessPermission && (
+                <Stack
+                  direction="row"
+                  spacing={1.25}
+                  useFlexGap
+                  sx={{
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    justifyContent: { xs: "stretch", lg: "flex-end" },
+                  }}
+                >
+                  <Chip
+                    size="small"
+                    icon={attendanceLocked ? <LockOutlined fontSize="small" /> : <LockOpenOutlined fontSize="small" />}
+                    color={
+                      attendanceLocked
+                        ? "success"
+                        : !policyConfig.requireAttendanceLock
+                          ? "info"
+                          : "warning"
+                    }
+                    variant={attendanceLocked ? "filled" : "outlined"}
+                    label={
+                      isCheckingLock
+                        ? "Checking Lock..."
+                        : attendanceLocked
+                          ? "Attendance Locked"
+                          : !policyConfig.requireAttendanceLock
+                            ? "Lock Optional"
+                            : "Attendance Unlocked"
+                    }
+                    sx={{
+                      height: 38,
+                      px: 1,
+                      borderRadius: 999,
+                      fontWeight: 600,
+                    }}
+                  />
+                  <Box sx={{ width: { xs: "100%", sm: 195 }, flexShrink: 0 }}>
+                    <CustomisedDatePicker
+                      label={i({ id: "PAYROLL_SETTINGS.PROCESS_MONTH" })}
+                      views={["month", "year"]}
+                      value={processMonth}
+                      maxDate={dayjs()}
+                      setValue={handleProcessMonthChange}
+                    />
+                  </Box>
+                  <CustomisedButton
+                    label="Sample Template"
+                    variant="outlined"
+                    handleClick={() => downloadPayrollBulkSampleTemplate(salaryData)}
+                    sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
+                  />
+                  <CustomisedButton
+                    label="Validate & Lock Attendance"
+                    variant="outlined"
+                    handleClick={() => void handleValidateAndLock()}
+                    disabled={!processMonth}
+                    loading={isLocking}
+                    sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
+                  />
+                  <CustomisedButton
+                    label={i({ id: "PAYROLL_SETTINGS.PROCESS_SALARY" })}
+                    handleClick={() => setConfirmOpen(true)}
+                    disabled={!canRunDraftGeneration}
+                    loading={isProcessing}
+                    sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
+                  />
+                </Stack>
+              )}
             </Stack>
-          )}
-        </Stack>
-        {policyLoadError && <AppAlert severity="error" sx={{ mb: 2 }}>Payroll configuration could not be loaded. Refresh this page before generating payroll.</AppAlert>}
-        <PayrollProcessingIssues failure={processingFailure} onDismiss={() => setProcessingFailure(null)}
-          onPolicy={() => navigate("/admin/companydetails/payroll-configuration")}
-          onAttendance={() => navigate("/attendance")} />
-        <SalaryTable salaryData={salaryData} handleRowClick={handleRowClick} />
+            {policyLoadError && <AppAlert severity="error" sx={{ mb: 2 }}>Payroll configuration could not be loaded. Refresh this page before generating payroll.</AppAlert>}
+            <PayrollProcessingIssues failure={processingFailure} onDismiss={() => setProcessingFailure(null)}
+              onPolicy={() => navigate("/admin/companydetails/payroll-configuration")}
+              onAttendance={() => navigate("/attendance")} />
+            <SalaryTable salaryData={salaryData} handleRowClick={handleRowClick} />
+          </>
+        ) : (
+          <Box sx={{ py: 1 }}>
+            <EmployeeSalaryImportPanel
+              canEdit={canEdit}
+              canApprove={canApprove}
+              onPendingCountChange={setPendingSalaryApprovalCount}
+              onSalaryApproved={handlePageRefresh}
+            />
+          </Box>
+        )}
       </Card>
       {isModalOpen && selectedEmployee && (
         <AddUpdateEmployeeSalary
@@ -449,6 +585,12 @@ export default function PayrollSettings() {
           employeeId={selectedEmployee.employeeId}
           employeeName={selectedEmployee.employeeName}
           existingSalary={selectedEmployee.activeSalary}
+          defaultEffectiveFrom={
+            selectedEmployee.activeSalary?.effectiveFrom
+              ? dayjs(selectedEmployee.activeSalary.effectiveFrom).format("YYYY-MM-DD")
+              : (selectedEmployee.dateOfJoining || processMonth?.startOf("month").format("YYYY-MM-DD"))
+          }
+          canApprove={canApprove}
           handleClose={handleModalClose}
           handlePageRefresh={handlePageRefresh}
         />

@@ -231,7 +231,9 @@
     "UPCOMING_HOLIDAYS": "Upcoming Holidays",
     "UPCOMING_EVENTS": "Upcoming Events",
     "NO_EVENT_HOLIDAY": "No upcoming holidays or events at the moment",
-    "NO_UPCOMING_CELEBRATION": "No upcoming celebrations right now"
+    "NO_UPCOMING_CELEBRATION": "No upcoming celebrations right now",
+    "NO_UPCOMING_BIRTHDAY": "No upcoming birthdays right now",
+    "NO_UPCOMING_WORK_ANNIVERSARY": "No upcoming work anniversaries right now"
   },
   "FORM": {
     "FIRST_NAME": "First Name",

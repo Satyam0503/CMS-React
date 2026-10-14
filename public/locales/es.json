@@ -229,7 +229,9 @@
     "UPCOMING_HOLIDAYS": "Próximos feriados",
     "UPCOMING_EVENTS": "Próximos eventos",
     "NO_EVENT_HOLIDAY": "No hay feriados ni eventos próximos en este momento",
-    "NO_UPCOMING_CELEBRATION": "No hay celebraciones próximas por ahora"
+    "NO_UPCOMING_CELEBRATION": "No hay celebraciones próximas por ahora",
+    "NO_UPCOMING_BIRTHDAY": "No hay cumpleaños próximos por ahora",
+    "NO_UPCOMING_WORK_ANNIVERSARY": "No hay aniversarios laborales próximos por ahora"
   },
   "FORM": {
     "FIRST_NAME": "Nombre",

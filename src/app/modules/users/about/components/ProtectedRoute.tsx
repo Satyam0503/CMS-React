@@ -22,20 +22,34 @@ export const ProtectedRoute: FC<PropsTypes> = ({ children, module, permission = 
   if (token && !userData) {
     return null;
   }
-  // Administrators bypass module permission checks and always have access
+  // If a module is specified, check if the module is active for the company.
+  // When a module is removed/disabled for the company, NO ONE (not even Administrator) may access it.
+  if (module) {
+    const isModuleActive = modulePermissions.some((p) => p.startsWith(`${module}.`));
+    if (!isModuleActive) {
+      return <Navigate to={"/unauthorize"} replace />;
+    }
+
+    // Module is active: Administrator has full access
+    if (userRoleType === Roles.Administrator) {
+      return <>{children}</>;
+    }
+
+    // Other roles: check granular permissions
+    const hasAccess = permissions?.length
+      ? permissions.some((perm) => hasModuleFeaturePermission(module, perm, modulePermissions))
+      : hasModuleFeaturePermission(module, permission, modulePermissions);
+
+    return hasAccess ? <>{children}</> : <Navigate to={"/unauthorize"} replace />;
+  }
+
+  if (adminOnly) {
+    return userRoleType === Roles.Administrator ? <>{children}</> : <Navigate to={"/unauthorize"} replace />;
+  }
+
   if (userRoleType === Roles.Administrator) {
     return <>{children}</>;
   }
 
-  if(adminOnly){
-    return userRoleType === Roles.Administrator ? children : <Navigate to={"/unauthorize"} replace />;
-  } else if (module && modulePermissions.length>0) {
-    const hasAccess = permissions?.length
-      ? permissions.some((perm) => hasModuleFeaturePermission(module, perm, modulePermissions))
-      : hasModuleFeaturePermission(module, permission, modulePermissions);
-    return hasAccess ? children : <Navigate to={"/unauthorize"} replace />;
-  }
-  else{
-    return <Navigate to={"/unauthorize"} replace />;
-  }
+  return <Navigate to={"/unauthorize"} replace />;
 };

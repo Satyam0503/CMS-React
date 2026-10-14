@@ -2,6 +2,7 @@ import { Alert, FormControl, InputLabel, MenuItem, Select, Stack, TextField } fr
 import dayjs from "dayjs";
 import { useState } from "react";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { AppButton } from "../../../shared/components/ui";
 
 export type PaymentForm = { paymentReference: string; paymentMethod: string; paymentDate: string; notes?: string };
@@ -38,7 +39,13 @@ export const RecordPayrollPaymentModal = ({ open, employeeName, submitting, onCl
         </Select>
       </FormControl>
       <TextField label="Payment reference" value={reference} onChange={event => setReference(event.target.value)} required fullWidth autoFocus disabled={submitting} error={!reference.trim() && reference.length > 0} helperText="Bank, cash, or internal reference is required." />
-      <TextField label="Payment date" type="date" value={paymentDate} onChange={event => setPaymentDate(event.target.value)} required fullWidth disabled={submitting} InputLabelProps={{ shrink: true }} />
+      <CustomisedDatePicker
+        label="Payment date"
+        value={paymentDate ? dayjs(paymentDate) : null}
+        setValue={(val) => setPaymentDate(val ? val.format("YYYY-MM-DD") : "")}
+        required
+        disabled={submitting}
+      />
       <TextField label="Notes (optional)" value={notes} onChange={event => setNotes(event.target.value)} fullWidth multiline minRows={2} disabled={submitting} />
       <Stack direction="row" justifyContent="flex-end" spacing={1}>
         <AppButton variant="outlined" onClick={close} disabled={submitting}>Cancel</AppButton>

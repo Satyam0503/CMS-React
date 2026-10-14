@@ -66,7 +66,8 @@ body,
   }
 
   & .MuiCard-root:not(.profile-picture-card),
-  & .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card),
+  & .MuiPaper-root:not(.profile-picture-card),
+  & .sidebar .sidebar-paper,
   & .tab-container {
     background: linear-gradient(
       140deg,

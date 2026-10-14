@@ -12,6 +12,7 @@ interface CurrencyInputProps {
   disabled?: boolean;
   helperText?: string;
   valueUnit?: string;
+  currencySymbol?: string;
   labelVarient?: "notched" | "seperate";
   showErrorLabel?: boolean;
   inputProps?: InputBaseProps["inputProps"];
@@ -28,6 +29,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   InputProps,
   helperText,
   valueUnit,
+  currencySymbol = "₹",
   labelVarient = "notched",
   showErrorLabel = true,
   ...props
@@ -71,15 +73,23 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             inputMode: "decimal",
             pattern: "-?[0-9]*[.]?[0-9]*",
           },
-          input: valueUnit ? {
+          input: {
             ...InputProps,
-            endAdornment: (
+            startAdornment: (currencySymbol && valueUnit !== "%") ? (
+              <>
+                <InputAdornment position="start" sx={{ mr: 0.25 }}>
+                  <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#64748B" }}>{currencySymbol}</span>
+                </InputAdornment>
+                {InputProps?.startAdornment}
+              </>
+            ) : InputProps?.startAdornment,
+            endAdornment: valueUnit ? (
               <>
                 {InputProps?.endAdornment}
                 <InputAdornment position="end">{valueUnit}</InputAdornment>
               </>
-            ),
-          } : InputProps,
+            ) : InputProps?.endAdornment,
+          },
         }}
       />
     </FormControl>

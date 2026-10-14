@@ -489,22 +489,85 @@ export const filterSideBarTabs = (
   userModulePermission: string[],
   userRoleType: number
 ) => {
-  // Administrators should see all sidebar tabs regardless of modulePermission entries
-  if (userRoleType === Roles.Administrator) {
-    return SideBarTabList;
-  }
+  const isAdministrator = userRoleType === Roles.Administrator;
 
   const filteredTabList = SideBarTabList.map((tab) => {
     if (tab.isDefault) return tab;
-    if (tab.adminOnly) return null; // non-admins can't see admin-only
-    else if (tab.hasSubTabs) {
-      const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
-        hasModuleFeaturePermission(
+
+    if (tab.adminOnly) {
+      if (!isAdministrator) return null; // non-admins can't see admin-only
+      if (tab.hasSubTabs) {
+        const subTabsWithPermission = tab.subTabs?.filter((subTab) => {
+          // Core admin tools are always available to administrator
+          if (
+            subTab.constant === ModulesName.Permissions ||
+            subTab.constant === ModulesName.CompanyMaster ||
+            subTab.constant === ModulesName.CompanyDetails
+          ) {
+            return true;
+          }
+          // Feature settings require the corresponding feature module to be active
+          if (subTab.constant === ModulesName.Attendance) {
+            return userModulePermission.some((p) => p.startsWith(`${ModulesName.Attendance}.`));
+          }
+          if (subTab.constant === ModulesName.RecruitmentSettings) {
+            return userModulePermission.some(
+              (p) =>
+                p.startsWith("Jobs.") ||
+                p.startsWith("Applications.") ||
+                p.startsWith("Process_Log.")
+            );
+          }
+          return userModulePermission.some((p) => p.startsWith(`${subTab.constant}.`));
+        });
+
+        if (subTabsWithPermission && subTabsWithPermission.length > 0) {
+          return {
+            ...tab,
+            subTabs: subTabsWithPermission,
+          };
+        }
+        return null;
+      }
+      return tab;
+    }
+
+    // If an administrator disabled the entire payroll suite, do not render the payroll tab
+    if (
+      tab.constant === ModulesName.PayRoll &&
+      isAdministrator &&
+      !userModulePermission.some(
+        (p) =>
+          p.startsWith("PayRoll.") ||
+          p.startsWith("Leave_Management.") ||
+          p.startsWith("Attendance.") ||
+          p.startsWith("Payroll_Settings.")
+      )
+    ) {
+      return null;
+    }
+
+    if (tab.hasSubTabs) {
+      const subTabsWithPermission = tab.subTabs?.filter((subTab) => {
+        // Company-wide payroll console and payroll settings are strictly for HR and Administrators
+        if (
+          subTab.constant === ModulesName.PayRoll ||
+          subTab.constant === ModulesName.PayrollSettings
+        ) {
+          if (!canAccessHrManagement(userRoleType)) {
+            return false;
+          }
+        }
+        if (isAdministrator) {
+          return userModulePermission.some((p) => p.startsWith(`${subTab.constant}.`));
+        }
+        return hasModuleFeaturePermission(
           subTab.constant,
           subTab.permission ?? Permission.View,
           userModulePermission
-        )
-      );
+        );
+      });
+
       if (subTabsWithPermission && subTabsWithPermission.length > 0) {
         return {
           ...tab,
@@ -513,17 +576,29 @@ export const filterSideBarTabs = (
       }
       return null;
     }
-    if (
-      hasModuleFeaturePermission(
-        tab.constant,
-        tab.permission ?? Permission.View,
-        userModulePermission
-      )
-    ) {
+
+    const hasAccess = isAdministrator
+      ? userModulePermission.some((p) => p.startsWith(`${tab.constant}.`))
+      : hasModuleFeaturePermission(
+          tab.constant,
+          tab.permission ?? Permission.View,
+          userModulePermission
+        );
+
+    if (hasAccess) {
+      if (
+        tab.constant === ModulesName.PayRoll ||
+        tab.constant === ModulesName.PayrollSettings
+      ) {
+        if (!canAccessHrManagement(userRoleType)) {
+          return null;
+        }
+      }
       return tab;
     }
     return null;
   }).filter((tab) => tab !== null);
+
   return filteredTabList;
 };
 

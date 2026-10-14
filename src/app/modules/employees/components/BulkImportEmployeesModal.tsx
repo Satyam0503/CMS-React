@@ -32,6 +32,14 @@ const requiredHeaderAlias: Record<keyof BulkImportEmployeeModel, string[]> = {
   department: ["department", "department name"],
   jobRole: ["job role", "jobrole", "job title", "designation"],
   gender: ["gender", "sex"],
+  dateOfJoining: [
+    "date of joining",
+    "dateofjoining",
+    "joining date",
+    "doj",
+    "date_of_joining",
+    "joiningdate",
+  ],
 };
 
 const normalizeHeader = (value: string) =>
@@ -59,6 +67,7 @@ const mapRowsToBulkEmployees = (
     department: getMappedHeader(headers, requiredHeaderAlias.department),
     jobRole: getMappedHeader(headers, requiredHeaderAlias.jobRole),
     gender: getMappedHeader(headers, requiredHeaderAlias.gender),
+    dateOfJoining: getMappedHeader(headers, requiredHeaderAlias.dateOfJoining),
   };
 
   if (
@@ -69,12 +78,13 @@ const mapRowsToBulkEmployees = (
     !headerMap.role ||
     !headerMap.department ||
     !headerMap.jobRole ||
-    !headerMap.gender
+    !headerMap.gender ||
+    !headerMap.dateOfJoining
   ) {
     throw new Error("Missing required headers");
   }
 
-  const { empId, firstName, lastName, email, role, department, jobRole, gender } =
+  const { empId, firstName, lastName, email, role, department, jobRole, gender, dateOfJoining } =
     headerMap;
   return rows
     .map((row) => ({
@@ -86,6 +96,7 @@ const mapRowsToBulkEmployees = (
       department: String(row[department] ?? "").trim(),
       jobRole: String(row[jobRole] ?? "").trim(),
       gender: String(row[gender] ?? "").trim(),
+      dateOfJoining: String(row[dateOfJoining] ?? "").trim(),
     }))
     .filter(
       (employee) =>
@@ -96,7 +107,8 @@ const mapRowsToBulkEmployees = (
         employee.role &&
         employee.department &&
         employee.jobRole &&
-        employee.gender,
+        employee.gender &&
+        employee.dateOfJoining,
     );
 };
 
@@ -123,8 +135,8 @@ export const BulkImportEmployeesModal = ({
   ) => {
     event.preventDefault();
     const csv =
-      "Emp ID,First Name,Last Name,Email,Gender,Role,Department,Job Role\r\n" +
-      "EMP001,John,Doe,john.doe@example.com,Male,Employee,Engineering,Software Engineer\r\n";
+      "Emp ID,First Name,Last Name,Email,Gender,Role,Department,Job Role,Date of Joining\r\n" +
+      "EMP001,John,Doe,john.doe@example.com,Male,Employee,Engineering,Software Engineer,2026-10-01\r\n";
     const blob = new Blob(["\uFEFF", csv], {
       type: "text/csv;charset=utf-8",
     });
@@ -185,7 +197,7 @@ export const BulkImportEmployeesModal = ({
         // TODO: Wire backend API here.
       } catch (error) {
         toast.error(
-          "Invalid template. Required columns: Emp ID, First Name, Last Name, Email, Gender, Role, Department, Job Role.",
+          "Invalid template. Required columns: Emp ID, First Name, Last Name, Email, Gender, Role, Department, Job Role, Date of Joining.",
         );
       }
     };
@@ -254,7 +266,7 @@ export const BulkImportEmployeesModal = ({
         <Box className="d-flex flex-column gap-2">
           <Typography variant="body2">
             Upload Excel/CSV with columns: Emp ID, First Name, Last Name, Email,
-            Gender, Role, Department, Job Role.
+            Gender, Role, Department, Job Role, Date of Joining.
           </Typography>
           <Typography variant="body2">
             Sample file:{" "}

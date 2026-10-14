@@ -345,17 +345,17 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
           borderTop: 1,
           borderColor: "divider",
           mt: 1,
-          overflowX: "auto",
+          display: "flex",
+          justifyContent: "flex-end",
           "& .MuiTablePagination-toolbar": {
             minHeight: 48,
-            px: { xs: 0, sm: 1 },
-            flexWrap: "wrap",
-            justifyContent: { xs: "center", sm: "initial" },
-            gap: { xs: 0.5, sm: 0 },
+            px: { xs: 1, sm: 2 },
+            justifyContent: "flex-end",
+            width: "100%",
           },
-          "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } },
+          "& .MuiTablePagination-spacer": { flex: "1 1 100%" },
           "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { fontSize: { xs: 12, sm: 14 }, mb: 0 },
-          "& .MuiTablePagination-actions": { ml: { xs: 0, sm: 2.5 } },
+          "& .MuiTablePagination-actions": { ml: { xs: 1, sm: 2.5 } },
         }}
       />
       {

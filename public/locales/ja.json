@@ -229,7 +229,9 @@
     "UPCOMING_HOLIDAYS": "今後の休日",
     "UPCOMING_EVENTS": "今後のイベント",
     "NO_EVENT_HOLIDAY": "現在、予定されている休日やイベントはありません",
-    "NO_UPCOMING_CELEBRATION": "現在、予定されているお祝いはありません"
+    "NO_UPCOMING_CELEBRATION": "現在、予定されているお祝いはありません",
+    "NO_UPCOMING_BIRTHDAY": "現在、予定されている誕生日はありません",
+    "NO_UPCOMING_WORK_ANNIVERSARY": "現在、予定されている勤務記念日はありません"
   },
   "FORM": {
     "FIRST_NAME": "名",

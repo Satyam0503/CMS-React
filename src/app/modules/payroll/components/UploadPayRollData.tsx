@@ -297,8 +297,8 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
     return (
         <>
             <Stack direction="row" spacing={1} className="align-items-center" sx={fillToolbarRow ? { flex: { xs: "2 1 0", lg: "0 0 auto" }, minWidth: 0, "& .MuiButton-root": { flex: 1, width: { xs: "100%", lg: 40 } } } : undefined}>
-                <Tooltip title={i({ id: "PAYROLL.IMPORT_EXCEL" })} arrow placement="top">
-                    <AppButton variant="outlined" component="label" role="button" aria-label={i({ id: "PAYROLL.IMPORT_EXCEL" })} sx={payrollActionButtonSx}>
+                <Tooltip title="Upload Monthly Attendance & Pay Data (.xlsx)" arrow placement="top">
+                    <AppButton variant="outlined" component="label" role="button" aria-label="Upload Monthly Attendance & Pay Data (.xlsx)" sx={payrollActionButtonSx}>
                         <UploadFile fontSize="small" />
                         <input
                             hidden
@@ -311,18 +311,27 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
                         />
                     </AppButton>
                 </Tooltip>
-                <Tooltip title={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} arrow placement="top">
-                    <AppButton component="a" href={SAMPLE_FILE_URL} download variant="outlined" aria-label={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} sx={payrollActionButtonSx}>
+                <Tooltip title="Download Monthly Payroll Sample File (.xlsx)" arrow placement="top">
+                    <AppButton component="a" href={SAMPLE_FILE_URL} download variant="outlined" aria-label="Download Monthly Payroll Sample File (.xlsx)" sx={payrollActionButtonSx}>
                         <Download fontSize="small" />
                     </AppButton>
                 </Tooltip>
             </Stack>
             {
                 open && <CustomisedModal open={true} handleClose={handleCloseModal}
-                    title={i({ id: "PAYROLL.UPLOAD_EXCEL_DATA" })}
+                    title="Upload Monthly Attendance & Payroll Adjustments"
                     allowMaximize
                 >
                     <Stack spacing={2}>
+                        <AppAlert severity="info">
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>Monthly Register Adjustments</Typography>
+                            <Typography variant="body2">
+                                Use this upload to import monthly attendance, paid days, loss of pay, and adjustments for a specific pay period. To import master employee CTC structures or offer letters, use <strong>PayRoll &rarr; Payroll Settings &rarr; Import &amp; Salary Approvals</strong>.
+                            </Typography>
+                            <Typography variant="caption" sx={{ display: "block", mt: 0.75, color: "text.secondary" }}>
+                                <strong>Note:</strong> Enter each employee's standard monthly Basic Pay rate. Loss of Pay (LOP) amount entered in the sheet is deducted from Gross to calculate Net Pay. Do not enter an already-reduced Basic Pay if entering LOP.
+                            </Typography>
+                        </AppAlert>
                         <Stack>
                             <Typography variant="h6">{i({ id: "PAYROLL.SELECT_SPREADSHEET" })}</Typography>
                             <Stack className="overflow-x-scroll flex-row gap-2 justify-content-start py-2 position-sticky top-0">

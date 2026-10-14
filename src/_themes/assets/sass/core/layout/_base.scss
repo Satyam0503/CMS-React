@@ -38,3 +38,83 @@ body {
 canvas {
   user-select: none;
 }
+
+.app-body-layout {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: calc(100dvh - var(--app-header-height));
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.app-main-viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
+.main-content-wrapper {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 16px 20px 32px 20px;
+
+  @media (min-width: 900px) {
+    padding: 18px 24px 36px 24px;
+  }
+
+  @media (min-width: 1440px) {
+    padding: 20px 32px 40px 32px;
+  }
+
+  @media (max-width: 599.95px) {
+    padding: 12px 14px 24px 14px;
+  }
+}
+
+.main-content-container {
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100%;
+  box-sizing: border-box;
+  flex-grow: 1;
+
+  // Responsive consistent content area:
+  // Adapts smoothly to screen size, keeping content elegantly centered
+  // and preventing awkward stretching or lopsided empty space on ultrawide screens
+  max-width: 100%;
+
+  @media (min-width: 1200px) {
+    max-width: 1360px;
+  }
+
+  @media (min-width: 1440px) {
+    max-width: 1480px;
+  }
+
+  @media (min-width: 1680px) {
+    max-width: 1620px;
+  }
+
+  @media (min-width: 1920px) {
+    max-width: 1720px;
+  }
+
+  & > :last-child {
+    animation: app-page-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}

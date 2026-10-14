@@ -1,8 +1,10 @@
 import {
-  Alert, Autocomplete, Button, Card, CardContent, Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent,
+  Alert, Autocomplete, Box, Button, Card, CardContent, Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent,
   DialogTitle, Divider, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Tab, TablePagination, Tabs, TextField, Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import {
   approvePayrollRun, calculatePayrollRun, cancelPayrollRun, createPayrollAdjustment, createPaymentBatch, createPayrollRun,
@@ -178,7 +180,11 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
       if (response?.success === false) throw new Error(response.message || message);
       await load(); return true;
     }
-    catch { setError(message); return false; }
+    catch (err: any) {
+      const serverMessage = err?.response?.data?.message || err?.message;
+      setError(serverMessage || message);
+      return false;
+    }
     finally { setBusy(""); }
   };
 
@@ -332,14 +338,35 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
         {canCreate && <Button variant="contained" onClick={() => setCreateOpen(true)} disabled={busy === "create"}>Create payroll run</Button>}
       </Stack>
       {loading && <CircularProgress size={22} aria-label="Loading payroll runs" />}
-      {error && <Alert severity="error">{error}</Alert>}
+      {error && (
+        <Alert
+          severity="error"
+          onClose={() => setError("")}
+          action={
+            runs.some((r) => r.status === "BLOCKED" || r.blockedCount > 0) ? (
+              <Button
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  const blockedRun = runs.find((r) => r.status === "BLOCKED" || r.blockedCount > 0);
+                  if (blockedRun) void inspectRunIssues(blockedRun);
+                }}
+              >
+                Review issues
+              </Button>
+            ) : undefined
+          }
+        >
+          {error}
+        </Alert>
+      )}
       <Tabs value={activeSection} onChange={(_, value: number) => setActiveSection(value)} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile aria-label="Payroll workspace sections">
         <Tab label={`Payroll runs (${runs.length})`} id="payroll-tab-runs" aria-controls="payroll-panel-runs" />
         <Tab label={`Adjustments (${adjustments.length})`} id="payroll-tab-adjustments" aria-controls="payroll-panel-adjustments" />
         <Tab label="Reports & statutory" id="payroll-tab-reports" aria-controls="payroll-panel-reports" />
       </Tabs>
       <Stack role="tabpanel" id="payroll-panel-runs" aria-labelledby="payroll-tab-runs" hidden={activeSection !== 0} spacing={1.25}>
-      {!loading && !error && runs.length > 0 && <Stack aria-label="Payroll run overview" sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", lg: "repeat(4, minmax(0, 1fr))" }, gap: 1 }}>
+      {!loading && runs.length > 0 && <Stack aria-label="Payroll run overview" sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", lg: "repeat(4, minmax(0, 1fr))" }, gap: 1 }}>
         {runOverview.map((metric) => <Card key={metric.label} variant="outlined" sx={{ minWidth: 0, borderLeft: 3, borderLeftColor: metric.color, borderRadius: 1.5 }}>
           <CardContent sx={{ p: 1.5, "&:last-child": { pb: 1.5 } }}>
             <Typography variant="caption" color="text.secondary">{metric.label}</Typography>
@@ -348,8 +375,8 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
           </CardContent>
         </Card>)}
       </Stack>}
-      {!loading && !error && runs.length === 0 && <Typography color="text.secondary">No payroll runs have been created.</Typography>}
-      {!loading && !error && runs.length > 0 && (
+      {!loading && runs.length === 0 && <Typography color="text.secondary">No payroll runs have been created.</Typography>}
+      {!loading && runs.length > 0 && (
         <>
         <Stack spacing={1} sx={{ display: { xs: "flex", md: "none" } }} aria-label="Payroll runs, compact view">
           {runs.slice(0, 10).map((run) => {
@@ -419,10 +446,24 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
           <Stack direction="row" spacing={1}><Button size="small" onClick={() => void loadReport()} disabled={reportLoading}>Refresh report</Button><Button size="small" variant="outlined" onClick={() => void downloadReport()} disabled={busy === "report-export"}>Export CSV</Button></Stack>
         </Stack>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-          <TextField label="From" type="date" value={reportFrom} onChange={(event) => setReportFrom(event.target.value)} InputLabelProps={{ shrink: true }} size="small" fullWidth />
-          <TextField label="To" type="date" value={reportTo} onChange={(event) => setReportTo(event.target.value)} InputLabelProps={{ shrink: true }} size="small" fullWidth />
-          <TextField select label="Run status" value={reportStatus} onChange={(event) => setReportStatus(event.target.value)} size="small" fullWidth><MenuItem value="">All statuses</MenuItem><MenuItem value="CALCULATED">Calculated</MenuItem><MenuItem value="PROCESSED">Processed</MenuItem><MenuItem value="PAID">Paid</MenuItem><MenuItem value="CLOSED">Closed</MenuItem><MenuItem value="BLOCKED">Blocked</MenuItem></TextField>
-          <TextField select label="Line status" value={reportLineStatus} onChange={(event) => setReportLineStatus(event.target.value)} size="small" fullWidth><MenuItem value="">All lines</MenuItem><MenuItem value="CALCULATED">Calculated</MenuItem><MenuItem value="BLOCKED">Blocked</MenuItem><MenuItem value="SKIPPED">Skipped</MenuItem></TextField>
+          <Box sx={{ flex: 1, minWidth: { sm: 160 } }}>
+            <CustomisedDatePicker
+              label="From"
+              value={reportFrom ? dayjs(reportFrom) : null}
+              setValue={(val) => setReportFrom(val ? val.format("YYYY-MM-DD") : "")}
+              clearable
+            />
+          </Box>
+          <Box sx={{ flex: 1, minWidth: { sm: 160 } }}>
+            <CustomisedDatePicker
+              label="To"
+              value={reportTo ? dayjs(reportTo) : null}
+              setValue={(val) => setReportTo(val ? val.format("YYYY-MM-DD") : "")}
+              clearable
+            />
+          </Box>
+          <TextField select label="Run status" value={reportStatus} onChange={(event) => setReportStatus(event.target.value)} size="small" fullWidth sx={{ flex: 1 }}><MenuItem value="">All statuses</MenuItem><MenuItem value="CALCULATED">Calculated</MenuItem><MenuItem value="PROCESSED">Processed</MenuItem><MenuItem value="PAID">Paid</MenuItem><MenuItem value="CLOSED">Closed</MenuItem><MenuItem value="BLOCKED">Blocked</MenuItem></TextField>
+          <TextField select label="Line status" value={reportLineStatus} onChange={(event) => setReportLineStatus(event.target.value)} size="small" fullWidth sx={{ flex: 1 }}><MenuItem value="">All lines</MenuItem><MenuItem value="CALCULATED">Calculated</MenuItem><MenuItem value="BLOCKED">Blocked</MenuItem><MenuItem value="SKIPPED">Skipped</MenuItem></TextField>
         </Stack>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
           <TextField select label="Run type" value={reportRunType} onChange={(event) => setReportRunType(event.target.value)} size="small" fullWidth><MenuItem value="">All run types</MenuItem><MenuItem value="REGULAR">Regular</MenuItem><MenuItem value="OFF_CYCLE">Off-cycle</MenuItem><MenuItem value="SUPPLEMENTAL">Supplemental</MenuItem><MenuItem value="CORRECTION">Correction</MenuItem></TextField>
@@ -463,10 +504,31 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
         <form onSubmit={createRun}><DialogTitle>Create payroll run</DialogTitle><DialogContent><Stack spacing={2} sx={{ pt: 1 }}>
           <Typography variant="body2" color="text.secondary">The server resolves the tenant&apos;s effective assignment, pay group, policy, and salary components and snapshots them at creation.</Typography>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-            <TextField label="Period start" type="date" value={periodStart} onChange={(event) => setPeriodStart(event.target.value)} InputLabelProps={{ shrink: true }} fullWidth required />
-            <TextField label="Period end" type="date" value={periodEnd} onChange={(event) => setPeriodEnd(event.target.value)} InputLabelProps={{ shrink: true }} fullWidth required />
+            <Box sx={{ flex: 1 }}>
+              <CustomisedDatePicker
+                label="Period start"
+                value={periodStart ? dayjs(periodStart) : null}
+                setValue={(val) => setPeriodStart(val ? val.format("YYYY-MM-DD") : "")}
+                required
+              />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <CustomisedDatePicker
+                label="Period end"
+                value={periodEnd ? dayjs(periodEnd) : null}
+                setValue={(val) => setPeriodEnd(val ? val.format("YYYY-MM-DD") : "")}
+                required
+              />
+            </Box>
           </Stack>
-          <TextField label="Pay date" type="date" value={payDate} onChange={(event) => setPayDate(event.target.value)} InputLabelProps={{ shrink: true }} fullWidth required />
+          <Box sx={{ width: "100%" }}>
+            <CustomisedDatePicker
+              label="Pay date"
+              value={payDate ? dayjs(payDate) : null}
+              setValue={(val) => setPayDate(val ? val.format("YYYY-MM-DD") : "")}
+              required
+            />
+          </Box>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
             <TextField select label="Run type" value={runType} onChange={(event) => setRunType(event.target.value)} fullWidth><MenuItem value="REGULAR">Regular</MenuItem><MenuItem value="OFF_CYCLE">Off-cycle</MenuItem><MenuItem value="SUPPLEMENTAL">Supplemental</MenuItem><MenuItem value="CORRECTION">Correction</MenuItem></TextField>
             <TextField select label="Population" value={populationType} onChange={(event) => { setPopulationType(event.target.value); if (event.target.value !== "SELECTED") setSelectedEmployees([]); }} fullWidth><MenuItem value="ALL_ELIGIBLE">All eligible</MenuItem><MenuItem value="SELECTED" disabled={!canSelectEmployees}>Selected employees</MenuItem></TextField>
@@ -499,7 +561,7 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
           <DialogActions><Button onClick={() => setAdjustmentToReject(null)}>Cancel</Button><Button type="submit" color="error" variant="contained" disabled={adjustmentRejectionReason.trim().length < 5 || adjustmentRejectionReason.trim().length > 500 || busy === adjustmentToReject?.id}>Reject request</Button></DialogActions>
         </form>
       </Dialog>
-      <Dialog open={Boolean(adjustmentRun)} onClose={() => setAdjustmentRun(null)} fullWidth maxWidth="sm"><form onSubmit={createAdjustmentForm}><DialogTitle>Create payroll adjustment</DialogTitle><DialogContent><Stack spacing={1.5} sx={{ pt: 1 }}><Typography>Creates an auditable correction request against paid/closed run {adjustmentRun?.id}; the original payslip stays unchanged.</Typography><Alert severity="warning">Approval records the request only. It will not enter gross-to-net or be paid until tax/statutory treatment is implemented and approved.</Alert><TextField select label="Employee" value={adjustmentEmployeeId} onChange={(event) => setAdjustmentEmployeeId(event.target.value)} required fullWidth disabled={adjustmentEmployeesLoading}><MenuItem value="" disabled>{adjustmentEmployeesLoading ? "Loading run employees…" : "Select employee"}</MenuItem>{adjustmentEmployees.map((employee) => <MenuItem key={employee.employeeId} value={employee.employeeId}>{employee.employeeId}</MenuItem>)}</TextField><TextField select label="Adjustment type" value={adjustmentType} onChange={(event) => setAdjustmentType(event.target.value as typeof adjustmentType)} fullWidth><MenuItem value="ARREARS">Arrears</MenuItem><MenuItem value="CORRECTION">Correction</MenuItem><MenuItem value="REVERSAL">Reversal</MenuItem></TextField><TextField label="Target payroll month" type="month" value={adjustmentTargetPeriod} onChange={(event) => { setAdjustmentTargetPeriod(event.target.value); setAdjustmentComponentCode(""); void loadAdjustmentComponents(event.target.value); }} required fullWidth inputProps={{ min: "2000-01", max: "2100-12" }} helperText="The component definition is resolved for this month." /><TextField select label="Salary component" value={adjustmentComponentCode} onChange={(event) => setAdjustmentComponentCode(event.target.value)} required fullWidth disabled={adjustmentComponentsLoading || adjustmentComponents.length === 0}><MenuItem value="" disabled>{adjustmentComponentsLoading ? "Loading components…" : "Select component"}</MenuItem>{adjustmentComponents.map((component) => <MenuItem key={`${component.code}-${component.version}`} value={component.code}>{component.name} ({component.code}) · {component.kind.toLowerCase()} · {component.isTaxable ? "taxable" : "non-taxable"}</MenuItem>)}</TextField><TextField label="Amount (+ earning / − deduction)" type="number" value={adjustmentAmount} onChange={(event) => setAdjustmentAmount(event.target.value)} required inputProps={{ step: "0.01" }} fullWidth /><TextField label="Reason and audit note" value={adjustmentReason} onChange={(event) => setAdjustmentReason(event.target.value)} required multiline minRows={2} fullWidth /></Stack></DialogContent><DialogActions><Button onClick={() => setAdjustmentRun(null)}>Cancel</Button><Button type="submit" variant="contained" disabled={adjustmentEmployeesLoading || adjustmentComponentsLoading || !adjustmentEmployeeId || !adjustmentComponentCode || !adjustmentTargetPeriod || !adjustmentReason.trim() || !adjustmentAmount || Number(adjustmentAmount) === 0 || busy === adjustmentRun?.id}>Create draft</Button></DialogActions></form></Dialog>
+      <Dialog open={Boolean(adjustmentRun)} onClose={() => setAdjustmentRun(null)} fullWidth maxWidth="sm"><form onSubmit={createAdjustmentForm}><DialogTitle>Create payroll adjustment</DialogTitle><DialogContent><Stack spacing={1.5} sx={{ pt: 1 }}><Typography>Creates an auditable correction request against paid/closed run {adjustmentRun?.id}; the original payslip stays unchanged.</Typography><Alert severity="warning">Approval records the request only. It will not enter gross-to-net or be paid until tax/statutory treatment is implemented and approved.</Alert><TextField select label="Employee" value={adjustmentEmployeeId} onChange={(event) => setAdjustmentEmployeeId(event.target.value)} required fullWidth disabled={adjustmentEmployeesLoading}><MenuItem value="" disabled>{adjustmentEmployeesLoading ? "Loading run employees…" : "Select employee"}</MenuItem>{adjustmentEmployees.map((employee) => <MenuItem key={employee.employeeId} value={employee.employeeId}>{employee.employeeId}</MenuItem>)}</TextField><TextField select label="Adjustment type" value={adjustmentType} onChange={(event) => setAdjustmentType(event.target.value as typeof adjustmentType)} fullWidth><MenuItem value="ARREARS">Arrears</MenuItem><MenuItem value="CORRECTION">Correction</MenuItem><MenuItem value="REVERSAL">Reversal</MenuItem></TextField><CustomisedDatePicker label="Target payroll month" views={["month", "year"]} format="YYYY-MM" value={adjustmentTargetPeriod ? dayjs(adjustmentTargetPeriod) : null} setValue={(val) => { const nextVal = val ? val.format("YYYY-MM") : ""; setAdjustmentTargetPeriod(nextVal); setAdjustmentComponentCode(""); if (nextVal) { void loadAdjustmentComponents(nextVal); } }} required helperText="The component definition is resolved for this month." /><TextField select label="Salary component" value={adjustmentComponentCode} onChange={(event) => setAdjustmentComponentCode(event.target.value)} required fullWidth disabled={adjustmentComponentsLoading || adjustmentComponents.length === 0}><MenuItem value="" disabled>{adjustmentComponentsLoading ? "Loading components…" : "Select component"}</MenuItem>{adjustmentComponents.map((component) => <MenuItem key={`${component.code}-${component.version}`} value={component.code}>{component.name} ({component.code}) · {component.kind.toLowerCase()} · {component.isTaxable ? "taxable" : "non-taxable"}</MenuItem>)}</TextField><TextField label="Amount (+ earning / − deduction)" type="number" value={adjustmentAmount} onChange={(event) => setAdjustmentAmount(event.target.value)} required inputProps={{ step: "0.01" }} fullWidth /><TextField label="Reason and audit note" value={adjustmentReason} onChange={(event) => setAdjustmentReason(event.target.value)} required multiline minRows={2} fullWidth /></Stack></DialogContent><DialogActions><Button onClick={() => setAdjustmentRun(null)}>Cancel</Button><Button type="submit" variant="contained" disabled={adjustmentEmployeesLoading || adjustmentComponentsLoading || !adjustmentEmployeeId || !adjustmentComponentCode || !adjustmentTargetPeriod || !adjustmentReason.trim() || !adjustmentAmount || Number(adjustmentAmount) === 0 || busy === adjustmentRun?.id}>Create draft</Button></DialogActions></form></Dialog>
     </Stack>
   );
 }

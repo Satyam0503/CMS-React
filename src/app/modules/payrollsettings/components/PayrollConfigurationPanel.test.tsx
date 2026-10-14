@@ -131,25 +131,18 @@ describe("PayrollConfigurationPanel statutory profile editor", { timeout: 15000 
     await vi.waitFor(() => expect(deleteRequestMock).toHaveBeenCalledWith("api/payroll/configuration/policies/policy-draft?version=4"));
   });
 
-  it("labels the salary review workspace and shows its live pending count", async () => {
-    getRequestMock.mockImplementation(async (url: string) => {
-      if (url === "api/payroll/configuration/employee-salaries/pending") return { data: [
-        { id: "salary-1", employeeId: "EMP-1", effectiveFrom: "2026-10-01", approvalStatus: "DRAFT", status: "DRAFT", source: "IMPORT:batch-1", version: 1, components: [] },
-        { id: "salary-2", employeeId: "EMP-2", effectiveFrom: "2026-10-01", approvalStatus: "SUBMITTED", status: "PENDING_REVIEW", source: "MANUAL", version: 1, components: [] },
-      ] };
-      if (url === "api/payroll/configuration/policies") return { data: profiles };
-      if (url === "api/payroll/divisor-policy") return { data: {} };
-      if (url === "api/payroll/configuration/assignments") return { data: assignments };
-      if (url === "api/payroll/configuration/components") return { data: components };
-      return { data: [] };
-    });
+  it("focuses on company-level policies and directs employee salaries to Payroll Settings", async () => {
     const { container, root } = renderPanel();
     await act(async () => root.render(<PayrollConfigurationPanel canEdit canApprove={false} />));
 
-    const salaryReviewTab = Array.from(container.querySelectorAll('[role="tab"]')).find((item) => item.textContent?.includes("Salary Import & Review"));
-    expect(salaryReviewTab).toBeDefined();
-    await act(async () => (salaryReviewTab as HTMLElement)?.click());
-    await vi.waitFor(() => expect(salaryReviewTab?.textContent).toContain("2 pending"));
+    const tabs = Array.from(container.querySelectorAll('[role="tab"]')).map((item) => item.textContent);
+    expect(tabs.some((t) => t?.includes("Statutory & Calculation Policy"))).toBe(true);
+    expect(tabs.some((t) => t?.includes("Salary Components"))).toBe(true);
+    expect(tabs.some((t) => t?.includes("Pay Groups"))).toBe(true);
+    expect(tabs.some((t) => t?.includes("Salary Templates"))).toBe(true);
+    expect(tabs.some((t) => t?.includes("Employee Assignments"))).toBe(true);
+    expect(tabs.some((t) => t?.includes("Salary Import & Review"))).toBe(false);
+    expect(container.textContent).toContain("Payroll Settings");
   });
 
   it("renders ampersands as symbols instead of leaking HTML entities", async () => {
@@ -157,7 +150,7 @@ describe("PayrollConfigurationPanel statutory profile editor", { timeout: 15000 
     await act(async () => root.render(<PayrollConfigurationPanel canEdit canApprove={false} />));
 
     expect(container.textContent).toContain("Payroll & Statutory Configuration");
-    expect(container.textContent).toContain("Salary Import & Review");
+    expect(container.textContent).toContain("Statutory & Calculation Policy");
     expect(container.textContent).not.toContain("&amp;");
   });
 

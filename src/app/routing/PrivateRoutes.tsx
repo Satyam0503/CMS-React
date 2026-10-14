@@ -120,8 +120,8 @@ const PrivateRoutes = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="attendance-settings" element={<ProtectedRoute adminOnly={true}><SuspensedView><AttendanceStatusSettings /></SuspensedView></ProtectedRoute>} />
-        <Route path="recruitment-settings" element={<ProtectedRoute adminOnly={true}><SuspensedView><RecruitmentSettings /></SuspensedView></ProtectedRoute>} />
+        <Route path="attendance-settings" element={<ProtectedRoute adminOnly={true} module={ModulesName.Attendance}><SuspensedView><AttendanceStatusSettings /></SuspensedView></ProtectedRoute>} />
+        <Route path="recruitment-settings" element={<ProtectedRoute adminOnly={true} module={ModulesName.Jobs}><SuspensedView><RecruitmentSettings /></SuspensedView></ProtectedRoute>} />
         <Route
           path="leavemanagement/*"
           element={

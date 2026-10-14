@@ -134,6 +134,7 @@ export interface SalaryModel {
   basicPay: number;
   hra: number;
   otherAllowance: number;
+  otherAllowances?: number;
   lta: number;
   bonus: number;
   healthInsurance: number;
@@ -174,6 +175,7 @@ export type BulkImportEmployeeModel = {
   department: string;
   jobRole: string;
   gender: string;
+  dateOfJoining: string;
 };
 
 export type BulkImportEmployeesRequest = {

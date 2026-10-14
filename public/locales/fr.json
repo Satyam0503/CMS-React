@@ -230,7 +230,9 @@
     "UPCOMING_HOLIDAYS": "Jours fériés à venir",
     "UPCOMING_EVENTS": "Événements à venir",
     "NO_EVENT_HOLIDAY": "Aucun jour férié ou événement à venir pour le moment",
-    "NO_UPCOMING_CELEBRATION": "Aucune célébration à venir pour le moment"
+    "NO_UPCOMING_CELEBRATION": "Aucune célébration à venir pour le moment",
+    "NO_UPCOMING_BIRTHDAY": "Aucun anniversaire à venir pour le moment",
+    "NO_UPCOMING_WORK_ANNIVERSARY": "Aucun anniversaire de travail à venir pour le moment"
   },
   "FORM": {
     "FIRST_NAME": "Prénom",

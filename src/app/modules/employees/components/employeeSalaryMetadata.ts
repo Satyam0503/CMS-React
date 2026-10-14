@@ -147,9 +147,21 @@ const standardPayrollCodes = new Set([
   "HRA",
   "LTA",
   "OTHER_ALLOWANCE",
+  "SPECIAL_ALLOWANCE",
   "BONUS",
   "HEALTH_INSURANCE",
 ]);
+
+const matchesComponentCode = (defCode: string, targetCode: string) => {
+  if (defCode === targetCode) return true;
+  if (
+    (targetCode === "SPECIAL_ALLOWANCE" || targetCode === "OTHER_ALLOWANCE") &&
+    (defCode === "SPECIAL_ALLOWANCE" || defCode === "OTHER_ALLOWANCE")
+  ) {
+    return true;
+  }
+  return false;
+};
 
 export const isEmployeePayrollComponentEligible = (
   definitions: PayrollSalaryComponentModel[],
@@ -159,9 +171,16 @@ export const isEmployeePayrollComponentEligible = (
 ) => {
   const normalized = code.trim().toUpperCase();
   const date = dateOnly(effectiveFrom);
-  const matchingDefinition = definitions
+  const exactMatch = definitions
     .filter((definition) => definition.code.trim().toUpperCase() === normalized && dateOnly(definition.effectiveFrom) <= date)
     .sort((left, right) => dateOnly(right.effectiveFrom).localeCompare(dateOnly(left.effectiveFrom)) || right.version - left.version)[0];
+  const matchingDefinition = exactMatch || (
+    (normalized === "SPECIAL_ALLOWANCE" || normalized === "OTHER_ALLOWANCE")
+      ? definitions
+          .filter((d) => matchesComponentCode(d.code.trim().toUpperCase(), normalized) && dateOnly(d.effectiveFrom) <= date)
+          .sort((left, right) => dateOnly(right.effectiveFrom).localeCompare(dateOnly(left.effectiveFrom)) || right.version - left.version)[0]
+      : undefined
+  );
 
   if (matchingDefinition) {
     return Boolean(matchingDefinition.isActive && (!matchingDefinition.effectiveTo || dateOnly(matchingDefinition.effectiveTo) >= date));
@@ -185,9 +204,16 @@ export const resolveEmployeePayrollComponentDefinition = (
 ) => {
   const normalizedCode = code.trim().toUpperCase();
   const date = dateOnly(effectiveFrom);
-  const latest = definitions
+  const exactMatch = definitions
     .filter((definition) => definition.code.trim().toUpperCase() === normalizedCode && dateOnly(definition.effectiveFrom) <= date)
     .sort((left, right) => dateOnly(right.effectiveFrom).localeCompare(dateOnly(left.effectiveFrom)) || right.version - left.version)[0];
+  const latest = exactMatch || (
+    (normalizedCode === "SPECIAL_ALLOWANCE" || normalizedCode === "OTHER_ALLOWANCE")
+      ? definitions
+          .filter((d) => matchesComponentCode(d.code.trim().toUpperCase(), normalizedCode) && dateOnly(d.effectiveFrom) <= date)
+          .sort((left, right) => dateOnly(right.effectiveFrom).localeCompare(dateOnly(left.effectiveFrom)) || right.version - left.version)[0]
+      : undefined
+  );
   return latest?.isActive && (!latest.effectiveTo || dateOnly(latest.effectiveTo) >= date) ? latest : undefined;
 };
 

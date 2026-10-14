@@ -48,7 +48,7 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
           onClick={handleMenuToggle}
           selected={hasActiveChild}
           aria-expanded={isOpen}
-          className="sidebar-menu-item"
+          className="sidebar-menu-item sidebar-parent-item"
         >
           <ListItemIcon>
             {icon}

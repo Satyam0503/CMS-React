@@ -249,7 +249,9 @@
     "UPCOMING_HOLIDAYS": "即将到来的假期",
     "UPCOMING_EVENTS": "即将到来的活动",
     "NO_EVENT_HOLIDAY": "目前没有即将到来的假期或活动",
-    "NO_UPCOMING_CELEBRATION": "目前没有即将到来的庆祝活动"
+    "NO_UPCOMING_CELEBRATION": "目前没有即将到来的庆祝活动",
+    "NO_UPCOMING_BIRTHDAY": "目前没有即将到来的生日",
+    "NO_UPCOMING_WORK_ANNIVERSARY": "目前没有即将到来的工作周年纪念"
   },
   "FORM": {
     "FIRST_NAME": "名",

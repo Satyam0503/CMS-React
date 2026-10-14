@@ -36,7 +36,7 @@ export type UpcomingCelebration = {
   workAnniversary: CelebrationModule[];
 };
 
-type CelebrationModule = {
+export type CelebrationModule = {
   employeeId: string;
   employeeName: string;
   profileUrl: string | null;
