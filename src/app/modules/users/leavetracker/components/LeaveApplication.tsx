@@ -123,6 +123,8 @@ export const LeaveApplication = (props: Props) => {
   const routeEmployeeId = useParams().employeeid;
   const employeeId = props.targetEmployeeId ?? routeEmployeeId;
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
+  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasWfhPermission = modulePermissions.some((p) => p.startsWith("Work_From_Home."));
   const [holidayList, setHolidayList] = useState<HolidayModel[]>([]);
   const [workFromHomeTypes, setWorkFromHomeTypes] = useState<SelectableLeaveType[]>([]);
   const [wfhEligibility, setWfhEligibility] = useState<WorkFromHomeContext | null>(null);
@@ -140,7 +142,7 @@ export const LeaveApplication = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (props.targetEmployeeId || routeEmployeeId) {
+    if (props.targetEmployeeId || routeEmployeeId || !hasWfhPermission) {
       setWfhEligibility(null);
       return;
     }

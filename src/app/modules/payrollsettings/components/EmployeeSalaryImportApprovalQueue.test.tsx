@@ -17,13 +17,33 @@ vi.mock("../../payroll/services", () => ({
   submitEmployeeSalaryStructure: submitMock,
 }));
 vi.mock("react-toastify", () => ({ toast: { error: toastErrorMock, success: toastSuccessMock } }));
-vi.mock("@mui/icons-material", () => ({ CloudUploadRounded: () => null, CheckCircleRounded: () => null, DownloadRounded: () => null }));
+vi.mock("@mui/icons-material", () => ({
+  CloudUploadRounded: () => null,
+  CheckCircleRounded: () => null,
+  DownloadRounded: () => null,
+  InsertDriveFileOutlined: () => null,
+  DeleteOutlineRounded: () => null,
+  TaskAltRounded: () => null,
+}));
 vi.mock("@mui/material", () => {
   const element = (tag: string) => ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => React.createElement(tag, props, children);
   return {
-    Alert: element("div"), Box: element("div"), Button: element("button"), Chip: element("span"), Stack: element("div"),
-    Table: element("table"), TableBody: element("tbody"), TableCell: element("td"), TableContainer: element("div"), TableHead: element("thead"),
-    TableRow: element("tr"), Typography: element("p"),
+    Alert: element("div"),
+    Box: element("div"),
+    Button: element("button"),
+    Chip: element("span"),
+    CircularProgress: () => null,
+    Divider: element("hr"),
+    Stack: element("div"),
+    Table: element("table"),
+    TableBody: element("tbody"),
+    TableCell: element("td"),
+    TableContainer: element("div"),
+    TableHead: element("thead"),
+    TableRow: element("tr"),
+    Typography: element("p"),
+    alpha: (color: string) => color,
+    useTheme: () => ({ palette: { mode: "light", primary: { main: "#0b5cab" } } }),
   };
 });
 

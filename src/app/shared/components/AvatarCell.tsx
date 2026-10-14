@@ -31,6 +31,14 @@ export const AvatarCell = ({
             <Avatar
               src={avatarSrc || DEFAULT_USER_AVATAR}
               alt={`${title || "Employee"} profile photo`}
+              imgProps={{
+                onError: (e) => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  if (target.src !== DEFAULT_USER_AVATAR) {
+                    target.src = DEFAULT_USER_AVATAR;
+                  }
+                },
+              }}
             >
               {title?.at(0)?.toLocaleUpperCase()}
             </Avatar>
@@ -39,6 +47,14 @@ export const AvatarCell = ({
           <Avatar
             src={avatarSrc || DEFAULT_USER_AVATAR}
             alt={`${title || "Employee"} profile photo`}
+            imgProps={{
+              onError: (e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                if (target.src !== DEFAULT_USER_AVATAR) {
+                  target.src = DEFAULT_USER_AVATAR;
+                }
+              },
+            }}
           >
             {title?.at(0)?.toLocaleUpperCase()}
           </Avatar>

@@ -7,6 +7,8 @@ import { checkIsActive } from "../../../../_themes/helpers";
 import PolicyIcon from '@mui/icons-material/Policy';
 import { useIntl } from "react-intl";
 
+import { useAppSelector } from "../../../Redux/hooks";
+
 const tabsRoutes: TabModel[] = [
     {
         tabId: 1,
@@ -43,6 +45,16 @@ const tabsRoutes: TabModel[] = [
 export const LeaveManagementTabs = () => {
     const { formatMessage: i } = useIntl();
     const navigate = useNavigate();
+    const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+    const hasWfhAccess = modulePermissions.some((p) => p.startsWith("Work_From_Home."));
+
+    const visibleTabs = tabsRoutes.filter((tab) => {
+        if (tab.to === "work-from-home") {
+            return hasWfhAccess;
+        }
+        return true;
+    });
+
     return (
         <Stack spacing={1} className="flex-grow-1">
             <Card
@@ -56,7 +68,7 @@ export const LeaveManagementTabs = () => {
                     },
                 }}
             >
-                {tabsRoutes.map((tab) => {
+                {visibleTabs.map((tab) => {
                     return (
                         <Box
                             component="div"

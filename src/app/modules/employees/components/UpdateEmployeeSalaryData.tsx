@@ -32,7 +32,7 @@ import {
 import { toast } from "react-toastify";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { useIntl } from "react-intl";
-import { getEmployeeSalaryHistory, getPayrollPayGroups, getPayrollSalaryComponents, getPayrollSalaryTemplates, previewEmployeeSalaryImport, previewEmployeeSalaryPdf, saveEmployeeSalaryStructure } from "../../payroll/services";
+import { approveEmployeeSalaryStructure, getEmployeeSalaryHistory, getPayrollPayGroups, getPayrollSalaryComponents, getPayrollSalaryTemplates, previewEmployeeSalaryImport, previewEmployeeSalaryPdf, saveEmployeeSalaryStructure } from "../../payroll/services";
 import { EmployeeSalaryComponentValueModel, EmployeeSalaryImportRowModel, EmployeeSalaryStructureModel, PayrollPayGroupModel, PayrollSalaryComponentModel, PayrollSalaryTemplateModel } from "../../payroll/models";
 import { salaryValidationSchema } from "../../../../utils/Schema/salaryValidationSchema";
 import { downloadEmployeeSalarySampleTemplate, hasExplicitSalaryComponentValue, invalidStandardSalaryValues, rowToImport } from "../../payrollsettings/components/salaryImportMapping";
@@ -51,6 +51,7 @@ interface PropsTypes {
   // already exists; omit for a brand new employee who has no salary yet
   existingSalary?: SalaryModel | null;
   defaultEffectiveFrom?: string;
+  canApprove?: boolean;
 }
 
 const employeeSalaryInitialValues: CreateEmployeeSalary = {
@@ -75,6 +76,7 @@ const fixedComponentFields: Record<string, keyof CreateEmployeeSalary> = {
   HRA: "hra",
   LTA: "lta",
   OTHER_ALLOWANCE: "otherAllowance",
+  SPECIAL_ALLOWANCE: "otherAllowance",
   BONUS: "bonus",
   HEALTH_INSURANCE: "healthInsurance",
   TOTAL_DEDUCTIONS: "totalDeductions",
@@ -93,6 +95,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
     handleButtonLoading,
     existingSalary,
     defaultEffectiveFrom,
+    canApprove,
   } = props;
   const { formatMessage: i } = useIntl();
   const [salaryTemplates, setSalaryTemplates] = useState<PayrollSalaryTemplateModel[]>([]);
@@ -113,7 +116,17 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
   const [isImportingSalary, setIsImportingSalary] = useState(false);
   const [importFeedback, setImportFeedback] = useState<{ severity: "success" | "error"; message: string } | null>(null);
   const salaryFileInput = useRef<HTMLInputElement>(null);
-  const fixedComponentCodes = new Set(["BASIC", "HRA", "LTA", "OTHER_ALLOWANCE", "BONUS", "HEALTH_INSURANCE", "TOTAL_DEDUCTIONS"]);
+  const fixedComponentCodes = new Set([
+    "BASIC",
+    "BASIC_PAY",
+    "HRA",
+    "LTA",
+    "OTHER_ALLOWANCE",
+    "SPECIAL_ALLOWANCE",
+    "BONUS",
+    "HEALTH_INSURANCE",
+    "TOTAL_DEDUCTIONS",
+  ]);
   const buildSalaryCalculation = (values: CreateEmployeeSalary, effectiveFrom: string) => {
     const isEnabled = (code: string) => isEmployeePayrollComponentEligible(salaryComponentDefinitions, code, effectiveFrom, true);
     const templateComponents = resolveEmployeePayrollComponents(
@@ -122,11 +135,22 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
       effectiveFrom,
       importedSalaryComponents,
     );
+    const isSpecialOrOtherEnabled = isEnabled("SPECIAL_ALLOWANCE") || isEnabled("OTHER_ALLOWANCE");
+    const configuredSpecialOrOtherDef = salaryComponentDefinitions.find((c) => {
+      const code = c.code.trim().toUpperCase();
+      return (code === "SPECIAL_ALLOWANCE" || code === "OTHER_ALLOWANCE") &&
+        isEmployeePayrollComponentEligible(salaryComponentDefinitions, code, effectiveFrom);
+    });
+    const specialOrOtherCode = configuredSpecialOrOtherDef?.code.trim().toUpperCase() ||
+      (salaryComponentDefinitions.some((c) => c.code.trim().toUpperCase() === "SPECIAL_ALLOWANCE") ? "SPECIAL_ALLOWANCE" : "OTHER_ALLOWANCE");
+    const specialOrOtherName = configuredSpecialOrOtherDef?.name ||
+      (specialOrOtherCode === "SPECIAL_ALLOWANCE" ? "Special Allowance" : "Other Allowance");
+
     const fixedRows: [string, string, unknown, boolean, "EARNING" | "DEDUCTION"][] = [
       ["BASIC", "Basic Pay", values.basicPay, true, "EARNING"],
       ...(isEnabled("HRA") ? [["HRA", "HRA", values.hra, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
       ...(isEnabled("LTA") ? [["LTA", "LTA", values.lta, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
-      ...(isEnabled("OTHER_ALLOWANCE") ? [["OTHER_ALLOWANCE", "Other Allowance", values.otherAllowance, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
+      ...(isSpecialOrOtherEnabled ? [[specialOrOtherCode, specialOrOtherName, values.otherAllowance, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
       ...(isEnabled("BONUS") ? [["BONUS", "Bonus", values.bonus, false, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
       ...(isEnabled("HEALTH_INSURANCE") ? [["HEALTH_INSURANCE", "Health Insurance", values.healthInsurance, true, "DEDUCTION"] as [string, string, unknown, boolean, "DEDUCTION"]] : []),
     ];
@@ -147,13 +171,15 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
       .map((component) => ({ componentCode: component.code.toUpperCase(), componentName: component.name, kind: component.kind,
         value: Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.code.toUpperCase()] || 0), calculationType: component.calculationType,
         baseComponentCode: component.baseComponentCode, isTaxable: component.isTaxable, isRecurring: true, isStatutory: false, isEmployerContribution: false }));
-    const importedComponents = importedSalaryComponents.map((component) => ({
-      ...component,
-      value: Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.componentCode.toUpperCase()] ?? component.value),
-      percentage: component.calculationType.toUpperCase() === "FIXED"
-        ? component.percentage
-        : Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.componentCode.toUpperCase()] ?? component.value),
-    }));
+    const importedComponents = importedSalaryComponents
+      .filter((component) => !fixedComponentCodes.has(component.componentCode.toUpperCase()))
+      .map((component) => ({
+        ...component,
+        value: Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.componentCode.toUpperCase()] ?? component.value),
+        percentage: component.calculationType.toUpperCase() === "FIXED"
+          ? component.percentage
+          : Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.componentCode.toUpperCase()] ?? component.value),
+      }));
     const components = [...fixedComponents, ...configuredComponents, ...importedComponents];
     return { components, calculation: calculateEmployeePayrollComponents(components) };
   };
@@ -174,13 +200,11 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
   }, []);
 
   useEffect(() => {
-    if (!existingSalary) return;
     let mounted = true;
     void getEmployeeSalaryHistory(employeeId).then(({ data }) => {
       if (!mounted) return;
-      const current = (data ?? [])
-        .filter((salary) => salary.status === "ACTIVE" && salary.approvalStatus === "APPROVED")
-        .sort((left, right) => dayjs(right.effectiveFrom).valueOf() - dayjs(left.effectiveFrom).valueOf())[0];
+      const sorted = (data ?? []).slice().sort((left, right) => dayjs(right.effectiveFrom).valueOf() - dayjs(left.effectiveFrom).valueOf());
+      const current = sorted.find((salary) => salary.status === "ACTIVE" && salary.approvalStatus === "APPROVED") ?? sorted[0];
       if (!current) return;
       setSelectedTemplateId(current.salaryTemplateId ?? "");
       setSelectedPayGroupId(current.payGroupId ?? "");
@@ -191,9 +215,18 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
         gradeId: current.gradeId,
         departmentId: current.departmentId,
       });
+      if (current.components && current.components.length > 0 && formRef?.current) {
+        const specialComp = current.components.find((c) => {
+          const code = c.componentCode.toUpperCase();
+          return code === "SPECIAL_ALLOWANCE" || code === "OTHER_ALLOWANCE";
+        });
+        if (specialComp && !formRef.current.values.otherAllowance) {
+          void formRef.current.setFieldValue("otherAllowance", specialComp.value);
+        }
+      }
     }).catch(() => undefined);
     return () => { mounted = false; };
-  }, [employeeId, existingSalary]);
+  }, [employeeId, existingSalary, formRef]);
 
   async function UpadteSalaryData(
     values: CreateEmployeeSalary,
@@ -250,6 +283,20 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
         await onUserUpdate(false);
         return;
       }
+      const savedId = response.data.resourceId || (response.data as unknown as { methodResult?: { id?: string; version?: number } }).methodResult?.id;
+      const savedVersion = (response.data as unknown as { methodResult?: { id?: string; version?: number } }).methodResult?.version ?? 1;
+      if (canApprove && savedId) {
+        try {
+          const approveRes = await approveEmployeeSalaryStructure(savedId, savedVersion);
+          if (approveRes.data.success) {
+            toast.success("Salary structure saved and approved successfully.");
+            await onUserUpdate(true);
+            return;
+          }
+        } catch {
+          // Fall through to draft toast if approval failed
+        }
+      }
       toast.success("Salary structure saved as a draft. It must be approved before payroll can use it.");
       await onUserUpdate(true);
     } catch (error) {
@@ -284,12 +331,14 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
       <Formik
         initialValues={{
           ...employeeSalaryInitialValues,
-          effectiveFrom: defaultEffectiveFrom ? dayjs(defaultEffectiveFrom) : employeeSalaryInitialValues.effectiveFrom,
+          effectiveFrom: existingSalary?.effectiveFrom
+            ? dayjs(existingSalary.effectiveFrom)
+            : (defaultEffectiveFrom ? dayjs(defaultEffectiveFrom) : employeeSalaryInitialValues.effectiveFrom),
           ...(existingSalary && {
             basicPay: existingSalary.basicPay,
             hra: existingSalary.hra,
             lta: existingSalary.lta,
-            otherAllowance: existingSalary.otherAllowance,
+            otherAllowance: existingSalary.otherAllowance ?? existingSalary.otherAllowances ?? 0,
             bonus: existingSalary.bonus,
             healthInsurance: existingSalary.healthInsurance,
             totalDeductions: existingSalary.totalDeductions,
@@ -338,6 +387,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                 .filter((c) => isEmployeePayrollComponentEligible(salaryComponentDefinitions, c.code, salaryEffectiveDate, true))
                 .map((c) => c.code.trim().toUpperCase()),
             );
+            const isSpecialOrOtherConfigured = configuredCodes.has("SPECIAL_ALLOWANCE") || configuredCodes.has("OTHER_ALLOWANCE");
             const standardHeads = [
               { code: "HRA", name: "House Rent Allowance", kind: "EARNING" },
               { code: "LTA", name: "Leave Travel Allowance", kind: "EARNING" },
@@ -347,7 +397,10 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
             ];
 
             const unconfiguredStandardHeads = hasDefinitions
-              ? standardHeads.filter((head) => !configuredCodes.has(head.code))
+              ? standardHeads.filter((head) => {
+                  if (head.code === "OTHER_ALLOWANCE") return !isSpecialOrOtherConfigured;
+                  return !configuredCodes.has(head.code);
+                })
               : [];
 
             return {
@@ -515,16 +568,29 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     <div>
                       <Stack direction="row" alignItems="center" spacing={1}>
                         <Typography variant="subtitle2" sx={{ fontWeight: 800, color: "text.primary", fontSize: "0.95rem" }}>
-                          Live salary breakdown
+                          Live Salary Breakdown
                         </Typography>
-                        <Chip size="small" label="Live Projection" color="success" variant="outlined" sx={{ height: 20, fontSize: "0.68rem", fontWeight: 700 }} />
+                        <Chip
+                          size="small"
+                          label="Live Projection"
+                          sx={{
+                            height: 20,
+                            fontSize: "0.68rem",
+                            fontWeight: 700,
+                            bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
+                            color: "success.main",
+                            border: "1px solid",
+                            borderColor: (theme) => alpha(theme.palette.success.main, 0.25),
+                            borderRadius: 1.25,
+                          }}
+                        />
                       </Stack>
-                      <Typography variant="caption" color="text.secondary">
-                        Recalculates from the enabled company components and selected template. Currency: INR (₹)
+                      <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.76rem" }}>
+                        Recalculates dynamically from enabled company components and selected pay group.
                       </Typography>
                     </div>
 
-                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ rowGap: 1 }}>
                       <input
                         ref={salaryFileInput}
                         hidden
@@ -545,7 +611,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                           borderRadius: 2,
                           fontWeight: 650,
                           textTransform: "none",
-                          py: 0.6,
+                          py: 0.65,
                           px: 1.5,
                           fontSize: "0.78rem",
                           borderColor: "divider",
@@ -566,7 +632,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                           borderRadius: 2,
                           fontWeight: 650,
                           textTransform: "none",
-                          py: 0.6,
+                          py: 0.65,
                           px: 1.75,
                           fontSize: "0.78rem",
                           boxShadow: "none",
@@ -630,8 +696,8 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                       <Grid size={{ xs: 6, sm: 6, md: 3 }}>
                         <Card
                           sx={{
-                            p: 1.75,
-                            borderRadius: 2,
+                            p: 2,
+                            borderRadius: 2.5,
                             border: "1px solid",
                             borderColor: "divider",
                             boxShadow: "none",
@@ -642,13 +708,13 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                            Recurring monthly gross
+                          <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                            Monthly Gross
                           </Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary", fontSize: "1.15rem" }}>
+                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary", fontSize: "1.2rem", letterSpacing: "-0.01em" }}>
                             <span data-testid="salary-preview-gross">{formatInr(salaryCalculationPreview.gross)}</span>
                           </Typography>
-                          <Typography variant="caption" color="text.disabled" sx={{ fontSize: "0.7rem" }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
                             All earnings combined
                           </Typography>
                         </Card>
@@ -656,8 +722,8 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                       <Grid size={{ xs: 6, sm: 6, md: 3 }}>
                         <Card
                           sx={{
-                            p: 1.75,
-                            borderRadius: 2,
+                            p: 2,
+                            borderRadius: 2.5,
                             border: "1px solid",
                             borderColor: "divider",
                             boxShadow: "none",
@@ -668,13 +734,13 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                            Configured monthly deductions
+                          <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                            Monthly Deductions
                           </Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary", fontSize: "1.15rem" }}>
+                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary", fontSize: "1.2rem", letterSpacing: "-0.01em" }}>
                             <span data-testid="salary-preview-deductions">{formatInr(salaryCalculationPreview.deductions)}</span>
                           </Typography>
-                          <Typography variant="caption" color="text.disabled" sx={{ fontSize: "0.7rem" }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
                             Pre-tax company withholdings
                           </Typography>
                         </Card>
@@ -682,10 +748,10 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                       <Grid size={{ xs: 6, sm: 6, md: 3 }}>
                         <Card
                           sx={(theme) => ({
-                            p: 1.75,
-                            borderRadius: 2,
-                            border: "1.5px solid",
-                            borderColor: "primary.main",
+                            p: 2,
+                            borderRadius: 2.5,
+                            border: "1px solid",
+                            borderColor: alpha(theme.palette.primary.main, 0.4),
                             bgcolor: alpha(theme.palette.primary.main, 0.04),
                             boxShadow: "none",
                             height: "100%",
@@ -694,13 +760,13 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                             justifyContent: "space-between",
                           })}
                         >
-                          <Typography variant="caption" color="primary.main" fontWeight={750} sx={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                            Estimated net before statutory deductions
+                          <Typography variant="caption" color="primary.main" fontWeight={750} sx={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                            Estimated Net Take-Home
                           </Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "primary.main", fontSize: "1.15rem" }}>
+                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "primary.main", fontSize: "1.2rem", letterSpacing: "-0.01em" }}>
                             <span data-testid="salary-preview-net">{formatInr(salaryCalculationPreview.net)}</span>
                           </Typography>
-                          <Typography variant="caption" color="primary.main" sx={{ fontSize: "0.7rem", opacity: 0.9 }}>
+                          <Typography variant="caption" color="primary.main" sx={{ fontSize: "0.72rem", opacity: 0.9 }}>
                             Net take-home projection
                           </Typography>
                         </Card>
@@ -708,8 +774,8 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                       <Grid size={{ xs: 6, sm: 6, md: 3 }}>
                         <Card
                           sx={{
-                            p: 1.75,
-                            borderRadius: 2,
+                            p: 2,
+                            borderRadius: 2.5,
                             border: "1px solid",
                             borderColor: "divider",
                             boxShadow: "none",
@@ -720,13 +786,13 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                             justifyContent: "space-between",
                           }}
                         >
-                          <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                          <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                             Annual CTC (Gross × 12)
                           </Typography>
-                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary", fontSize: "1.15rem" }}>
+                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary", fontSize: "1.2rem", letterSpacing: "-0.01em" }}>
                             {formatInr(salaryCalculationPreview.gross * 12)}
                           </Typography>
-                          <Typography variant="caption" color="text.disabled" sx={{ fontSize: "0.7rem" }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
                             Annualized compensation
                           </Typography>
                         </Card>
@@ -734,12 +800,12 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     </Grid>
                   )}
 
-                  <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems="center" sx={{ mt: 1.25 }} spacing={1}>
+                  <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems="center" sx={{ mt: 1.5, pt: 1.25, borderTop: "1px dashed", borderColor: "divider" }} spacing={1}>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
-                      This estimate excludes EPF/ESIC/TDS, attendance and leave adjustments, and one-time earnings. Final payroll may differ.
+                      Note: Excludes statutory taxes (EPF, ESIC, PT, TDS) and attendance deductions computed during final payroll runs.
                     </Typography>
                     <Typography variant="caption" color="text.disabled" sx={{ fontSize: "0.7rem", display: { xs: "none", md: "inline" } }}>
-                      The file is previewed and checked before it fills this form; it is not saved automatically.
+                      Document imports preview before filling; saving creates an unapproved draft.
                     </Typography>
                   </Stack>
                 </Box>
@@ -783,7 +849,8 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                       Company Component Catalog Notice
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 1.45 }}>
-                      {standardCatalogAudit.unconfiguredStandardHeads.map((h) => h.code).join(", ")} are not active in this company&apos;s Payroll Configuration.
+                      {standardCatalogAudit.unconfiguredStandardHeads.map((h) => h.code).join(", ")}{" "}
+                      {standardCatalogAudit.unconfiguredStandardHeads.length === 1 ? "is" : "are"} not active in this company&apos;s Payroll Configuration.
                       Only components configured in your company catalog are available for salary assignments.
                     </Typography>
                   </Alert>
@@ -830,22 +897,29 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                               </Typography>
                             </div>
                           </Stack>
-                          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                            <Chip size="small" label="Monthly Recurring & Variable" variant="outlined" sx={{ height: 24, fontSize: "0.72rem", fontWeight: 600 }} />
-                            <Chip
-                              size="small"
-                              label={`Gross: ${formatInr(monthlyGross)}`}
-                              sx={{
-                                fontWeight: 750,
-                                fontSize: "0.75rem",
-                                borderRadius: 1.5,
-                                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
-                                color: "primary.main",
-                                border: "1px solid",
-                                borderColor: (theme) => alpha(theme.palette.primary.main, 0.2),
-                              }}
-                            />
-                          </Stack>
+                          <Box
+                            sx={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 0.75,
+                              px: 1.5,
+                              py: 0.5,
+                              borderRadius: 2,
+                              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                              border: "1px solid",
+                              borderColor: (theme) => alpha(theme.palette.primary.main, 0.2),
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, fontSize: "0.72rem" }}>
+                              Total Gross:
+                            </Typography>
+                            <Typography variant="subtitle2" sx={{ color: "primary.main", fontWeight: 800, fontSize: "0.85rem", lineHeight: 1 }}>
+                              {formatInr(monthlyGross)}
+                              <Typography component="span" variant="caption" sx={{ color: "text.secondary", fontWeight: 500, fontSize: "0.7rem", ml: 0.35 }}>
+                                / mo
+                              </Typography>
+                            </Typography>
+                          </Box>
                         </Stack>
 
                         <Grid container spacing={2}>
@@ -878,12 +952,18 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                               />
                             </Grid>
                           )}
-                          {componentEnabled("OTHER_ALLOWANCE") && (
+                          {(componentEnabled("SPECIAL_ALLOWANCE") || componentEnabled("OTHER_ALLOWANCE")) && (
                             <Grid size={{ xs: 12, sm: 6 }}>
                               <CurrencyInput
-                                label={i({ id: "EMPLOYEE.SALARY.OTHER_ALLOWANCE" })}
+                                label={
+                                  salaryComponentDefinitions.find((c) => {
+                                    const code = c.code.trim().toUpperCase();
+                                    return (code === "SPECIAL_ALLOWANCE" || code === "OTHER_ALLOWANCE") &&
+                                      isEmployeePayrollComponentEligible(salaryComponentDefinitions, code, salaryEffectiveDate);
+                                  })?.name || (salaryComponentDefinitions.some((c) => c.code.trim().toUpperCase() === "SPECIAL_ALLOWANCE") ? "Special Allowance" : i({ id: "EMPLOYEE.SALARY.OTHER_ALLOWANCE" }))
+                                }
                                 name="otherAllowance"
-                                {...componentInputGuidance("OTHER_ALLOWANCE")}
+                                {...componentInputGuidance(componentEnabled("SPECIAL_ALLOWANCE") ? "SPECIAL_ALLOWANCE" : "OTHER_ALLOWANCE")}
                               />
                             </Grid>
                           )}
@@ -1000,23 +1080,29 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                               </Typography>
                             </div>
                           </Stack>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <Chip size="small" label="Monthly Withholdings" variant="outlined" sx={{ height: 22, fontSize: "0.7rem", fontWeight: 600 }} />
-                            <Chip
-                              size="small"
-                              label={`Deductions: ${formatInr(monthlyDeductions)}`}
-                              sx={{
-                                fontWeight: 750,
-                                fontSize: "0.72rem",
-                                borderRadius: 1.5,
-                                bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
-                                color: "error.main",
-                                border: "1px solid",
-                                borderColor: (theme) => alpha(theme.palette.error.main, 0.2),
-                                height: 22,
-                              }}
-                            />
-                          </Stack>
+                          <Box
+                            sx={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 0.75,
+                              px: 1.5,
+                              py: 0.5,
+                              borderRadius: 2,
+                              bgcolor: (theme) => alpha(theme.palette.error.main, 0.06),
+                              border: "1px solid",
+                              borderColor: (theme) => alpha(theme.palette.error.main, 0.18),
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ color: "text.secondary", fontWeight: 600, fontSize: "0.72rem" }}>
+                              Total Deductions:
+                            </Typography>
+                            <Typography variant="subtitle2" sx={{ color: "error.main", fontWeight: 800, fontSize: "0.85rem", lineHeight: 1 }}>
+                              {formatInr(monthlyDeductions)}
+                              <Typography component="span" variant="caption" sx={{ color: "text.secondary", fontWeight: 500, fontSize: "0.7rem", ml: 0.35 }}>
+                                / mo
+                              </Typography>
+                            </Typography>
+                          </Box>
                         </Stack>
 
                         <Grid container spacing={2}>
@@ -1181,7 +1267,13 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                                   const templateValues = salaryTemplateValues(template);
                                   const fixedValues: Record<string, number> = {};
                                   Object.entries(fixedComponentFields).forEach(([code, field]) => {
-                                    if (code !== "BASIC_PAY") fixedValues[field] = templateValues[code] ?? 0;
+                                    if (code === "BASIC_PAY") return;
+                                    if (code === "SPECIAL_ALLOWANCE" || code === "OTHER_ALLOWANCE") {
+                                      const val = templateValues["SPECIAL_ALLOWANCE"] || templateValues["OTHER_ALLOWANCE"] || 0;
+                                      fixedValues["otherAllowance"] = val;
+                                      return;
+                                    }
+                                    fixedValues[field] = templateValues[code] ?? 0;
                                   });
                                   Object.entries(fixedValues).forEach(([field, value]) => setFieldValue(field, value));
                                   const templateEffectiveFrom = values.effectiveFrom ? dayjs(values.effectiveFrom).format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");

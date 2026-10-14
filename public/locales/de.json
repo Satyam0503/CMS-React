@@ -229,7 +229,9 @@
     "UPCOMING_HOLIDAYS": "Bevorstehende Feiertage",
     "UPCOMING_EVENTS": "Bevorstehende Veranstaltungen",
     "NO_EVENT_HOLIDAY": "Derzeit keine bevorstehenden Feiertage oder Veranstaltungen",
-    "NO_UPCOMING_CELEBRATION": "Derzeit keine bevorstehenden Feierlichkeiten"
+    "NO_UPCOMING_CELEBRATION": "Derzeit keine bevorstehenden Feierlichkeiten",
+    "NO_UPCOMING_BIRTHDAY": "Derzeit keine bevorstehenden Geburtstage",
+    "NO_UPCOMING_WORK_ANNIVERSARY": "Derzeit keine bevorstehenden Dienstjubiläen"
   },
   "FORM": {
     "FIRST_NAME": "Vorname",

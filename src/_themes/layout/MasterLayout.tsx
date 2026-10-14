@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { Container, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { CSSProperties } from "react";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Sidebar } from "./components/sidebar";
@@ -27,7 +27,7 @@ const MasterLayout = () => {
       ? "collapsed"
       : "expanded";
   const shellVariables = {
-    "--sidebar-expanded-width": "265px",
+    "--sidebar-expanded-width": "250px",
     "--sidebar-collapsed-width": "76px",
     "--sidebar-current-width": isSmallScreen
       ? "0px"
@@ -60,67 +60,65 @@ const MasterLayout = () => {
             className="app-shell flex-column flex-shrink-0 flex-grow-1"
             data-sidebar-state={sidebarState}
             style={shellVariables}
-            sx={{ height: "100dvh", overflow: "hidden" }}
+            sx={{ height: "100dvh", overflow: "hidden", position: "relative" }}
           >
             <HeaderWrapper
               openSideBar={handleOpenSidebar}
               sidebarState={sidebarState}
             />
-            <Stack
-              direction="column"
+            <Box
+              className="app-body-layout"
               sx={{
-                flex: "1 1 0",
-                height: 0,
+                display: "flex",
+                flex: "1 1 auto",
                 minHeight: 0,
-                overflowX: "hidden",
-                overflowY: "auto",
-                overscrollBehavior: "contain",
+                height: "calc(100dvh - var(--app-header-height))",
+                position: "relative",
+                overflow: "hidden",
+                width: "100%",
               }}
             >
-              <Stack
-                direction="column"
-                className="app-content-surface"
+              <Sidebar
+                open={open}
+                handleClose={handleSideBarClose}
+                isMiniSidebar={isMiniSidebar}
+                setMiniSidebar={setMiniSidebar}
+                isHoverExpanded={isSidebarHoverExpanded}
+                setHoverExpanded={setSidebarHoverExpanded}
+              />
+              <Box
+                component="main"
+                className="app-content-surface app-main-viewport"
                 data-sidebar-state={sidebarState}
                 sx={{
-                  flex: "1 0 auto",
+                  flex: "1 1 auto",
+                  minWidth: 0,
                   minHeight: 0,
-                  marginLeft: { xs: 0, md: "calc(var(--sidebar-current-width) + 16px)" },
-                  width: { xs: "100%", md: "auto" },
-                  transition: "margin-left 0.32s cubic-bezier(.2, .8, .2, 1)",
+                  height: "100%",
+                  overflowX: "hidden",
+                  overflowY: "auto",
+                  overscrollBehavior: "contain",
+                  marginLeft: {
+                    xs: 0,
+                    md: "calc(var(--sidebar-current-width) + 32px)",
+                  },
+                  width: {
+                    xs: "100%",
+                    md: "calc(100% - var(--sidebar-current-width) - 48px)",
+                  },
+                  transition:
+                    "margin-left 0.28s cubic-bezier(.2, .8, .2, 1), width 0.28s cubic-bezier(.2, .8, .2, 1)",
                 }}
               >
-                <Sidebar
-                  open={open}
-                  handleClose={handleSideBarClose}
-                  isMiniSidebar={isMiniSidebar}
-                  setMiniSidebar={setMiniSidebar}
-                  isHoverExpanded={isSidebarHoverExpanded}
-                  setHoverExpanded={setSidebarHoverExpanded}
-                />
-                <Container
-                  maxWidth={false}
-                  className="d-flex flex-column flex-grow-1 gap-3"
-                  sx={{
-                    width: "100%",
-                    maxWidth: "none",
-                    mx: 0,
-                    minWidth: 0,
-                    minHeight: "max-content",
-                    overflow: "visible",
-                    py: 2,
-                    pb: 4,
-                    px: { xs: 2, md: 3 },
-                    pl: { xs: 2, md: 2 },
-                    pr: { xs: 2, md: 3 },
-                    transition: "max-width 0.32s cubic-bezier(.2, .8, .2, 1), padding 0.32s cubic-bezier(.2, .8, .2, 1)",
-                  }}
-                >
-                  <PageData />
-                  <EmployeeExitQueueAction showButton={false} />
-                  <Outlet />
-                </Container>
-              </Stack>
-            </Stack>
+                <div className="main-content-wrapper">
+                  <div className="main-content-container">
+                    <PageData />
+                    <EmployeeExitQueueAction showButton={false} />
+                    <Outlet />
+                  </div>
+                </div>
+              </Box>
+            </Box>
           </Stack>
           {/* <ChatMessenger /> */}
         </PageDataProvider>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { DepartmentModel, JobTitleRequestModel, JobTitleResponseModel } from "../../models";
+import { JobTitleRequestModel, JobTitleResponseModel } from "../../models";
 import { transformAttributeObjectToList } from "../../../../../utils/common";
 import {
   addUpdateJobTitles,
   deleteAttributeItem,
-  getAllDepartments,
   getJobTitles,
 } from "../../adminservices";
 import { toast } from "react-toastify";
@@ -16,7 +15,6 @@ export const JobTitles = () => {
   const { formatMessage: i } = useIntl();
   const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
   const [refresh, setRefresh] = useState(false);
-  const [departments, setDepartments] = useState<DepartmentModel[]>([]);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -25,7 +23,7 @@ export const JobTitles = () => {
   const handleJobTitleUpdate = async (jobTitles: JobTitleResponseModel[]) => {
     const payload: JobTitleRequestModel[] = jobTitles.map((item) => ({
       jobTitleId: item.jobTitleId,
-      departmentId: (item as any).departmentId ?? null,
+      departmentId: null,
       isActive: item.isActive,
       titles: transformAttributeObjectToList(item.titles),
     }));
@@ -83,12 +81,6 @@ export const JobTitles = () => {
     getAllJobTitles();
   }, [refresh]);
 
-  useEffect(() => {
-    getAllDepartments(true)
-      .then(({ data }) => setDepartments(data.success ? data.methodResults : []))
-      .catch((error) => console.error((error as Error).message));
-  }, []);
-
   return (
     <AttributeTable
       attributeName={i({ id: "COMPANY_MASTER.TAB.JOB_TILES" })}
@@ -96,12 +88,6 @@ export const JobTitles = () => {
       keyName="jobTitleId"
       handleAttributeUpdate={handleJobTitleUpdate}
       handleDeleteAttribute={handleDeleteJobTitle}
-      selectField="departmentId"
-      selectLabel="Department"
-      selectOptions={departments.map((department) => ({
-        value: department.departmentId ?? "",
-        label: Object.values(department.titles)[0] ?? "Department",
-      })).filter((department) => Boolean(department.value))}
     />
   );
 };

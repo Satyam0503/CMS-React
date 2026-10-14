@@ -75,8 +75,10 @@ export default function Dashboard() {
   if (!canViewCompanyDashboard) {
     return (
       <Box className="dashboard-modern">
-        <DashboardHeader fullName={user.fullName} />
         <Grid container spacing={{ xs: 2, md: 3 }}>
+          <Grid size={12}>
+            <DashboardHeader fullName={user.fullName} />
+          </Grid>
           <Grid size={{ xs: 12, lg: 8 }}>
             {hasAccessToNoticeBoard && <NoticeBoard />}
           </Grid>
@@ -93,8 +95,10 @@ export default function Dashboard() {
 
   return (
     <Box className="dashboard-modern">
-      <DashboardHeader fullName={user.fullName} />
       <Grid container spacing={{ xs: 2, md: 3 }} className="d-flex justify-content-between">
+        <Grid size={12}>
+          <DashboardHeader fullName={user.fullName} />
+        </Grid>
         <Grid
           size={{
             xs: 12,

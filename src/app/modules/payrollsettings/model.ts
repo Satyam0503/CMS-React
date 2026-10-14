@@ -4,6 +4,7 @@ export type CompanySalaryResponseModel = {
   userId: string;
   employeeId: string;
   employeeName: string;
+  dateOfJoining?: string | null;
   jobTitle: Record<string, string> | null;
   activeSalary: SalaryModel | null;
   lifecyclePayrollStatus?: string;

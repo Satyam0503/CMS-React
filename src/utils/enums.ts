@@ -82,6 +82,8 @@ export enum ModulesName {
   PayrollSettings = "Payroll_Settings",
   CareerProfile = "Career_Profile",
   RecruitmentSettings = "Recruitment_Settings",
+  WorkFromHome = "Work_From_Home",
+  Offboarding = "Offboarding",
 }
 
 export enum ModulesTitles {
@@ -106,6 +108,7 @@ export enum ModulesTitles {
   CareerProfile = "MODULES.CAREER_PROFILE",
   RecruitmentSettings = "MODULES.RECRUITMENT_SETTINGS",
   LifecycleManagement = "MODULES.LIFECYCLE_MANAGEMENT",
+  WorkFromHome = "MODULES.WORK_FROM_HOME",
 }
 
 export enum PayRollModuleTitles {

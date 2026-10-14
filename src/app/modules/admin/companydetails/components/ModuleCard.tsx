@@ -40,7 +40,8 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
   const isHardDisabled =
     moduleCostant === DefaultModles.Employees ||
-    moduleCostant === DefaultModles.Calendar;
+    moduleCostant === DefaultModles.Calendar ||
+    moduleCostant === "Dashboard";
 
   const isDisabled = disabled || isHardDisabled;
 

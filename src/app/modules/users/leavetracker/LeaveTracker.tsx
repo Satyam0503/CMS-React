@@ -82,13 +82,14 @@ export const LeaveTracker: FC = () => {
   const [clocking, setClocking] = useState(false);
   const modulePermission =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasWfhPermission = modulePermission.some((p) => p.startsWith("Work_From_Home."));
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleOpen = () => {
-    if (empLeaveTypeBalance.length > 0 || wfhContext?.isEligible || hasLifecycleLeavePolicy) {
+    if (empLeaveTypeBalance.length > 0 || (hasWfhPermission && wfhContext?.isEligible) || hasLifecycleLeavePolicy) {
       setOpen(true);
     } else {
       toast.error(i({ id: "VALIDATION_ERR.LEAVE_TYPES_NOT_AVAILABLE" }));
@@ -145,8 +146,11 @@ export const LeaveTracker: FC = () => {
   useEffect(() => {
     // The WFH context is identity-bound, so only load it on the employee's own
     // profile rather than while HR is viewing another employee.
-    if (employeeId) {
+    if (employeeId || !hasWfhPermission) {
       setWfhContext(null);
+      setWfhRequests([]);
+      setTodayWfhRequest(null);
+      setWfhTiming(null);
       return;
     }
 

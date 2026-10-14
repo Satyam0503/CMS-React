@@ -3,78 +3,74 @@
 .sidebar {
   & .sidebar-paper {
     width: var(--sidebar-current-width);
-    top: calc(50% + (var(--app-header-height) / 2)) !important;
-    bottom: auto !important;
+    top: calc(var(--app-header-height) + 14px) !important;
+    bottom: 16px !important;
+    left: 16px !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    height: clamp(560px, calc(100dvh - var(--app-header-height) - 120px), 640px) !important;
-    max-height: calc(100dvh - var(--app-header-height) - 32px) !important;
-    left: 16px;
+    height: calc(100dvh - var(--app-header-height) - 30px) !important;
+    max-height: calc(100dvh - var(--app-header-height) - 30px) !important;
     overflow: hidden;
     white-space: nowrap;
-    // Compact floating capsule that adapts cleanly to content
-    border: 1px solid rgba(255, 255, 255, 0.88);
-    border-radius: 28px !important;
+    border: 1px solid rgba(255, 255, 255, 0.88) !important;
+    border-radius: 38px !important;
     background-clip: padding-box;
     isolation: isolate;
-    -webkit-backdrop-filter: blur(24px) saturate(190%);
-    backdrop-filter: blur(24px) saturate(190%);
-    background:
-      linear-gradient(
-        155deg,
-        rgba(255, 255, 255, 0.82) 0%,
-        rgba(255, 255, 255, 0.64) 100%
-      );
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.62) 100%
+    ) !important;
     box-shadow:
-      inset 0 1px 1px rgba(255, 255, 255, 0.95),
-      0 18px 40px rgba(11, 92, 171, 0.10),
-      0 4px 12px rgba(15, 23, 42, 0.04);
-    transform: translateY(-50%) translateZ(0) !important;
-    will-change: width, border-radius, transform;
+      0 10px 30px 0 rgba(11, 92, 171, 0.06),
+      0 2px 8px 0 rgba(15, 23, 42, 0.03),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important;
+    transform: none !important;
+    will-change: width;
     transition:
-      width 0.32s cubic-bezier(.2, .8, .2, 1),
-      border-radius 0.32s cubic-bezier(.2, .8, .2, 1),
-      transform 0.32s cubic-bezier(.2, .8, .2, 1),
-      box-shadow 0.32s cubic-bezier(.2, .8, .2, 1);
+      width 0.28s cubic-bezier(.2, .8, .2, 1),
+      box-shadow 0.28s cubic-bezier(.2, .8, .2, 1);
 
     &:hover {
-      transform: translateY(calc(-50% - 2px)) translateZ(0) !important;
+      transform: none !important;
       box-shadow:
-        0 20px 42px rgba(11, 92, 171, 0.14),
-        0 4px 12px rgba(15, 23, 42, 0.06);
+        0 14px 36px rgba(15, 23, 42, 0.07),
+        0 4px 12px rgba(11, 92, 171, 0.05) !important;
     }
   }
 
-  // Collapse toggle — sits cleanly directly below the menu items
+  // Collapse toggle footer — sits cleanly at bottom of sidebar card
   & .sidebar-footer {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: flex-end;
     flex-shrink: 0;
-    padding-top: 0.35rem;
-    border-top: 1px solid var(--mui-palette-divider);
-    margin-top: 0.3rem;
-    margin-bottom: 0.1rem;
+    padding: 6px 10px;
+    margin-top: auto;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   & .sidebar-edge-toggle {
-    position: static;
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
     padding: 0;
-    color: var(--mui-palette-text-secondary);
+    color: #94a3b8;
     background: transparent;
-    border-radius: 8px;
+    border-radius: 50%;
+    border: 0 !important;
+    box-shadow: none !important;
+    cursor: pointer;
     transition:
       color 180ms ease,
-      background-color 180ms ease,
-      transform 180ms ease,
-      box-shadow 180ms ease;
-
-    &::before {
-      content: "";
-      display: none;
-    }
+      background-color 180ms ease;
 
     & .sidebar-edge-toggle-icon {
       display: grid;
@@ -84,16 +80,19 @@
     }
 
     & .MuiSvgIcon-root {
-      font-size: 17px;
-      transition: transform 0.3s ease;
+      font-size: 18px;
+      color: #94a3b8;
+      transition: transform 0.28s ease, color 180ms ease;
     }
 
     &:hover,
     &:focus-visible {
-      color: var(--mui-palette-primary-main);
-      background: var(--mui-palette-background-box);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 16px color-mix(in srgb, var(--mui-palette-common-black) 12%, transparent);
+      color: var(--mui-palette-primary-main, #0B5CAB);
+      background: var(--mui-palette-action-hover, rgba(11, 92, 171, 0.08));
+
+      & .MuiSvgIcon-root {
+        color: var(--mui-palette-primary-main, #0B5CAB);
+      }
     }
   }
 
@@ -129,16 +128,18 @@
     flex-direction: column !important;
     min-height: 0;
     flex: 1 1 auto !important;
-    max-height: calc(100dvh - var(--app-header-height) - 108px);
+    height: 100%;
+    max-height: none !important;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
-    scrollbar-width: none;
-    padding: 0.25rem 0.2rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+    padding: 8px 6px;
     scroll-behavior: smooth;
 
     &::-webkit-scrollbar {
-      width: 0;
+      width: 4px;
     }
 
     &::-webkit-scrollbar-track {
@@ -146,17 +147,14 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: color-mix(in srgb, var(--mui-palette-common-white) 38%, transparent);
+      background: rgba(148, 163, 184, 0.25);
       border-radius: 999px;
     }
 
     &:hover,
     &:focus-within {
-      scrollbar-width: thin;
-      scrollbar-color: color-mix(in srgb, var(--mui-palette-common-white) 38%, transparent) transparent;
-
-      &::-webkit-scrollbar {
-        width: 5px;
+      &::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.45);
       }
     }
 
@@ -164,10 +162,12 @@
       display: flex;
       align-items: center;
       flex-direction: row;
-      padding: 0.52rem 0.84rem;
-      margin-block: 0.15rem;
-      border-radius: 14px;
-      color: rgba(255, 255, 255, 0.78);
+      position: relative;
+      padding: 10px 14px;
+      margin-block: 3px;
+      border-radius: 12px;
+      color: #475569;
+      background: transparent;
       transition:
         background-color 180ms ease,
         color 180ms ease,
@@ -178,37 +178,106 @@
       & .MuiTypography-root {
         font-weight: 500 !important;
         font-size: 13.5px;
+        color: #475569;
         opacity: 1;
-        transition: opacity 180ms ease, transform 180ms ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: opacity 180ms ease, color 180ms ease;
       }
       & .MuiListItemIcon-root {
-        color: inherit;
-        margin-inline-end: 0.75rem;
+        color: #64748b;
+        margin-inline-end: 12px;
         min-width: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 180ms ease;
       }
       & .MuiSvgIcon-root {
-        font-size: 19px;
-        transition: transform 200ms ease, color 180ms ease, opacity 180ms ease;
+        font-size: 20px;
+        color: #64748b;
+        transition: transform 200ms ease, color 180ms ease;
+      }
+
+      & .menu-arrow {
+        margin-left: auto;
+        font-size: 18px;
+        color: #94a3b8;
+        transition: transform 200ms ease, color 180ms ease;
       }
 
       &:hover {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-        color: #ffffff;
-        transform: translateX(3px);
+        background: rgba(11, 92, 171, 0.06);
+        color: var(--mui-palette-primary-main, #0B5CAB);
 
+        & .MuiTypography-root {
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+        }
+
+        & .MuiListItemIcon-root,
         & .MuiSvgIcon-root {
-          transform: scale(1.06);
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+        }
+
+        & .menu-arrow {
+          color: var(--mui-palette-primary-main, #0B5CAB);
         }
       }
 
       &.Mui-selected {
-        background-color: rgba(255, 255, 255, 0.14);
-        color: #ffffff !important;
-        box-shadow: none;
-        transform: translateX(2px);
+        position: relative;
+        background: #EBF3FA !important;
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 3.5px;
+          height: 22px;
+          border-radius: 0 4px 4px 0;
+          background-color: var(--mui-palette-primary-main, #0B5CAB);
+        }
+
         & .MuiTypography-root {
-          color: #ffffff !important;
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
           font-weight: 600 !important;
+        }
+
+        & .MuiListItemIcon-root,
+        & .MuiSvgIcon-root {
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+        }
+
+        & .menu-arrow {
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+        }
+      }
+
+      // Parent menu items (e.g. PayRoll, Admin) when a sub-item is active
+      &.sidebar-parent-item.Mui-selected {
+        background: rgba(11, 92, 171, 0.04) !important;
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
+
+        &::before {
+          display: none !important;
+        }
+
+        & .MuiTypography-root {
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          font-weight: 600 !important;
+        }
+
+        & .MuiListItemIcon-root,
+        & .MuiSvgIcon-root {
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+        }
+
+        & .menu-arrow {
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
         }
       }
     }
@@ -219,77 +288,133 @@
   }
 
   &[data-sidebar-mini="true"] {
-      & .sidebar-paper {
-        width: var(--sidebar-current-width) !important;
-        height: auto !important;
-        // A fully pill-shaped rail makes the collapsed navigation feel like a
-        // deliberate compact control, with matching rounded top and bottom.
-        border-radius: 38px !important;
-        box-shadow:
-          0 14px 30px rgba(15, 23, 42, 0.16),
-          0 3px 10px rgba(11, 92, 171, 0.10);
-      }
-      & .user-block-info {
-        display: none;
-      }
-      & .sidebar-user-block {
-        justify-content: center;
-      }
-      & .sidebar-footer {
-        justify-content: center;
-      }
-      & .MuiCollapse-root {
-        display: none !important;
-      }
-      & .MuiList-root {
-        padding-inline-start: 0 !important;
-        padding-left: 0 !important;
-        width: 100% !important;
-      }
-      & .sidebar-menu-main {
-        & .sidebar-menu-item {
-          width: 40px !important;
-          height: 40px !important;
-          min-height: 40px !important;
-          margin: 3px auto !important;
-          padding: 0 !important;
-          justify-content: center !important;
-          border-radius: 999px !important;
+    & .sidebar-paper {
+      width: var(--sidebar-current-width) !important;
+      top: calc(var(--app-header-height) + 14px) !important;
+      bottom: 16px !important;
+      left: 16px !important;
+      height: calc(100dvh - var(--app-header-height) - 30px) !important;
+      max-height: calc(100dvh - var(--app-header-height) - 30px) !important;
+      border-radius: 38px !important;
+      border: 1px solid rgba(255, 255, 255, 0.88) !important;
+      box-shadow:
+        0 10px 30px 0 rgba(11, 92, 171, 0.06),
+        0 2px 8px 0 rgba(15, 23, 42, 0.03),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important;
+      background: linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.78) 0%,
+        rgba(255, 255, 255, 0.62) 100%
+      ) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+      backdrop-filter: blur(20px) saturate(180%) !important;
+    }
+    & .user-block-info {
+      display: none;
+    }
+    & .sidebar-user-block {
+      justify-content: center;
+    }
+    & .sidebar-footer {
+      justify-content: center;
+      padding: 6px 4px;
+    }
+    & .sidebar-edge-toggle {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      padding: 0;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    & .sidebar-edge-toggle-label {
+      display: none !important;
+    }
+    & .MuiCollapse-root {
+      display: none !important;
+    }
+    & .MuiList-root {
+      padding-inline-start: 0 !important;
+      padding-left: 0 !important;
+      width: 100% !important;
+    }
+    & .sidebar-menu-main {
+      padding: 4px 4px !important;
 
-          & .MuiListItemText-root {
-            display: none !important;
+      & .sidebar-menu-item {
+        width: 44px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        margin: 4px auto !important;
+        padding: 0 !important;
+        justify-content: center !important;
+        border-radius: 12px !important;
+
+        &::before {
+          display: none !important;
+        }
+
+        & .MuiListItemText-root {
+          display: none !important;
+        }
+        & .MuiTypography-root {
+          opacity: 0 !important;
+          display: none !important;
+        }
+        & .menu-arrow {
+          display: none !important;
+        }
+        & .MuiListItemIcon-root {
+          margin-inline-end: 0 !important;
+          min-width: 0 !important;
+          justify-content: center !important;
+          display: flex !important;
+        }
+
+        &:hover {
+          background: rgba(11, 92, 171, 0.06);
+          & .MuiListItemIcon-root,
+          & .MuiSvgIcon-root {
+            color: var(--mui-palette-primary-main, #0B5CAB) !important;
           }
-          & .MuiTypography-root {
-            opacity: 0 !important;
-            display: none !important;
-          }
-          & .menu-arrow {
-            display: none !important;
-          }
-          & .MuiListItemIcon-root {
-            margin-inline-end: 0 !important;
-            min-width: 0 !important;
-            justify-content: center !important;
-            display: flex !important;
+        }
+
+        &.Mui-selected {
+          background: #EBF3FA !important;
+          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+
+          & .MuiListItemIcon-root,
+          & .MuiSvgIcon-root {
+            color: var(--mui-palette-primary-main, #0B5CAB) !important;
           }
         }
       }
     }
   }
+}
 
 @media (max-width: 959.95px) {
   .sidebar {
     & .sidebar-paper {
-      top: 10px !important;
-      bottom: 10px !important;
-      left: 10px;
-      height: auto !important;
-      max-height: none !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      height: 100dvh !important;
+      max-height: 100dvh !important;
       transform: none !important;
-      width: min(300px, calc(100vw - 20px));
-      // A compact radius prevents the mobile drawer from clipping its
-      // navigation content while retaining the same capsule character.
-      border-radius: 24px;
+      width: min(290px, 85vw) !important;
+      border-radius: 0 16px 16px 0 !important;
+      border: none !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.88) !important;
+      box-shadow: 12px 0 36px rgba(15, 23, 42, 0.16) !important;
+      background: linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.88) 0%,
+        rgba(255, 255, 255, 0.74) 100%
+      ) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+      backdrop-filter: blur(20px) saturate(180%) !important;
     }
   }
 }
@@ -298,172 +423,70 @@
   background: transparent !important;
 }
 
-// Futuristic motion layer: restrained ambient light and tactile micro-motion
-// keep the rail alive without distracting from navigation.
-@keyframes sidebarAmbientPulse {
-  0%, 100% { opacity: 0.18; transform: translate3d(0, 0, 0) scale(1); }
-  50% { opacity: 0.32; transform: translate3d(6px, -4px, 0) scale(1.06); }
-}
-
-@keyframes sidebarActiveSweep {
-  0% { transform: translateY(-120%); opacity: 0; }
-  35%, 65% { opacity: 0.7; }
-  100% { transform: translateY(120%); opacity: 0; }
-}
-
-.sidebar .sidebar-paper {
-  overflow: hidden;
-
-  &::before {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    top: -16%;
-    right: -22%;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    pointer-events: none;
-    background: radial-gradient(circle, rgba(94, 234, 212, 0.38), transparent 68%);
-    filter: blur(4px);
-    animation: sidebarAmbientPulse 5.5s ease-in-out infinite;
-  }
-
-  & > * {
-    position: relative;
-    z-index: 1;
-  }
-}
-
-.sidebar .sidebar-menu-item {
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: -80%;
-    left: 0;
-    width: 2px;
-    height: 260%;
-    opacity: 0;
-    background: linear-gradient(180deg, transparent, var(--mui-palette-primary-main), transparent);
-    transition: opacity 180ms ease;
-  }
-
-  &:hover::after,
-  &.Mui-selected::after {
-    opacity: 0.9;
-  }
-
-  &.Mui-selected::after {
-    animation: sidebarActiveSweep 1.8s ease-in-out infinite;
-  }
-
-  &:hover .MuiSvgIcon-root {
-    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--mui-palette-primary-main) 42%, transparent));
-  }
-}
-
-.sidebar .sidebar-edge-toggle {
-  &:hover .MuiSvgIcon-root,
-  &:focus-visible .MuiSvgIcon-root {
-    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--mui-palette-primary-main) 52%, transparent));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sidebar .sidebar-paper::before,
-  .sidebar .sidebar-menu-item.Mui-selected::after {
-    animation: none !important;
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Sidebar style variants — switched by the AppStylePicker popover (in header).
 // Each rule keys off [data-sidebar-style="..."] applied to the .sidebar root
-// (which mirrors the global app style from useAppStyle()). Adding a new style:
-// add a block here + an entry to APP_STYLES in useAppStyle.ts + a `surface`
-// branch in MuiTheme.ts + a block in _app-style.scss.
 // ---------------------------------------------------------------------------
 
-// Active-item accent shared by the supported glass/aurora/minimal surfaces.
-%sidebar-active-glow {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.92) 0%,
-    rgba(255, 255, 255, 0.78) 100%
-  );
-  color: var(--mui-palette-primary-main) !important;
-  & .MuiTypography-root {
-    color: var(--mui-palette-primary-main) !important;
-  }
-}
-
-// --- Glass: translucent panel with backdrop blur ---------------------------
+// --- Glass: crisp translucent panel with backdrop blur ---------------------------
 .sidebar[data-sidebar-style="glass"] {
   & .sidebar-paper {
-    background:
-      linear-gradient(
-        155deg,
-        rgba(255, 255, 255, 0.82) 0%,
-        rgba(255, 255, 255, 0.64) 100%
-      ) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
-    backdrop-filter: blur(24px) saturate(190%) !important;
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.62) 100%
+    ) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
     border: 1px solid rgba(255, 255, 255, 0.88) !important;
+    border-radius: 38px !important;
     box-shadow:
-      0 18px 40px rgba(11, 92, 171, 0.10),
-      0 4px 12px rgba(15, 23, 42, 0.04),
-      inset 0 1px 1px rgba(255, 255, 255, 0.95),
-      inset 0 -1px 1px rgba(11, 92, 171, 0.03) !important;
+      0 10px 30px 0 rgba(11, 92, 171, 0.06),
+      0 2px 8px 0 rgba(15, 23, 42, 0.03),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important;
   }
 
   & .sidebar-menu-item {
     border-radius: 12px;
-    color: #1e293b;
+    color: #475569;
 
     & .MuiTypography-root,
     & .MuiListItemIcon-root,
     & .MuiSvgIcon-root {
-      color: #334155 !important;
+      color: #475569 !important;
     }
-    transition:
-      background-color 160ms ease,
-      box-shadow 160ms ease,
-      border-color 160ms ease,
-      transform 160ms ease;
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.72) !important;
-      color: #0B5CAB !important;
-      box-shadow: 0 4px 14px rgba(11, 92, 171, 0.08);
-    }
+      background-color: rgba(11, 92, 171, 0.06) !important;
+      color: var(--mui-palette-primary-main, #0B5CAB) !important;
 
-    & .MuiTypography-root {
-      font-weight: 600 !important;
-      letter-spacing: 0.005em;
+      & .MuiListItemIcon-root,
+      & .MuiSvgIcon-root {
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
+      }
     }
 
     &.Mui-selected {
-      background: linear-gradient(135deg, rgba(235, 243, 250, 0.92) 0%, rgba(224, 237, 249, 0.82) 100%) !important;
-      border: 1px solid rgba(11, 92, 171, 0.18) !important;
-      box-shadow: 0 4px 12px rgba(11, 92, 171, 0.10), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
-      color: var(--mui-palette-primary-main) !important;
+      background: #EBF3FA !important;
+      border: none !important;
+      box-shadow: none !important;
+      color: var(--mui-palette-primary-main, #0B5CAB) !important;
 
       & .MuiTypography-root,
       & .MuiListItemIcon-root,
       & .MuiSvgIcon-root {
-        color: var(--mui-palette-primary-main) !important;
-        text-shadow: none;
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
       }
     }
   }
 }
 
 .sidebar[data-sidebar-style="aurora"] .sidebar-paper {
-  background: linear-gradient(165deg, #07192F 0%, #0B3866 48%, #0B5CAB 100%) !important;
-  border-color: rgba(255, 255, 255, 0.16);
+  background: linear-gradient(180deg, #07192F 0%, #0B3866 50%, #08284d 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 38px !important;
+  box-shadow: 0 10px 30px rgba(7, 25, 47, 0.3) !important;
 }
 
 .sidebar[data-sidebar-style="aurora"] {
@@ -472,147 +495,144 @@
   }
 
   & .sidebar-menu-item.Mui-selected {
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.16) !important;
     color: #fff !important;
 
     & .MuiTypography-root,
-    & .MuiListItemIcon-root {
+    & .MuiListItemIcon-root,
+    & .MuiSvgIcon-root {
       color: #fff !important;
     }
   }
 }
 
-// --- Slate: frosted glass navigation capsule over the Corporate Cobalt mesh ---
+// --- Slate: clean navigation capsule ---
 .sidebar[data-sidebar-style="slate"] {
   & .sidebar-paper {
-    background:
-      linear-gradient(
-        155deg,
-        rgba(255, 255, 255, 0.94) 0%,
-        rgba(248, 250, 252, 0.88) 100%
-      ) !important;
+    background: #ffffff !important;
     -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
     backdrop-filter: blur(24px) saturate(180%) !important;
-    border: 1px solid #E2E8F0;
-    box-shadow:
-      0 14px 34px -8px rgba(15, 23, 42, 0.08),
-      0 2px 8px -2px rgba(15, 23, 42, 0.04);
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 38px !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
   }
 
   & .sidebar-menu-item,
   & .sidebar-menu-item .MuiTypography-root,
   & .sidebar-menu-item .MuiListItemIcon-root,
   & .sidebar-menu-item .MuiSvgIcon-root {
-    color: #334155 !important;
+    color: #475569 !important;
   }
 
   & .sidebar-menu-item {
-    border-radius: 10px;
+    border-radius: 12px;
 
     &:hover {
-      background-color: #F1F5F9;
+      background-color: rgba(11, 92, 171, 0.06);
+
+      & .MuiListItemIcon-root,
+      & .MuiSvgIcon-root {
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
+      }
     }
 
     &.Mui-selected {
-      background: #EBF3FA;
-      box-shadow: inset 3px 0 0 var(--mui-palette-primary-main);
-      color: var(--mui-palette-primary-main) !important;
+      background: #EBF3FA !important;
+      color: var(--mui-palette-primary-main, #0B5CAB) !important;
 
       & .MuiTypography-root,
       & .MuiListItemIcon-root,
       & .MuiSvgIcon-root {
-        color: var(--mui-palette-primary-main) !important;
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
       }
     }
   }
 
   & .sidebar-edge-toggle-icon {
-    background-color: #F8FAFC !important;
-    color: #334155;
-    border: 1px solid #E2E8F0;
+    background-color: transparent !important;
+    color: #94a3b8;
   }
 }
 
-// --- Dawn: frosted lilac-glass navigation capsule ----
+// --- Dawn: clean navigation capsule ----
 .sidebar[data-sidebar-style="dawn"] {
   & .sidebar-paper {
-    background:
-      linear-gradient(
-        155deg,
-        rgba(255, 255, 255, 0.66) 0%,
-        rgba(247, 238, 251, 0.42) 100%
-      ) !important;
+    background: #ffffff !important;
     -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
     backdrop-filter: blur(24px) saturate(190%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.82);
-    box-shadow: 0 16px 34px rgba(105, 65, 124, 0.10), inset 0 1px 1px rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(200, 180, 215, 0.5) !important;
+    border-radius: 38px !important;
+    box-shadow: 0 10px 30px rgba(105, 65, 124, 0.06) !important;
   }
 
   & .sidebar-menu-item,
   & .sidebar-menu-item .MuiTypography-root,
   & .sidebar-menu-item .MuiListItemIcon-root,
-  & .sidebar-menu-item .MuiSvgIcon-root { color: #1e293b !important; }
+  & .sidebar-menu-item .MuiSvgIcon-root { color: #475569 !important; }
 
   & .sidebar-menu-item {
-    border-radius: 10px;
+    border-radius: 12px;
 
-    &:hover { background-color: rgba(255, 255, 255, 0.48); }
+    &:hover {
+      background-color: rgba(11, 92, 171, 0.06);
+
+      & .MuiListItemIcon-root,
+      & .MuiSvgIcon-root {
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
+      }
+    }
 
     &.Mui-selected {
-      background: linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--mui-palette-primary-main) 18%, transparent),
-        rgba(251, 215, 229, 0.42)
-      );
-      box-shadow: inset 3px 0 0 var(--mui-palette-primary-main);
-      color: var(--mui-palette-primary-main) !important;
+      background: #EBF3FA !important;
+      color: var(--mui-palette-primary-main, #0B5CAB) !important;
 
       & .MuiTypography-root,
       & .MuiListItemIcon-root,
-      & .MuiSvgIcon-root { color: var(--mui-palette-primary-main) !important; }
+      & .MuiSvgIcon-root { color: var(--mui-palette-primary-main, #0B5CAB) !important; }
     }
   }
 
   & .sidebar-edge-toggle-icon {
-    background: rgba(255, 255, 255, 0.64) !important;
-    color: #334155;
-    border: 1px solid rgba(255, 255, 255, 0.82);
+    background: transparent !important;
+    color: #94a3b8;
   }
 }
 
-// --- Blush: frosted rose-glass navigation capsule -----------
+// --- Blush: clean navigation capsule -----------
 .sidebar[data-sidebar-style="blush"] {
   & .sidebar-paper {
-    background:
-      linear-gradient(
-        155deg,
-        rgba(255, 255, 255, 0.66) 0%,
-        rgba(255, 248, 251, 0.42) 100%
-      ) !important;
+    background: #ffffff !important;
     -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
     backdrop-filter: blur(24px) saturate(190%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.82);
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.09), inset 0 1px 1px rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(225, 185, 205, 0.5) !important;
+    border-radius: 38px !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
   }
 
   & .sidebar-menu-item,
   & .sidebar-menu-item .MuiTypography-root,
   & .sidebar-menu-item .MuiListItemIcon-root,
-  & .sidebar-menu-item .MuiSvgIcon-root { color: #1e293b !important; }
+  & .sidebar-menu-item .MuiSvgIcon-root { color: #475569 !important; }
 
   & .sidebar-menu-item {
-    border-radius: 10px;
+    border-radius: 12px;
 
-    &:hover { background: rgba(255, 255, 255, 0.48); }
+    &:hover {
+      background: rgba(11, 92, 171, 0.06);
+
+      & .MuiListItemIcon-root,
+      & .MuiSvgIcon-root {
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
+      }
+    }
 
     &.Mui-selected {
-      background: rgba(255, 255, 255, 0.56);
-      box-shadow: inset 3px 0 0 var(--mui-palette-primary-main);
-      color: var(--mui-palette-primary-main) !important;
+      background: #EBF3FA !important;
+      color: var(--mui-palette-primary-main, #0B5CAB) !important;
 
       & .MuiTypography-root,
       & .MuiListItemIcon-root,
-      & .MuiSvgIcon-root { color: var(--mui-palette-primary-main) !important; }
+      & .MuiSvgIcon-root { color: var(--mui-palette-primary-main, #0B5CAB) !important; }
     }
   }
 }
@@ -621,10 +641,9 @@
 .sidebar[data-sidebar-style="minimal"] {
   & .sidebar-paper {
     background: var(--mui-palette-background-paper) !important;
-    border-right: 1px solid var(--mui-palette-divider);
-    box-shadow:
-      0 16px 36px color-mix(in srgb, var(--mui-palette-common-black) 12%, transparent),
-      0 4px 12px color-mix(in srgb, var(--mui-palette-primary-main) 8%, transparent);
+    border: 1px solid var(--mui-palette-divider) !important;
+    border-radius: 38px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
   }
 
   & .user-name,
@@ -643,62 +662,25 @@
   }
 
   & .sidebar-edge-toggle-icon {
-    background-color: var(--mui-palette-background-paper) !important;
-    color: var(--mui-palette-text-primary);
-    border: 1px solid var(--mui-palette-divider);
+    background-color: transparent !important;
+    color: #94a3b8;
   }
 
   & .sidebar-menu-item {
-    border-radius: 8px;
+    border-radius: 12px;
     transition: background-color 120ms ease;
 
     &:hover {
       background-color: var(--mui-palette-action-hover);
     }
     &.Mui-selected {
-      background: color-mix(
-        in srgb,
-        var(--mui-palette-background-paper) 78%,
-        var(--mui-palette-primary-main)
-      ) !important;
-      color: var(--mui-palette-primary-main) !important;
-      & .MuiTypography-root {
-        color: var(--mui-palette-primary-main) !important;
+      background: #EBF3FA !important;
+      color: var(--mui-palette-primary-main, #0B5CAB) !important;
+      & .MuiTypography-root,
+      & .MuiListItemIcon-root,
+      & .MuiSvgIcon-root {
+        color: var(--mui-palette-primary-main, #0B5CAB) !important;
       }
-    }
-  }
-}
-
-.sidebar[data-sidebar-mini="true"] .sidebar-menu-main .sidebar-menu-item {
-  width: 40px !important;
-  height: 40px !important;
-  min-height: 40px !important;
-  margin: 3px auto !important;
-  border-radius: 999px !important;
-  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
-
-  &:hover {
-    background: rgba(11, 92, 171, 0.08) !important;
-    color: var(--mui-palette-primary-main) !important;
-    transform: none;
-  }
-
-  &.Mui-selected {
-    position: relative;
-    background: #EBF3FA !important;
-    box-shadow: 0 2px 8px rgba(11, 92, 171, 0.14) !important;
-    color: var(--mui-palette-primary-main) !important;
-    transform: none;
-
-    &::before {
-      display: none !important;
-    }
-
-    & .MuiListItemIcon-root,
-    & .MuiSvgIcon-root {
-      position: relative;
-      z-index: 1;
-      color: var(--mui-palette-primary-main) !important;
     }
   }
 }
@@ -722,6 +704,10 @@
 }
 
 :root.dark {
+  & .sidebar .sidebar-paper {
+    border-radius: 38px !important;
+  }
+
   & .sidebar[data-sidebar-style="glass"] .sidebar-menu-item {
     color: rgba(248, 250, 252, 0.94);
 
