@@ -25,12 +25,14 @@ import {
   AssignmentTurnedInOutlined,
   HistoryOutlined,
   SendRounded,
+  UploadFile,
 } from "@mui/icons-material";
 
 import { SearchInput } from "../../shared/components/SearchInput";
 import { AttendanceCalendarGrid } from "./component/AttendanceCalendar";
 import { getAllEmployees } from "../employees/employeeServices";
 import { exportMonthlyAttendance } from "./AttendanceServices";
+import { ImportAttendanceModal } from "./component/ImportAttendanceModal";
 
 import { AppSelect } from "../../shared/components/ui";
 import { CustomisedModal } from "../../shared/components/C_Modal";
@@ -101,6 +103,8 @@ const EmployeeAttendance = () => {
   const [correctionType, setCorrectionType] = React.useState("Incorrect status");
   const [submittingCorrection, setSubmittingCorrection] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
+  const [importModalOpen, setImportModalOpen] = React.useState(false);
+  const [refreshTrigger, setRefreshTrigger] = React.useState(0);
   const [correctionRequests, setCorrectionRequests] = React.useState<any[]>([]);
   const [reviewCorrection, setReviewCorrection] = React.useState<any | null>(null);
   const debouncedSearch = useDebounce(searchValue, 500);
@@ -730,33 +734,56 @@ const EmployeeAttendance = () => {
                   </AppSelect>
                 </Stack>
                 {canViewAllAttendance && (
-                  <Button
-                    variant="outlined"
-                    startIcon={<DownloadOutlined />}
-                    onClick={downloadMonthlyReport}
-                    disabled={isExporting}
-                    sx={{
-                      height: 40,
-                      minHeight: 40,
-                      borderRadius: "10px",
-                      fontWeight: 700,
-                      bgcolor: "#FFFFFF",
-                      borderColor: "#CBD5E1",
-                      backdropFilter: "blur(10px)",
-                      WebkitBackdropFilter: "blur(10px)",
-                      color: "#1E293B",
-                      whiteSpace: "nowrap",
-                      width: { xs: "100%", sm: "auto" },
-                      alignSelf: { xs: "stretch", sm: "flex-end" },
-                      "&:hover": {
-                        bgcolor: "#EBF3FA",
-                        borderColor: "#0B5CAB",
-                        color: "#0B5CAB",
-                      },
-                    }}
-                  >
-                    {isExporting ? "Preparing..." : "Export month"}
-                  </Button>
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ width: { xs: "100%", sm: "auto" }, alignSelf: { xs: "stretch", sm: "flex-end" } }}>
+                    <Button
+                      variant="outlined"
+                      startIcon={<DownloadOutlined />}
+                      onClick={downloadMonthlyReport}
+                      disabled={isExporting}
+                      sx={{
+                        height: 40,
+                        minHeight: 40,
+                        borderRadius: "10px",
+                        fontWeight: 700,
+                        bgcolor: "#FFFFFF",
+                        borderColor: "#CBD5E1",
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
+                        color: "#1E293B",
+                        whiteSpace: "nowrap",
+                        width: { xs: "100%", sm: "auto" },
+                        "&:hover": {
+                          bgcolor: "#EBF3FA",
+                          borderColor: "#0B5CAB",
+                          color: "#0B5CAB",
+                        },
+                      }}
+                    >
+                      {isExporting ? "Preparing..." : "Export month"}
+                    </Button>
+                    {canManageAttendance && (
+                      <Button
+                        variant="contained"
+                        startIcon={<UploadFile />}
+                        onClick={() => setImportModalOpen(true)}
+                        sx={{
+                          height: 40,
+                          minHeight: 40,
+                          borderRadius: "10px",
+                          fontWeight: 700,
+                          bgcolor: "#0B5CAB",
+                          color: "#FFFFFF",
+                          whiteSpace: "nowrap",
+                          width: { xs: "100%", sm: "auto" },
+                          "&:hover": {
+                            bgcolor: "#094a8a",
+                          },
+                        }}
+                      >
+                        Import attendance
+                      </Button>
+                    )}
+                  </Stack>
                 )}
               </Stack>
             </Box>
@@ -766,6 +793,7 @@ const EmployeeAttendance = () => {
 
           <Box sx={{ mb: 3 }}>
             <AttendanceCalendarGrid
+              key={`calendar-${refreshTrigger}-${calendarOffset}`}
               employees={employeesForCalendar}
               searchValue={debouncedSearch}
               onStatsChange={setAttendanceStats}
@@ -855,6 +883,16 @@ const EmployeeAttendance = () => {
           </Box>
         </Card>
       </Grid>}
+
+      <ImportAttendanceModal
+        open={importModalOpen}
+        handleClose={() => setImportModalOpen(false)}
+        initialYear={dateRange.startDate.year()}
+        initialMonth={dateRange.startDate.month() + 1}
+        onImportSuccess={() => {
+          setRefreshTrigger((prev) => prev + 1);
+        }}
+      />
     </Grid>
   );
 };
