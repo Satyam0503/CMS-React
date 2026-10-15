@@ -32,6 +32,7 @@ const CustomisedDatePicker = (props: PropsTypes) => {
     maxDate,
     name,
     minDate,
+    className,
     disabled = false,
     views,
     sx,
@@ -46,7 +47,7 @@ const CustomisedDatePicker = (props: PropsTypes) => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ width: "100%", minWidth: 0 }}>
         <DatePicker
-          className="datepicker"
+          className={`datepicker ${className || ""}`.trim()}
           name={name}
           label={label}
           value={value}
@@ -62,14 +63,11 @@ const CustomisedDatePicker = (props: PropsTypes) => {
           slotProps={{
             field: { clearable },
             textField: {
+              label,
+              InputLabelProps: label ? { shrink: true } : undefined,
+              InputProps: label ? { notched: true } : undefined,
               size: "small",
-              className: "w-100",
-              sx: {
-                "& .MuiOutlinedInput-root": {
-                  height: 40,
-                  bgcolor: "background.paper",
-                },
-              },
+              className: `w-100 ${className || ""}`.trim(),
               required,
               error,
               helperText,
@@ -89,6 +87,10 @@ const CustomisedDatePicker = (props: PropsTypes) => {
             },
           }}
           sx={{
+            "& .MuiOutlinedInput-root": {
+              height: 40,
+              bgcolor: "background.paper",
+            },
             ...sx,
             minWidth: "unset !important",
             width: 1,

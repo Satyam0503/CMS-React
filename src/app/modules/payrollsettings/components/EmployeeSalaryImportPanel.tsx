@@ -24,6 +24,7 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
+import { useIsDark } from "../../theme/useIsDark";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import {
@@ -78,7 +79,7 @@ export function EmployeeSalaryImportPanel({
   onSalaryApproved?: () => void;
 }) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const isDark = useIsDark();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -237,20 +238,20 @@ export function EmployeeSalaryImportPanel({
         }}
       >
         <Stack
-          direction={{ xs: "column", sm: "row" }}
+          direction={{ xs: "column", md: "row" }}
           justifyContent="space-between"
-          alignItems={{ xs: "flex-start", sm: "center" }}
+          alignItems={{ xs: "flex-start", md: "center" }}
           spacing={1.5}
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, width: "100%" }}
         >
-          <Box>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
             <Stack direction="row" spacing={1} alignItems="center">
-              <CloudUploadRounded sx={{ fontSize: 20, color: "primary.main" }} />
-              <Typography variant="subtitle1" fontWeight={700} sx={{ color: "text.primary", letterSpacing: "-0.01em" }}>
+              <CloudUploadRounded sx={{ fontSize: 22, color: "primary.main" }} />
+              <Typography variant="subtitle1" fontWeight={750} sx={{ color: "text.primary", letterSpacing: "-0.01em" }}>
                 Import Employee Salary Structures
               </Typography>
             </Stack>
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.8rem", mt: 0.35 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.82rem", mt: 0.35 }}>
               Upload master salary spreadsheet (.xlsx) or candidate offer letters (.pdf) to stage compensation revisions.
             </Typography>
           </Box>
@@ -258,20 +259,24 @@ export function EmployeeSalaryImportPanel({
           <Button
             size="small"
             variant="outlined"
-            startIcon={<DownloadRounded sx={{ fontSize: 16 }} />}
+            startIcon={<DownloadRounded sx={{ fontSize: 18 }} />}
             onClick={() => downloadPayrollBulkSampleTemplate()}
             sx={{
-              height: 32,
-              px: 1.75,
-              fontSize: "0.78rem",
-              fontWeight: 600,
+              height: 38,
+              px: 2,
+              fontSize: "0.8rem",
+              fontWeight: 700,
               textTransform: "none",
-              borderRadius: "7px",
-              borderColor: isDark ? "rgba(255,255,255,0.14)" : "#CBD5E1",
-              color: "text.secondary",
-              bgcolor: isDark ? "transparent" : "#FFFFFF",
+              borderRadius: "10px",
+              borderColor: isDark ? "rgba(255,255,255,0.14)" : "divider",
+              color: "text.primary",
+              bgcolor: "background.paper",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              width: { xs: "100%", sm: "auto" },
               "&:hover": {
                 borderColor: "primary.main",
+                bgcolor: "action.hover",
                 color: "primary.main",
               },
             }}
@@ -367,23 +372,29 @@ export function EmployeeSalaryImportPanel({
               bgcolor: isDark ? "rgba(15, 23, 42, 0.5)" : "#FFFFFF",
             }}
           >
-            <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems="center" spacing={2}>
-              <Stack direction="row" spacing={1.5} alignItems="center">
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              justifyContent="space-between"
+              alignItems={{ xs: "stretch", md: "center" }}
+              spacing={2}
+            >
+              <Stack direction="row" spacing={1.5} alignItems="center" sx={{ minWidth: 0 }}>
                 <Box
                   sx={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: "8px",
+                    width: 40,
+                    height: 40,
+                    borderRadius: "10px",
                     display: "grid",
                     placeItems: "center",
                     bgcolor: alpha(theme.palette.primary.main, 0.1),
                     color: "primary.main",
+                    flexShrink: 0,
                   }}
                 >
                   <InsertDriveFileOutlined sx={{ fontSize: 20 }} />
                 </Box>
-                <Box>
-                  <Typography variant="body2" fontWeight={700} sx={{ color: "text.primary" }}>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography variant="body2" fontWeight={700} sx={{ color: "text.primary", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {selectedFile.name}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
@@ -392,21 +403,28 @@ export function EmployeeSalaryImportPanel({
                 </Box>
               </Stack>
 
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+                alignItems="center"
+                sx={{ width: { xs: "100%", md: "auto" }, flexWrap: "wrap" }}
+              >
                 <Button
                   size="small"
                   variant="outlined"
                   onClick={resetUpload}
                   disabled={busy}
                   sx={{
-                    height: 32,
-                    px: 1.5,
-                    fontSize: "0.78rem",
-                    fontWeight: 600,
+                    height: 36,
+                    px: 2,
+                    fontSize: "0.8rem",
+                    fontWeight: 650,
                     textTransform: "none",
-                    borderRadius: "6px",
+                    borderRadius: "8px",
                     borderColor: "divider",
                     color: "text.secondary",
+                    width: { xs: "100%", sm: "auto" },
+                    whiteSpace: "nowrap",
                   }}
                 >
                   Clear
@@ -417,12 +435,14 @@ export function EmployeeSalaryImportPanel({
                   onClick={() => void runPreview()}
                   disabled={!canEdit || busy || rows.length === 0}
                   sx={{
-                    height: 32,
-                    px: 1.75,
-                    fontSize: "0.78rem",
+                    height: 36,
+                    px: 2,
+                    fontSize: "0.8rem",
                     fontWeight: 650,
                     textTransform: "none",
-                    borderRadius: "6px",
+                    borderRadius: "8px",
+                    width: { xs: "100%", sm: "auto" },
+                    whiteSpace: "nowrap",
                   }}
                 >
                   Validate preview
@@ -435,13 +455,15 @@ export function EmployeeSalaryImportPanel({
                   disabled={!canEdit || busy || !allValid}
                   startIcon={<CheckCircleRounded sx={{ fontSize: 16 }} />}
                   sx={{
-                    height: 32,
-                    px: 2,
-                    fontSize: "0.78rem",
+                    height: 36,
+                    px: 2.25,
+                    fontSize: "0.8rem",
                     fontWeight: 650,
                     textTransform: "none",
-                    borderRadius: "6px",
+                    borderRadius: "8px",
                     boxShadow: "none",
+                    width: { xs: "100%", sm: "auto" },
+                    whiteSpace: "nowrap",
                   }}
                 >
                   Import salary drafts
@@ -560,14 +582,16 @@ export function EmployeeSalaryImportPanel({
               size="small"
               label={`${pendingSalaries.length} pending review`}
               sx={{
-                height: 24,
-                px: 0.5,
-                fontSize: "0.72rem",
+                height: 28,
+                px: 1,
+                fontSize: "0.75rem",
                 fontWeight: 700,
-                borderRadius: "6px",
-                bgcolor: "#FEF3C7",
-                color: "#92400E",
-                border: "1px solid #FDE68A",
+                borderRadius: "8px",
+                flexShrink: 0,
+                bgcolor: isDark ? "rgba(245, 158, 11, 0.2)" : "#FEF3C7",
+                color: isDark ? "#FDE68A" : "#92400E",
+                border: "1px solid",
+                borderColor: isDark ? "rgba(245, 158, 11, 0.4)" : "#FDE68A",
               }}
             />
           )}

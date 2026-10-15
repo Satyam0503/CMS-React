@@ -16,10 +16,11 @@ type PropsType = {
   setSearch: (value: string) => void;
   placeholder?: string;
   sx?: SxProps<Theme>;
+  fullWidth?: boolean;
 };
 
 export const SearchInput: FC<PropsType> = memo(
-  ({ search, setSearch, placeholder = "PLACEHOLDER.SEARCH", sx }) => {
+  ({ search, setSearch, placeholder = "PLACEHOLDER.SEARCH", sx, fullWidth = false }) => {
     const [value, setValue] = useState(search);
     const debouncedValue = useDebounce(value);
     const intl = useContext(IntlContext);
@@ -41,40 +42,44 @@ export const SearchInput: FC<PropsType> = memo(
       <Box
         sx={[
           {
-            width: { xs: "100%", sm: "clamp(200px, 22vw, 300px)" },
-            maxWidth: "100%",
+            width: fullWidth ? "100%" : { xs: "100%", sm: "clamp(200px, 22vw, 300px)" },
+            maxWidth: fullWidth ? "none" : "100%",
             minWidth: 0,
             flexShrink: 1,
+            flexGrow: fullWidth ? 1 : undefined,
           },
           ...(Array.isArray(sx) ? sx : [sx]),
         ]}
       >
         <AppTextField
+          fullWidth
           variant="outlined"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={resolvedPlaceholder}
           sx={{
+            width: "100%",
             "& .MuiOutlinedInput-root": {
+              width: "100%",
               height: 40,
               borderRadius: "10px",
-              bgcolor: "rgba(255, 255, 255, 0.65)",
+              bgcolor: "color-mix(in srgb, var(--mui-palette-background-paper) 80%, transparent)",
               backdropFilter: "blur(12px) saturate(160%)",
               WebkitBackdropFilter: "blur(12px) saturate(160%)",
               transition: "background-color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease",
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "rgba(203, 213, 225, 0.75)",
+                borderColor: "var(--mui-palette-divider, rgba(203, 213, 225, 0.75))",
                 borderWidth: "1px",
               },
               "&:hover": {
-                bgcolor: "rgba(255, 255, 255, 0.85)",
+                bgcolor: "color-mix(in srgb, var(--mui-palette-background-paper) 95%, transparent)",
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "rgba(11, 92, 171, 0.45)",
+                  borderColor: "primary.main",
                 },
               },
               "&.Mui-focused": {
-                bgcolor: "#FFFFFF",
-                boxShadow: "0 0 0 3px rgba(11, 92, 171, 0.14)",
+                bgcolor: "background.paper",
+                boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent)",
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderColor: "primary.main",
                   borderWidth: "1.5px",
@@ -90,12 +95,12 @@ export const SearchInput: FC<PropsType> = memo(
                     sx={{
                       border: "none",
                       p: 0.5,
-                      color: "#64748B",
+                      color: "text.secondary",
                       "&:hover": { color: "primary.main", bgcolor: "transparent" },
                     }}
                     onClick={handleClearSearch}
                   >
-                    {value ? <Close sx={{ fontSize: 18 }} /> : <Search sx={{ fontSize: 19, color: "#64748B" }} />}
+                    {value ? <Close sx={{ fontSize: 18 }} /> : <Search sx={{ fontSize: 19, color: "text.secondary" }} />}
                   </AppIconButton>
                 </InputAdornment>
               ),

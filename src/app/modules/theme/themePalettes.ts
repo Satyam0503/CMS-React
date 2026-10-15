@@ -213,6 +213,7 @@ export const getChartPalette = (
   systemMode: "light" | "dark" | undefined,
   appStyle?: string,
 ) => {
-  const resolvedMode = systemMode ?? (mode === "dark" ? "dark" : "light");
+  const effective = mode === "system" ? systemMode : mode;
+  const resolvedMode = effective === "dark" ? "dark" : "light";
   return (appStyle === "dawn" ? dawnChartColorPalette : chartColorpalette)[resolvedMode];
 };

@@ -23,7 +23,9 @@ import {
   MenuItem,
   Alert,
   Divider,
+  alpha,
 } from "@mui/material";
+import { useIsDark } from "../../theme/useIsDark";
 import CloudUploadOutlined from "@mui/icons-material/CloudUploadOutlined";
 import DownloadOutlined from "@mui/icons-material/DownloadOutlined";
 import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
@@ -81,6 +83,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
   const [isValidating, setIsValidating] = useState<boolean>(false);
   const [isCommitting, setIsCommitting] = useState<boolean>(false);
   const [validationResult, setValidationResult] = useState<AttendanceImportValidationResult | null>(null);
+  const isDark = useIsDark();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -197,8 +200,11 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
       PaperProps={{
         sx: {
           borderRadius: "16px",
-          bgcolor: "#FFFFFF",
-          boxShadow: "0 20px 45px rgba(15, 23, 42, 0.16)",
+          bgcolor: "background.paper",
+          backgroundImage: "none",
+          boxShadow: (theme) => theme.palette.mode === "dark"
+            ? "0 20px 45px rgba(0, 0, 0, 0.5)"
+            : "0 20px 45px rgba(15, 23, 42, 0.16)",
         },
       }}
     >
@@ -208,18 +214,19 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
           justifyContent: "space-between",
           alignItems: "center",
           p: 2.5,
-          borderBottom: "1px solid #E2E8F0",
+          borderBottom: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Box>
-          <Typography variant="h6" fontWeight={700} color="#0F172A">
+          <Typography variant="h6" fontWeight={700} color="text.primary">
             Import Monthly Attendance
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Upload attendance muster configured with company calendar, working days & policies.
           </Typography>
         </Box>
-        <IconButton onClick={onCloseModal} size="small" sx={{ color: "#64748B" }}>
+        <IconButton onClick={onCloseModal} size="small" sx={{ color: "text.secondary" }}>
           <Close />
         </IconButton>
       </DialogTitle>
@@ -231,11 +238,12 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
             sx={{
               p: 2,
               borderRadius: "12px",
-              bgcolor: "#F8FAFC",
-              border: "1px solid #E2E8F0",
+              bgcolor: "action.hover",
+              border: "1px solid",
+              borderColor: "divider",
             }}
           >
-            <Typography variant="subtitle2" fontWeight={700} color="#1E293B" mb={1.5}>
+            <Typography variant="subtitle2" fontWeight={700} color="text.primary" mb={1.5}>
               1. Select Payroll Month & Download Dynamic Template
             </Typography>
 
@@ -247,7 +255,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
             >
               <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flexGrow: 1 }}>
                 <Box sx={{ width: 150 }}>
-                  <Typography variant="caption" fontWeight={600} color="#475569" display="block" mb={0.5}>
+                  <Typography variant="caption" fontWeight={600} color="text.secondary" display="block" mb={0.5}>
                     Month
                   </Typography>
                   <AppSelect
@@ -256,7 +264,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
                       setMonth(Number(e.target.value));
                       setValidationResult(null);
                     }}
-                    sx={{ height: 40, bgcolor: "#FFFFFF" }}
+                    sx={{ height: 40, bgcolor: "background.paper" }}
                   >
                     {months.map((m) => (
                       <MenuItem key={m.value} value={m.value}>
@@ -267,7 +275,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
                 </Box>
 
                 <Box sx={{ width: 110 }}>
-                  <Typography variant="caption" fontWeight={600} color="#475569" display="block" mb={0.5}>
+                  <Typography variant="caption" fontWeight={600} color="text.secondary" display="block" mb={0.5}>
                     Year
                   </Typography>
                   <AppSelect
@@ -276,7 +284,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
                       setYear(Number(e.target.value));
                       setValidationResult(null);
                     }}
-                    sx={{ height: 40, bgcolor: "#FFFFFF" }}
+                    sx={{ height: 40, bgcolor: "background.paper" }}
                   >
                     {[2024, 2025, 2026, 2027, 2028].map((y) => (
                       <MenuItem key={y} value={y}>
@@ -314,7 +322,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
 
           {/* Step 2: File Upload Dropzone */}
           <Box>
-            <Typography variant="subtitle2" fontWeight={700} color="#1E293B" mb={1}>
+            <Typography variant="subtitle2" fontWeight={700} color="text.primary" mb={1}>
               2. Upload Completed Excel Sheet
             </Typography>
 
@@ -330,15 +338,20 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
               onClick={() => fileInputRef.current?.click()}
               sx={{
                 p: 3,
-                border: "2px dashed #CBD5E1",
+                border: "2px dashed",
+                borderColor: "divider",
                 borderRadius: "12px",
-                bgcolor: file ? "#F0FDF4" : "#F8FAFC",
+                bgcolor: file
+                  ? (isDark ? "rgba(22, 163, 74, 0.15)" : "#F0FDF4")
+                  : (isDark ? "rgba(255, 255, 255, 0.03)" : "#F8FAFC"),
                 textAlign: "center",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 "&:hover": {
-                  borderColor: "#0B5CAB",
-                  bgcolor: file ? "#F0FDF4" : "#F1F5F9",
+                  borderColor: "primary.main",
+                  bgcolor: file
+                    ? (isDark ? "rgba(22, 163, 74, 0.22)" : "#F0FDF4")
+                    : (isDark ? "rgba(255, 255, 255, 0.06)" : "#F1F5F9"),
                 },
               }}
             >
@@ -346,7 +359,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
                 <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center">
                   <InsertDriveFileOutlined sx={{ fontSize: 32, color: "#16A34A" }} />
                   <Box sx={{ textAlign: "left" }}>
-                    <Typography fontWeight={700} color="#0F172A">
+                    <Typography fontWeight={700} color="text.primary">
                       {file.name}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
@@ -356,8 +369,8 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
                 </Stack>
               ) : (
                 <Stack spacing={1} alignItems="center">
-                  <CloudUploadOutlined sx={{ fontSize: 40, color: "#0B5CAB" }} />
-                  <Typography fontWeight={700} color="#1E293B">
+                  <CloudUploadOutlined sx={{ fontSize: 40, color: "primary.main" }} />
+                  <Typography fontWeight={700} color="text.primary">
                     Click to browse or drag & drop attendance Excel file (.xlsx)
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
@@ -378,7 +391,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
                   />
                 }
                 label={
-                  <Typography variant="body2" color="#334155" fontWeight={600}>
+                  <Typography variant="body2" color="text.secondary" fontWeight={600}>
                     Preserve approved leaves (recommended)
                   </Typography>
                 }
@@ -406,7 +419,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
           {/* Step 3: Validation Preview & Results */}
           {validationResult && (
             <Box>
-              <Typography variant="subtitle2" fontWeight={700} color="#1E293B" mb={1}>
+              <Typography variant="subtitle2" fontWeight={700} color="text.primary" mb={1}>
                 3. Pre-flight Validation Report
               </Typography>
 
@@ -447,17 +460,18 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
                   sx={{
                     maxHeight: 220,
                     borderRadius: "10px",
-                    borderColor: "#E2E8F0",
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
                   }}
                 >
                   <Table size="small" stickyHeader>
                     <TableHead>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 700, bgcolor: "#F8FAFC" }}>Row</TableCell>
-                        <TableCell sx={{ fontWeight: 700, bgcolor: "#F8FAFC" }}>Employee</TableCell>
-                        <TableCell sx={{ fontWeight: 700, bgcolor: "#F8FAFC" }}>Date</TableCell>
-                        <TableCell sx={{ fontWeight: 700, bgcolor: "#F8FAFC" }}>Type</TableCell>
-                        <TableCell sx={{ fontWeight: 700, bgcolor: "#F8FAFC" }}>Issue Description</TableCell>
+                        <TableCell sx={{ fontWeight: 700, bgcolor: "action.hover", color: "text.primary" }}>Row</TableCell>
+                        <TableCell sx={{ fontWeight: 700, bgcolor: "action.hover", color: "text.primary" }}>Employee</TableCell>
+                        <TableCell sx={{ fontWeight: 700, bgcolor: "action.hover", color: "text.primary" }}>Date</TableCell>
+                        <TableCell sx={{ fontWeight: 700, bgcolor: "action.hover", color: "text.primary" }}>Type</TableCell>
+                        <TableCell sx={{ fontWeight: 700, bgcolor: "action.hover", color: "text.primary" }}>Issue Description</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>

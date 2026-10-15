@@ -39,6 +39,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BaseUrl } from "../../../utils/constant/Constant";
 import { CompanyCareerTheme } from "../careerPortal/components/CompanyCareerTheme";
+import LightDarkMode from "../../../_themes/layout/components/header/navbarmenus/LightDarkMode";
 import {
   FormerEmployeePortalCase,
   createFormerEmployeePortalRequest,
@@ -413,7 +414,7 @@ const Access = ({
         sx={{ py: { xs: 2, md: 3 } }}
       >
         <Brand name={brand?.name} logo={brand?.logo} />
-        <Box sx={{ display: { xs: "none", md: "block" }, width: 80 }} />
+        <LightDarkMode sx={{ width: 36, height: 36 }} />
       </Stack>
       <Box sx={stage === "otp" ? otpLayout : accessLayout}>
         {stage === "login" && (
@@ -674,7 +675,7 @@ const Portal = ({
   document,
   setRequestOpen,
 }: any) => (
-  <Box sx={{ minHeight: "100vh", bgcolor: "#F6F9FC", pb: { xs: 9, md: 4 } }}>
+  <Box sx={{ minHeight: "100vh", bgcolor: "background.default", color: "text.primary", pb: { xs: 9, md: 4 } }}>
     <Container maxWidth="xl">
       <Stack
         direction="row"
@@ -683,25 +684,27 @@ const Portal = ({
         sx={{
           display: { xs: "none", md: "flex" },
           py: 2,
-          borderBottom: "1px solid #E2E8F0",
+          borderBottom: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Brand name={data.companyName} logo={data.companyLogo} />
         <Stack direction="row" alignItems="center" spacing={1}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: .25, bgcolor: "#eef4f6", borderRadius: 99, p: .5 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: .25, bgcolor: "color-mix(in srgb, var(--mui-palette-background-paper) 80%, transparent)", border: "1px solid", borderColor: "divider", borderRadius: 99, p: .5 }}>
           {(["home", "documents", "requests", "support"] as View[]).map(
             (item) => (
               <Button
                 key={item}
                 variant="text"
                 onClick={() => setView(item)}
-                sx={{ minWidth: "auto", px: 1.6, py: .75, borderRadius: 99, textTransform: "none", fontWeight: 750, color: view === item ? "#fff" : "#35616a", bgcolor: view === item ? "#0b6153" : "transparent", boxShadow: view === item ? "0 5px 14px rgba(11,97,83,.25)" : "none", '&:hover': { bgcolor: view === item ? '#075344' : 'rgba(11,97,83,.08)' } }}
+                sx={{ minWidth: "auto", px: 1.6, py: .75, borderRadius: 99, textTransform: "none", fontWeight: 750, color: view === item ? "#fff" : "text.secondary", bgcolor: view === item ? "#0b6153" : "transparent", boxShadow: view === item ? "0 5px 14px rgba(11,97,83,.25)" : "none", '&:hover': { bgcolor: view === item ? '#075344' : 'rgba(11,97,83,.08)' } }}
               >
                 {readable(item)}
               </Button>
             ),
           )}
           </Box>
+          <LightDarkMode sx={{ width: 36, height: 36 }} />
           <IconButton onClick={() => setView("profile")}>
             <Avatar sx={{ width: 32, height: 32, bgcolor: "#008b90" }}>
               {initials}
@@ -984,7 +987,10 @@ const Card = ({ title, action, onAction, children, sx }: any) => (
     elevation={0}
     sx={{
       p: { xs: 1.5, sm: 2 },
-      border: "1px solid #E2E8F0",
+      border: "1px solid",
+      borderColor: "divider",
+      bgcolor: "background.paper",
+      color: "text.primary",
       borderRadius: 3,
       boxShadow: "0 7px 22px rgba(15,42,58,.05)",
       animation: "portalEnter .55s ease-out both",
@@ -1019,7 +1025,7 @@ const Document = ({ item, document }: any) => (
     justifyContent="space-between"
     alignItems={{ sm: "center" }}
     gap={1}
-    sx={{ p: 1.25, border: "1px solid #E2E8F0", borderRadius: 2.5, mb: 1 }}
+    sx={{ p: 1.25, border: "1px solid", borderColor: "divider", borderRadius: 2.5, mb: 1 }}
   >
     <Stack direction="row" spacing={1} alignItems="center" minWidth={0}>
       <Box sx={docIcon}>
@@ -1060,8 +1066,9 @@ const Requests = ({ requests }: any) =>
           key={request.requestId}
           sx={{
             p: 1.25,
-            bgcolor: "#F8FAFC",
-            border: "1px solid #E2E8F0",
+            bgcolor: "action.hover",
+            border: "1px solid",
+            borderColor: "divider",
             borderRadius: 2.5,
           }}
         >
@@ -1300,7 +1307,8 @@ const Quick = ({ icon, title, text, click }: any) => (
       justifyContent: "flex-start",
       textAlign: "left",
       p: 1,
-      border: "1px solid #E2E8F0",
+      border: "1px solid",
+      borderColor: "divider",
       borderRadius: 2.5,
       color: "text.primary",
     }}
@@ -1447,8 +1455,10 @@ const accessCard = {
   mt: { md: 0 },
   p: { xs: 2.25, sm: 4, md: 4.5 },
   borderRadius: { xs: 0, sm: 5 },
-  bgcolor: "#ffffff",
-  border: "1px solid rgba(255,255,255,.92)",
+  bgcolor: "background.paper",
+  color: "text.primary",
+  border: "1px solid",
+  borderColor: "divider",
   backdropFilter: "blur(18px)",
   boxShadow: { sm: "0 28px 72px rgba(28,62,88,.18), 0 4px 14px rgba(0,139,144,.08)" },
   animation: "portalEnter .72s .1s cubic-bezier(.2,.8,.2,1) both",
@@ -1468,7 +1478,7 @@ const accessCard = {
   },
   "& .MuiOutlinedInput-root": {
     borderRadius: 2.5,
-    bgcolor: "rgba(255,255,255,.8)",
+    bgcolor: "color-mix(in srgb, var(--mui-palette-background-paper) 80%, transparent)",
   },
   "@media (min-width: 900px)": { position: "absolute", left: "29vw", top: "6%", width: "min(38vw, 600px)", transform: "none" },
 };

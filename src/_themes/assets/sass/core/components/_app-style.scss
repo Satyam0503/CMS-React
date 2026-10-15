@@ -7,7 +7,7 @@
 // useAppStyle.ts + a `surface` branch in MuiTheme.ts.
 // =============================================================================
 
-:root {
+:root:not(.dark) {
   --app-content-background:
     radial-gradient(ellipse 75% 60% at 4% 5%, rgba(11, 92, 171, 0.20) 0%, transparent 65%),
     radial-gradient(ellipse 65% 55% at 96% 10%, rgba(13, 148, 136, 0.18) 0%, transparent 60%),
@@ -15,6 +15,14 @@
     radial-gradient(ellipse 70% 50% at 85% 90%, rgba(11, 92, 171, 0.15) 0%, transparent 65%),
     radial-gradient(circle 450px at 15% 85%, rgba(13, 148, 136, 0.11) 0%, transparent 60%),
     linear-gradient(180deg, #F6F9FD 0%, #EDF3FB 50%, #E4EDF7 100%);
+}
+
+:root.dark {
+  --app-content-background:
+    radial-gradient(ellipse 62% 56% at -10% -14%, rgba(45, 212, 191, 0.16), transparent 68%),
+    radial-gradient(ellipse 54% 50% at 108% 4%, rgba(96, 165, 250, 0.14), transparent 70%),
+    radial-gradient(ellipse 50% 46% at 84% 108%, rgba(20, 184, 166, 0.10), transparent 72%),
+    linear-gradient(135deg, #09151b 0%, #0d2029 50%, #10262b 100%);
 }
 
 body,
@@ -36,13 +44,28 @@ body,
 
 
 // ----- Glass: translucent surfaces with a soft, blurred application shell -----
-:root[data-app-style="glass"] {
+:root:not(.dark)[data-app-style="glass"] {
   --mui-palette-background-default: #F0F4FA;
   --mui-palette-background-body: #F0F4FA;
   --mui-palette-background-card: rgba(255, 255, 255, 0.76);
   --mui-palette-background-paper: rgba(255, 255, 255, 0.80);
   --mui-palette-background-box: rgba(248, 250, 252, 0.70);
   --mui-palette-background-header: rgba(255, 255, 255, 0.74);
+
+  --app-glass-surface: rgba(255, 255, 255, 0.78);
+  --app-glass-card-bg: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.62) 100%
+  );
+  --app-glass-paper-bg: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.80) 0%,
+    rgba(255, 255, 255, 0.65) 100%
+  );
+  --app-glass-border: rgba(255, 255, 255, 0.88);
+  --app-glass-card-shadow: 0 10px 30px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  --app-glass-paper-shadow: 0 8px 26px -4px rgba(11, 92, 171, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
 
   --app-content-background:
     radial-gradient(ellipse 75% 60% at 4% 5%, rgba(11, 92, 171, 0.20) 0%, transparent 65%),
@@ -179,39 +202,96 @@ body,
 }
 
 :root.dark[data-app-style="glass"] {
-  --app-glass-surface: rgba(15, 29, 38, 0.78);
-  --app-glass-surface-elevated: rgba(20, 38, 49, 0.86);
+  --mui-palette-background-default: #09151b;
+  --mui-palette-background-body: #09151b;
+  --mui-palette-background-card: rgba(15, 29, 38, 0.88);
+  --mui-palette-background-paper: rgba(20, 38, 49, 0.92);
+  --mui-palette-background-box: rgba(20, 38, 49, 0.72);
+  --mui-palette-background-header: rgba(9, 20, 27, 0.85);
+  --mui-palette-divider: rgba(171, 213, 222, 0.18);
+
+  --app-glass-surface: rgba(15, 29, 38, 0.88);
+  --app-glass-surface-elevated: rgba(20, 38, 49, 0.92);
+  --app-glass-card-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)), rgba(15, 29, 38, 0.88);
+  --app-glass-paper-bg: rgba(20, 38, 49, 0.92);
   --app-glass-border: rgba(171, 213, 222, 0.22);
   --app-glass-border-strong: rgba(112, 211, 200, 0.38);
+  --app-glass-card-shadow: 0 14px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.045);
+  --app-glass-paper-shadow: 0 10px 28px rgba(0, 0, 0, 0.30);
   --app-content-background:
     radial-gradient(ellipse 62% 56% at -10% -14%, rgba(45, 212, 191, 0.16), transparent 68%),
     radial-gradient(ellipse 54% 50% at 108% 4%, rgba(96, 165, 250, 0.14), transparent 70%),
     radial-gradient(ellipse 50% 46% at 84% 108%, rgba(20, 184, 166, 0.10), transparent 72%),
     linear-gradient(135deg, #09151b 0%, #0d2029 50%, #10262b 100%);
 
-  & .app-header {
-    background: rgba(9, 20, 27, 0.82) !important;
-    border-bottom-color: rgba(171, 213, 222, 0.18);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26);
+  body {
+    background: var(--app-content-background);
+    background-attachment: fixed;
   }
 
-  // Dark glass needs a dark base beneath the highlight layer. Without this,
-  // the light-mode white mix in the shared MUI override turns large cards grey.
-  & .MuiCard-root,
-  & .MuiPaper-root {
+  & .app-header {
+    background: rgba(9, 20, 27, 0.85) !important;
+    border-bottom: 1px solid rgba(171, 213, 222, 0.18) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26) !important;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card),
+  & .MuiPaper-root:not(.profile-picture-card),
+  & .sidebar .sidebar-paper,
+  & .tab-container {
     background:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018) 46%),
-      var(--app-glass-surface) !important;
-    border-color: var(--app-glass-border) !important;
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+      linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
+      rgba(15, 29, 38, 0.88) !important;
+    border: 1px solid var(--app-glass-border) !important;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card)[role="button"]:hover,
+  & .MuiCard-root:not(.profile-picture-card) .MuiCard-root:hover,
+  & .interactive-card:hover,
+  & .MuiCard-root:not(.profile-picture-card):hover {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03)),
+      rgba(20, 38, 49, 0.94) !important;
+    border-color: rgba(112, 211, 200, 0.38) !important;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45) !important;
+    transform: translateY(-2px);
+  }
+
+  & .MuiDialog-paper,
+  & .MuiMenu-paper,
+  & .MuiPopover-paper,
+  & .MuiAutocomplete-paper,
+  & .MuiPickersPopper-paper,
+  & .MuiDrawer-paper:not(.sidebar-paper) {
+    background: linear-gradient(
+      140deg,
+      rgba(20, 38, 49, 0.94) 0%,
+      rgba(15, 29, 38, 0.90) 100%
+    ) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    border: 1px solid var(--app-glass-border) !important;
+    box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.45) !important;
+    color: #eef7f8 !important;
+  }
+
+  & .MuiButton-outlined {
+    background: rgba(15, 29, 38, 0.6) !important;
+    border: 1px solid var(--app-glass-border) !important;
+    color: #eef7f8 !important;
+    &:hover {
+      background: rgba(20, 38, 49, 0.85) !important;
+      border-color: var(--app-glass-border-strong) !important;
+    }
   }
 
   & .MuiOutlinedInput-root {
     background: rgba(6, 20, 28, 0.64) !important;
 
-    & .MuiOutlinedInput-notchedOutline { border-color: var(--app-glass-border); }
-    &:hover .MuiOutlinedInput-notchedOutline { border-color: rgba(171, 213, 222, 0.42); }
-    &.Mui-focused .MuiOutlinedInput-notchedOutline { border-color: var(--app-glass-border-strong); }
+    & .MuiOutlinedInput-notchedOutline { border-color: var(--app-glass-border) !important; }
+    &:hover .MuiOutlinedInput-notchedOutline { border-color: rgba(171, 213, 222, 0.42) !important; }
+    &.Mui-focused .MuiOutlinedInput-notchedOutline { border-color: var(--app-glass-border-strong) !important; }
 
     input,
     textarea { color: #eef7f8; }
@@ -220,8 +300,9 @@ body,
   & .MuiInputLabel-root { color: #b8ccd2; }
 
   & .MuiTableHead-root .MuiTableCell-root {
-    background: rgba(255, 255, 255, 0.055);
-    color: #e3f0f2;
+    background: rgba(255, 255, 255, 0.055) !important;
+    color: #e3f0f2 !important;
+    border-bottom: 1px solid rgba(171, 213, 222, 0.18) !important;
   }
 
   & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
@@ -229,7 +310,7 @@ body,
   }
 }
 
-:root[data-app-style="aurora"] {
+:root:not(.dark)[data-app-style="aurora"] {
   --app-content-background:
     radial-gradient(ellipse 72% 60% at -8% -14%, rgba(45, 212, 191, 0.28), transparent 68%),
     radial-gradient(ellipse 58% 52% at 108% 2%, rgba(11, 92, 171, 0.14), transparent 70%),
@@ -253,7 +334,7 @@ body,
 }
 
 // ----- Slate: frosted cool-glass workspace with Corporate Cobalt mesh -----
-:root[data-app-style="slate"] {
+:root:not(.dark)[data-app-style="slate"] {
   --app-slate-surface: rgba(255, 255, 255, 0.96);
   --app-slate-surface-muted: #F8FAFC;
   --app-slate-border: #E2E8F0;
@@ -417,6 +498,18 @@ body,
     box-shadow: var(--app-slate-card-shadow) !important;
   }
 
+  & .MuiDialog-paper,
+  & .MuiMenu-paper,
+  & .MuiPopover-paper,
+  & .MuiAutocomplete-paper,
+  & .MuiPickersPopper-paper,
+  & .MuiDrawer-paper:not(.sidebar-paper) {
+    background: var(--app-slate-surface) !important;
+    border: 1px solid var(--app-slate-border) !important;
+    box-shadow: var(--app-slate-paper-shadow) !important;
+    color: #f8fafc !important;
+  }
+
   & .MuiOutlinedInput-root {
     background: #111827 !important;
     color: #f8fafc;
@@ -453,7 +546,7 @@ body,
 }
 
 // ----- Dawn: crisp lilac glass with rose product accents -------------------
-:root[data-app-style="dawn"] {
+:root:not(.dark)[data-app-style="dawn"] {
   --app-dawn-surface: linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 244, 253, 0.42) 100%);
   --app-dawn-surface-muted: rgba(243, 236, 247, 0.42);
   --app-dawn-card-background: linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 244, 253, 0.40) 100%);
@@ -601,6 +694,18 @@ body,
     box-shadow: var(--app-dawn-card-shadow) !important;
   }
 
+  & .MuiDialog-paper,
+  & .MuiMenu-paper,
+  & .MuiPopover-paper,
+  & .MuiAutocomplete-paper,
+  & .MuiPickersPopper-paper,
+  & .MuiDrawer-paper:not(.sidebar-paper) {
+    background: var(--app-dawn-surface) !important;
+    border: 1px solid var(--app-dawn-border) !important;
+    box-shadow: var(--app-dawn-paper-shadow) !important;
+    color: #f8fafc !important;
+  }
+
   & .MuiOutlinedInput-root {
     background: #111827 !important;
     color: #f8fafc;
@@ -626,7 +731,7 @@ body,
 }
 
 // ----- Blush: soft pink ambient background with frosted glass surfaces -----
-:root[data-app-style="blush"] {
+:root:not(.dark)[data-app-style="blush"] {
   --app-blush-surface: linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(255, 248, 251, 0.42) 100%);
   --app-blush-border: #CBD5E1;
   --app-blush-border-soft: #E2E8F0;
@@ -757,7 +862,7 @@ body,
 }
 
 // ----- Minimal: pure white body, hairline-bordered header ------------------
-:root[data-app-style="minimal"] {
+:root:not(.dark)[data-app-style="minimal"] {
   --app-content-background: var(--mui-palette-background-body);
 
   body {
@@ -806,10 +911,311 @@ body,
   }
 }
 
-:root[data-app-style="gradient"] .app-header {
+:root:not(.dark)[data-app-style="gradient"] .app-header {
   --app-header-foreground: #fff;
 }
 
 :root.dark[data-app-style="gradient"] .app-header {
   --app-header-foreground: var(--mui-palette-text-primary);
 }
+
+// Global Dark Mode Enhancements across all themes & components
+:root.dark,
+[data-bs-theme="dark"],
+.dark {
+  // Ensure cards across ALL pages (Employees, Settings, Attendance, Dashboard, etc.) in dark mode have dark background
+  .MuiCard-root:not(.profile-picture-card) {
+    background: var(--mui-palette-background-card, var(--mui-palette-background-paper, #172235)) !important;
+    border: 1px solid var(--mui-palette-divider, rgba(255, 255, 255, 0.12)) !important;
+    color: var(--mui-palette-text-primary, #f8fafc);
+  }
+
+  // Ensure Paper elements inherit proper dark mode backgrounds
+  .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card) {
+    color: var(--mui-palette-text-primary, #f8fafc);
+  }
+
+  // Ensure Dialog, Popover, Menu papers in dark mode have dark background
+  .MuiDialog-paper,
+  .MuiPopover-paper,
+  .MuiMenu-paper,
+  .MuiDrawer-paper:not(.sidebar-paper) {
+    background: var(--mui-palette-background-paper, #172235) !important;
+    color: var(--mui-palette-text-primary, #f8fafc) !important;
+    border: 1px solid var(--mui-palette-divider, rgba(255, 255, 255, 0.12)) !important;
+  }
+
+  // Prevent white overlays on tables inside cards
+  .MuiCard-root:not(.profile-picture-card) .MuiTableContainer-root,
+  .MuiTableContainer-root {
+    background-color: transparent !important;
+  }
+
+  // Ensure table cells in dark mode have proper borders and readable text
+  .MuiTableCell-root {
+    border-color: var(--mui-palette-divider, rgba(255, 255, 255, 0.12)) !important;
+    color: inherit;
+  }
+
+  .MuiTableHead-root .MuiTableCell-root {
+    background: var(--mui-palette-background-box, rgba(255, 255, 255, 0.04)) !important;
+    color: var(--mui-palette-text-primary, #f8fafc) !important;
+  }
+
+  // Ensure MuiOutlinedInput doesn't have white background
+  .MuiOutlinedInput-root:not(.Mui-disabled) {
+    background-color: var(--mui-palette-background-paper, #111827) !important;
+    color: var(--mui-palette-text-primary, #f8fafc);
+    .MuiOutlinedInput-notchedOutline {
+      border-color: var(--mui-palette-divider, rgba(255, 255, 255, 0.16)) !important;
+    }
+    input, textarea {
+      color: var(--mui-palette-text-primary, #f8fafc);
+    }
+  }
+
+  // Legibility safeguard for any legacy elements with inline dark text
+  .MuiTypography-root[style*="color: #0F172A"],
+  .MuiTypography-root[style*="color: rgb(15, 23, 42)"],
+  .MuiTypography-root[style*="color: #1E293B"],
+  .MuiTypography-root[style*="color: rgb(30, 41, 59)"],
+  .MuiTypography-root[style*="color: #334155"],
+  .MuiTypography-root[style*="color: rgb(51, 65, 85)"] {
+    color: var(--mui-palette-text-primary, #f8fafc) !important;
+  }
+
+  // Dark scrollbars across all scrollable containers in dark mode
+  * {
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.28);
+      }
+    }
+  }
+
+  .dashboard-modern {
+    .MuiCard-root {
+      background: var(--mui-palette-background-card, #172235) !important;
+      border: 1px solid var(--mui-palette-divider, rgba(255, 255, 255, 0.12)) !important;
+      box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.35) !important;
+
+      &:hover {
+        background: var(--mui-palette-background-paper, #1e293b) !important;
+        border-color: var(--mui-palette-primary-main) !important;
+        box-shadow: 0 16px 38px -4px rgba(0, 0, 0, 0.45) !important;
+      }
+
+      .MuiStack-root {
+        &[style*="background-color: rgba(255, 255, 255"],
+        &[style*="background: rgba(255, 255, 255"],
+        &[style*="rgba(255, 255, 255, 0.65)"],
+        &[style*="rgba(255, 255, 255, 0.75)"] {
+          background-color: var(--mui-palette-background-box, rgba(20, 38, 49, 0.72)) !important;
+          border-color: var(--mui-palette-divider, rgba(255, 255, 255, 0.12)) !important;
+          box-shadow: none !important;
+
+          .MuiTypography-root[style*="color: rgb(15, 23, 42)"],
+          .MuiTypography-root[style*="color: #0F172A"] {
+            color: var(--mui-palette-text-primary, #f8fafc) !important;
+          }
+        }
+      }
+    }
+
+    .MuiAvatar-root {
+      border-color: var(--mui-palette-divider, rgba(255, 255, 255, 0.15));
+    }
+
+    .dashboard-hero {
+      background: var(--mui-palette-background-card, #172235) !important;
+      background-image: none !important;
+      border: 1px solid var(--mui-palette-divider, rgba(255, 255, 255, 0.12)) !important;
+      box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.35) !important;
+
+      .dashboard-hero-chip {
+        color: var(--mui-palette-primary-light, #38bdf8);
+        background: color-mix(in srgb, var(--mui-palette-primary-main) 18%, transparent);
+        border: 1px solid color-mix(in srgb, var(--mui-palette-primary-main) 35%, transparent);
+        box-shadow: none;
+      }
+
+      .dashboard-welcome-title .dashboard-welcome-word {
+        color: var(--mui-palette-text-primary, #f8fafc) !important;
+      }
+
+      .dashboard-welcome-title .dashboard-welcome-name {
+        color: var(--mui-palette-primary-light, #38bdf8) !important;
+      }
+
+      .dashboard-welcome-copy {
+        color: var(--mui-palette-text-secondary, #94a3b8) !important;
+      }
+
+      .dashboard-date-card {
+        background: var(--mui-palette-background-box, #1e293b) !important;
+        border: 1px solid var(--mui-palette-divider, rgba(255, 255, 255, 0.12)) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25) !important;
+        color: var(--mui-palette-text-primary, #f8fafc);
+      }
+    }
+  }
+
+  // Consistent tab container dark treatment across styles
+  .tab-container {
+    background: var(--mui-palette-background-paper, #172235) !important;
+    border: 1px solid var(--mui-palette-divider, rgba(255, 255, 255, 0.12)) !important;
+  }
+
+  // Bootstrap forms and tables dark mode integration
+  .table {
+    --bs-table-color: var(--mui-palette-text-primary, #f8fafc);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--mui-palette-divider, rgba(255, 255, 255, 0.12));
+    --bs-table-striped-bg: rgba(255, 255, 255, 0.03);
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.06);
+    color: var(--bs-table-color);
+    border-color: var(--bs-table-border-color);
+  }
+
+  .form-control,
+  .form-select {
+    background-color: var(--mui-palette-background-paper, #111827);
+    border-color: var(--mui-palette-divider, #334155);
+    color: var(--mui-palette-text-primary, #f8fafc);
+
+    &:focus {
+      background-color: var(--mui-palette-background-paper, #111827);
+      border-color: var(--mui-palette-primary-main);
+      color: var(--mui-palette-text-primary, #f8fafc);
+    }
+
+    &::placeholder {
+      color: var(--mui-palette-text-secondary, #94a3b8);
+    }
+  }
+
+  .modal-content {
+    background-color: var(--mui-palette-background-paper, #172235);
+    border-color: var(--mui-palette-divider, rgba(255, 255, 255, 0.12));
+    color: var(--mui-palette-text-primary, #f8fafc);
+  }
+}
+
+// DatePicker poppers must have an opaque background so underlying page content does not bleed through
+.MuiPickersPopper-paper {
+  background: var(--mui-palette-background-paper, #ffffff) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18) !important;
+  border: 1px solid var(--mui-palette-divider, rgba(0, 0, 0, 0.12)) !important;
+  opacity: 1 !important;
+}
+
+// Profile Card Payslip Controls (guarantees solid white background and crisp contrast across all theme presets)
+:root:not(.dark)[data-app-style] .profile-picture-card,
+:root.dark .profile-picture-card,
+:root .profile-picture-card,
+#kt_app_root .profile-picture-card,
+.profile-picture-card {
+  .MuiOutlinedInput-root,
+  .MuiPickersOutlinedInput-root,
+  .profile-payslip-datepicker .MuiOutlinedInput-root,
+  .profile-payslip-datepicker .MuiPickersOutlinedInput-root {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border-radius: 8px !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+
+    * {
+      color: #0f172a !important;
+      -webkit-text-fill-color: #0f172a !important;
+    }
+
+    input,
+    .MuiInputBase-input {
+      color: #0f172a !important;
+      -webkit-text-fill-color: #0f172a !important;
+      font-weight: 600 !important;
+    }
+
+    input::placeholder,
+    .MuiPickersSectionList-placeholder {
+      color: #475569 !important;
+      -webkit-text-fill-color: #475569 !important;
+      opacity: 1 !important;
+      font-weight: 500 !important;
+    }
+
+    .MuiPickersSectionList-root,
+    .MuiPickersSectionList-sectionContent,
+    .MuiPickersSectionList-sectionSeparator {
+      color: #0f172a !important;
+      -webkit-text-fill-color: #0f172a !important;
+      font-weight: 600 !important;
+    }
+
+    fieldset,
+    .MuiOutlinedInput-notchedOutline {
+      border: 1px solid rgba(15, 23, 42, 0.16) !important;
+    }
+
+    &:hover fieldset,
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: rgba(15, 23, 42, 0.35) !important;
+    }
+
+    &.Mui-focused fieldset,
+    &.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: #4F46E5 !important;
+      border-width: 2px !important;
+    }
+
+    .MuiSvgIcon-root,
+    .MuiIconButton-root .MuiSvgIcon-root {
+      color: #1e1b4b !important;
+      fill: #1e1b4b !important;
+      opacity: 1 !important;
+    }
+  }
+
+  .MuiButton-root,
+  .profile-payslip-button {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #1e1b4b !important;
+    -webkit-text-fill-color: #1e1b4b !important;
+    font-weight: 700 !important;
+    font-size: 0.875rem !important;
+    border-radius: 8px !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18) !important;
+
+    * {
+      color: #1e1b4b !important;
+      -webkit-text-fill-color: #1e1b4b !important;
+    }
+
+    .MuiSvgIcon-root {
+      color: #1e1b4b !important;
+      fill: #1e1b4b !important;
+    }
+
+    &:hover {
+      background: #f1f5f9 !important;
+      background-color: #f1f5f9 !important;
+      color: #1e1b4b !important;
+      -webkit-text-fill-color: #1e1b4b !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25) !important;
+    }
+  }
+}
+

@@ -95,7 +95,7 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
         border: "1px solid",
         borderColor: "divider",
         borderRadius: 3,
-        bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.paper" : "#FFFFFF"),
+        bgcolor: "background.paper",
         boxShadow: "0 1px 4px rgba(15, 23, 42, 0.04)",
       }}
     >

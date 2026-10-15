@@ -1023,7 +1023,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     );
 
     const getIcon = (attendanceValue: AttendanceData) => {
-      if (!attendanceValue.status) {
+      const statusStr = (attendanceValue.status as string) || "";
+      const isVirtualOff = !statusStr || statusStr === "WO" || statusStr === "H";
+      if (isVirtualOff) {
         if (isHoliday) {
           return (
             <CelebrationIcon sx={{ fontSize: 18, color: "secondary.main" }} />
@@ -1064,10 +1066,12 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     };
 
     const getBg = (attendanceValue: AttendanceData) => {
+      const statusStr = (attendanceValue.status as string) || "";
+      const isVirtualOff = !statusStr || statusStr === "WO" || statusStr === "H";
       if (isHoliday) return alpha(theme.palette.secondary.main, 0.16);
-      if (isWeekend && !isHoliday && !attendanceValue.status)
+      if (isWeekend && !isHoliday && (!statusStr || statusStr === "WO"))
         return theme.palette.action.hover;
-      if (!attendanceValue.status) return theme.palette.background.paper;
+      if (isVirtualOff) return theme.palette.background.paper;
       const color = getStatusColor(attendanceValue.status);
       return alpha(color, 0.14);
     };
@@ -1241,7 +1245,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               </Typography>
               <LockOutlinedIcon sx={{ fontSize: 14 }} aria-hidden="true" />
             </Stack>
-          ) : value.status ? (
+          ) : (((value.status as string) && (value.status as string) !== "WO" && (value.status as string) !== "H")) ? (
             <Stack alignItems="center" spacing={0.25}>
               {getIcon(value)}
               <Typography
@@ -1427,26 +1431,18 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         {dateRange.startDate.format("DD MMM YYYY")} –{" "}
         {dateRange.endDate.format("DD MMM YYYY")}
       </Typography>
-      <Card
-        sx={{
-          p: { xs: 1.5, sm: 2 },
-          borderRadius: 3,
-          bgcolor: "rgba(255, 255, 255, 0.65) !important",
-          backdropFilter: "blur(20px) saturate(180%)",
-          WebkitBackdropFilter: "blur(20px) saturate(180%)",
-          boxShadow: "0 10px 30px 0 rgba(11, 92, 171, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important",
-          border: "1px solid rgba(255, 255, 255, 0.88) !important",
-          overflow: "hidden",
-        }}
-      >
+      <Box sx={{ width: "100%", minWidth: 0 }}>
         {isSingleDay ? (
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, minmax(0, 1fr))",
+                lg: "repeat(3, minmax(0, 1fr))",
+                xl: "repeat(4, minmax(0, 1fr))",
+              },
               gap: 2,
-              // A single employee must never be clipped by the company-grid
-              // scrolling viewport. Let the page own vertical scrolling.
               alignItems: "stretch",
               "@keyframes attendance-card-in": {
                 from: { opacity: 0, transform: "translateY(10px)" },
@@ -1503,13 +1499,13 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     justifyContent: "space-between",
                     borderRadius: "12px",
                     cursor: readOnly ? "default" : "pointer",
-                    bgcolor: "rgba(255, 255, 255, 0.72) !important",
+                    bgcolor: "var(--mui-palette-background-card, var(--mui-palette-background-paper))",
                     backdropFilter: "blur(14px) saturate(180%)",
                     WebkitBackdropFilter: "blur(14px) saturate(180%)",
-                    border: "1px solid rgba(255, 255, 255, 0.88) !important",
+                    border: "1px solid",
+                    borderColor: "divider",
                     borderLeft: `4px solid ${statusAccent} !important`,
-                    boxShadow:
-                      "0 8px 24px 0 rgba(11, 92, 171, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important",
+                    boxShadow: "0 8px 24px 0 rgba(0, 0, 0, 0.05)",
                     animation: `attendance-card-in 320ms ease-out ${Math.min(index * 35, 280)}ms both`,
                     transition:
                       "transform 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease, background 180ms ease",
@@ -1517,13 +1513,12 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       ? {}
                       : {
                           transform: "translateY(-4px)",
-                          bgcolor: "rgba(255, 255, 255, 0.88) !important",
-                          borderColor: "rgba(11, 92, 171, 0.3) !important",
+                          bgcolor: "var(--mui-palette-background-paper)",
+                          borderColor: "primary.main",
                           borderLeftColor: "#0B5CAB !important",
-                          boxShadow:
-                            "0 14px 28px -6px rgba(11, 92, 171, 0.16), 0 4px 10px -2px rgba(15, 23, 42, 0.06), inset 0 1px 2px rgba(255, 255, 255, 1) !important",
+                          boxShadow: "0 14px 28px -6px rgba(0, 0, 0, 0.16)",
                           "& .attendance-card-cta": {
-                            color: "#0B5CAB",
+                            color: "primary.main",
                             transform: "translateX(2px)",
                           },
                         },
@@ -1548,9 +1543,10 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                             borderRadius: "9px",
                             fontSize: "0.8rem",
                             fontWeight: 700,
-                            bgcolor: "#EBF3FA",
-                            color: "#0B5CAB",
-                            border: "1px solid rgba(11, 92, 171, 0.18)",
+                            bgcolor: "action.hover",
+                            color: "primary.main",
+                            border: "1px solid",
+                            borderColor: "divider",
                             flexShrink: 0,
                           }}
                         >
@@ -1561,14 +1557,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                             fontWeight={700}
                             noWrap
                             title={row.name}
-                            sx={{ color: "#0F172A", fontSize: "0.925rem", lineHeight: 1.3 }}
+                            sx={{ color: "text.primary", fontSize: "0.925rem", lineHeight: 1.3 }}
                           >
                             {row.name}
                           </Typography>
                           <Typography
                             variant="caption"
                             noWrap
-                            sx={{ color: "#64748B", fontWeight: 600, display: "block" }}
+                            sx={{ color: "text.secondary", fontWeight: 600, display: "block" }}
                           >
                             {row.employeeId || "Employee"}
                           </Typography>
@@ -1597,13 +1593,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                           px: 1,
                           py: 0.35,
                           borderRadius: "6px",
-                          bgcolor: "#EBF3FA",
-                          border: "1px solid rgba(11, 92, 171, 0.18)",
+                          bgcolor: "action.hover",
+                          border: "1px solid",
+                          borderColor: "divider",
                         }}
                       >
                         <Typography
                           variant="caption"
-                          sx={{ color: "#0B5CAB", fontWeight: 700, fontSize: "0.72rem" }}
+                          sx={{ color: "primary.main", fontWeight: 700, fontSize: "0.72rem" }}
                         >
                           {row.scheduleName} · {row.scheduledStartTime}–{row.scheduledEndTime}
                         </Typography>
@@ -1618,24 +1615,25 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                         mt: 1.25,
                         p: 1,
                         borderRadius: "8px",
-                        bgcolor: "#F8FAFC",
-                        border: "1px solid #E2E8F0",
+                        bgcolor: "var(--mui-palette-background-box, action.hover)",
+                        border: "1px solid",
+                        borderColor: "divider",
                         backdropFilter: "blur(8px)",
                       }}
                     >
                       <Box>
-                        <Typography variant="caption" sx={{ color: "#64748B", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
+                        <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
                           Punch in
                         </Typography>
-                        <Typography variant="caption" sx={{ color: "#0F172A", fontWeight: 700, fontSize: "0.8rem" }}>
+                        <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 700, fontSize: "0.8rem" }}>
                           {value.checkIn || (isLegacySystemPresent ? "09:00" : "—")}
                         </Typography>
                       </Box>
-                      <Box sx={{ borderLeft: "1px solid #E2E8F0", pl: 1 }}>
-                        <Typography variant="caption" sx={{ color: "#64748B", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
+                      <Box sx={{ borderLeft: "1px solid", borderColor: "divider", pl: 1 }}>
+                        <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
                           Punch out
                         </Typography>
-                        <Typography variant="caption" sx={{ color: "#0F172A", fontWeight: 700, fontSize: "0.8rem" }}>
+                        <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 700, fontSize: "0.8rem" }}>
                           {value.checkOut || (isLegacySystemPresent ? "18:00" : "—")}
                         </Typography>
                       </Box>
@@ -1964,8 +1962,17 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             setRowsPerPage(Number(event.target.value));
             setPage(0);
           }}
+          sx={{
+            borderTop: "1px solid",
+            borderColor: "divider",
+            mt: 1.5,
+            px: 0,
+            "& .MuiTablePagination-toolbar": {
+              px: { xs: 1, sm: 2 },
+            },
+          }}
         />
-      </Card>
+      </Box>
       {!readOnly && dateRange.startDate.isSame(dateRange.endDate, "month") && (
         <MonthlyAttendanceExceptions month={dateRange.startDate} />
       )}

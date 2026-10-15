@@ -1,4 +1,4 @@
-import { Box, Card, Stack, Typography } from "@mui/material";
+import { alpha, Box, Card, Stack, Typography } from "@mui/material";
 import clsx from "clsx";
 import { FC } from "react";
 
@@ -29,7 +29,8 @@ export const CustomCard: FC<Props> = (props) => {
           justifyContent="space-between"
           sx={{
             pb: 1.25,
-            borderBottom: "1px solid rgba(11, 92, 171, 0.08)",
+            borderBottom: "1px solid",
+            borderColor: "divider",
           }}
         >
           <Typography
@@ -37,7 +38,7 @@ export const CustomCard: FC<Props> = (props) => {
               fontWeight: 700,
               fontSize: "0.95rem",
               letterSpacing: "-0.015em",
-              color: "#0F172A",
+              color: "text.primary",
             }}
           >
             {label}
@@ -52,14 +53,14 @@ export const CustomCard: FC<Props> = (props) => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "8px",
-                backgroundColor: "rgba(11, 92, 171, 0.08)",
-                border: "1px solid rgba(11, 92, 171, 0.18)",
-                boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.85)",
+                backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                border: "1px solid",
+                borderColor: (theme) => alpha(theme.palette.primary.main, 0.25),
                 WebkitBackdropFilter: "blur(6px)",
                 backdropFilter: "blur(6px)",
                 fontWeight: 700,
                 fontSize: "0.75rem",
-                color: "#0B5CAB",
+                color: "primary.main",
                 lineHeight: 1,
               }}
             >

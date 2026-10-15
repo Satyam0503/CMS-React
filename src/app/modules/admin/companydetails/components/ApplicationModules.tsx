@@ -262,7 +262,7 @@ export const ApplicationModules: FC = () => {
             );
 
             return (
-              <Grid size={{ xs: 12, md: 6, lg: 4 }} key={module.moduleId}>
+              <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={module.moduleId}>
                 <ModuleCard
                   moduleId={module.moduleId}
                   moduleCostant={module.moduleConstant}
@@ -286,7 +286,7 @@ export const ApplicationModules: FC = () => {
             );
           })}
 
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
             <ModuleCard
               moduleId="PAYROLL"
               titleMessageId="COMMON.PAYROLL_MANAGEMENT"
@@ -303,7 +303,7 @@ export const ApplicationModules: FC = () => {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
             <ModuleCard
               moduleId="RECRUITMENT"
               titleMessageId="COMMON.RECRUITMENT_MANAGEMENT"

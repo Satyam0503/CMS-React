@@ -31,10 +31,6 @@ const featureOptions = featureSections.flatMap(section => section.options);
 const legacyFeatureValues: Array<[keyof EmployeeExitPolicy, FeatureKey]> = featureOptions.flatMap(option => option.legacyKey ? [[option.legacyKey, option.key] as [keyof EmployeeExitPolicy, FeatureKey]] : []);
 const legacyCompletionKeys: Partial<Record<FeatureKey, keyof EmployeeExitPolicy>> = { Handover: "requireHandover", Assets: "requireAssetClearance", ItAccess: "requireAccessRevocation", Finance: "requireFinanceClearance", Benefits: "requireBenefitClearance", FinalSettlement: "requireFinalSettlement" };
 const acknowledgementOption = { key: "requireEmployeeAcknowledgement" as const, title: "Employee acknowledgement", description: "Require the employee to acknowledge confirmed exit details." };
-// Legacy layout remains in the source only while this route is migrated; it is not rendered.
-const workflowOptions: Array<{ key: keyof EmployeeExitPolicy; title: string; description: string }> = [];
-const completionOptions: Array<{ key: keyof EmployeeExitPolicy; title: string; description: string }> = [];
-const modularFeatures: Array<{ key: FeatureKey; title: string }> = [];
 
 const departmentName = (department: DepartmentModel) => Object.values(department.titles ?? {})[0] || "Unnamed department";
 const policyDepartmentIds = (policy: EmployeeExitPolicy) => Array.from(new Set([...(policy.departmentIds || []), policy.departmentId].filter((value): value is string => Boolean(value))));
@@ -59,9 +55,235 @@ const normalizePolicy = (policy: EmployeeExitPolicy): EmployeeExitPolicy => {
 
 const FieldHelp = ({ text }: { text: string }) => <Tooltip title={text} arrow placement="top"><Box component="span" className="policy-help" aria-label="More information" sx={{ display: "inline-flex", alignItems: "center", fontSize: 16, lineHeight: 1, color: "primary.main", opacity: 0, transition: "opacity .16s ease" }}><InfoOutlined fontSize="inherit" /></Box></Tooltip>;
 
-const ToggleTile = ({ option, checked, disabled = false, onChange }: { option: { key: keyof EmployeeExitPolicy; title: string; description: string }; checked: boolean; disabled?: boolean; onChange: () => void }) => <Box role="switch" aria-checked={checked} aria-disabled={disabled} tabIndex={disabled ? -1 : 0} onClick={disabled ? undefined : onChange} onKeyDown={event => { if (!disabled && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onChange(); } }} sx={{ minHeight: 56, px: 1.25, display: "flex", alignItems: "center", gap: .25, cursor: disabled ? "default" : "pointer", border: "1px solid", borderColor: checked ? "primary.main" : "divider", borderLeftWidth: checked ? 3 : 1, borderRadius: 2, bgcolor: checked ? "action.selected" : "background.paper", color: "text.primary", opacity: disabled ? .72 : 1, transition: "all .18s ease", "&:hover, &:focus-visible, &:focus-within": disabled ? {} : { borderColor: "primary.main", boxShadow: "0 5px 12px rgba(0,0,0,.06)", outline: "none" }, "&:hover .policy-help, &:focus-within .policy-help": { opacity: 1 }, "& .MuiSwitch-root": { mr: .5, ml: 0 } }}><Switch checked={checked} disabled={disabled} onClick={event => event.stopPropagation()} onChange={onChange} /><Typography variant="body2" fontWeight={700} sx={{ minWidth: 0 }}>{option.title}</Typography><Box sx={{ ml: "auto", display: "flex", alignItems: "center" }}><FieldHelp text={option.description} /></Box></Box>;
+const ToggleTile = ({
+  option,
+  checked,
+  disabled = false,
+  onChange,
+}: {
+  option: { key: keyof EmployeeExitPolicy; title: string; description: string };
+  checked: boolean;
+  disabled?: boolean;
+  onChange: () => void;
+}) => (
+  <Box
+    role="switch"
+    aria-checked={checked}
+    aria-disabled={disabled}
+    tabIndex={disabled ? -1 : 0}
+    onClick={disabled ? undefined : onChange}
+    onKeyDown={(event) => {
+      if (!disabled && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        onChange();
+      }
+    }}
+    sx={{
+      minHeight: 44,
+      px: 1.25,
+      py: 0.75,
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+      cursor: disabled ? "default" : "pointer",
+      border: "1px solid",
+      borderColor: checked
+        ? "color-mix(in srgb, var(--mui-palette-primary-main) 45%, transparent)"
+        : "divider",
+      borderRadius: 2,
+      bgcolor: checked
+        ? "color-mix(in srgb, var(--mui-palette-primary-main) 4%, var(--mui-palette-background-paper))"
+        : "background.paper",
+      color: "text.primary",
+      opacity: disabled ? 0.6 : 1,
+      transition: "all 0.18s ease",
+      "&:hover, &:focus-visible, &:focus-within": disabled
+        ? {}
+        : {
+            borderColor: "primary.main",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+            outline: "none",
+          },
+      "& .MuiSwitch-root": { mr: 0, ml: -0.5 },
+    }}
+  >
+    <Switch
+      size="small"
+      checked={checked}
+      disabled={disabled}
+      onClick={(event) => event.stopPropagation()}
+      onChange={onChange}
+    />
+    <Box minWidth={0} sx={{ flex: 1 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          fontWeight: 650,
+          fontSize: "12.5px",
+          color: checked ? "text.primary" : "text.secondary",
+          lineHeight: 1.25,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {option.title}
+      </Typography>
+    </Box>
+    <FieldHelp text={option.description} />
+  </Box>
+);
 
-const CompletionTile = ({ option, checked, disabled, onChange }: { option: { key: keyof EmployeeExitPolicy; title: string; description: string }; checked: boolean; disabled: boolean; onChange: () => void }) => <Box role="checkbox" aria-checked={checked} tabIndex={disabled ? -1 : 0} onClick={disabled ? undefined : onChange} onKeyDown={event => { if (!disabled && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onChange(); } }} sx={{ minHeight: 56, px: 1.25, display: "flex", alignItems: "center", gap: .25, cursor: disabled ? "default" : "pointer", border: "1px solid", borderColor: checked ? "primary.main" : "divider", borderLeftWidth: checked ? 3 : 1, borderRadius: 2, bgcolor: checked ? "action.selected" : "background.paper", color: "text.primary", opacity: disabled ? .55 : 1, transition: "all .18s ease", "&:hover, &:focus-visible, &:focus-within": disabled ? {} : { borderColor: "primary.main", boxShadow: "0 5px 12px rgba(0,0,0,.06)", outline: "none" }, "&:hover .policy-help, &:focus-within .policy-help": { opacity: 1 }, "& .MuiCheckbox-root": { mr: .5, ml: 0 } }}><Checkbox checked={checked} disabled={disabled} onClick={event => event.stopPropagation()} onChange={onChange} /><Typography variant="body2" fontWeight={700} sx={{ minWidth: 0 }}>{option.title}</Typography><Box sx={{ ml: "auto", display: "flex", alignItems: "center" }}><FieldHelp text={option.description} /></Box></Box>;
+interface FeatureTileProps {
+  title: string;
+  description: string;
+  enabled: boolean;
+  disabled?: boolean;
+  onToggle: () => void;
+  completionCapable?: boolean;
+  blocksCompletion?: boolean;
+  onToggleBlocker?: (blocks: boolean) => void;
+  isEditing: boolean;
+}
+
+const FeatureTile = ({
+  title,
+  description,
+  enabled,
+  disabled = false,
+  onToggle,
+  completionCapable = false,
+  blocksCompletion = false,
+  onToggleBlocker,
+  isEditing,
+}: FeatureTileProps) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "100%",
+        minHeight: completionCapable ? 84 : 64,
+        p: { xs: 1.25, sm: 1.5 },
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: enabled
+          ? "color-mix(in srgb, var(--mui-palette-primary-main) 40%, transparent)"
+          : "divider",
+        bgcolor: enabled
+          ? "color-mix(in srgb, var(--mui-palette-primary-main) 4%, var(--mui-palette-background-paper))"
+          : "background.paper",
+        boxShadow: enabled ? "0 1px 3px rgba(0, 0, 0, 0.04)" : "none",
+        transition: "all 0.18s ease",
+        opacity: !disabled && isEditing ? 1 : 0.72,
+        "&:hover": !disabled && isEditing
+          ? {
+              borderColor: "primary.main",
+              bgcolor: enabled
+                ? "color-mix(in srgb, var(--mui-palette-primary-main) 7%, var(--mui-palette-background-paper))"
+                : "action.hover",
+            }
+          : {},
+      }}
+    >
+      <Box minWidth={0}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 700,
+              fontSize: "13px",
+              color: enabled ? "text.primary" : "text.secondary",
+              lineHeight: 1.3,
+            }}
+          >
+            {title}
+          </Typography>
+          <Tooltip title={enabled ? `Disable ${title}` : `Enable ${title}`}>
+            <span>
+              <Switch
+                size="small"
+                checked={enabled}
+                disabled={disabled}
+                onChange={onToggle}
+                sx={{ my: -0.5, mr: -0.5 }}
+              />
+            </span>
+          </Tooltip>
+        </Stack>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            fontSize: "11.5px",
+            lineHeight: 1.35,
+            display: "block",
+            mt: 0.5,
+          }}
+        >
+          {description}
+        </Typography>
+      </Box>
+
+      {completionCapable && (
+        <Box
+          sx={{
+            mt: 1,
+            pt: 0.75,
+            borderTop: "1px dashed",
+            borderColor: enabled
+              ? "color-mix(in srgb, var(--mui-palette-primary-main) 25%, transparent)"
+              : "divider",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            minHeight: 28,
+          }}
+        >
+          <FormControlLabel
+            sx={{
+              m: 0,
+              "& .MuiFormControlLabel-label": {
+                fontSize: "11.5px",
+                fontWeight: blocksCompletion ? 600 : 400,
+                color: blocksCompletion ? "warning.dark" : "text.secondary",
+              },
+            }}
+            label="Blocks completion"
+            control={
+              <Checkbox
+                size="small"
+                checked={enabled && blocksCompletion}
+                disabled={disabled || !enabled}
+                onChange={(e) => onToggleBlocker?.(e.target.checked)}
+                sx={{
+                  p: 0.25,
+                  mr: 0.5,
+                  "&.Mui-checked": { color: "warning.main" },
+                }}
+              />
+            }
+          />
+          {enabled && blocksCompletion && (
+            <Chip
+              label="Blocker"
+              size="small"
+              color="warning"
+              variant="outlined"
+              sx={{
+                height: 18,
+                fontSize: "10px",
+                fontWeight: 700,
+                px: 0.25,
+              }}
+            />
+          )}
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 export const EmployeeExitPolicySettings = () => {
   const [policy, setPolicy] = useState(defaultPolicy); const [policies, setPolicies] = useState<EmployeeExitPolicy[]>([]); const [departments, setDepartments] = useState<DepartmentModel[]>([]); const [roles, setRoles] = useState<RoleModel[]>([]); const [templates, setTemplates] = useState<EmployeeExitClearanceTemplate[]>([]); const [scope, setScope] = useState<PolicyScope>("company"); const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<string[]>([]); const [category, setCategory] = useState(""); const [templateKey, setTemplateKey] = useState(""); const [templateScope, setTemplateScope] = useState<"Global" | "Department">("Global"); const [templateDepartmentId, setTemplateDepartmentId] = useState(""); const [ownerPermission, setOwnerPermission] = useState(""); const [templateGate, setTemplateGate] = useState<EmployeeExitClearanceTemplate["requiredPolicyGate"]>("General"); const [dueDays, setDueDays] = useState(0); const [mandatory, setMandatory] = useState(true); const [visible, setVisible] = useState(false); const [saving, setSaving] = useState(false); const [expandedPolicyId, setExpandedPolicyId] = useState<string | false>(false); const [editingPolicyId, setEditingPolicyId] = useState<string | false>(false); const [templatePendingDelete, setTemplatePendingDelete] = useState<EmployeeExitClearanceTemplate | null>(null); const [deletingTemplate, setDeletingTemplate] = useState(false);
@@ -124,11 +346,6 @@ export const EmployeeExitPolicySettings = () => {
   const addTemplate = async () => { if (!category.trim() || (templateScope === "Department" && !templateDepartmentId)) return; setSaving(true); try { const response = await saveEmployeeExitClearanceTemplate({ templateKey: templateKey.trim() || undefined, scope: templateScope, departmentId: templateScope === "Department" ? templateDepartmentId : undefined, category: category.trim(), ownerPermission: ownerPermission || undefined, requiredPolicyGate: templateGate, isMandatory: mandatory, dueDaysBeforeLastWorkingDate: dueDays, isActive: true }); if (!response.data.success) throw new Error(response.data.message); setCategory(""); setTemplateKey(""); setTemplateDepartmentId(""); setOwnerPermission(""); setTemplateGate("General"); toast.success("Clearance template saved."); await load(); } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to save clearance template."); } finally { setSaving(false); } };
   const deleteTemplate = async () => { const templateId = templatePendingDelete?.employeeExitClearanceTemplateId; if (!templateId) return; setDeletingTemplate(true); try { const response = await deleteEmployeeExitClearanceTemplate(templateId); if (!response.data.success) throw new Error(response.data.message); toast.success("Clearance template deleted."); setTemplatePendingDelete(null); await load(); } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to delete clearance template."); } finally { setDeletingTemplate(false); } };
   if (!visible) return null;
-  const scopeSummary = scope === "company" ? "Company default" : scope === "department" ? selectedDepartments.length ? `${selectedDepartments.length} department${selectedDepartments.length === 1 ? "" : "s"} selected` : "Choose departments" : selectedRole ? `Access role: ${selectedRole.titles}` : "Choose an access role";
-  const canSavePolicy = !saving && !(scope === "department" ? !selectedDepartmentIds.length : scope === "role" && !policy.roleId);
-  const saveLabel = scope === "department" ? "Save department policy" : scope === "role" ? "Save role policy" : "Save company policy";
-  const enabledJourneyCount = workflowOptions.filter(option => Boolean(policy[option.key])).length;
-  const enabledCompletionGateCount = completionOptions.filter(option => Boolean(policy[option.key])).length;
   const orderedPolicies = [...policies].sort((left, right) => {
     const leftRank = policyDepartmentIds(left).length ? 1 : left.roleId ? 2 : 0;
     const rightRank = policyDepartmentIds(right).length ? 1 : right.roleId ? 2 : 0;
@@ -140,45 +357,609 @@ export const EmployeeExitPolicySettings = () => {
     const displayedDepartments = isEditing ? selectedDepartments : departments.filter(value => policyDepartmentIds(item).includes(value.departmentId || ""));
     const displayedRole = isEditing ? selectedRole : roles.find(value => value.rolesId === item.roleId) ?? null;
     const canSaveHere = isEditing && !saving && !(displayedScope === "department" ? !selectedDepartmentIds.length : displayedScope === "role" && !policy.roleId);
-    return <Stack spacing={2} sx={{ pt: 1.75, borderTop: "1px solid", borderColor: "divider" }}>
-      <TextField
-        select
-        fullWidth
-        size="small"
-        disabled={!isEditing || !isNew}
-        label="Exit outcome"
-        value={displayedPolicy.exitType || ""}
-        onChange={event => setPolicy(current => ({ ...current, exitType: (event.target.value || undefined) as EmployeeExitPolicy["exitType"] }))}
-        helperText="Generic applies to every exit. Select an outcome only when this scope needs a different workflow."
-      >
-        <MenuItem value="">Generic offboarding policy</MenuItem>
-        <MenuItem value="Resigned">Resignation</MenuItem>
-        <MenuItem value="Terminated">Termination</MenuItem>
-        <MenuItem value="Retired">Retirement</MenuItem>
-        <MenuItem value="ContractEnded">Contract end</MenuItem>
-        <MenuItem value="Deceased">Death</MenuItem>
-      </TextField>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(220px, .8fr) minmax(0, 1.2fr)" }, gap: 1.25, minWidth: 0 }}>
-        {isNew ? <TextField select fullWidth size="small" label="Policy scope" value={displayedScope} onChange={event => chooseScope(event.target.value as PolicyScope)}><MenuItem value="company">Everyone in the company</MenuItem><MenuItem value="department">Selected departments</MenuItem><MenuItem value="role">One access role</MenuItem></TextField> : <TextField fullWidth size="small" disabled label="Policy scope" value={policyScopeLabel(item)} helperText={isEditing ? "The saved policy scope cannot be changed. Add a policy for a different scope." : undefined} />}
-        {displayedScope === "department" && <Autocomplete multiple disableCloseOnSelect disabled={!isEditing} size="small" value={displayedDepartments} options={departments} getOptionLabel={departmentName} onChange={(_, values) => chooseDepartments(values)} renderOption={(props, option, { selected }) => <li {...props}><Checkbox size="small" checked={selected} sx={{ mr: .75 }} />{departmentName(option)}</li>} renderInput={params => <TextField {...params} label="Departments" placeholder="Select departments" helperText={isEditing ? "Select departments that share this exact offboarding journey. Different settings should remain in their own policy." : undefined} />} />}
-        {displayedScope === "role" && <Autocomplete disabled={!isEditing || !isNew} size="small" value={displayedRole} options={roles} getOptionLabel={value => value.titles} onChange={(_, value) => chooseScope("role", value?.rolesId)} renderInput={params => <TextField {...params} label="Access role" placeholder="Select a role" />} />}
-        {displayedScope === "company" && <TextField fullWidth size="small" disabled label="Applies to" value="All employees" />}
-      </Box>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" }, gap: 1.25 }}><TextField disabled={!isEditing} size="small" label="Minimum notice days" type="number" inputProps={{ min: 0 }} value={displayedPolicy.minimumNoticeDays} onChange={event => setPolicy(current => ({ ...current, minimumNoticeDays: Math.max(0, Number(event.target.value) || 0) }))} helperText="Use 0 when no standard notice period is required." InputProps={{ endAdornment: <InputAdornment position="end"><FieldHelp text="The shortest normal notice period. An earlier last working day requires an approved notice adjustment." /></InputAdornment> }} /><TextField select disabled={!isEditing} size="small" label="Notice-pay salary basis" value={displayedPolicy.noticePaySalaryBasis} onChange={event => setPolicy(current => ({ ...current, noticePaySalaryBasis: event.target.value as EmployeeExitPolicy["noticePaySalaryBasis"] }))} helperText="The payroll amount used for a buyout or recovery."><MenuItem value="GrossMonthly">Gross monthly pay</MenuItem><MenuItem value="BasicMonthly">Basic monthly pay</MenuItem></TextField><TextField disabled={!isEditing} size="small" label="Daily-rate divisor" type="number" inputProps={{ min: 1, max: 31 }} value={displayedPolicy.noticePayDailyRateDivisor} onChange={event => setPolicy(current => ({ ...current, noticePayDailyRateDivisor: Math.min(31, Math.max(1, Number(event.target.value) || 30)) }))} helperText="Daily rate = selected monthly pay ÷ this divisor." /></Box>
-      <Box><Typography variant="subtitle2" fontWeight={750} sx={{ mb: 1 }}>Recommended starting point</Typography><TextField select disabled={!isEditing} size="small" label="Preset" value={displayedPolicy.presetLevel || "Custom"} onChange={event => setPolicy(current => ({ ...current, presetLevel: event.target.value as NonNullable<EmployeeExitPolicy["presetLevel"]> }))} helperText="A preset is a starting point only. Every module below remains independently editable."><MenuItem value="Disabled">Disabled</MenuItem><MenuItem value="Basic">Basic</MenuItem><MenuItem value="Structured">Structured</MenuItem><MenuItem value="Operational">Operational</MenuItem><MenuItem value="Advanced">Advanced</MenuItem><MenuItem value="Enterprise">Enterprise</MenuItem><MenuItem value="Custom">Custom</MenuItem></TextField></Box>
-      <Box><Typography variant="subtitle2" fontWeight={750} sx={{ mb: 1 }}>Notice-period reminders</Typography><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" }, gap: 1 }}><ToggleTile option={{ key: "enableNoticePeriodReminders", title: "Enable reminders", description: "Run server-side reminders while an exit remains in notice period." }} checked={displayedPolicy.enableNoticePeriodReminders} disabled={!isEditing} onChange={() => toggle("enableNoticePeriodReminders")} /><TextField disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders} size="small" label="Repeat every days" type="number" inputProps={{ min: 1, max: 365 }} value={displayedPolicy.noticePeriodReminderEveryDays} onChange={event => setPolicy(current => ({ ...current, noticePeriodReminderEveryDays: Math.min(365, Math.max(1, Number(event.target.value) || 3)) }))} /><TextField disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders} size="small" label="Milestones before LWD" value={(displayedPolicy.noticePeriodReminderOffsets || []).join(", ")} onChange={event => setPolicy(current => ({ ...current, noticePeriodReminderOffsets: event.target.value.split(",").map(value => value.trim()).filter(Boolean) }))} helperText="Comma-separated days, for example 30, 15, 7, 3, 1, 0." /></Box><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" }, gap: 1, mt: 1 }}><ToggleTile option={{ key: "notifyNoticePeriodEmployee", title: "Notify employee", description: "Send the employee their own notice-period reminder." }} checked={displayedPolicy.notifyNoticePeriodEmployee} disabled={!isEditing} onChange={() => toggle("notifyNoticePeriodEmployee")} /><ToggleTile option={{ key: "notifyNoticePeriodReportingManager", title: "Notify manager", description: "Send the reporting manager the reminder." }} checked={displayedPolicy.notifyNoticePeriodReportingManager} disabled={!isEditing} onChange={() => toggle("notifyNoticePeriodReportingManager")} /><ToggleTile option={{ key: "notifyNoticePeriodHr", title: "Notify HR", description: "Send authorized offboarding case managers the reminder." }} checked={displayedPolicy.notifyNoticePeriodHr} disabled={!isEditing} onChange={() => toggle("notifyNoticePeriodHr")} /><ToggleTile option={{ key: "notifyNoticePeriodAdmins", title: "Notify admins", description: "Include administrators only when explicitly enabled." }} checked={displayedPolicy.notifyNoticePeriodAdmins} disabled={!isEditing} onChange={() => toggle("notifyNoticePeriodAdmins")} /><ToggleTile option={{ key: "noticePeriodReminderEmail", title: "Send email", description: "Queue email delivery when the recipient has a verified email." }} checked={displayedPolicy.noticePeriodReminderEmail} disabled={!isEditing} onChange={() => toggle("noticePeriodReminderEmail")} /></Box></Box>
-      <Box sx={{ display: "none" }} aria-hidden="true">
-      <Box><Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={1}><Box><Typography variant="subtitle2" fontWeight={750}>Modular workflow</Typography><Typography variant="caption" color="text.secondary">Enabled controls whether a module is used. Completion blocker is separate and only applies to enabled work.</Typography></Box><Chip size="small" label={`${(displayedPolicy.features || []).filter(x => x.enabled).length} active · ${(displayedPolicy.features || []).filter(x => x.enabled && x.blocksCompletion).length} blockers`} /></Stack><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" }, gap: 1, mt: 1.25 }}>{modularFeatures.map(feature => { const value = (displayedPolicy.features || []).find(x => x.key === feature.key) || { key: feature.key, enabled: false, blocksCompletion: false, required: false, allowWaiver: false, waiverReasonRequired: false }; const update = (changes: Partial<EmployeeExitFeatureConfiguration>) => setPolicy(current => ({ ...current, presetLevel: "Custom", features: [...(current.features || []).filter(x => x.key !== feature.key), { ...value, ...changes }] })); return <Box key={feature.key} sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto auto", alignItems: "center", gap: .5, px: 1, py: .75, border: "1px solid", borderColor: value.enabled ? "primary.main" : "divider", borderRadius: 1.5, opacity: isEditing ? 1 : .75 }}><Typography variant="body2" fontWeight={650}>{feature.title}</Typography><Tooltip title="Enable module"><span><Switch size="small" checked={value.enabled} disabled={!isEditing} onChange={event => update({ enabled: event.target.checked, blocksCompletion: event.target.checked ? value.blocksCompletion : false })} /></span></Tooltip><Tooltip title="Blocks completion"><span><Checkbox size="small" checked={value.enabled && value.blocksCompletion} disabled={!isEditing || !value.enabled} onChange={event => update({ blocksCompletion: event.target.checked })} /></span></Tooltip></Box>; })}</Box></Box>
-      <Box><Typography variant="subtitle2" fontWeight={750} sx={{ mb: 1 }}>Reviews and conversations</Typography><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 1, sm: 1.25 } }}>{workflowOptions.slice(0, 4).map(option => <ToggleTile key={option.key} option={option} checked={Boolean(displayedPolicy[option.key])} disabled={!isEditing} onChange={() => toggle(option.key)} />)}</Box></Box>
-      <Box><Typography variant="subtitle2" fontWeight={750} sx={{ mb: 1 }}>Employee follow-up</Typography><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 1, sm: 1.25 } }}>{workflowOptions.slice(4).map(option => <ToggleTile key={option.key} option={option} checked={Boolean(displayedPolicy[option.key])} disabled={!isEditing} onChange={() => toggle(option.key)} />)}</Box></Box>
-      <Box><Typography variant="subtitle2" fontWeight={750} sx={{ mb: 1 }}>Post-exit decisions</Typography><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 1, sm: 1.25 } }}><ToggleTile option={{ key: "allowRejoin", title: "Allow rejoin", description: "Allow this policy scope to consider a former employee for rejoin. Exit interview eligibility and deceased-employee rules still apply." }} checked={displayedPolicy.allowRejoin} disabled={!isEditing} onChange={() => toggle("allowRejoin")} /><ToggleTile option={{ key: "enableOffboarding", title: "Allow exit during active leave", description: "If disabled, an approved active leave must be resolved before permanent exit processing." }} checked={Boolean((displayedPolicy as EmployeeExitPolicy & { allowExitDuringActiveLeave?: boolean }).allowExitDuringActiveLeave)} disabled={!isEditing} onChange={() => setPolicy(current => ({ ...current, allowExitDuringActiveLeave: !Boolean((current as EmployeeExitPolicy & { allowExitDuringActiveLeave?: boolean }).allowExitDuringActiveLeave) }))} /></Box></Box>
-      <Box><Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1}><Box><Typography variant="subtitle2" fontWeight={750}>Completion gates</Typography><Typography variant="caption" color="text.secondary">Choose the checks that must finish before this exit can be completed.</Typography></Box><Chip size="small" label={completionOptions.filter(option => Boolean(displayedPolicy[option.key])).length ? `${completionOptions.filter(option => Boolean(displayedPolicy[option.key])).length} required` : "No required gates"} color={completionOptions.some(option => Boolean(displayedPolicy[option.key])) ? "warning" : "default"} variant="outlined" /></Stack><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 1, sm: 1.25 }, mt: 1.25 }}>{completionOptions.map(option => <CompletionTile key={option.key} option={option} checked={Boolean(displayedPolicy[option.key])} disabled={!isEditing || !displayedPolicy.enableOffboarding} onChange={() => toggle(option.key)} />)}</Box></Box>
-      </Box>
-      <Box><Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={1}><Box><Typography variant="subtitle2" fontWeight={750}>Policy modules</Typography><Typography variant="caption" color="text.secondary">Each capability is configured once. Completion blockers appear only on operational work the server can enforce.</Typography></Box><Chip size="small" label={`${featureOptions.filter(option => getFeature(displayedPolicy, option).enabled).length} active · ${featureOptions.filter(option => { const feature = getFeature(displayedPolicy, option); return feature.enabled && feature.blocksCompletion; }).length} blockers`} /></Stack></Box>
-      <Box><Typography variant="subtitle2" fontWeight={750} sx={{ mb: 1 }}>Status</Typography><ToggleTile option={{ key: "enableOffboarding", title: "Enable offboarding", description: "Employees in this scope can submit resignation and use the exit workflow." }} checked={displayedPolicy.enableOffboarding} disabled={!isEditing} onChange={() => toggle("enableOffboarding")} /></Box>
-      {featureSections.map(section => <Card component="section" key={section.title} variant="outlined" sx={{ p: { xs: 1.25, sm: 1.5 }, borderRadius: 2, bgcolor: "background.paper", boxShadow: "none", minWidth: 0 }}><Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={.5}><Box minWidth={0}><Typography variant="subtitle2" fontWeight={750}>{section.title}</Typography><Typography variant="caption" color="text.secondary">{section.description}</Typography></Box><Chip size="small" variant="outlined" label={`${section.options.filter(option => getFeature(displayedPolicy, option).enabled).length}/${section.options.length} enabled`} sx={{ alignSelf: { xs: "flex-start", sm: "center" } }} /></Stack><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "repeat(2, minmax(0, 1fr))" }, gap: 1, mt: 1.25 }}>{section.options.map(option => { const value = getFeature(displayedPolicy, option); return <Box key={option.key} sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr) auto", sm: option.completionCapable ? "minmax(0, 1fr) auto auto" : "minmax(0, 1fr) auto" }, alignItems: "center", columnGap: .75, rowGap: .5, px: 1.25, py: 1, minWidth: 0, border: "1px solid", borderColor: value.enabled ? "primary.main" : "divider", borderRadius: 1.5, bgcolor: value.enabled ? "action.selected" : "background.default", opacity: isEditing ? 1 : .78 }}><Box minWidth={0}><Typography variant="body2" fontWeight={700}>{option.title}</Typography><Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: .25 }}>{option.description}</Typography></Box><Tooltip title={`Enable ${option.title}`}><span><Switch size="small" checked={value.enabled} disabled={!isEditing || !displayedPolicy.enableOffboarding} inputProps={{ "aria-label": `Enable ${option.title}` }} onChange={event => updateFeature(option, { enabled: event.target.checked })} /></span></Tooltip>{option.completionCapable && <FormControlLabel sx={{ gridColumn: { xs: "1 / -1", sm: "auto" }, m: 0, ml: { sm: -.5 }, whiteSpace: "nowrap", "& .MuiFormControlLabel-label": { fontSize: 12, color: "text.secondary" } }} label="Blocks completion" control={<Checkbox size="small" inputProps={{ "aria-label": `${option.title} must finish before exit completion` }} checked={value.enabled && value.blocksCompletion} disabled={!isEditing || !displayedPolicy.enableOffboarding || !value.enabled} onChange={event => updateFeature(option, { blocksCompletion: event.target.checked })} />} />}</Box>; })}</Box>{section.title === "Employee requirements" && <Box sx={{ mt: 1.25 }}><ToggleTile option={acknowledgementOption} checked={displayedPolicy.requireEmployeeAcknowledgement} disabled={!isEditing || !displayedPolicy.enableOffboarding} onChange={() => toggle("requireEmployeeAcknowledgement")} /></Box>}</Card>)}
-      {isEditing ? <Stack direction={{ xs: "column-reverse", sm: "row" }} justifyContent="flex-end" gap={1}><AppButton variant="outlined" onClick={() => { setEditingPolicyId(false); if (!isNew) setPolicy({ ...item }); }}>Cancel</AppButton><AppButton disabled={!canSaveHere} onClick={() => void savePolicy()}>{saving ? "Saving…" : isNew ? "Create policy" : "Save changes"}</AppButton></Stack> : <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1}><Typography variant="caption" color="text.secondary">Fields are read-only until you choose Edit policy.</Typography><AppButton size="small" variant="outlined" onClick={() => editPolicy(item)} sx={{ alignSelf: { xs: "stretch", sm: "auto" } }}>Edit policy</AppButton></Stack>}
-    </Stack>;
+
+    const activeFeatureCount =
+      featureOptions.filter((option) => getFeature(displayedPolicy, option).enabled).length +
+      (displayedPolicy.requireEmployeeAcknowledgement ? 1 : 0);
+    const blockerFeatureCount = featureOptions.filter((option) => {
+      const feature = getFeature(displayedPolicy, option);
+      return feature.enabled && feature.blocksCompletion;
+    }).length;
+
+    return (
+      <Stack spacing={2} sx={{ pt: 1.75, borderTop: "1px solid", borderColor: "divider" }}>
+        {/* Basic Policy Configuration */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, minmax(0, 1fr))",
+              md: "repeat(3, minmax(0, 1fr))",
+            },
+            gap: 1.5,
+            minWidth: 0,
+            "& .MuiFormHelperText-root": {
+              minHeight: { sm: 20 },
+              mx: 0.5,
+              mt: 0.5,
+              lineHeight: 1.25,
+              fontSize: "11px",
+            },
+          }}
+        >
+          {/* Field 1: Exit outcome */}
+          <TextField
+            select
+            fullWidth
+            size="small"
+            disabled={!isEditing || !isNew}
+            label="Exit outcome"
+            value={displayedPolicy.exitType || ""}
+            onChange={event => setPolicy(current => ({ ...current, exitType: (event.target.value || undefined) as EmployeeExitPolicy["exitType"] }))}
+            helperText="Applies generically or for a specific exit outcome"
+          >
+            <MenuItem value="">Generic offboarding policy</MenuItem>
+            <MenuItem value="Resigned">Resignation</MenuItem>
+            <MenuItem value="Terminated">Termination</MenuItem>
+            <MenuItem value="Retired">Retirement</MenuItem>
+            <MenuItem value="ContractEnded">Contract end</MenuItem>
+            <MenuItem value="Deceased">Death</MenuItem>
+          </TextField>
+
+          {/* Field 2: Policy scope */}
+          {isNew ? (
+            <TextField
+              select
+              fullWidth
+              size="small"
+              label="Policy scope"
+              value={displayedScope}
+              onChange={event => chooseScope(event.target.value as PolicyScope)}
+              helperText="Scope this policy applies to"
+            >
+              <MenuItem value="company">Everyone in the company</MenuItem>
+              <MenuItem value="department">Selected departments</MenuItem>
+              <MenuItem value="role">One access role</MenuItem>
+            </TextField>
+          ) : (
+            <TextField
+              fullWidth
+              size="small"
+              disabled
+              label="Policy scope"
+              value={policyScopeLabel(item)}
+              helperText={isEditing ? "Saved policy scope cannot be changed" : "Configured policy scope"}
+            />
+          )}
+
+          {/* Field 3: Workflow starting preset */}
+          <TextField
+            select
+            fullWidth
+            disabled={!isEditing}
+            size="small"
+            label="Workflow starting preset"
+            value={displayedPolicy.presetLevel || "Custom"}
+            onChange={event => setPolicy(current => ({ ...current, presetLevel: event.target.value as NonNullable<EmployeeExitPolicy["presetLevel"]> }))}
+            helperText="Preconfigures default modules below"
+          >
+            <MenuItem value="Disabled">Disabled</MenuItem>
+            <MenuItem value="Basic">Basic</MenuItem>
+            <MenuItem value="Structured">Structured</MenuItem>
+            <MenuItem value="Operational">Operational</MenuItem>
+            <MenuItem value="Advanced">Advanced</MenuItem>
+            <MenuItem value="Enterprise">Enterprise</MenuItem>
+            <MenuItem value="Custom">Custom</MenuItem>
+          </TextField>
+
+          {/* If scope needs department / role picker, it spans the entire grid evenly below */}
+          {displayedScope === "department" && (
+            <Box sx={{ gridColumn: "1 / -1" }}>
+              <Autocomplete
+                multiple
+                disableCloseOnSelect
+                disabled={!isEditing}
+                size="small"
+                value={displayedDepartments}
+                options={departments}
+                getOptionLabel={departmentName}
+                onChange={(_, values) => chooseDepartments(values)}
+                renderOption={(props, option, { selected }) => (
+                  <li {...props}>
+                    <Checkbox size="small" checked={selected} sx={{ mr: 0.75 }} />
+                    {departmentName(option)}
+                  </li>
+                )}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label="Departments"
+                    placeholder="Select departments"
+                    helperText={isEditing ? "Departments sharing this exact offboarding journey" : undefined}
+                  />
+                )}
+              />
+            </Box>
+          )}
+          {displayedScope === "role" && (
+            <Box sx={{ gridColumn: "1 / -1" }}>
+              <Autocomplete
+                disabled={!isEditing || !isNew}
+                size="small"
+                value={displayedRole}
+                options={roles}
+                getOptionLabel={value => value.titles}
+                onChange={(_, value) => chooseScope("role", value?.rolesId)}
+                renderInput={params => <TextField {...params} label="Access role" placeholder="Select a role" />}
+              />
+            </Box>
+          )}
+          {displayedScope === "company" && isNew && (
+            <Box sx={{ gridColumn: "1 / -1", minHeight: 32, px: 1.25, py: 0.5, display: "flex", alignItems: "center", border: "1px dashed", borderColor: "divider", borderRadius: 1.5, bgcolor: "action.hover" }}>
+              <Typography variant="caption" color="text.secondary">Applies as company default to all employees without a specific exception.</Typography>
+            </Box>
+          )}
+
+          {/* Field 4: Minimum notice days */}
+          <TextField
+            fullWidth
+            disabled={!isEditing}
+            size="small"
+            label="Minimum notice days"
+            type="number"
+            inputProps={{ min: 0 }}
+            value={displayedPolicy.minimumNoticeDays}
+            onChange={event => setPolicy(current => ({ ...current, minimumNoticeDays: Math.max(0, Number(event.target.value) || 0) }))}
+            helperText="Use 0 when no notice period is required"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <FieldHelp text="Shortest normal notice period. An earlier LWD requires approved adjustment." />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Field 5: Notice-pay salary basis */}
+          <TextField
+            select
+            fullWidth
+            disabled={!isEditing}
+            size="small"
+            label="Notice-pay salary basis"
+            value={displayedPolicy.noticePaySalaryBasis}
+            onChange={event => setPolicy(current => ({ ...current, noticePaySalaryBasis: event.target.value as EmployeeExitPolicy["noticePaySalaryBasis"] }))}
+            helperText="Payroll amount used for buyout or recovery"
+          >
+            <MenuItem value="GrossMonthly">Gross monthly pay</MenuItem>
+            <MenuItem value="BasicMonthly">Basic monthly pay</MenuItem>
+          </TextField>
+
+          {/* Field 6: Daily-rate divisor */}
+          <TextField
+            fullWidth
+            disabled={!isEditing}
+            size="small"
+            label="Daily-rate divisor"
+            type="number"
+            inputProps={{ min: 1, max: 31 }}
+            value={displayedPolicy.noticePayDailyRateDivisor}
+            onChange={event => setPolicy(current => ({ ...current, noticePayDailyRateDivisor: Math.min(31, Math.max(1, Number(event.target.value) || 30)) }))}
+            helperText="Monthly pay ÷ divisor = daily rate"
+          />
+        </Box>
+
+        {/* Notice-period Reminders */}
+        <Card
+          variant="outlined"
+          sx={{
+            p: { xs: 1.25, sm: 1.75 },
+            borderRadius: 2,
+            bgcolor: "background.paper",
+            borderColor: "divider",
+            minWidth: 0,
+          }}
+        >
+          {/* Header with Title + Chip + Master Toggle */}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems={{ sm: "center" }}
+            gap={1}
+            sx={{ mb: 1.5 }}
+          >
+            <Box minWidth={0}>
+              <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+                <Typography variant="subtitle2" sx={{ fontWeight: 750, fontSize: "13px" }}>
+                  Notice-period reminders
+                </Typography>
+                <Chip
+                  size="small"
+                  variant={displayedPolicy.enableNoticePeriodReminders ? "filled" : "outlined"}
+                  color={displayedPolicy.enableNoticePeriodReminders ? "primary" : "default"}
+                  label={displayedPolicy.enableNoticePeriodReminders ? "Active" : "Paused"}
+                  sx={{ height: 20, fontSize: "10.5px", fontWeight: 700 }}
+                />
+              </Stack>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "11.5px", display: "block" }}>
+                Automated server-side notifications sent during active notice period.
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                px: 1.25,
+                py: 0.5,
+                borderRadius: 1.5,
+                bgcolor: displayedPolicy.enableNoticePeriodReminders
+                  ? "color-mix(in srgb, var(--mui-palette-primary-main) 6%, var(--mui-palette-background-paper))"
+                  : "action.hover",
+                border: "1px solid",
+                borderColor: displayedPolicy.enableNoticePeriodReminders
+                  ? "color-mix(in srgb, var(--mui-palette-primary-main) 35%, transparent)"
+                  : "divider",
+                alignSelf: { xs: "stretch", sm: "auto" },
+                justifyContent: { xs: "space-between", sm: "flex-start" },
+              }}
+            >
+              <Typography variant="body2" sx={{ fontWeight: 650, fontSize: "12px" }}>
+                Enable reminders
+              </Typography>
+              <Switch
+                size="small"
+                checked={displayedPolicy.enableNoticePeriodReminders}
+                disabled={!isEditing}
+                onChange={() => toggle("enableNoticePeriodReminders")}
+                color="primary"
+              />
+            </Box>
+          </Stack>
+
+          {/* Body content */}
+          <Box
+            sx={{
+              opacity: displayedPolicy.enableNoticePeriodReminders ? 1 : 0.6,
+              pointerEvents: displayedPolicy.enableNoticePeriodReminders ? "auto" : "none",
+              transition: "opacity 0.2s ease",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1.5,
+            }}
+          >
+            {/* Cadence & Milestones: Exactly 2 equal columns on sm+ */}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" },
+                gap: 1.5,
+                "& .MuiFormHelperText-root": {
+                  minHeight: 20,
+                  mx: 0.5,
+                  mt: 0.5,
+                  lineHeight: 1.25,
+                  fontSize: "11px",
+                },
+              }}
+            >
+              <TextField
+                fullWidth
+                size="small"
+                disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders}
+                label="Repeat cadence"
+                type="number"
+                inputProps={{ min: 1, max: 365 }}
+                value={displayedPolicy.noticePeriodReminderEveryDays}
+                onChange={event =>
+                  setPolicy(current => ({
+                    ...current,
+                    noticePeriodReminderEveryDays: Math.min(365, Math.max(1, Number(event.target.value) || 3)),
+                  }))
+                }
+                helperText="Send recurring reminders every N days during notice"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">days</InputAdornment>,
+                }}
+              />
+              <TextField
+                fullWidth
+                size="small"
+                disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders}
+                label="Milestones before last working day"
+                value={(displayedPolicy.noticePeriodReminderOffsets || []).join(", ")}
+                onChange={event =>
+                  setPolicy(current => ({
+                    ...current,
+                    noticePeriodReminderOffsets: event.target.value.split(",").map(value => value.trim()).filter(Boolean),
+                  }))
+                }
+                helperText="Specific alert days before LWD (e.g. 30, 15, 7, 3, 1, 0)"
+              />
+            </Box>
+
+            {/* Notification Recipients: 4 equal columns on md+, 2 on sm */}
+            <Box>
+              <Typography variant="caption" sx={{ fontWeight: 700, color: "text.secondary", textTransform: "uppercase", letterSpacing: 0.5, fontSize: "10.5px", mb: 0.75, display: "block" }}>
+                Notify Recipients
+              </Typography>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" },
+                  gap: 1,
+                }}
+              >
+                <ToggleTile
+                  option={{ key: "notifyNoticePeriodEmployee", title: "Employee", description: "Send the employee notice-period reminders." }}
+                  checked={displayedPolicy.notifyNoticePeriodEmployee}
+                  disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders}
+                  onChange={() => toggle("notifyNoticePeriodEmployee")}
+                />
+                <ToggleTile
+                  option={{ key: "notifyNoticePeriodReportingManager", title: "Reporting manager", description: "Send the reporting manager reminder alerts." }}
+                  checked={displayedPolicy.notifyNoticePeriodReportingManager}
+                  disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders}
+                  onChange={() => toggle("notifyNoticePeriodReportingManager")}
+                />
+                <ToggleTile
+                  option={{ key: "notifyNoticePeriodHr", title: "HR / Case manager", description: "Send authorized offboarding managers the reminder." }}
+                  checked={displayedPolicy.notifyNoticePeriodHr}
+                  disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders}
+                  onChange={() => toggle("notifyNoticePeriodHr")}
+                />
+                <ToggleTile
+                  option={{ key: "notifyNoticePeriodAdmins", title: "System admins", description: "Include administrators when explicitly required." }}
+                  checked={displayedPolicy.notifyNoticePeriodAdmins}
+                  disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders}
+                  onChange={() => toggle("notifyNoticePeriodAdmins")}
+                />
+              </Box>
+            </Box>
+
+            {/* Delivery Channel: Full width clean card strip */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 1,
+                px: 1.5,
+                py: 0.85,
+                borderRadius: 1.5,
+                bgcolor: displayedPolicy.noticePeriodReminderEmail
+                  ? "color-mix(in srgb, var(--mui-palette-primary-main) 4%, var(--mui-palette-background-paper))"
+                  : "action.hover",
+                border: "1px dashed",
+                borderColor: displayedPolicy.noticePeriodReminderEmail
+                  ? "color-mix(in srgb, var(--mui-palette-primary-main) 30%, transparent)"
+                  : "divider",
+              }}
+            >
+              <Box minWidth={0}>
+                <Typography variant="body2" sx={{ fontWeight: 650, fontSize: "12.5px" }}>
+                  Email notification delivery
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: "11px", display: "block" }}>
+                  Deliver email notifications to verified email addresses of selected recipients.
+                </Typography>
+              </Box>
+              <Switch
+                size="small"
+                checked={displayedPolicy.noticePeriodReminderEmail}
+                disabled={!isEditing || !displayedPolicy.enableNoticePeriodReminders}
+                onChange={() => toggle("noticePeriodReminderEmail")}
+                color="primary"
+              />
+            </Box>
+          </Box>
+        </Card>
+
+        {/* Master Control Bar for Policy Modules */}
+        <Box
+          sx={{
+            p: { xs: 1.5, sm: 2 },
+            borderRadius: 2.5,
+            border: "1px solid",
+            borderColor: displayedPolicy.enableOffboarding
+              ? "color-mix(in srgb, var(--mui-palette-primary-main) 30%, transparent)"
+              : "divider",
+            bgcolor: displayedPolicy.enableOffboarding
+              ? "color-mix(in srgb, var(--mui-palette-primary-main) 3%, var(--mui-palette-background-paper))"
+              : "action.hover",
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "flex-start", sm: "center" },
+            justifyContent: "space-between",
+            gap: 1.5,
+          }}
+        >
+          <Box minWidth={0}>
+            <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap" sx={{ mb: 0.5 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, fontSize: { xs: "14px", sm: "15px" } }}>
+                Policy modules
+              </Typography>
+              <Chip
+                size="small"
+                color={displayedPolicy.enableOffboarding ? "primary" : "default"}
+                variant={displayedPolicy.enableOffboarding ? "filled" : "outlined"}
+                label={displayedPolicy.enableOffboarding ? "Active" : "Disabled"}
+                sx={{ height: 22, fontSize: "11px", fontWeight: 700 }}
+              />
+              <Chip
+                size="small"
+                variant="outlined"
+                label={`${activeFeatureCount} active`}
+                sx={{ height: 22, fontSize: "11px", fontWeight: 600 }}
+              />
+              {blockerFeatureCount > 0 && (
+                <Chip
+                  size="small"
+                  color="warning"
+                  variant="outlined"
+                  label={`${blockerFeatureCount} completion blockers`}
+                  sx={{ height: 22, fontSize: "11px", fontWeight: 600 }}
+                />
+              )}
+            </Stack>
+            <Typography variant="caption" sx={{ color: "text.secondary", display: "block", fontSize: "12px" }}>
+              Each capability is configured once. Completion blockers appear only on operational work the server can enforce.
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.25,
+              px: 1.5,
+              py: 0.75,
+              borderRadius: 2,
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
+              alignSelf: { xs: "stretch", sm: "auto" },
+              justifyContent: { xs: "space-between", sm: "flex-start" },
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04)",
+            }}
+          >
+            <Box>
+              <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "13px" }}>
+                Enable offboarding
+              </Typography>
+              <Typography variant="caption" sx={{ color: "text.secondary", display: "block", fontSize: "11px" }}>
+                {displayedPolicy.enableOffboarding ? "Workflow is active" : "Workflow is paused"}
+              </Typography>
+            </Box>
+            <Switch
+              size="small"
+              checked={displayedPolicy.enableOffboarding}
+              disabled={!isEditing}
+              onChange={() => toggle("enableOffboarding")}
+              color="primary"
+            />
+          </Box>
+        </Box>
+
+        {/* Feature Sections */}
+        <Stack spacing={1.5}>
+          {featureSections.map(section => {
+            const isEmpReq = section.title === "Employee requirements";
+            const sectionEnabledCount =
+              section.options.filter(option => getFeature(displayedPolicy, option).enabled).length +
+              (isEmpReq && displayedPolicy.requireEmployeeAcknowledgement ? 1 : 0);
+            const sectionTotalCount = section.options.length + (isEmpReq ? 1 : 0);
+
+            const getGridCols = () => {
+              if (section.title === "Approvals & conversations" || section.title === "Notice") {
+                return { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", md: "repeat(3, minmax(0, 1fr))" };
+              }
+              if (section.title === "Post-exit") {
+                return { xs: "1fr" };
+              }
+              return { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" };
+            };
+
+            return (
+              <Card
+                component="section"
+                key={section.title}
+                variant="outlined"
+                sx={{
+                  p: { xs: 1.25, sm: 1.5 },
+                  borderRadius: 2,
+                  bgcolor: "background.paper",
+                  boxShadow: "none",
+                  borderColor: "divider",
+                  minWidth: 0,
+                  opacity: displayedPolicy.enableOffboarding ? 1 : 0.65,
+                  transition: "opacity 0.2s ease",
+                }}
+              >
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  justifyContent="space-between"
+                  alignItems={{ sm: "center" }}
+                  gap={0.5}
+                  sx={{ mb: 1.25 }}
+                >
+                  <Box minWidth={0}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 750, fontSize: "13px" }}>
+                      {section.title}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "11.5px", display: "block" }}>
+                      {section.description}
+                    </Typography>
+                  </Box>
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    color={sectionEnabledCount > 0 ? "primary" : "default"}
+                    label={`${sectionEnabledCount}/${sectionTotalCount} enabled`}
+                    sx={{
+                      height: 22,
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      alignSelf: { xs: "flex-start", sm: "center" },
+                    }}
+                  />
+                </Stack>
+
+                <Box sx={{ display: "grid", gridTemplateColumns: getGridCols(), gap: 1 }}>
+                  {section.options.map(option => {
+                    const value = getFeature(displayedPolicy, option);
+                    const isLastOperational = section.title === "Operational work" && option.key === "FinalSettlement";
+                    return (
+                      <Box key={option.key} sx={{ gridColumn: isLastOperational ? { sm: "1 / -1" } : undefined, height: "100%" }}>
+                        <FeatureTile
+                          title={option.title}
+                          description={option.description}
+                          enabled={value.enabled}
+                          disabled={!isEditing || !displayedPolicy.enableOffboarding}
+                          onToggle={() => updateFeature(option, { enabled: !value.enabled })}
+                          completionCapable={option.completionCapable}
+                          blocksCompletion={value.blocksCompletion}
+                          onToggleBlocker={blocks => updateFeature(option, { blocksCompletion: blocks })}
+                          isEditing={isEditing}
+                        />
+                      </Box>
+                    );
+                  })}
+                  {isEmpReq && (
+                    <Box sx={{ height: "100%" }}>
+                      <FeatureTile
+                        key={acknowledgementOption.key}
+                        title={acknowledgementOption.title}
+                        description={acknowledgementOption.description}
+                        enabled={displayedPolicy.requireEmployeeAcknowledgement}
+                        disabled={!isEditing || !displayedPolicy.enableOffboarding}
+                        onToggle={() => toggle("requireEmployeeAcknowledgement")}
+                        isEditing={isEditing}
+                      />
+                    </Box>
+                  )}
+                </Box>
+              </Card>
+            );
+          })}
+        </Stack>
+
+        {/* Action Buttons */}
+        {isEditing ? (
+          <Stack direction={{ xs: "column-reverse", sm: "row" }} justifyContent="flex-end" gap={1} sx={{ pt: 1 }}>
+            <AppButton variant="outlined" onClick={() => { setEditingPolicyId(false); if (!isNew) setPolicy({ ...item }); }}>Cancel</AppButton>
+            <AppButton disabled={!canSaveHere} onClick={() => void savePolicy()}>{saving ? "Saving…" : isNew ? "Create policy" : "Save changes"}</AppButton>
+          </Stack>
+        ) : (
+          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1} sx={{ pt: 1 }}>
+            <Typography variant="caption" color="text.secondary">Fields are read-only until you choose Edit policy.</Typography>
+            <AppButton size="small" variant="outlined" onClick={() => editPolicy(item)} sx={{ alignSelf: { xs: "stretch", sm: "auto" } }}>Edit policy</AppButton>
+          </Stack>
+        )}
+      </Stack>
+    );
   };
   // This route sits inside the shared Company Details tab layout. Keep it fluid so it
   // uses the same available width as Company Details, Modules and Office Schedule.
@@ -207,43 +988,28 @@ export const EmployeeExitPolicySettings = () => {
         {editingPolicyId === "new" && <Accordion disableGutters elevation={0} expanded={expandedPolicyId === "new"} sx={{ border: "1px solid", borderColor: "primary.main", borderRadius: "12px !important", overflow: "hidden", "&:before": { display: "none" } }}><AccordionSummary sx={{ px: { xs: 1.25, sm: 1.75 }, minHeight: 64, "& .MuiAccordionSummary-content": { my: 1.25 } }}><Box><Typography fontWeight={750}>New offboarding policy</Typography><Typography variant="caption" color="text.secondary">Choose a department or access role, then configure its exit journey.</Typography></Box></AccordionSummary><AccordionDetails sx={{ px: { xs: 1.25, sm: 1.75 }, pt: 0, pb: 1.5 }}>{renderPolicyFields(defaultPolicy, true, true)}</AccordionDetails></Accordion>}
       </Stack>
     </Card>
-    {false && <><Card variant="outlined" sx={{ p: { xs: 1.5, sm: 2, md: 2.5 }, borderRadius: 3, boxShadow: "0 8px 26px rgba(26, 83, 92, .06)", minWidth: 0 }}>
-      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1.5}>
-        <Box><Typography variant="h6" fontWeight={750}>Configure policy</Typography><Typography variant="body2" color="text.secondary">Choose who this policy applies to, then set its notice period and exit journey below.</Typography></Box>
-        <Chip label={scopeSummary} color="primary" variant="outlined" sx={{ maxWidth: "100%", alignSelf: { xs: "flex-start", sm: "auto" } }} />
-      </Stack>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(220px, .8fr) minmax(0, 1.2fr)" }, gap: 1.5, mt: 2, minWidth: 0, alignItems: "start" }}>
-        <TextField select fullWidth size="small" label="Policy scope" value={scope} onChange={event => chooseScope(event.target.value as PolicyScope)}>
-          <MenuItem value="company">Everyone in the company</MenuItem><MenuItem value="department">Selected departments</MenuItem><MenuItem value="role">One access role</MenuItem>
-        </TextField>
-        {scope === "department" && <Autocomplete multiple disableCloseOnSelect size="small" value={selectedDepartments} options={departments} getOptionLabel={departmentName} onChange={(_, values) => chooseDepartments(values)} renderOption={(props, option, { selected }) => <li {...props}><Checkbox size="small" checked={selected} sx={{ mr: .75 }} />{departmentName(option)}</li>} renderInput={params => <TextField {...params} label="Departments" placeholder="Select departments" />} />}
-        {scope === "role" && <Autocomplete size="small" value={selectedRole} options={roles} getOptionLabel={item => item.titles} onChange={(_, value) => chooseScope("role", value?.rolesId)} renderInput={params => <TextField {...params} label="Access role" placeholder="Select a role" />} />}
-        {scope === "company" && <Box sx={{ minHeight: 40, px: 1.25, display: "flex", alignItems: "center", border: "1px dashed", borderColor: "divider", borderRadius: 1, bgcolor: "action.hover" }}><Typography variant="body2" fontWeight={700}>All employees</Typography></Box>}
-      </Box>
-      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1.25} sx={{ mt: 2, pt: 1.5, borderTop: "1px solid", borderColor: "divider" }}>
-        <Typography variant="caption" color="text.secondary">Department rules take priority over role and company rules. Changes affect new resignation cases only.</Typography>
-        <AppButton disabled={!canSavePolicy} onClick={() => void savePolicy()} sx={{ minWidth: { sm: 168 } }}>{saving ? "Saving…" : saveLabel}</AppButton>
-      </Stack>
-    </Card>
-    <Card variant="outlined" sx={{ p: { xs: 1.5, sm: 2, md: 2.5 }, borderRadius: 3, boxShadow: "0 8px 26px rgba(26, 83, 92, .06)", minWidth: 0 }}>
-      <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" alignItems={{ md: "center" }} gap={1.25}>
-        <Box><Typography variant="h6" fontWeight={750}>Set the exit journey</Typography><Typography variant="body2" color="text.secondary">Turn on only the reviews, evidence and employee confirmations your company needs.</Typography></Box>
-        <Stack direction="row" flexWrap="wrap" gap={.75}><Chip size="small" label={`${policy.minimumNoticeDays} day notice`} color="primary" variant="outlined" /><Chip size="small" label={`${enabledJourneyCount} journey settings on`} variant="outlined" /></Stack>
-      </Stack>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" }, gap: 1.25, mt: 2 }}><TextField size="small" label="Minimum notice days" type="number" inputProps={{ min: 0 }} value={policy.minimumNoticeDays} onChange={event => setPolicy(current => ({ ...current, minimumNoticeDays: Math.max(0, Number(event.target.value) || 0) }))} helperText="Use 0 when no standard notice period is required." InputProps={{ endAdornment: <InputAdornment position="end"><FieldHelp text="The shortest normal notice period. An earlier last working day requires an approved notice adjustment." /></InputAdornment> }} /><TextField select size="small" label="Notice-pay salary basis" value={policy.noticePaySalaryBasis} onChange={event => setPolicy(current => ({ ...current, noticePaySalaryBasis: event.target.value as EmployeeExitPolicy["noticePaySalaryBasis"] }))} helperText="Payroll amount used for buyout or recovery."><MenuItem value="GrossMonthly">Gross monthly pay</MenuItem><MenuItem value="BasicMonthly">Basic monthly pay</MenuItem></TextField><TextField size="small" label="Daily-rate divisor" type="number" inputProps={{ min: 1, max: 31 }} value={policy.noticePayDailyRateDivisor} onChange={event => setPolicy(current => ({ ...current, noticePayDailyRateDivisor: Math.min(31, Math.max(1, Number(event.target.value) || 30)) }))} helperText="Monthly pay divided by this number gives the daily rate." /></Box>
-      <Typography variant="subtitle2" fontWeight={750} sx={{ mt: 2.25, mb: 1 }}>Reviews and conversations</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" }, gap: { xs: 1, sm: 1.25 }, minWidth: 0 }}>{workflowOptions.slice(0, 4).map(option => <ToggleTile key={option.key} option={option} checked={Boolean(policy[option.key])} onChange={() => toggle(option.key)} />)}</Box>
-      <Typography variant="subtitle2" fontWeight={750} sx={{ mt: 2.25, mb: 1 }}>Employee follow-up</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" }, gap: { xs: 1, sm: 1.25 }, minWidth: 0 }}>{workflowOptions.slice(4).map(option => <ToggleTile key={option.key} option={option} checked={Boolean(policy[option.key])} onChange={() => toggle(option.key)} />)}</Box>
-    </Card>
-    <Card variant="outlined" sx={{ p: { xs: 1.5, sm: 2, md: 2.5 }, borderRadius: 3, opacity: policy.enableOffboarding ? 1 : .65, boxShadow: "0 8px 26px rgba(26, 83, 92, .06)", minWidth: 0 }}><Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1}><Box><Typography variant="h6" fontWeight={750}>What must be completed before exit?</Typography><Typography variant="body2" color="text.secondary">Select only the clearances that are mandatory for this policy.</Typography></Box><Chip size="small" label={enabledCompletionGateCount ? `${enabledCompletionGateCount} required` : "No mandatory gates"} color={enabledCompletionGateCount ? "warning" : "default"} variant="outlined" /></Stack><Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 1, sm: 1.25 }, mt: 2, minWidth: 0 }}>{completionOptions.map(option => <CompletionTile key={option.key} option={option} checked={Boolean(policy[option.key])} disabled={!policy.enableOffboarding} onChange={() => toggle(option.key)} />)}</Box></Card></>}
+
     <Card variant="outlined" sx={{ p: { xs: 1.5, sm: 2, md: 2.5 }, borderRadius: 3, minWidth: 0 }}>
       <Typography variant="h6" fontWeight={750}>Clearance templates</Typography>
       <Typography variant="body2" color="text.secondary">Global templates apply to everyone. A department template replaces only the matching template key for that department.</Typography>
       {templates.length > 0 && <Stack spacing={1} sx={{ mt: 2 }}>{templates.map(template => <Box key={template.employeeExitClearanceTemplateId || `${template.scope}-${template.templateKey || template.category}`} sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto", gap: 1, alignItems: "center", p: { xs: 1, sm: 1.25 }, borderRadius: 2, bgcolor: "action.hover", minWidth: 0 }}><Stack direction="row" flexWrap="wrap" gap={.75} alignItems="center" sx={{ minWidth: 0 }}><Typography fontWeight={650} sx={{ mr: { sm: .25 }, overflowWrap: "anywhere" }}>{template.category}</Typography><Chip size="small" color="primary" variant="outlined" label={template.templateKey || template.category} /><Chip size="small" label={template.scope === "Department" ? "Department override" : "Global"} /><Chip size="small" color="primary" variant="outlined" label={template.requiredPolicyGate || "General"} /><Chip size="small" label={template.ownerRole || "HR / manager fallback"} /><Chip size="small" color={template.isMandatory ? "warning" : "default"} label={template.isMandatory ? "Mandatory" : "Optional"} /><Typography variant="caption" color="text.secondary" sx={{ whiteSpace: { xs: "normal", sm: "nowrap" } }}>Due {template.dueDaysBeforeLastWorkingDate} day(s) before LWD</Typography></Stack><Tooltip title="Delete clearance template" arrow><span><IconButton aria-label={`Delete ${template.category} clearance template`} color="error" size="small" disabled={!template.employeeExitClearanceTemplateId} onClick={() => setTemplatePendingDelete(template)} sx={{ width: 34, height: 34, border: "1px solid", borderColor: "divider", borderRadius: 1.75, "&:hover": { bgcolor: "error.lighter", borderColor: "error.main" } }}><DeleteOutlineRounded fontSize="small" /></IconButton></span></Tooltip></Box>)}</Stack>}
       <Divider sx={{ my: 2.5 }} />
       <Typography fontWeight={700}>Add clearance template</Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" }, gap: 1.25, mt: 1.5, alignItems: "start", minWidth: 0 }}>
+      <Box sx={{
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" },
+        gap: 1.25,
+        mt: 1.5,
+        alignItems: "start",
+        minWidth: 0,
+        "& .MuiFormHelperText-root": {
+          minHeight: 18,
+          mx: 0.5,
+          mt: 0.5,
+          lineHeight: 1.25,
+          fontSize: "11px",
+        },
+      }}>
         <TextField size="small" label="Clearance category" placeholder="For example: Laptop return" value={category} onChange={event => setCategory(event.target.value)} />
         <TextField size="small" label="Template key" placeholder="For example: LAPTOP_RETURN" value={templateKey} onChange={event => setTemplateKey(event.target.value)} helperText="Use the same key to override this task for a department." />
         <TextField select size="small" label="Applies to" value={templateScope} onChange={event => { const value = event.target.value as "Global" | "Department"; setTemplateScope(value); if (value === "Global") setTemplateDepartmentId(""); }}><MenuItem value="Global">Everyone in the company</MenuItem><MenuItem value="Department">One department</MenuItem></TextField>

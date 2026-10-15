@@ -534,10 +534,10 @@ export const LeaveApplication = (props: Props) => {
                   {status}
                 </AppAlert>
               )}
-              <Stack sx={{ maxHeight: "min(62vh, 560px)", overflowY: "auto", overflowX: "hidden", pr: 1.5 }}>
-              <Grid container spacing={2}>
+              <Stack sx={{ maxHeight: "min(62vh, 560px)", overflowY: "auto", overflowX: "hidden", pt: 1.5, pb: 0.5, px: 0.5, pr: 1.5 }}>
+              <Grid container spacing={2} sx={{ mt: 0 }}>
                 <Grid size={12}>
-                  <FormControl fullWidth>
+                  <FormControl fullWidth sx={{ mt: 0.5 }}>
                     <InputLabel id="leave-policy-label">
                       {i({ id: "LEAVE.TITLES.LEAVE_POLICIES" })}
                     </InputLabel>

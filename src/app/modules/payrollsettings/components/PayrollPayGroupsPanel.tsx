@@ -6,6 +6,7 @@ import { postRequest } from "../../../../server/axios";
 import { toast } from "react-toastify";
 import { configurationWindowIssue, coversConfigurationWindow } from "./payrollConfigurationSelection";
 import { PayrollDateField } from "./PayrollDateField";
+import { useIsDark } from "../../theme/useIsDark";
 
 export type PayrollPayGroup = {
   id?: string; name: string; schedule: string; policyProfileId?: string;
@@ -17,7 +18,7 @@ type Props = { groups: PayrollPayGroup[]; profiles: GroupPolicy[]; canEdit: bool
 
 export function PayrollPayGroupsPanel({ groups, profiles, canEdit, onSaved }: Props) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const isDark = useIsDark();
   const [editing, setEditing] = useState<PayrollPayGroup | null>(null);
   const [name, setName] = useState("");
   const [policyId, setPolicyId] = useState("");

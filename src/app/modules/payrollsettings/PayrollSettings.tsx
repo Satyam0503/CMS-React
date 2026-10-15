@@ -7,7 +7,7 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import { LockOutlined, LockOpenOutlined, CloudUploadRounded, PaymentsOutlined } from "@mui/icons-material";
+import { LockOutlined, LockOpenOutlined, CloudUploadRounded, PaymentsOutlined, DownloadRounded } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePageData } from "../../Context/PageDataProvider";
@@ -36,8 +36,9 @@ import {
   AttendanceLockBlockingIssue,
 } from "./components/AttendanceLockBlockingModal";
 import { PayrollProcessingIssues, payrollProcessingFailure, type PayrollProcessingFailure } from "./components/PayrollProcessingIssues";
-import { AppAlert } from "../../shared/components/ui";
+import { AppAlert, AppButton } from "../../shared/components/ui";
 import { downloadPayrollBulkSampleTemplate } from "./components/salaryImportMapping";
+import { useIsDark } from "../theme/useIsDark";
 
 type AttendanceMonthLockStatus = {
   payrollMonth: string;
@@ -51,6 +52,7 @@ type AttendanceMonthLockValidationResult = {
 };
 
 export default function PayrollSettings() {
+  const isDark = useIsDark();
   const { setPageTitle } = usePageData();
   const { formatMessage: i } = useIntl();
   const navigate = useNavigate();
@@ -354,77 +356,70 @@ export default function PayrollSettings() {
     <>
 
       <Card
-        sx={(theme) => ({
+        sx={{
           minWidth: 0,
           width: "100%",
-          p: { xs: 2, sm: 2.5, md: 3 },
-          borderRadius: 4,
-          background:
-            theme.palette.mode === "dark"
-              ? "linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(15, 23, 42, 0.72) 100%)"
-              : "linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.78) 100%)",
-          backdropFilter: "blur(24px) saturate(180%)",
-          WebkitBackdropFilter: "blur(24px) saturate(180%)",
+          p: { xs: 1.5, sm: 2, md: 2.5, lg: 3 },
+          borderRadius: 3,
+          bgcolor: "var(--mui-palette-background-card, var(--mui-palette-background-paper))",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
           border: "1px solid",
-          borderColor:
-            theme.palette.mode === "dark"
-              ? "rgba(148, 163, 184, 0.18)"
-              : "rgba(255, 255, 255, 0.88)",
-          boxShadow:
-            theme.palette.mode === "dark"
-              ? "0 16px 36px -6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06)"
-              : "0 14px 34px -6px rgba(15, 23, 42, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.025), inset 0 1px 0 rgba(255, 255, 255, 0.95)",
-        })}
+          borderColor: "divider",
+          boxShadow: "0 10px 30px 0 rgba(0, 0, 0, 0.08)",
+        }}
       >
         <Box
-          sx={(theme) => ({
-            display: "inline-flex",
+          sx={{
+            display: "flex",
+            width: { xs: "100%", sm: "fit-content" },
             p: "4px",
             borderRadius: "10px",
-            bgcolor: theme.palette.mode === "dark" ? "rgba(30, 41, 59, 0.7)" : "#F1F5F9",
+            bgcolor: "var(--mui-palette-background-box, action.hover)",
             border: "1px solid",
-            borderColor: theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-            mb: 3,
+            borderColor: "divider",
+            mb: 2.5,
             maxWidth: "100%",
             overflowX: "auto",
-          })}
+          }}
         >
           <Tabs
             value={activeTab}
             onChange={(_, val) => setActiveTab(val)}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
             sx={{
               minHeight: 38,
               "& .MuiTabs-indicator": { display: "none" },
               "& .MuiTabs-flexContainer": { gap: 0.5 },
               "& .MuiTab-root": {
                 textTransform: "none",
-                fontWeight: 600,
+                fontWeight: 650,
                 fontSize: "0.835rem",
                 minHeight: 36,
                 py: 0.65,
-                px: 2,
+                px: { xs: 1.5, sm: 2 },
                 borderRadius: "8px",
                 color: "text.secondary",
+                whiteSpace: "nowrap",
                 transition: "all 0.15s ease",
                 "&.Mui-selected": {
-                  bgcolor: (theme) => (theme.palette.mode === "dark" ? "rgba(15, 23, 42, 0.95)" : "#FFFFFF"),
-                  color: "text.primary",
-                  boxShadow: (theme) =>
-                    theme.palette.mode === "dark"
-                      ? "0 2px 8px rgba(0, 0, 0, 0.4)"
-                      : "0 1px 4px rgba(15, 23, 42, 0.08)",
+                  bgcolor: isDark ? "rgba(15, 23, 42, 0.98)" : "#FFFFFF",
+                  color: isDark ? "#F8FAFC" : "text.primary",
+                  boxShadow: isDark
+                    ? "0 2px 8px rgba(0, 0, 0, 0.4)"
+                    : "0 1px 4px rgba(15, 23, 42, 0.08)",
                   border: "1px solid",
-                  borderColor: (theme) =>
-                    theme.palette.mode === "dark"
-                      ? "rgba(255, 255, 255, 0.12)"
-                      : "rgba(226, 232, 240, 0.9)",
+                  borderColor: isDark
+                    ? "rgba(255, 255, 255, 0.12)"
+                    : "rgba(226, 232, 240, 0.9)",
                 },
                 "&:hover:not(.Mui-selected)": {
                   color: "text.primary",
-                  bgcolor: (theme) =>
-                    theme.palette.mode === "dark"
-                      ? "rgba(255, 255, 255, 0.04)"
-                      : "rgba(255, 255, 255, 0.5)",
+                  bgcolor: isDark
+                    ? "rgba(255, 255, 255, 0.04)"
+                    : "rgba(255, 255, 255, 0.5)",
                 },
               },
             }}
@@ -447,13 +442,14 @@ export default function PayrollSettings() {
                       component="span"
                       sx={{
                         px: 0.85,
-                        py: 0.1,
+                        py: 0.15,
                         borderRadius: "999px",
-                        bgcolor: "#FEF3C7",
-                        color: "#92400E",
+                        bgcolor: isDark ? "rgba(245, 158, 11, 0.2)" : "#FEF3C7",
+                        color: isDark ? "#FDE68A" : "#92400E",
                         fontSize: "0.7rem",
                         fontWeight: 700,
-                        border: "1px solid #FDE68A",
+                        border: "1px solid",
+                        borderColor: isDark ? "rgba(245, 158, 11, 0.4)" : "#FDE68A",
                         lineHeight: 1.4,
                       }}
                     >
@@ -468,99 +464,204 @@ export default function PayrollSettings() {
 
         {activeTab === "salaries" ? (
           <>
-            <Stack
-              direction={{ xs: "column", lg: "row" }}
-              justifyContent="space-between"
-              alignItems={{ xs: "stretch", lg: "center" }}
-              spacing={1.5}
-              useFlexGap
-              sx={(theme) => ({
+            {/* Actions Toolbar */}
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: "100%",
+                boxSizing: "border-box",
                 mb: 2.5,
                 p: { xs: 1.25, sm: 1.5 },
-                borderRadius: 3,
+                borderRadius: "12px",
                 border: "1px solid",
                 borderColor: "divider",
-                bgcolor:
-                  theme.palette.mode === "dark"
-                    ? "rgba(30, 41, 59, 0.45)"
-                    : "rgba(241, 245, 249, 0.65)",
+                bgcolor: "var(--mui-palette-background-box, action.hover)",
                 backdropFilter: "blur(12px)",
-              })}
+                WebkitBackdropFilter: "blur(12px)",
+                boxShadow: "none",
+                "& .MuiOutlinedInput-root": {
+                  height: 40,
+                  bgcolor: "background.paper",
+                  borderRadius: "10px",
+                },
+              }}
             >
-              <Box sx={{ width: { xs: "100%", lg: 280 }, flexShrink: 0, minWidth: 0 }}>
-                <SearchInput search={search} setSearch={handleSearchChange} sx={{ width: "100%" }} />
-              </Box>
-              {hasProcessPermission && (
-                <Stack
-                  direction="row"
-                  spacing={1.25}
-                  useFlexGap
+              {/* Row 1: Search & Month Selection / Attendance Lock Status */}
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                spacing={1.25}
+                alignItems={{ xs: "stretch", md: "center" }}
+                sx={{ width: "100%", maxWidth: "100%" }}
+              >
+                <Box
                   sx={{
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    justifyContent: { xs: "stretch", lg: "flex-end" },
+                    width: { xs: "100%", md: "auto" },
+                    flex: { md: 1 },
+                    minWidth: 0,
                   }}
                 >
-                  <Chip
-                    size="small"
-                    icon={attendanceLocked ? <LockOutlined fontSize="small" /> : <LockOpenOutlined fontSize="small" />}
-                    color={
-                      attendanceLocked
-                        ? "success"
-                        : !policyConfig.requireAttendanceLock
-                          ? "info"
-                          : "warning"
-                    }
-                    variant={attendanceLocked ? "filled" : "outlined"}
-                    label={
-                      isCheckingLock
-                        ? "Checking Lock..."
-                        : attendanceLocked
-                          ? "Attendance Locked"
-                          : !policyConfig.requireAttendanceLock
-                            ? "Lock Optional"
-                            : "Attendance Unlocked"
-                    }
+                  <SearchInput
+                    fullWidth
+                    search={search}
+                    setSearch={handleSearchChange}
+                    sx={{ width: "100%", maxWidth: "none" }}
+                  />
+                </Box>
+
+                {hasProcessPermission && (
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.25}
+                    alignItems="center"
                     sx={{
-                      height: 38,
-                      px: 1,
-                      borderRadius: 999,
-                      fontWeight: 600,
+                      width: { xs: "100%", md: "auto" },
+                      flexShrink: 0,
                     }}
-                  />
-                  <Box sx={{ width: { xs: "100%", sm: 195 }, flexShrink: 0 }}>
-                    <CustomisedDatePicker
-                      label={i({ id: "PAYROLL_SETTINGS.PROCESS_MONTH" })}
-                      views={["month", "year"]}
-                      value={processMonth}
-                      maxDate={dayjs()}
-                      setValue={handleProcessMonthChange}
+                  >
+                    <Box sx={{ width: { xs: "100%", sm: 200, md: 220 }, flexShrink: 0 }}>
+                      <CustomisedDatePicker
+                        label={i({ id: "PAYROLL_SETTINGS.PROCESS_MONTH" })}
+                        views={["month", "year"]}
+                        value={processMonth}
+                        maxDate={dayjs()}
+                        setValue={handleProcessMonthChange}
+                      />
+                    </Box>
+
+                    <Chip
+                      size="small"
+                      icon={attendanceLocked ? <LockOutlined fontSize="small" /> : <LockOpenOutlined fontSize="small" />}
+                      color={
+                        attendanceLocked
+                          ? "success"
+                          : !policyConfig.requireAttendanceLock
+                            ? "info"
+                            : "warning"
+                      }
+                      variant={attendanceLocked ? "filled" : "outlined"}
+                      label={
+                        isCheckingLock
+                          ? "Checking Lock..."
+                          : attendanceLocked
+                            ? "Attendance Locked"
+                            : !policyConfig.requireAttendanceLock
+                              ? "Lock Optional"
+                              : "Attendance Unlocked"
+                      }
+                      sx={{
+                        height: 40,
+                        px: 1.5,
+                        width: { xs: "100%", sm: "auto" },
+                        borderRadius: "10px",
+                        fontWeight: 700,
+                        fontSize: "0.8rem",
+                        flexShrink: 0,
+                        whiteSpace: "nowrap",
+                        borderWidth: attendanceLocked ? 0 : 1,
+                        bgcolor: attendanceLocked ? undefined : "background.paper",
+                        "& .MuiChip-icon": { fontSize: 18 },
+                      }}
                     />
-                  </Box>
-                  <CustomisedButton
-                    label="Sample Template"
+                  </Stack>
+                )}
+              </Stack>
+
+              {/* Row 2: Actions Toolbar (Left: Sample Template; Right: Validate & Lock + Process Salary) */}
+              {hasProcessPermission && (
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={1}
+                  useFlexGap
+                  flexWrap="wrap"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  sx={{
+                    width: "100%",
+                    pt: 1.25,
+                    mt: 1.25,
+                    borderTop: "1px dashed",
+                    borderColor: "divider",
+                  }}
+                >
+                  <AppButton
                     variant="outlined"
-                    handleClick={() => downloadPayrollBulkSampleTemplate(salaryData)}
-                    sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
-                  />
-                  <CustomisedButton
-                    label="Validate & Lock Attendance"
-                    variant="outlined"
-                    handleClick={() => void handleValidateAndLock()}
-                    disabled={!processMonth}
-                    loading={isLocking}
-                    sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
-                  />
-                  <CustomisedButton
-                    label={i({ id: "PAYROLL_SETTINGS.PROCESS_SALARY" })}
-                    handleClick={() => setConfirmOpen(true)}
-                    disabled={!canRunDraftGeneration}
-                    loading={isProcessing}
-                    sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
-                  />
+                    startIcon={<DownloadRounded fontSize="small" />}
+                    onClick={() => downloadPayrollBulkSampleTemplate(salaryData)}
+                    sx={{
+                      height: 40,
+                      px: 2,
+                      fontWeight: 700,
+                      borderRadius: "10px",
+                      textTransform: "none",
+                      whiteSpace: "nowrap",
+                      borderColor: "divider",
+                      bgcolor: "background.paper",
+                      color: "text.primary",
+                      width: { xs: "100%", sm: "auto" },
+                      "&:hover": {
+                        borderColor: "primary.main",
+                        bgcolor: "action.hover",
+                        color: "primary.main",
+                      },
+                    }}
+                  >
+                    Sample Template
+                  </AppButton>
+
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1}
+                    alignItems="center"
+                    sx={{ width: { xs: "100%", sm: "auto" }, flexWrap: "wrap" }}
+                  >
+                    <AppButton
+                      variant="outlined"
+                      startIcon={<LockOutlined fontSize="small" />}
+                      onClick={() => void handleValidateAndLock()}
+                      disabled={!processMonth || isLocking}
+                      sx={{
+                        height: 40,
+                        px: 2,
+                        fontWeight: 700,
+                        borderRadius: "10px",
+                        textTransform: "none",
+                        whiteSpace: "nowrap",
+                        borderColor: "divider",
+                        bgcolor: "background.paper",
+                        color: "text.primary",
+                        width: { xs: "100%", sm: "auto" },
+                        "&:hover": {
+                          borderColor: "primary.main",
+                          bgcolor: "action.hover",
+                          color: "primary.main",
+                        },
+                      }}
+                    >
+                      {isLocking ? "Validating..." : "Validate & Lock Attendance"}
+                    </AppButton>
+
+                    <AppButton
+                      variant="contained"
+                      color="primary"
+                      startIcon={<PaymentsOutlined fontSize="small" />}
+                      onClick={() => setConfirmOpen(true)}
+                      disabled={!canRunDraftGeneration || isProcessing}
+                      sx={{
+                        height: 40,
+                        px: 2.25,
+                        fontWeight: 700,
+                        borderRadius: "10px",
+                        textTransform: "none",
+                        whiteSpace: "nowrap",
+                        width: { xs: "100%", sm: "auto" },
+                      }}
+                    >
+                      {isProcessing ? "Processing..." : i({ id: "PAYROLL_SETTINGS.PROCESS_SALARY" })}
+                    </AppButton>
+                  </Stack>
                 </Stack>
               )}
-            </Stack>
+            </Box>
             {policyLoadError && <AppAlert severity="error" sx={{ mb: 2 }}>Payroll configuration could not be loaded. Refresh this page before generating payroll.</AppAlert>}
             <PayrollProcessingIssues failure={processingFailure} onDismiss={() => setProcessingFailure(null)}
               onPolicy={() => navigate("/admin/companydetails/payroll-configuration")}

@@ -4,5 +4,5 @@ export const payrollActionButtonSx = {
   width: 40,
   px: 0,
   justifyContent: "center",
-  borderRadius: 1,
+  borderRadius: "10px",
 } as const;

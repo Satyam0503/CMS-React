@@ -366,324 +366,400 @@ const PayRollManagement = () => {
             <Card
                 className="payroll-management-card d-flex flex-column flex-grow-1"
                 sx={{
-                    gap: { xs: 1.5, sm: 2, md: 3 },
+                    gap: { xs: 1.5, sm: 2, md: 2.5 },
                     p: { xs: 1.5, sm: 2, md: 2.5, lg: 3 },
                     minWidth: 0,
                     overflow: "hidden",
                     borderRadius: 3,
+                    bgcolor: "var(--mui-palette-background-card, var(--mui-palette-background-paper))",
+                    backdropFilter: "blur(20px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    boxShadow: "0 10px 30px 0 rgba(0, 0, 0, 0.08)",
                 }}
             >
                 {/* Actions Toolbar */}
-                <Stack
-                    direction={{ xs: "column", lg: "row" }}
-                    spacing={1.25}
-                    useFlexGap
+                <Box
                     sx={{
-                        alignItems: { xs: "stretch", lg: "center" },
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1.5,
                         width: "100%",
-                        p: { xs: 1, sm: 1.5 },
-                        border: 1,
+                        p: { xs: 1.25, sm: 1.5 },
+                        border: "1px solid",
                         borderColor: "divider",
-                        borderRadius: 2,
-                        bgcolor: "action.hover",
+                        borderRadius: "12px",
+                        bgcolor: "var(--mui-palette-background-box, action.hover)",
+                        backdropFilter: "blur(12px)",
+                        WebkitBackdropFilter: "blur(12px)",
+                        boxShadow: "none",
                         "& .MuiOutlinedInput-root": {
                             height: 40,
                             bgcolor: "background.paper",
+                            borderRadius: "10px",
                         },
                     }}
                 >
+                    {/* Row 1: Search & Month Selection ONLY (fully responsive, spans full card width) */}
                     <Stack
-                        sx={{
-                            width: { xs: "100%", lg: 232 },
-                            flexShrink: 0,
-                            "& > .MuiStack-root": {
-                                pt: "0 !important",
-                                overflow: "visible",
-                            },
-                        }}
+                        direction={{ xs: "column", sm: "row" }}
+                        spacing={1.25}
+                        alignItems="center"
+                        sx={{ width: "100%" }}
                     >
-                        <CustomisedDatePicker
-                            label={i({ id: "PAYROLL.SELECT_PAY_MONTH" })}
-                            views={["month", "year"]}
-                            value={payMonth}
-                            maxDate={dayjs().subtract(1, "month")}
-                            setValue={handleDateChange}
-                        />
+                        <Box
+                            sx={{
+                                width: { xs: "100%", sm: "clamp(240px, 30%, 320px)" },
+                                flex: { sm: "1 1 240px", md: "1 1 280px" },
+                                maxWidth: { sm: 300, md: 340, lg: 360 },
+                                minWidth: { sm: 220 },
+                                flexShrink: 0,
+                                "& > .MuiStack-root": {
+                                    pt: "0 !important",
+                                    overflow: "visible",
+                                },
+                            }}
+                        >
+                            <CustomisedDatePicker
+                                label={i({ id: "PAYROLL.SELECT_PAY_MONTH" })}
+                                views={["month", "year"]}
+                                value={payMonth}
+                                maxDate={dayjs().subtract(1, "month")}
+                                setValue={handleDateChange}
+                            />
+                        </Box>
+                        <Box
+                            sx={{
+                                width: { xs: "100%", sm: "auto" },
+                                flex: { sm: "2 1 300px", md: "2 1 400px" },
+                                minWidth: { sm: 200 },
+                            }}
+                        >
+                            <SearchInput
+                                fullWidth
+                                search={search}
+                                setSearch={handleSearchChange}
+                                sx={{ width: "100%", maxWidth: "none" }}
+                            />
+                        </Box>
                     </Stack>
-                    <Box sx={{ width: { xs: "100%", sm: 260, lg: 300 }, minWidth: 0, flexShrink: 1 }}>
-                        <SearchInput search={search} setSearch={handleSearchChange} />
-                    </Box>
+
+                    {/* Row 2: All Operations & Controls (Left: Filter + Upload + Sample + Add; Right: Calculate + Process Salary) */}
                     <Stack
-                        direction="row"
+                        direction={{ xs: "column", sm: "row" }}
                         spacing={1}
                         useFlexGap
+                        flexWrap="wrap"
+                        alignItems="center"
+                        justifyContent="space-between"
                         sx={{
-                            alignItems: "center",
-                            flexShrink: { lg: 0 },
-                            flexWrap: "wrap",
-                            width: { xs: "100%", lg: "auto" },
-                            justifyContent: { xs: "flex-start", lg: "flex-end" },
-                            ml: { lg: "auto" },
-                            pl: { lg: 1.5 },
-                            borderLeft: { lg: 1 },
-                            borderColor: { lg: "divider" },
+                            width: "100%",
+                            pt: 1.25,
+                            borderTop: "1px dashed",
+                            borderColor: "divider",
                         }}
                     >
-                        {/* Filter Trigger Button */}
-                        <Tooltip
-                            title={
-                                activeFilterCount > 0
-                                    ? `${activeFilterCount} active filter${activeFilterCount === 1 ? "" : "s"} applied`
-                                    : "Filter payroll records"
-                            }
-                            arrow
-                            placement="top"
+                        {/* Utility Icon Buttons Group (Filter + Upload + Sample + Add) */}
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="center"
+                            sx={{
+                                width: { xs: "100%", sm: "auto" },
+                                justifyContent: "flex-start",
+                                flexShrink: 0,
+                            }}
                         >
-                            <Badge
-                                badgeContent={activeFilterCount}
-                                color="primary"
-                                sx={{
-                                    "& .MuiBadge-badge": {
-                                        fontSize: "0.72rem",
-                                        fontWeight: 700,
-                                        height: 18,
-                                        minWidth: 18,
-                                        padding: "0 4px",
-                                    },
-                                }}
-                            >
-                                <AppButton
-                                    variant={activeFilterCount > 0 ? "contained" : "outlined"}
-                                    color={activeFilterCount > 0 ? "primary" : "inherit"}
-                                    onClick={(e) => setFilterAnchorEl(e.currentTarget)}
-                                    aria-label="Filter payroll records"
-                                    sx={{
-                                        ...payrollActionButtonSx,
-                                        border: 1,
-                                        borderColor: activeFilterCount > 0 ? "primary.main" : "divider",
-                                        bgcolor: activeFilterCount > 0 ? "primary.main" : "background.paper",
-                                        color: activeFilterCount > 0 ? "primary.contrastText" : "text.secondary",
-                                        "&:hover": {
-                                            bgcolor: activeFilterCount > 0 ? "primary.dark" : "action.hover",
-                                            borderColor: activeFilterCount > 0 ? "primary.dark" : "text.secondary",
-                                            color: activeFilterCount > 0 ? "primary.contrastText" : "text.primary",
-                                        },
-                                    }}
-                                >
-                                    <FilterList fontSize="small" />
-                                </AppButton>
-                            </Badge>
-                        </Tooltip>
-
-                        {hasCreatePermission && (
-                            <>
-                                <UploadPayRollData handlePageRefresh={handlePageRefresh} fillToolbarRow />
-                                <Tooltip title={i({ id: "BUTTON.ADD" })} arrow placement="top">
-                                    <AppButton
-                                        variant="outlined"
-                                        aria-label={i({ id: "BUTTON.ADD" })}
-                                        sx={{ ...payrollActionButtonSx, flex: { xs: "1 1 0", lg: "0 0 auto" }, width: { xs: "100%", lg: 40 } }}
-                                        onClick={() => setIsModalOpen(true)}
-                                    >
-                                        <Add fontSize="small" />
-                                    </AppButton>
-                                </Tooltip>
-                            </>
-                        )}
-
-                        {hasCreatePermission && !isMonthProcessed && (
+                            {/* Filter Trigger Button */}
                             <Tooltip
                                 title={
-                                    payrollRows.length === 0
-                                        ? "Auto-calculate monthly payroll from attendance and approved salary structures"
-                                        : uncalculatedRows.length > 0
-                                        ? `Calculate payroll for ${uncalculatedRows.length} remaining employee${uncalculatedRows.length === 1 ? "" : "s"} whose salary structures were configured`
-                                        : "Recalculate monthly payroll worksheets with latest attendance and approved salary updates"
+                                    activeFilterCount > 0
+                                        ? `${activeFilterCount} active filter${activeFilterCount === 1 ? "" : "s"} applied`
+                                        : "Filter payroll records"
                                 }
                                 arrow
                                 placement="top"
                             >
-                                <span>
+                                <Badge
+                                    badgeContent={activeFilterCount}
+                                    color="primary"
+                                    sx={{
+                                        flexShrink: 0,
+                                        "& .MuiBadge-badge": {
+                                            fontSize: "0.72rem",
+                                            fontWeight: 700,
+                                            height: 18,
+                                            minWidth: 18,
+                                            padding: "0 4px",
+                                        },
+                                    }}
+                                >
                                     <AppButton
-                                        variant={payrollRows.length === 0 ? "contained" : "outlined"}
-                                        color={payrollRows.length === 0 ? "primary" : "inherit"}
-                                        aria-label={
-                                            payrollRows.length === 0
-                                                ? "Generate Payroll"
-                                                : uncalculatedRows.length > 0
-                                                ? "Calculate Remaining"
-                                                : "Recalculate"
-                                        }
-                                        startIcon={
-                                            isGenerating ? (
-                                                <CircularProgress size={16} color="inherit" />
-                                            ) : payrollRows.length === 0 ? (
-                                                <AutoAwesome fontSize="small" />
-                                            ) : uncalculatedRows.length > 0 ? (
-                                                <CalculateOutlined fontSize="small" />
-                                            ) : (
-                                                <Refresh fontSize="small" />
-                                            )
-                                        }
-                                        disabled={isGenerating}
-                                        onClick={() => void handleGeneratePayroll()}
+                                        variant={activeFilterCount > 0 ? "contained" : "outlined"}
+                                        color={activeFilterCount > 0 ? "primary" : "inherit"}
+                                        onClick={(e) => setFilterAnchorEl(e.currentTarget)}
+                                        aria-label="Filter payroll records"
                                         sx={{
+                                            ...payrollActionButtonSx,
                                             height: 40,
-                                            px: 1.5,
-                                            fontSize: "0.82rem",
-                                            fontWeight: 600,
-                                            borderRadius: 1.5,
-                                            textTransform: "none",
-                                            whiteSpace: "nowrap",
-                                            transition: "all 0.15s ease-in-out",
-                                            ...(payrollRows.length > 0 && uncalculatedRows.length > 0
-                                                ? {
-                                                      color: "primary.main",
-                                                      borderColor: (theme) => alpha(theme.palette.primary.main, 0.45),
-                                                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.05),
-                                                      "&:hover": {
-                                                          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
-                                                          borderColor: "primary.main",
-                                                      },
-                                                  }
-                                                : payrollRows.length > 0
-                                                ? {
-                                                      borderColor: "divider",
-                                                      color: "text.secondary",
-                                                      bgcolor: "background.paper",
-                                                      "&:hover": {
-                                                          borderColor: "text.primary",
-                                                          color: "text.primary",
-                                                          bgcolor: "action.hover",
-                                                      },
-                                                  }
-                                                : {}),
+                                            minWidth: 40,
+                                            width: 40,
+                                            border: 1,
+                                            borderColor: activeFilterCount > 0 ? "primary.main" : "divider",
+                                            bgcolor: activeFilterCount > 0 ? "primary.main" : "background.paper",
+                                            color: activeFilterCount > 0 ? "primary.contrastText" : "text.secondary",
+                                            borderRadius: "10px",
+                                            "&:hover": {
+                                                bgcolor: activeFilterCount > 0 ? "primary.dark" : "action.hover",
+                                                borderColor: activeFilterCount > 0 ? "primary.dark" : "text.secondary",
+                                                color: activeFilterCount > 0 ? "primary.contrastText" : "text.primary",
+                                            },
                                         }}
                                     >
-                                        {isGenerating
-                                            ? "Calculating..."
-                                            : payrollRows.length === 0
-                                            ? "Generate"
-                                            : uncalculatedRows.length > 0
-                                            ? `Calculate (${uncalculatedRows.length})`
-                                            : "Recalculate"}
+                                        <FilterList fontSize="small" />
                                     </AppButton>
-                                </span>
+                                </Badge>
                             </Tooltip>
-                        )}
-                        {needsApproval && hasEditPermission && !isMonthProcessed && (
-                            <Tooltip title="Approve payroll month before processing" arrow placement="top">
-                                <AppButton
-                                    variant="contained"
-                                    color="warning"
-                                    startIcon={<CheckCircle fontSize="small" />}
-                                    aria-label="Approve payroll month"
-                                    disabled={isApproving}
-                                    onClick={() => void handleApproveMonth()}
-                                    sx={{
-                                        height: 40,
-                                        px: 1.5,
-                                        fontWeight: 600,
-                                        borderRadius: 1.5,
-                                        textTransform: "none",
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    {isApproving ? "Approving..." : "Approve month"}
-                                </AppButton>
-                            </Tooltip>
-                        )}
-                        {isMonthProcessed && allPaymentsRecorded && hasEditPermission && (
-                            <Tooltip title="Close payroll month" arrow placement="top">
-                                <AppButton
-                                    variant="outlined"
-                                    color="success"
-                                    startIcon={<Lock fontSize="small" />}
-                                    aria-label="Close payroll month"
-                                    onClick={requestCloseMonth}
-                                    sx={{
-                                        height: 40,
-                                        px: 1.5,
-                                        fontWeight: 600,
-                                        borderRadius: 1.5,
-                                        textTransform: "none",
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    Close month
-                                </AppButton>
-                            </Tooltip>
-                        )}
-                        {(hasCreatePermission || hasEditPermission) && payrollRows.length > 0 && (
-                            isMonthProcessed ? (
-                                <Chip
-                                    icon={<CheckCircle />}
-                                    color="success"
-                                    variant="outlined"
-                                    label="Month processed · Payslips published"
-                                    aria-label={`Payroll for ${payMonth?.format("MMMM YYYY")} is already processed`}
-                                    sx={{
-                                        height: 40,
-                                        px: 1,
-                                        fontWeight: 600,
-                                        borderRadius: 1.5,
-                                        bgcolor: "background.paper",
-                                        maxWidth: "100%",
-                                        flexBasis: { xs: "100%", lg: "auto" },
-                                        "& .MuiChip-label": { overflow: "hidden", textOverflow: "ellipsis" },
-                                        "& .MuiChip-icon": { fontSize: 20 },
-                                    }}
-                                />
-                            ) : (
+
+                            {hasCreatePermission && (
+                                <>
+                                    <UploadPayRollData handlePageRefresh={handlePageRefresh} />
+                                    <Tooltip title={i({ id: "BUTTON.ADD" })} arrow placement="top">
+                                        <AppButton
+                                            variant="outlined"
+                                            aria-label={i({ id: "BUTTON.ADD" })}
+                                            sx={{
+                                                ...payrollActionButtonSx,
+                                                borderRadius: "10px",
+                                                border: 1,
+                                                borderColor: "divider",
+                                                bgcolor: "background.paper",
+                                                color: "text.secondary",
+                                                "&:hover": {
+                                                    borderColor: "text.primary",
+                                                    color: "text.primary",
+                                                    bgcolor: "action.hover",
+                                                },
+                                            }}
+                                            onClick={() => setIsModalOpen(true)}
+                                        >
+                                            <Add fontSize="small" />
+                                        </AppButton>
+                                    </Tooltip>
+                                </>
+                            )}
+                        </Stack>
+
+                        {/* Lifecycle Action Buttons Group */}
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="center"
+                            sx={{
+                                width: { xs: "100%", sm: "auto" },
+                                justifyContent: { xs: "stretch", sm: "flex-end" },
+                                flexWrap: "wrap",
+                                gap: 1,
+                                "& > *": { flex: { xs: 1, sm: "initial" } },
+                            }}
+                        >
+                            {hasCreatePermission && !isMonthProcessed && (
                                 <Tooltip
-                                    title={needsApproval ? "Approve payroll month before processing" : "Locks employee salary worksheets and generates official payslips"}
+                                    title={
+                                        payrollRows.length === 0
+                                            ? "Auto-calculate monthly payroll from attendance and approved salary structures"
+                                            : uncalculatedRows.length > 0
+                                            ? `Calculate payroll for ${uncalculatedRows.length} remaining employee${uncalculatedRows.length === 1 ? "" : "s"} whose salary structures were configured`
+                                            : "Recalculate monthly payroll worksheets with latest attendance and approved salary updates"
+                                    }
                                     arrow
                                     placement="top"
                                 >
                                     <span>
                                         <AppButton
-                                            variant="contained"
-                                            color="primary"
-                                            startIcon={<PlayArrow fontSize="small" />}
-                                            aria-label={`Process salary for ${processableRows.length} remaining employee${processableRows.length === 1 ? "" : "s"}`}
+                                            variant={payrollRows.length === 0 ? "contained" : "outlined"}
+                                            color={payrollRows.length === 0 ? "primary" : "inherit"}
+                                            aria-label={
+                                                payrollRows.length === 0
+                                                    ? "Generate Payroll"
+                                                    : uncalculatedRows.length > 0
+                                                    ? "Calculate Remaining"
+                                                    : "Recalculate"
+                                            }
+                                            startIcon={
+                                                isGenerating ? (
+                                                    <CircularProgress size={16} color="inherit" />
+                                                ) : payrollRows.length === 0 ? (
+                                                    <AutoAwesome fontSize="small" />
+                                                ) : uncalculatedRows.length > 0 ? (
+                                                    <CalculateOutlined fontSize="small" />
+                                                ) : (
+                                                    <Refresh fontSize="small" />
+                                                )
+                                            }
+                                            disabled={isGenerating}
+                                            onClick={() => void handleGeneratePayroll()}
                                             sx={{
                                                 height: 40,
-                                                px: 2,
-                                                fontWeight: 600,
-                                                borderRadius: 1.5,
+                                                px: 1.5,
+                                                fontSize: "0.82rem",
+                                                fontWeight: 700,
+                                                borderRadius: "10px",
                                                 textTransform: "none",
                                                 whiteSpace: "nowrap",
+                                                transition: "all 0.15s ease-in-out",
+                                                ...(payrollRows.length > 0 && uncalculatedRows.length > 0
+                                                    ? {
+                                                          color: "primary.main",
+                                                          borderColor: (theme) => alpha(theme.palette.primary.main, 0.45),
+                                                          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.05),
+                                                          "&:hover": {
+                                                              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                                                              borderColor: "primary.main",
+                                                          },
+                                                      }
+                                                    : payrollRows.length > 0
+                                                    ? {
+                                                          borderColor: "divider",
+                                                          color: "text.secondary",
+                                                          bgcolor: "background.paper",
+                                                          "&:hover": {
+                                                              borderColor: "text.primary",
+                                                              color: "text.primary",
+                                                              bgcolor: "action.hover",
+                                                          },
+                                                      }
+                                                    : {}),
                                             }}
-                                            disabled={isProcessing || processableRows.length === 0 || needsApproval}
-                                            onClick={() => setIsProcessModalOpen(true)}
                                         >
-                                            {isProcessing ? "Processing..." : `Process salary (${processableRows.length})`}
+                                            {isGenerating
+                                                ? "Calculating..."
+                                                : payrollRows.length === 0
+                                                ? "Generate"
+                                                : uncalculatedRows.length > 0
+                                                ? `Calculate (${uncalculatedRows.length})`
+                                                : "Recalculate"}
                                         </AppButton>
                                     </span>
                                 </Tooltip>
-                            )
-                        )}
+                            )}
+                            {needsApproval && hasEditPermission && !isMonthProcessed && (
+                                <Tooltip title="Approve payroll month before processing" arrow placement="top">
+                                    <AppButton
+                                        variant="contained"
+                                        color="warning"
+                                        startIcon={<CheckCircle fontSize="small" />}
+                                        aria-label="Approve payroll month"
+                                        disabled={isApproving}
+                                        onClick={() => void handleApproveMonth()}
+                                        sx={{
+                                            height: 40,
+                                            px: 1.5,
+                                            fontWeight: 700,
+                                            borderRadius: "10px",
+                                            textTransform: "none",
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        {isApproving ? "Approving..." : "Approve month"}
+                                    </AppButton>
+                                </Tooltip>
+                            )}
+                            {isMonthProcessed && allPaymentsRecorded && hasEditPermission && (
+                                <Tooltip title="Close payroll month" arrow placement="top">
+                                    <AppButton
+                                        variant="outlined"
+                                        color="success"
+                                        startIcon={<Lock fontSize="small" />}
+                                        aria-label="Close payroll month"
+                                        onClick={requestCloseMonth}
+                                        sx={{
+                                            height: 40,
+                                            px: 1.5,
+                                            fontWeight: 700,
+                                            borderRadius: "10px",
+                                            textTransform: "none",
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        Close month
+                                    </AppButton>
+                                </Tooltip>
+                            )}
+                            {(hasCreatePermission || hasEditPermission) && payrollRows.length > 0 && (
+                                isMonthProcessed ? (
+                                    <Chip
+                                        icon={<CheckCircle />}
+                                        color="success"
+                                        variant="outlined"
+                                        label="Month processed · Payslips published"
+                                        aria-label={`Payroll for ${payMonth?.format("MMMM YYYY")} is already processed`}
+                                        sx={{
+                                            height: 40,
+                                            px: 1,
+                                            fontWeight: 700,
+                                            borderRadius: "10px",
+                                            bgcolor: "background.paper",
+                                            maxWidth: "100%",
+                                            flexBasis: { xs: "100%", lg: "auto" },
+                                            "& .MuiChip-label": { overflow: "hidden", textOverflow: "ellipsis" },
+                                            "& .MuiChip-icon": { fontSize: 20 },
+                                        }}
+                                    />
+                                ) : (
+                                    <Tooltip
+                                        title={needsApproval ? "Approve payroll month before processing" : "Locks employee salary worksheets and generates official payslips"}
+                                        arrow
+                                        placement="top"
+                                    >
+                                        <span>
+                                            <AppButton
+                                                variant="contained"
+                                                color="primary"
+                                                startIcon={<PlayArrow fontSize="small" />}
+                                                aria-label={`Process salary for ${processableRows.length} remaining employee${processableRows.length === 1 ? "" : "s"}`}
+                                                sx={{
+                                                    height: 40,
+                                                    px: 2,
+                                                    fontWeight: 700,
+                                                    borderRadius: "10px",
+                                                    textTransform: "none",
+                                                    whiteSpace: "nowrap",
+                                                }}
+                                                disabled={isProcessing || processableRows.length === 0 || needsApproval}
+                                                onClick={() => setIsProcessModalOpen(true)}
+                                            >
+                                                {isProcessing ? "Processing..." : `Process salary (${processableRows.length})`}
+                                            </AppButton>
+                                        </span>
+                                    </Tooltip>
+                                )
+                            )}
+                        </Stack>
                     </Stack>
-                </Stack>
+                </Box>
 
                 {/* Payroll Month Status Summary */}
                 <Stack
-                    direction={{ xs: "column", md: "row" }}
-                    spacing={1.5}
-                    alignItems={{ xs: "stretch", md: "center" }}
+                    direction={{ xs: "column", lg: "row" }}
+                    spacing={{ xs: 1.5, lg: 2 }}
+                    alignItems={{ xs: "stretch", lg: "center" }}
                     justifyContent="space-between"
                     sx={{
-                        p: 1.5,
+                        p: { xs: 1.5, sm: 2 },
                         border: 1,
                         borderColor: "divider",
-                        borderRadius: 2,
+                        borderRadius: "12px",
                         bgcolor: "background.paper",
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
                     }}
                     aria-label="Payroll month summary"
                 >
-                    <Stack spacing={0.25}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ mb: 0.5 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 800, fontSize: "1rem", color: "text.primary" }}>
                                 {payMonth?.format("MMMM YYYY")} Payroll
                             </Typography>
                             <Chip
@@ -691,28 +767,43 @@ const PayRollManagement = () => {
                                 label={isMonthProcessed ? "Processed & Locked" : "Draft / In Review"}
                                 color={isMonthProcessed ? "success" : "warning"}
                                 variant="outlined"
+                                sx={{ fontWeight: 700, borderRadius: "6px" }}
                             />
                         </Stack>
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" sx={{ color: "text.secondary", lineHeight: 1.4, display: "block" }}>
                             {isMonthProcessed
                                 ? "Salaries are locked and official payslips are published for employees. You can preview/download payslips below or record individual payments."
                                 : payrollRows.length === 0
                                 ? "No payroll records found for this month. Click 'Generate Payroll' above to auto-calculate salaries from attendance and approved salary structures."
                                 : "Review and edit individual employee salary worksheets. Click 'Approve month' then 'Process salary' to freeze numbers and publish payslips."}
                         </Typography>
-                    </Stack>
+                    </Box>
                     {payRollData.length > 0 && (
-                        <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" alignItems="center">
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 0.75,
+                                alignItems: "center",
+                                pt: { xs: 1.25, lg: 0 },
+                                borderTop: { xs: "1px dashed", lg: "none" },
+                                borderColor: { xs: "divider", lg: "transparent" },
+                                justifyContent: { xs: "flex-start", lg: "flex-end" },
+                            }}
+                        >
                             <Chip
                                 size="small"
                                 label={`Total: ${payRollData.length}`}
                                 variant="outlined"
                                 sx={{
-                                    fontWeight: 600,
+                                    fontWeight: 700,
+                                    fontSize: "0.75rem",
+                                    height: 26,
+                                    borderRadius: "8px",
                                     borderColor: "divider",
-                                    bgcolor: "background.paper",
+                                    bgcolor: (theme) => alpha(theme.palette.text.primary, 0.04),
+                                    color: "text.primary",
                                     cursor: "default",
-                                    "&:hover": { bgcolor: "background.paper" },
                                 }}
                             />
                             <Chip
@@ -721,9 +812,11 @@ const PayRollManagement = () => {
                                 color="warning"
                                 variant="outlined"
                                 sx={{
-                                    fontWeight: 600,
+                                    fontWeight: 700,
+                                    fontSize: "0.75rem",
+                                    height: 26,
+                                    borderRadius: "8px",
                                     cursor: "default",
-                                    "&:hover": { bgcolor: "transparent" },
                                 }}
                             />
                             <Chip
@@ -732,9 +825,11 @@ const PayRollManagement = () => {
                                 color="info"
                                 variant="outlined"
                                 sx={{
-                                    fontWeight: 600,
+                                    fontWeight: 700,
+                                    fontSize: "0.75rem",
+                                    height: 26,
+                                    borderRadius: "8px",
                                     cursor: "default",
-                                    "&:hover": { bgcolor: "transparent" },
                                 }}
                             />
                             <Chip
@@ -743,9 +838,11 @@ const PayRollManagement = () => {
                                 color={paidRows.length > 0 ? "success" : "default"}
                                 variant="outlined"
                                 sx={{
-                                    fontWeight: 600,
+                                    fontWeight: 700,
+                                    fontSize: "0.75rem",
+                                    height: 26,
+                                    borderRadius: "8px",
                                     cursor: "default",
-                                    "&:hover": { bgcolor: "transparent" },
                                 }}
                             />
                             <Chip
@@ -754,9 +851,11 @@ const PayRollManagement = () => {
                                 color={closedRows.length > 0 ? "success" : "default"}
                                 variant="outlined"
                                 sx={{
-                                    fontWeight: 600,
+                                    fontWeight: 700,
+                                    fontSize: "0.75rem",
+                                    height: 26,
+                                    borderRadius: "8px",
                                     cursor: "default",
-                                    "&:hover": { bgcolor: "transparent" },
                                 }}
                             />
                             {uncalculatedRows.length > 0 && (
@@ -766,9 +865,11 @@ const PayRollManagement = () => {
                                     color="error"
                                     variant="outlined"
                                     sx={{
-                                        fontWeight: 600,
+                                        fontWeight: 700,
+                                        fontSize: "0.75rem",
+                                        height: 26,
+                                        borderRadius: "8px",
                                         cursor: "default",
-                                        "&:hover": { bgcolor: "transparent" },
                                     }}
                                 />
                             )}
@@ -780,12 +881,15 @@ const PayRollManagement = () => {
                                     color="primary"
                                     variant="outlined"
                                     sx={{
-                                        fontWeight: 600,
+                                        fontWeight: 700,
+                                        fontSize: "0.75rem",
+                                        height: 26,
+                                        borderRadius: "8px",
                                         bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
                                     }}
                                 />
                             )}
-                        </Stack>
+                        </Box>
                     )}
                 </Stack>
 

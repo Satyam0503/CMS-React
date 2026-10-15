@@ -1,5 +1,6 @@
 import { SaveRounded } from "@mui/icons-material";
 import {
+  alpha,
   Box,
   Button,
   Card,
@@ -87,23 +88,36 @@ export const CompanyNotificationSettings = () => {
     setConfiguration((c) => ({ ...c, [key]: value }));
   const cardSx = {
     m: 0,
-    minHeight: 64,
-    px: 1.5,
-    py: 1,
+    minHeight: 54,
+    px: 1.75,
+    py: 1.25,
     border: "1px solid",
     borderColor: "divider",
     borderRadius: 2,
+    bgcolor: "background.paper",
     justifyContent: "space-between",
-    gap: 2,
+    alignItems: "center",
+    gap: 1.5,
+    width: "100%",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+    "&:hover": {
+      borderColor: "primary.main",
+      bgcolor: (theme: any) => alpha(theme.palette.primary.main, 0.02),
+    },
+    "& .MuiFormControlLabel-label": {
+      flex: 1,
+      minWidth: 0,
+      userSelect: "none",
+    },
   };
   const toggle = (key: keyof Config, label: string, helper: string) => (
     <FormControlLabel
       labelPlacement="start"
       sx={cardSx}
       label={
-        <Box>
-          <Typography fontWeight={600}>{label}</Typography>
-          <Typography variant="caption" color="text.secondary">
+        <Box sx={{ pr: 1 }}>
+          <Typography fontWeight={650} variant="body2">{label}</Typography>
+          <Typography variant="caption" color="text.secondary" display="block">
             {helper}
           </Typography>
         </Box>
@@ -117,7 +131,16 @@ export const CompanyNotificationSettings = () => {
     />
   );
   return (
-    <Card sx={{ p: { xs: 2, sm: 3 }, borderRadius: 3 }}>
+    <Card
+      sx={{
+        p: { xs: 2, sm: 2.5, md: 3 },
+        borderRadius: { xs: 2.5, sm: 3 },
+        border: "1px solid",
+        borderColor: "divider",
+        boxShadow: "0 10px 28px rgba(24, 74, 82, .07)",
+        bgcolor: "background.paper",
+      }}
+    >
       <Stack
         direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
@@ -138,7 +161,7 @@ export const CompanyNotificationSettings = () => {
           onClick={save}
           disabled={saving}
           sx={{
-            minHeight: 48,
+            minHeight: 44,
             minWidth: { xs: "100%", sm: 148 },
             borderRadius: 2,
             textTransform: "none",
@@ -155,7 +178,7 @@ export const CompanyNotificationSettings = () => {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "repeat(2,1fr)" },
+          gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" },
           gap: 1.5,
         }}
       >
@@ -164,7 +187,7 @@ export const CompanyNotificationSettings = () => {
             key={key}
             labelPlacement="start"
             sx={cardSx}
-            label={label}
+            label={<Typography fontWeight={650} variant="body2">{label}</Typography>}
             control={
               <Switch
                 checked={preferences[key] ?? true}
@@ -183,7 +206,7 @@ export const CompanyNotificationSettings = () => {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "repeat(2,1fr)" },
+          gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
           gap: 1.5,
         }}
       >

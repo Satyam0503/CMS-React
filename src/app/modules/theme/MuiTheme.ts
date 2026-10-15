@@ -12,80 +12,80 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
       return {
         card: {
           background:
-            "linear-gradient(140deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.62) 100%)",
+            "var(--app-glass-card-bg, var(--mui-palette-background-card, rgba(255, 255, 255, 0.76)))",
           WebkitBackdropFilter: "blur(20px) saturate(180%)",
           backdropFilter: "blur(20px) saturate(180%)",
-          border: "1px solid rgba(255, 255, 255, 0.88)",
+          border: "1px solid var(--app-glass-border, var(--mui-palette-divider, rgba(255, 255, 255, 0.88)))",
           boxShadow:
-            "0 10px 32px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
+            "var(--app-glass-card-shadow, 0 10px 32px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03))",
         },
         paper: {
           background:
-            "linear-gradient(140deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.65) 100%)",
+            "var(--app-glass-paper-bg, var(--mui-palette-background-paper, rgba(255, 255, 255, 0.80)))",
           WebkitBackdropFilter: "blur(20px) saturate(180%)",
           backdropFilter: "blur(20px) saturate(180%)",
-          border: "1px solid rgba(255, 255, 255, 0.88)",
+          border: "1px solid var(--app-glass-border, var(--mui-palette-divider, rgba(255, 255, 255, 0.88)))",
           boxShadow:
-            "0 8px 26px -4px rgba(11, 92, 171, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
+            "var(--app-glass-paper-shadow, 0 8px 26px -4px rgba(11, 92, 171, 0.06))",
         },
       };
     case "slate":
       return {
         card: {
           background:
-            "var(--app-slate-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.74) 100%))",
+            "var(--app-slate-surface, var(--mui-palette-background-card, linear-gradient(135deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.74) 100%)))",
           WebkitBackdropFilter: "blur(24px) saturate(185%)",
           backdropFilter: "blur(24px) saturate(185%)",
           borderRadius: 16,
-          border: "1px solid var(--app-slate-border, rgba(255, 255, 255, 0.90))",
+          border: "1px solid var(--app-slate-border, var(--mui-palette-divider, rgba(255, 255, 255, 0.90)))",
           boxShadow:
             "var(--app-slate-card-shadow, 0 14px 36px -6px rgba(15, 23, 42, 0.08), 0 4px 14px -2px rgba(79, 70, 229, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.96))",
         },
         paper: {
           background:
-            "var(--app-slate-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.76) 100%))",
+            "var(--app-slate-surface, var(--mui-palette-background-paper, linear-gradient(135deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.76) 100%)))",
           WebkitBackdropFilter: "blur(22px) saturate(180%)",
           backdropFilter: "blur(22px) saturate(180%)",
           borderRadius: 14,
-          border: "1px solid var(--app-slate-border-soft, rgba(255, 255, 255, 0.88))",
+          border: "1px solid var(--app-slate-border-soft, var(--mui-palette-divider, rgba(255, 255, 255, 0.88)))",
           boxShadow: "var(--app-slate-paper-shadow, 0 10px 28px -4px rgba(15, 23, 42, 0.07), inset 0 1px 1px 0 rgba(255, 255, 255, 0.94))",
         },
       };
     case "dawn":
       return {
         card: {
-          background: "var(--app-dawn-card-background, linear-gradient(135deg, rgba(255, 255, 255, 0.66) 0%, rgba(250, 244, 253, 0.44) 100%))",
+          background: "var(--app-dawn-card-background, var(--mui-palette-background-card, linear-gradient(135deg, rgba(255, 255, 255, 0.66) 0%, rgba(250, 244, 253, 0.44) 100%)))",
           WebkitBackdropFilter: "blur(24px) saturate(185%)",
           backdropFilter: "blur(24px) saturate(185%)",
           borderRadius: 16,
-          border: "1px solid var(--app-dawn-border, rgba(255, 255, 255, 0.78))",
+          border: "1px solid var(--app-dawn-border, var(--mui-palette-divider, rgba(255, 255, 255, 0.78)))",
           boxShadow: "var(--app-dawn-card-shadow, 0 14px 36px rgba(73, 59, 89, 0.09), inset 0 1px 1px rgba(255, 255, 255, 0.90))",
         },
         paper: {
-          background: "var(--app-dawn-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 244, 253, 0.46) 100%))",
+          background: "var(--app-dawn-surface, var(--mui-palette-background-paper, linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 244, 253, 0.46) 100%)))",
           WebkitBackdropFilter: "blur(22px) saturate(180%)",
           backdropFilter: "blur(22px) saturate(180%)",
           borderRadius: 14,
-          border: "1px solid var(--app-dawn-border-soft, rgba(255, 255, 255, 0.74))",
+          border: "1px solid var(--app-dawn-border-soft, var(--mui-palette-divider, rgba(255, 255, 255, 0.74)))",
           boxShadow: "var(--app-dawn-paper-shadow, 0 10px 28px rgba(73, 59, 89, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.86))",
         },
       };
     case "blush":
       return {
         card: {
-          background: "var(--app-blush-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 248, 251, 0.44) 100%))",
+          background: "var(--app-blush-surface, var(--mui-palette-background-card, linear-gradient(135deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 248, 251, 0.44) 100%)))",
           WebkitBackdropFilter: "blur(24px) saturate(185%)",
           backdropFilter: "blur(24px) saturate(185%)",
           borderRadius: 16,
-          border: "1px solid var(--app-blush-border, rgba(255, 255, 255, 0.78))",
+          border: "1px solid var(--app-blush-border, var(--mui-palette-divider, rgba(255, 255, 255, 0.78)))",
           boxShadow: "var(--app-blush-card-shadow, 0 14px 36px rgba(150, 82, 120, 0.09), inset 0 1px 1px rgba(255, 255, 255, 0.90))",
         },
         paper: {
-          background: "var(--app-blush-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(255, 248, 251, 0.46) 100%))",
+          background: "var(--app-blush-surface, var(--mui-palette-background-paper, linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(255, 248, 251, 0.46) 100%)))",
           WebkitBackdropFilter: "blur(22px) saturate(180%)",
           backdropFilter: "blur(22px) saturate(180%)",
           borderRadius: 14,
-          border: "1px solid var(--app-blush-border-soft, rgba(255, 255, 255, 0.74))",
+          border: "1px solid var(--app-blush-border-soft, var(--mui-palette-divider, rgba(255, 255, 255, 0.74)))",
           boxShadow: "var(--app-blush-paper-shadow, 0 10px 28px rgba(150, 82, 120, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.86))",
         },
       };
@@ -138,22 +138,23 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
             paddingBlock: ".55rem",
             paddingInline: ".9rem",
             fontSize: "13.5px",
+            color: "inherit",
             "&.Mui-disabled": {
-              WebkitTextFillColor: "#1E293B",
-              color: "#1E293B",
-              fontWeight: 600,
-              opacity: 1,
+              WebkitTextFillColor: "var(--mui-palette-text-disabled, #64748B)",
+              color: "var(--mui-palette-text-disabled, #64748B)",
+              fontWeight: 500,
+              opacity: 0.8,
             },
           },
           root: {
             padding: 0,
             borderRadius: 10,
-            backgroundColor: "#F8FAFC",
+            backgroundColor: "var(--mui-palette-background-box, #F8FAFC)",
             transition: "border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
             "&.Mui-disabled": {
-              backgroundColor: "rgba(241, 245, 249, 0.90)",
+              backgroundColor: "color-mix(in srgb, var(--mui-palette-action-disabledBackground, rgba(241, 245, 249, 0.90)) 70%, transparent)",
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "rgba(148, 163, 184, 0.65)",
+                borderColor: "var(--mui-palette-divider, rgba(148, 163, 184, 0.65))",
               },
             },
             "& input:-webkit-autofill": {
@@ -162,13 +163,13 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
               WebkitTextFillColor: theme.vars?.palette.text.primary,
             },
             "&:hover:not(.Mui-focused)": {
-              backgroundColor: "#FFFFFF",
+              backgroundColor: "var(--mui-palette-background-paper, #FFFFFF)",
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#64748B",
+                borderColor: "var(--mui-palette-primary-main, #64748B)",
               },
             },
             "&.Mui-focused": {
-              backgroundColor: "#FFFFFF",
+              backgroundColor: "var(--mui-palette-background-paper, #FFFFFF)",
               boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent)",
               "& .MuiOutlinedInput-notchedOutline": {
                 borderWidth: "1.5px",
@@ -176,7 +177,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
               },
             },
             ".MuiOutlinedInput-notchedOutline": {
-              borderColor: "#CBD5E1",
+              borderColor: "var(--mui-palette-divider, #CBD5E1)",
               transition: "border-color 0.2s ease",
             },
           },
@@ -190,8 +191,8 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
             fontSize: 13.5,
             fontWeight: 600,
             "&.Mui-disabled": {
-              color: "#475569",
-              fontWeight: 600,
+              color: "var(--mui-palette-text-disabled, #64748B)",
+              fontWeight: 500,
             },
           },
         },
@@ -199,13 +200,21 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
 
       MuiFormControlLabel: {
         styleOverrides: {
+          root: {
+            marginLeft: 0,
+            gap: "10px",
+            "& .MuiSwitch-root": {
+              marginRight: "6px",
+            },
+          },
           label: {
             fontSize: "13.5px",
             fontWeight: 500,
+            userSelect: "none",
             "&.Mui-disabled": {
-              color: "#334155",
-              WebkitTextFillColor: "#334155",
-              fontWeight: 600,
+              color: "var(--mui-palette-text-disabled, #64748B)",
+              WebkitTextFillColor: "var(--mui-palette-text-disabled, #64748B)",
+              fontWeight: 500,
             },
           },
         },
@@ -492,7 +501,8 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
             fontSize: 13,
             fontWeight: 700,
             backgroundColor: "transparent",
-            borderBottom: `2px solid ${theme.vars?.palette.grey[400]}`,
+            color: theme.vars?.palette.text.primary,
+            borderBottom: "1px solid var(--mui-palette-divider)",
           },
         },
       },
@@ -570,6 +580,8 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
             width: 42,
             height: 26,
             padding: 0,
+            marginRight: 10,
+            flexShrink: 0,
             "& .MuiSwitch-switchBase": {
               padding: 0,
               margin: 2,

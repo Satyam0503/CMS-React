@@ -53,6 +53,7 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
+import { useIsDark } from "../../theme/useIsDark";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { deleteRequest, getRequest, postRequest } from "../../../../server/axios";
@@ -183,7 +184,7 @@ const defaultPolicy = (): PayrollDivisorPolicyConfig => ({
 
 export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmployeeSalary = false, canApprovePolicy = false, canDeletePolicy = false }: { canEdit: boolean; canApprove: boolean; canApproveEmployeeSalary?: boolean; canApprovePolicy?: boolean; canDeletePolicy?: boolean }) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const isDark = useIsDark();
 
   const [activeTab, setActiveTab] = useState<"policy" | "components" | "groups" | "templates" | "assignments">("policy");
 

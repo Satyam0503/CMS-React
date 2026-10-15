@@ -3,13 +3,15 @@ import {
   CalendarTodayOutlined,
   DomainVerificationOutlined,
 } from "@mui/icons-material";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, alpha } from "@mui/material";
 import { useIntl } from "react-intl";
 import { memo } from "react";
 import dayjs from "dayjs";
 import { dateFormatter } from "../../../../utils/common";
+import { useIsDark } from "../../theme/useIsDark";
 
 export const DashboardHeader = memo((props: { fullName: string }) => {
+  const isDark = useIsDark();
   const intl = useIntl();
   const now = dayjs();
 
@@ -33,12 +35,13 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
             px: 1.25,
             py: 0.4,
             borderRadius: "8px",
-            backgroundColor: "rgba(11, 92, 171, 0.08)",
-            border: "1px solid rgba(11, 92, 171, 0.18)",
-            boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.8)",
+            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+            border: "1px solid",
+            borderColor: (theme) => alpha(theme.palette.primary.main, 0.25),
+            boxShadow: isDark ? "none" : "inset 0 1px 1px rgba(255, 255, 255, 0.8)",
             backdropFilter: "blur(8px)",
             WebkitBackdropFilter: "blur(8px)",
-            color: "#0B5CAB",
+            color: "primary.main",
           }}
         >
           <DomainVerificationOutlined sx={{ fontSize: 15, color: "#0D9488" }} />
@@ -47,7 +50,7 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
               fontSize: "0.75rem",
               fontWeight: 700,
               letterSpacing: "0.02em",
-              color: "#0B5CAB",
+              color: "primary.main",
               textTransform: "uppercase",
             }}
           >
@@ -77,9 +80,14 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
             width: 52,
             height: 52,
             borderRadius: "14px",
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
-            border: "1px solid rgba(255, 255, 255, 0.95)",
-            boxShadow: "0 4px 14px rgba(11, 92, 171, 0.08), inset 0 1px 1px rgba(255, 255, 255, 1)",
+            backgroundColor: isDark
+              ? "rgba(255, 255, 255, 0.08)"
+              : "rgba(255, 255, 255, 0.85)",
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: isDark
+              ? "none"
+              : "0 4px 14px rgba(11, 92, 171, 0.08), inset 0 1px 1px rgba(255, 255, 255, 1)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
             display: "flex",
@@ -90,7 +98,7 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
         >
           <Box
             sx={{
-              backgroundColor: "#0B5CAB",
+              backgroundColor: "primary.main",
               color: "#FFFFFF",
               fontSize: "0.625rem",
               fontWeight: 700,
@@ -109,7 +117,7 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#0F172A",
+              color: "text.primary",
               fontSize: "1.15rem",
               fontWeight: 800,
               lineHeight: 1,
@@ -127,19 +135,19 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
               fontWeight: 700,
               lineHeight: 1.15,
               letterSpacing: "-0.02em",
-              color: "#0F172A",
+              color: "text.primary",
             }}
           >
             {dateFormatter(now, "dddd")}
           </Typography>
           <Stack direction="row" spacing={1.25} alignItems="center">
             <Stack direction="row" spacing={0.5} alignItems="center">
-              <CalendarTodayOutlined sx={{ fontSize: 13.5, color: "#0B5CAB" }} />
+              <CalendarTodayOutlined sx={{ fontSize: 13.5, color: "primary.main" }} />
               <Typography
                 sx={{
                   fontSize: "0.8125rem",
                   fontWeight: 600,
-                  color: "#475569",
+                  color: "text.secondary",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -151,16 +159,16 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
                 width: 3,
                 height: 3,
                 borderRadius: "50%",
-                backgroundColor: "#CBD5E1",
+                backgroundColor: "divider",
               }}
             />
             <Stack direction="row" spacing={0.4} alignItems="center">
-              <AccessTimeOutlined sx={{ fontSize: 13.5, color: "#64748B" }} />
+              <AccessTimeOutlined sx={{ fontSize: 13.5, color: "text.secondary" }} />
               <Typography
                 sx={{
                   fontSize: "0.75rem",
                   fontWeight: 500,
-                  color: "#64748B",
+                  color: "text.secondary",
                   whiteSpace: "nowrap",
                 }}
               >

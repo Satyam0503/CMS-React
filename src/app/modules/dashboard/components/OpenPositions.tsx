@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { alpha, Box, Stack, Typography } from "@mui/material";
 import {
   ArrowForwardRounded,
   BugReportOutlined,
@@ -17,6 +17,7 @@ import { CustomCard } from "../../../shared/components/C_Card";
 import { CardSkeleton } from "./CardSkeleton";
 import { JobTypeMapper } from "../../../../utils/common";
 import { getVacancyPayload } from "../../recruitment/jobs/Jobs";
+import { useIsDark } from "../../theme/useIsDark";
 
 const getJobRoleIcon = (title: string) => {
   const lower = title.toLowerCase();
@@ -33,6 +34,7 @@ const getJobRoleIcon = (title: string) => {
 };
 
 export default function OpenPositions() {
+  const isDark = useIsDark();
   const [activeJobs, setActiveJobs] = useState<JobModal[]>([]);
   const [loading, setLoading] = useState(true);
   const { formatMessage: i } = useIntl();
@@ -89,16 +91,23 @@ export default function OpenPositions() {
                       alignItems: "center",
                       p: 1.15,
                       borderRadius: "12px",
-                      backgroundColor: "rgba(255, 255, 255, 0.65)",
-                      border: "1px solid rgba(255, 255, 255, 0.85)",
-                      boxShadow: "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
+                      backgroundColor: isDark
+                        ? "rgba(255, 255, 255, 0.04)"
+                        : "rgba(255, 255, 255, 0.65)",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      boxShadow: isDark
+                        ? "none"
+                        : "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
                       backdropFilter: "blur(8px)",
                       WebkitBackdropFilter: "blur(8px)",
                       transition: "border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background-color 0.18s ease",
                       "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.92)",
-                        borderColor: "rgba(11, 92, 171, 0.3)",
-                        boxShadow: "0 6px 16px rgba(11, 92, 171, 0.08)",
+                        backgroundColor: isDark
+                          ? "rgba(255, 255, 255, 0.08)"
+                          : "rgba(255, 255, 255, 0.92)",
+                        borderColor: "primary.main",
+                        boxShadow: (theme) => `0 6px 16px ${alpha(theme.palette.primary.main, 0.15)}`,
                         transform: "translateY(-1px)",
                       },
                     }}
@@ -108,9 +117,9 @@ export default function OpenPositions() {
                         width: 38,
                         height: 38,
                         borderRadius: "10px",
-                        backgroundColor: "rgba(11, 92, 171, 0.08)",
-                        border: "1px solid rgba(11, 92, 171, 0.18)",
-                        boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.8)",
+                        backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                        border: "1px solid",
+                        borderColor: (theme) => alpha(theme.palette.primary.main, 0.25),
                         display: "grid",
                         placeItems: "center",
                         flexShrink: 0,
@@ -125,7 +134,7 @@ export default function OpenPositions() {
                         sx={{
                           fontWeight: 600,
                           fontSize: "0.875rem",
-                          color: "#0F172A",
+                          color: "text.primary",
                         }}
                       >
                         {job.title}
@@ -134,7 +143,7 @@ export default function OpenPositions() {
                         sx={{
                           fontSize: "0.75rem",
                           fontWeight: 500,
-                          color: "#64748B",
+                          color: "text.secondary",
                         }}
                       >
                         {i({ id: JobTypeMapper[job.jobType] })}
@@ -149,14 +158,15 @@ export default function OpenPositions() {
                         px: 1,
                         py: 0.35,
                         borderRadius: "6px",
-                        backgroundColor: "#F8FAFC",
-                        border: "1px solid #E2E8F0",
-                        color: "#334155",
+                        backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                        border: "1px solid",
+                        borderColor: (theme) => alpha(theme.palette.primary.main, 0.2),
+                        color: "text.primary",
                         flexShrink: 0,
                       }}
                     >
-                      <PeopleOutlineRounded sx={{ fontSize: 13.5, color: "#64748B" }} />
-                      <Typography sx={{ fontWeight: 700, fontSize: "0.78rem", color: "#0F172A" }}>
+                      <PeopleOutlineRounded sx={{ fontSize: 13.5, color: "text.secondary" }} />
+                      <Typography sx={{ fontWeight: 700, fontSize: "0.78rem", color: "text.primary" }}>
                         {job.vacancies}
                       </Typography>
                     </Stack>
@@ -174,14 +184,17 @@ export default function OpenPositions() {
                     px: 1.25,
                     py: 0.55,
                     borderRadius: "8px",
-                    backgroundColor: "#F8FAFC",
-                    border: "1px solid #E2E8F0",
-                    color: "#334155",
+                    backgroundColor: isDark
+                      ? "rgba(255, 255, 255, 0.06)"
+                      : "#F8FAFC",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    color: "text.primary",
                     transition: "all 0.18s ease",
                     "&:hover": {
-                      backgroundColor: "#EBF3FA",
-                      borderColor: "#8ABCE6",
-                      color: "#0B5CAB",
+                      backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                      borderColor: "primary.main",
+                      color: "primary.main",
                     },
                   }}
                 >

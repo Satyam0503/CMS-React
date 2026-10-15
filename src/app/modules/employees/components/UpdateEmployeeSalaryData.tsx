@@ -554,7 +554,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     borderRadius: 3,
                     border: "1px solid",
                     borderColor: "divider",
-                    bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.paper" : "#FFFFFF"),
+                    bgcolor: "background.paper",
                     boxShadow: "0 1px 4px rgba(15, 23, 42, 0.04)",
                   }}
                 >
@@ -701,7 +701,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                             border: "1px solid",
                             borderColor: "divider",
                             boxShadow: "none",
-                            bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.default" : "#F8FAFC"),
+                            bgcolor: "background.default",
                             height: "100%",
                             display: "flex",
                             flexDirection: "column",
@@ -727,7 +727,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                             border: "1px solid",
                             borderColor: "divider",
                             boxShadow: "none",
-                            bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.default" : "#F8FAFC"),
+                            bgcolor: "background.default",
                             height: "100%",
                             display: "flex",
                             flexDirection: "column",
@@ -779,7 +779,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                             border: "1px solid",
                             borderColor: "divider",
                             boxShadow: "none",
-                            bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.default" : "#F8FAFC"),
+                            bgcolor: "background.default",
                             height: "100%",
                             display: "flex",
                             flexDirection: "column",
@@ -868,7 +868,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                           borderRadius: 3,
                           border: "1px solid",
                           borderColor: "divider",
-                          bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.paper" : "#FFFFFF"),
+                          bgcolor: "background.paper",
                           boxShadow: "0 2px 10px rgba(15, 23, 42, 0.03)",
                         }}
                       >
@@ -1006,7 +1006,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                                   borderRadius: 2,
                                   border: "1px dashed",
                                   borderColor: "divider",
-                                  bgcolor: (theme) => alpha(theme.palette.background.default, 0.6),
+                                  bgcolor: "action.hover",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "space-between",
@@ -1051,7 +1051,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                           borderRadius: 3,
                           border: "1px solid",
                           borderColor: "divider",
-                          bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.paper" : "#FFFFFF"),
+                          bgcolor: "background.paper",
                           boxShadow: "0 1px 4px rgba(15, 23, 42, 0.04)",
                         }}
                       >
@@ -1172,7 +1172,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                                   borderRadius: 2,
                                   border: "1px dashed",
                                   borderColor: "divider",
-                                  bgcolor: (theme) => alpha(theme.palette.background.default, 0.6),
+                                  bgcolor: "action.hover",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "space-between",
@@ -1220,7 +1220,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                           borderRadius: 3,
                           border: "1px solid",
                           borderColor: "divider",
-                          bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.paper" : "#FFFFFF"),
+                          bgcolor: "background.paper",
                           boxShadow: "0 1px 4px rgba(15, 23, 42, 0.04)",
                         }}
                       >
@@ -1320,7 +1320,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                           borderRadius: 3,
                           border: "1px solid",
                           borderColor: "divider",
-                          bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.paper" : "#FFFFFF"),
+                          bgcolor: "background.paper",
                           boxShadow: "0 1px 4px rgba(15, 23, 42, 0.04)",
                         }}
                       >

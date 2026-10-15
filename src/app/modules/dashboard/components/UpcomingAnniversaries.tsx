@@ -1,4 +1,4 @@
-import { Stack, Typography, Avatar, Box, Card, Tooltip } from "@mui/material";
+import { Stack, Typography, Avatar, Box, Card, Tooltip, alpha } from "@mui/material";
 import { WorkspacePremiumOutlined } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import dayjs from "dayjs";
@@ -7,6 +7,7 @@ import { CardSkeleton } from "./CardSkeleton";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 import { CelebrationModule } from "../model";
 import { useUpcomingCelebrationsQuery } from "../dashboardQueries";
+import { useIsDark } from "../../theme/useIsDark";
 
 export interface UpcomingAnniversariesProps {
   anniversaries?: CelebrationModule[];
@@ -17,6 +18,7 @@ export const UpcomingAnniversaries = ({
   anniversaries,
   isLoading: propIsLoading,
 }: UpcomingAnniversariesProps) => {
+  const isDark = useIsDark();
   const { formatMessage: i } = useIntl();
   const query = useUpcomingCelebrationsQuery();
 
@@ -52,7 +54,7 @@ export const UpcomingAnniversaries = ({
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        sx={{ pb: 1.1, mb: 1.25, borderBottom: "1px solid #E2E8F0" }}
+        sx={{ pb: 1.1, mb: 1.25, borderBottom: "1px solid", borderColor: "divider" }}
       >
         <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0 }}>
           <Box
@@ -60,11 +62,12 @@ export const UpcomingAnniversaries = ({
               width: 28,
               height: 28,
               borderRadius: "8px",
-              backgroundColor: "#ECFDF5",
-              border: "1px solid #A7F3D0",
+              backgroundColor: (theme) => alpha(theme.palette.success.main || "#059669", 0.12),
+              border: "1px solid",
+              borderColor: (theme) => alpha(theme.palette.success.main || "#059669", 0.25),
               display: "grid",
               placeItems: "center",
-              color: "#059669",
+              color: "success.main",
               flexShrink: 0,
             }}
           >
@@ -75,7 +78,7 @@ export const UpcomingAnniversaries = ({
               fontWeight: 700,
               fontSize: { xs: "0.875rem", sm: "0.925rem" },
               letterSpacing: "-0.015em",
-              color: "#0F172A",
+              color: "text.primary",
             }}
             noWrap
           >
@@ -90,11 +93,12 @@ export const UpcomingAnniversaries = ({
             px: 0.9,
             py: 0.25,
             borderRadius: "6px",
-            backgroundColor: "#F1F5F9",
-            border: "1px solid #E2E8F0",
+            backgroundColor: isDark ? "action.hover" : "#F1F5F9",
+            border: "1px solid",
+            borderColor: "divider",
             fontSize: "0.72rem",
             fontWeight: 700,
-            color: "#475569",
+            color: "text.secondary",
             flexShrink: 0,
           }}
         >
@@ -121,17 +125,18 @@ export const UpcomingAnniversaries = ({
               width: 42,
               height: 42,
               borderRadius: "10px",
-              backgroundColor: "#ECFDF5",
-              border: "1px dashed #A7F3D0",
+              backgroundColor: (theme) => alpha(theme.palette.success.main || "#059669", 0.12),
+              border: "1px dashed",
+              borderColor: (theme) => alpha(theme.palette.success.main || "#059669", 0.35),
               display: "grid",
               placeItems: "center",
-              color: "#059669",
+              color: "success.main",
               mb: 1,
             }}
           >
             <WorkspacePremiumOutlined sx={{ fontSize: 20 }} />
           </Box>
-          <Typography sx={{ fontSize: "0.85rem", color: "#64748B", fontWeight: 500 }}>
+          <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", fontWeight: 500 }}>
             {i({
               id: "TITLES.NO_UPCOMING_WORK_ANNIVERSARY",
               defaultMessage: "No upcoming work anniversaries right now",
@@ -175,21 +180,33 @@ export const UpcomingAnniversaries = ({
                 sx={{
                   p: { xs: 1, sm: 1.15 },
                   borderRadius: "12px",
-                  backgroundColor: isToday
-                    ? "rgba(236, 253, 245, 0.75)"
-                    : "rgba(255, 255, 255, 0.65)",
-                  border: isToday
-                    ? "1px solid rgba(167, 243, 208, 0.9)"
-                    : "1px solid rgba(255, 255, 255, 0.85)",
-                  boxShadow:
-                    "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
+                  backgroundColor: (theme) =>
+                    isToday
+                      ? alpha(theme.palette.success.main || "#059669", 0.15)
+                      : isDark
+                      ? "rgba(255, 255, 255, 0.04)"
+                      : "rgba(255, 255, 255, 0.65)",
+                  border: "1px solid",
+                  borderColor: (theme) =>
+                    isToday
+                      ? alpha(theme.palette.success.main || "#059669", 0.35)
+                      : "divider",
+                  boxShadow: isDark
+                    ? "none"
+                    : "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
                   backdropFilter: "blur(8px)",
                   WebkitBackdropFilter: "blur(8px)",
                   transition: "all 0.18s ease",
                   "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.95)",
-                    borderColor: "rgba(5, 150, 105, 0.3)",
-                    boxShadow: "0 6px 16px rgba(5, 150, 105, 0.08)",
+                    backgroundColor: (theme) =>
+                      isToday
+                        ? alpha(theme.palette.success.main || "#059669", 0.22)
+                        : isDark
+                        ? "rgba(255, 255, 255, 0.08)"
+                        : "rgba(255, 255, 255, 0.95)",
+                    borderColor: "success.main",
+                    boxShadow: (theme) =>
+                      `0 6px 16px ${alpha(theme.palette.success.main || "#059669", 0.15)}`,
                     transform: "translateY(-1px)",
                   },
                 }}
@@ -207,7 +224,8 @@ export const UpcomingAnniversaries = ({
                       width: { xs: 36, sm: 40 },
                       height: { xs: 36, sm: 40 },
                       fontSize: "0.85rem",
-                      border: "1px solid #E2E8F0",
+                      border: "1px solid",
+                      borderColor: "divider",
                       flexShrink: 0,
                     }}
                   />
@@ -217,7 +235,7 @@ export const UpcomingAnniversaries = ({
                         sx={{
                           fontWeight: 600,
                           fontSize: { xs: "0.825rem", sm: "0.875rem" },
-                          color: "#0F172A",
+                          color: "text.primary",
                         }}
                         noWrap
                       >
@@ -230,9 +248,10 @@ export const UpcomingAnniversaries = ({
                         px: 0.85,
                         py: 0.15,
                         borderRadius: "5px",
-                        backgroundColor: "#ECFDF5",
-                        border: "1px solid #A7F3D0",
-                        color: "#047857",
+                        backgroundColor: (theme) => alpha(theme.palette.success.main || "#059669", 0.12),
+                        border: "1px solid",
+                        borderColor: (theme) => alpha(theme.palette.success.main || "#059669", 0.25),
+                        color: "success.main",
                         fontWeight: 600,
                         fontSize: { xs: "0.68rem", sm: "0.7rem" },
                         whiteSpace: "nowrap",
@@ -253,13 +272,14 @@ export const UpcomingAnniversaries = ({
                     whiteSpace: "nowrap",
                     fontSize: { xs: "0.72rem", sm: "0.78rem" },
                     fontWeight: 600,
-                    color: isToday ? "#059669" : "#475569",
+                    color: isToday ? "success.main" : "text.secondary",
                     ...(isToday && {
                       px: 0.8,
                       py: 0.2,
                       borderRadius: "5px",
-                      backgroundColor: "#ECFDF5",
-                      border: "1px solid #A7F3D0",
+                      backgroundColor: (theme) => alpha(theme.palette.success.main || "#059669", 0.12),
+                      border: "1px solid",
+                      borderColor: (theme) => alpha(theme.palette.success.main || "#059669", 0.25),
                     }),
                   }}
                 >

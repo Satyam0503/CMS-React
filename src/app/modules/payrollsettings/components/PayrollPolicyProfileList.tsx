@@ -6,6 +6,7 @@ import { Box, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
 import dayjs from "dayjs";
 import { AppButton } from "../../../shared/components/ui";
 import type { StatutoryProfile } from "./PayrollConfigurationPanel";
+import { useIsDark } from "../../theme/useIsDark";
 
 export function PayrollPolicyProfileList({
   profiles,
@@ -29,7 +30,7 @@ export function PayrollPolicyProfileList({
   onApprove: (profile: StatutoryProfile) => void;
 }) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const isDark = useIsDark();
 
   if (!profiles.length) return null;
 

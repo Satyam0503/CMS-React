@@ -3,6 +3,7 @@ import {
   Box,
   Card,
   Chip,
+  CircularProgress,
   Stack,
   Typography,
   alpha,
@@ -46,9 +47,7 @@ export default function ProfileCard() {
     LANGUAGE.ENGLISH;
   const [date, setDate] = useState<Dayjs | null>(null);
   const [loading, setLoading] = useState(false);
-  const paySlipControlColor = theme.palette.mode === "light"
-    ? theme.palette.primary.dark
-    : theme.palette.common.white;
+  const paySlipControlColor = theme.palette.common.white;
 
   const handleClose = () => {
     setOpen(false);
@@ -86,6 +85,7 @@ export default function ProfileCard() {
 
   const viewPaySlip = async () => {
     if (!date) {
+      toast.info(i({ id: "PAYROLL.SELECT_PAY_MONTH", defaultMessage: "Please select pay month" }));
       return;
     }
     setLoading(true);
@@ -233,45 +233,116 @@ export default function ProfileCard() {
         </Stack>
         {!employeeId && (
           <Stack
-            spacing={1}
+            spacing={1.25}
             sx={{
               width: "100%",
               mt: 1.5,
             }}
           >
             <Box sx={{ width: "100%" }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#ffffff !important",
+                  fontWeight: 700,
+                  fontSize: "0.875rem",
+                  letterSpacing: "0.01em",
+                  mb: 0.75,
+                  display: "block",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.25)",
+                }}
+              >
+                {i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
+              </Typography>
               <CustomisedDatePicker
-                label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
+                className="profile-payslip-datepicker"
                 views={["month", "year"]}
                 value={date}
                 maxDate={dayjs().subtract(1, "month")}
                 setValue={handleDateChange}
                 sx={{
                   width: "100%",
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: alpha(paySlipControlColor, 0.1),
-                    "& fieldset": { borderColor: alpha(paySlipControlColor, 0.82) },
-                    "&:hover:not(.Mui-focused)": {
-                      "& .MuiOutlinedInput-notchedOutline": { borderColor: paySlipControlColor },
+                  "& .MuiOutlinedInput-root, & .MuiPickersOutlinedInput-root": {
+                    height: 40,
+                    backgroundColor: "#ffffff !important",
+                    borderRadius: "8px !important",
+                    color: "#0f172a !important",
+                    WebkitTextFillColor: "#0f172a !important",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.12)",
+                    "& *": {
+                      color: "#0f172a !important",
+                      WebkitTextFillColor: "#0f172a !important",
                     },
-                    "&.Mui-focused fieldset": { borderColor: paySlipControlColor },
-                    color: paySlipControlColor,
+                    "& fieldset, & .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "rgba(15, 23, 42, 0.16) !important",
+                    },
+                    "&:hover fieldset, &:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "rgba(15, 23, 42, 0.35) !important",
+                    },
+                    "&.Mui-focused fieldset, &.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#4F46E5 !important",
+                      borderWidth: "2px !important",
+                    },
+                    "& input, & .MuiInputBase-input": {
+                      color: "#0f172a !important",
+                      WebkitTextFillColor: "#0f172a !important",
+                      fontWeight: 600,
+                    },
+                    "& input::placeholder, & .MuiPickersSectionList-placeholder": {
+                      color: "#475569 !important",
+                      WebkitTextFillColor: "#475569 !important",
+                      opacity: "1 !important",
+                      fontWeight: 500,
+                    },
+                    "& .MuiPickersSectionList-root, & .MuiPickersSectionList-sectionContent, & .MuiPickersSectionList-sectionSeparator": {
+                      color: "#0f172a !important",
+                      WebkitTextFillColor: "#0f172a !important",
+                      fontWeight: 600,
+                    },
+                    "& .MuiSvgIcon-root": {
+                      color: "#1e1b4b !important",
+                      fill: "#1e1b4b !important",
+                    },
                   },
-                  "& .MuiInputLabel-root": { color: paySlipControlColor },
-                  "& .MuiInputLabel-root.Mui-focused": { color: paySlipControlColor },
-                  "& .MuiSvgIcon-root": { color: paySlipControlColor },
                 }}
               />
             </Box>
             <AppButton
               aria-label="View payslip"
-              startIcon={<Visibility />}
+              className="profile-payslip-button"
+              disabled={loading}
+              startIcon={
+                loading ? (
+                  <CircularProgress size={18} sx={{ color: "#1E1B4B !important" }} />
+                ) : (
+                  <Visibility sx={{ color: "#1E1B4B !important", fill: "#1E1B4B !important" }} />
+                )
+              }
               fullWidth
               sx={{
-                color: paySlipControlColor,
-                borderColor: alpha(paySlipControlColor, 0.42),
+                height: 40,
+                borderRadius: "8px",
+                fontWeight: 700,
+                fontSize: "0.875rem",
+                letterSpacing: "0.01em",
+                backgroundColor: "#ffffff !important",
+                color: "#1E1B4B !important",
+                WebkitTextFillColor: "#1E1B4B !important",
+                border: "none !important",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.18)",
+                transition: "all 0.18s ease-in-out",
+                "&:hover": {
+                  backgroundColor: "#f1f5f9 !important",
+                  color: "#1E1B4B !important",
+                  WebkitTextFillColor: "#1E1B4B !important",
+                  boxShadow: "0 6px 16px rgba(0, 0, 0, 0.25)",
+                  transform: "translateY(-1px)",
+                },
+                "&:active": {
+                  transform: "translateY(0)",
+                },
               }}
-              variant="outlined"
+              variant="contained"
               onClick={viewPaySlip}
             >
               {loading ? "Generating..." : "View Pay Slip"}

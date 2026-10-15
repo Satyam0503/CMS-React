@@ -6,6 +6,7 @@ import { removeUnwantedString, sanitizeHtmlContent } from "../../../utils/common
 import { useIntl } from "react-intl";
 import { useTheme } from "@mui/material";
 import clsx from "clsx";
+import { useIsDark } from "../../modules/theme/useIsDark";
 
 type PropsType = {
   value: string;
@@ -17,7 +18,7 @@ const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "PLACEH
   const [textValue, setTextValue] = useState(value);
   const debouncedValue = useDebounce(textValue);
   const { formatMessage: i } = useIntl();
-  const themeMode = useTheme().palette.mode;
+  const isDark = useIsDark();
 
   // Create a ref to hold the ReactQuill instance
   const quillRef = useRef<ReactQuill | null>(null);
@@ -75,7 +76,7 @@ const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "PLACEH
       formats={formats}
       modules={modules}
       placeholder={i({ id: placeholder })}
-      className={clsx("text-editor", { dark: themeMode === "dark", light: themeMode === "light" })}
+      className={clsx("text-editor", { dark: isDark, light: !isDark })}
     />
   );
 });

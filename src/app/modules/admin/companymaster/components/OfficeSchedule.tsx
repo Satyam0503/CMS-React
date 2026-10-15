@@ -110,20 +110,22 @@ const ScheduleMetric = ({
   <Paper
     variant="outlined"
     sx={{
-      p: { xs: 1, sm: 1.25 },
+      p: { xs: 1.25, sm: 1.5 },
       height: "100%",
       borderRadius: 2,
       bgcolor: (theme) => alpha(theme.palette.primary.main, 0.035),
+      display: "flex",
+      alignItems: "center",
     }}
   >
-    <Stack direction="row" spacing={1} alignItems="center">
+    <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0, width: "100%" }}>
       <Box
         sx={{
           display: "grid",
           placeItems: "center",
-          width: 32,
-          height: 32,
-          borderRadius: 1.5,
+          width: 36,
+          height: 36,
+          borderRadius: 1.75,
           bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
           color: "primary.main",
           flexShrink: 0,
@@ -131,14 +133,42 @@ const ScheduleMetric = ({
       >
         {icon}
       </Box>
-      <Box sx={{ minWidth: 0 }}>
-        <Typography variant="caption" color="text.secondary" fontWeight={700} noWrap>
+      <Box sx={{ minWidth: 0, flex: 1 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          fontWeight={700}
+          sx={{
+            display: "block",
+            fontSize: { xs: "0.72rem", sm: "0.76rem" },
+            lineHeight: 1.25,
+            mb: 0.25,
+            wordBreak: "break-word",
+          }}
+        >
           {label}
         </Typography>
-        <Typography fontWeight={800} noWrap>
+        <Typography
+          fontWeight={800}
+          sx={{
+            fontSize: { xs: "0.92rem", sm: "1rem" },
+            lineHeight: 1.25,
+            wordBreak: "break-word",
+          }}
+        >
           {value}
         </Typography>
-        <Typography variant="caption" color="text.secondary" noWrap sx={{ display: { xs: "none", sm: "block" } }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{
+            display: "block",
+            fontSize: { xs: "0.7rem", sm: "0.75rem" },
+            lineHeight: 1.2,
+            mt: 0.25,
+            wordBreak: "break-word",
+          }}
+        >
           {detail}
         </Typography>
       </Box>
@@ -383,13 +413,58 @@ export const OfficeSchedule = () => {
           {visibleSchedules.map((item) => (
             <Accordion key={item.scheduleId} expanded={expanded === item.scheduleId} onChange={(_, value) => { setExpanded(value ? item.scheduleId ?? false : false); if (value && item.scheduleId !== "new") setForm(item); }} sx={{ overflow: "hidden", transition: "opacity 220ms ease, transform 220ms ease, max-height 220ms ease, margin 220ms ease", ...(removingScheduleId === item.scheduleId ? { opacity: 0, transform: "translateX(16px) scale(0.98)", maxHeight: 0, mb: -1, pointerEvents: "none" } : {}), "& .MuiAccordionSummary-content": { minWidth: 0, my: 1.25 } }}>
               <AccordionSummary expandIcon={<ExpandMoreRounded />} sx={{ px: { xs: 1.5, sm: 2 }, "& .MuiAccordionSummary-content": { mr: 0 } }}>
-                <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto auto", alignItems: "center", columnGap: { xs: 0.75, sm: 1.25 }, width: "100%", minWidth: 0 }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "minmax(0, 1fr) auto",
+                      sm: "minmax(0, 1fr) auto auto",
+                    },
+                    alignItems: "center",
+                    columnGap: { xs: 0.75, sm: 1.25 },
+                    rowGap: 0.5,
+                    width: "100%",
+                    minWidth: 0,
+                  }}
+                >
                   <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, flexWrap: "wrap" }}>
-                    <Typography fontWeight={750} noWrap>{item.name}</Typography>
+                    <Typography fontWeight={750} sx={{ wordBreak: "break-word" }}>{item.name}</Typography>
                   </Stack>
-                  <Typography variant="body2" color="text.secondary" noWrap sx={{ fontSize: { xs: 12, sm: 14 } }}>{formatTime(item.standardCheckIn)} - {formatTime(item.standardCheckOut)}</Typography>
-                  <Box sx={{ width: 32, height: 32, display: "grid", placeItems: "center" }}>
-                    {item.isDefault ? <Tooltip title="Company default"><StarRounded color="primary" fontSize="small" /></Tooltip> : item.scheduleId !== "new" && <Tooltip title="Delete shift"><IconButton aria-label={`Delete ${item.name}`} color="error" size="small" onClick={(event) => { event.stopPropagation(); setSchedulePendingDelete(item); }} sx={{ width: 32, height: 32, p: 0.5, border: 0, bgcolor: "transparent", transition: "transform 160ms ease, background-color 160ms ease", "&:hover": { bgcolor: (theme) => alpha(theme.palette.error.main, 0.1), transform: "rotate(-10deg) scale(1.12)" } }}><DeleteOutlineRounded fontSize="small" /></IconButton></Tooltip>}
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      fontSize: { xs: 12, sm: 14 },
+                      gridColumn: { xs: "1 / 2", sm: "auto" },
+                      fontWeight: 600,
+                    }}
+                  >
+                    {formatTime(item.standardCheckIn)} - {formatTime(item.standardCheckOut)}
+                  </Typography>
+                  <Box sx={{ width: 32, height: 32, display: "grid", placeItems: "center", gridColumn: { xs: "2 / 3", sm: "auto" }, gridRow: { xs: "1 / 3", sm: "auto" } }}>
+                    {item.isDefault ? (
+                      <Tooltip title="Company default"><StarRounded color="primary" fontSize="small" /></Tooltip>
+                    ) : item.scheduleId !== "new" && (
+                      <Tooltip title="Delete shift">
+                        <IconButton
+                          aria-label={`Delete ${item.name}`}
+                          color="error"
+                          size="small"
+                          onClick={(event) => { event.stopPropagation(); setSchedulePendingDelete(item); }}
+                          sx={{
+                            width: 32,
+                            height: 32,
+                            p: 0.5,
+                            border: 0,
+                            bgcolor: "transparent",
+                            transition: "transform 160ms ease, background-color 160ms ease",
+                            "&:hover": { bgcolor: (theme) => alpha(theme.palette.error.main, 0.1), transform: "rotate(-10deg) scale(1.12)" }
+                          }}
+                        >
+                          <DeleteOutlineRounded fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </Box>
                   {expanded !== item.scheduleId && item.scheduleId !== "new" && (
                     <Typography gridColumn="1 / -1" variant="caption" color="text.secondary" sx={{ mt: 0.25, overflowWrap: "anywhere" }}>
@@ -425,17 +500,17 @@ export const OfficeSchedule = () => {
           </Alert>
         )}
 
-        <Grid container spacing={1}>
-          <Grid size={{ xs: 6, sm: 3 }}>
+        <Grid container spacing={{ xs: 1, sm: 1.25 }}>
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <ScheduleMetric icon={<AlarmOnRounded fontSize="small" />} label="Automatic Present" value={formatTime(form.standardCheckIn)} detail="Effective office start" />
           </Grid>
-          <Grid size={{ xs: 6, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <ScheduleMetric icon={<TimerRounded fontSize="small" />} label="Scheduled span" value={formatMinutes(schedule.span)} detail={`${formatTime(form.standardCheckIn)} – ${formatTime(form.standardCheckOut)}`} />
           </Grid>
-          <Grid size={{ xs: 6, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <ScheduleMetric icon={<CoffeeRounded fontSize="small" />} label="Break allowance" value={formatMinutes(Number(form.breakMinutes))} detail={`${formatMinutes(schedule.available)} available time`} />
           </Grid>
-          <Grid size={{ xs: 6, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
             <ScheduleMetric icon={<CheckCircleRounded fontSize="small" />} label="Required work" value={formatMinutes(schedule.required)} detail={schedule.isWorkTargetValid ? "Fits the scheduled day" : "Exceeds available time"} />
           </Grid>
         </Grid>
@@ -492,8 +567,8 @@ export const OfficeSchedule = () => {
               <Stack spacing={1.25}>
                 <Stack direction="row" spacing={1} alignItems="center"><LoginRounded color="primary" fontSize="small" /><Typography fontWeight={800}>Punch-in window</Typography></Stack>
                 <Grid container spacing={1.5}>
-                  <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth size="small" type="time" label="Allowed from" value={form.checkInAllowedFrom} onChange={(event) => set("checkInAllowedFrom", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth size="small" type="time" label="Allowed until" value={form.checkInAllowedUntil} onChange={(event) => set("checkInAllowedUntil", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
+                  <Grid size={{ xs: 12, sm: 6, md: 12, lg: 6 }}><TextField fullWidth size="small" type="time" label="Allowed from" value={form.checkInAllowedFrom} onChange={(event) => set("checkInAllowedFrom", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
+                  <Grid size={{ xs: 12, sm: 6, md: 12, lg: 6 }}><TextField fullWidth size="small" type="time" label="Allowed until" value={form.checkInAllowedUntil} onChange={(event) => set("checkInAllowedUntil", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
                   <Grid size={{ xs: 12 }}><TextField fullWidth size="small" type="time" label="Automatic present punch-in" value={form.standardCheckIn} onChange={(event) => set("standardCheckIn", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
                 </Grid>
               </Stack>
@@ -505,8 +580,8 @@ export const OfficeSchedule = () => {
               <Stack spacing={1.25}>
                 <Stack direction="row" spacing={1} alignItems="center"><LogoutRounded color="primary" fontSize="small" /><Typography fontWeight={800}>Punch-out window</Typography></Stack>
                 <Grid container spacing={1.5}>
-                  <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth size="small" type="time" label="Allowed from" value={form.checkOutAllowedFrom} onChange={(event) => set("checkOutAllowedFrom", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth size="small" type="time" label="Allowed until" value={form.checkOutAllowedUntil} onChange={(event) => set("checkOutAllowedUntil", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
+                  <Grid size={{ xs: 12, sm: 6, md: 12, lg: 6 }}><TextField fullWidth size="small" type="time" label="Allowed from" value={form.checkOutAllowedFrom} onChange={(event) => set("checkOutAllowedFrom", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
+                  <Grid size={{ xs: 12, sm: 6, md: 12, lg: 6 }}><TextField fullWidth size="small" type="time" label="Allowed until" value={form.checkOutAllowedUntil} onChange={(event) => set("checkOutAllowedUntil", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
                   <Grid size={{ xs: 12 }}><TextField fullWidth size="small" type="time" label="Standard punch-out" value={form.standardCheckOut} onChange={(event) => set("standardCheckOut", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
                 </Grid>
               </Stack>
@@ -560,7 +635,7 @@ export const OfficeSchedule = () => {
               </Tooltip>
             </Stack>
           </Stack>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(4, minmax(0, 1fr))", lg: "repeat(7, minmax(0, 1fr))" }, gap: 1 }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(auto-fit, minmax(130px, 1fr))", md: "repeat(auto-fit, minmax(130px, 1fr))", xl: "repeat(7, minmax(0, 1fr))" }, gap: 1 }}>
             {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((name, index) => (
               <FormControlLabel key={name} sx={{ m: 0, minHeight: 44, px: 1, border: "1px solid", borderColor: offDays.includes(index) ? "primary.main" : "divider", borderRadius: 2, bgcolor: offDays.includes(index) ? "action.selected" : "background.paper", transition: "transform 160ms ease, background-color 160ms ease", "&:hover": { transform: "translateY(-1px)", bgcolor: "action.hover" }, "& .MuiFormControlLabel-label": { fontWeight: 700, fontSize: 13 } }} control={<Checkbox size="small" checked={offDays.includes(index)} onChange={(event) => setOffDays((current) => event.target.checked ? [...current, index] : current.filter((day) => day !== index))} />} label={name} />
             ))}

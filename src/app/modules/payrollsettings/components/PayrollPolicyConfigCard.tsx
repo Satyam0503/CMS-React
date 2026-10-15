@@ -1,4 +1,4 @@
-﻿import {
+import {
   AccountBalanceOutlined,
   CalendarMonthOutlined,
   HealthAndSafetyOutlined,
@@ -26,6 +26,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { AppButton } from "../../../shared/components/ui";
+import { useIsDark } from "../../theme/useIsDark";
 
 export type PayrollDivisorPolicyConfig = {
   id?: string;
@@ -62,7 +63,7 @@ export function PayrollPolicyConfigCard({
   canSavePolicy,
 }: Props) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const isDark = useIsDark();
 
   const glassCardSx = {
     borderRadius: "16px",

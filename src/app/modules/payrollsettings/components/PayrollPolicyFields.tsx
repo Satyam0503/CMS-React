@@ -23,6 +23,7 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
+import { useIsDark } from "../../theme/useIsDark";
 import type { Dispatch, SetStateAction } from "react";
 import type { PayrollDivisorPolicyConfig } from "./PayrollConfigurationPanel";
 
@@ -64,7 +65,7 @@ export function PayrollPolicyFields({
   componentsBusy,
 }: Props) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const isDark = useIsDark();
 
   const epfEnabled = config.epfMode !== "EXEMPT";
   const esicEnabled = config.esicMode !== "EXEMPT";

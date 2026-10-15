@@ -2,7 +2,6 @@ import React from "react";
 import {
   Typography,
   Grid,
-  FormHelperText,
   Stack,
   Box,
   FormLabel,
@@ -64,7 +63,9 @@ const HolidayForm: React.FC<PropsTypes> = ({
       formData.append("name", values.name);
       formData.append("type", values.type.toString());
       formData.append("date", dayjs(values.date).startOf("day").format("YYYY-MM-DD"));
-      formData.append("image", values.image!);
+      if (values.image) {
+        formData.append("image", values.image);
+      }
       formData.append("description", values.description);
       formData.append("recurring", String(values.recurring));
 
@@ -117,9 +118,8 @@ const HolidayForm: React.FC<PropsTypes> = ({
                 <Grid
                   size={{
                     xs: 12,
-                    md: 6,
+                    sm: 6,
                   }}
-                  className="pt-2"
                 >
                   <TextInput
                     required={true}
@@ -127,80 +127,152 @@ const HolidayForm: React.FC<PropsTypes> = ({
                     type="text"
                     name="name"
                     placeholder={i({ id: "OCCASION.NAME" })}
+                    size="small"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: 40,
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid
                   size={{
                     xs: 12,
-                    md: 6,
+                    sm: 6,
                   }}
                 >
                   <CustomisedDatePicker
+                    required={true}
                     label={i({ id: "OCCASION.DATE" })}
                     value={
                       formik.values.date ? dayjs(formik.values.date) : null
                     }
                     setValue={(newDate: Dayjs | null) => {
-                      formik.setFieldTouched("date", true);
-                      formik.setFieldValue("date", newDate);
+                      formik.setFieldTouched("date", true, true);
+                      formik.setFieldValue("date", newDate, true);
                     }}
                     name="date"
+                    error={Boolean(formik.touched.date && formik.errors.date)}
+                    helperText={
+                      formik.touched.date && formik.errors.date
+                        ? i({
+                            id: formik.errors.date,
+                            defaultMessage: formik.errors.date,
+                          })
+                        : undefined
+                    }
                   />
-                  <FormHelperText>
-                    {formik.touched.date &&
-                      formik.errors.date &&
-                      formik.errors.date}
-                  </FormHelperText>
                 </Grid>
                 <Grid
                   size={{
                     xs: 12,
-                    md: 6,
+                    sm: 6,
                   }}
-                  className="d-flex align-items-center gap-2"
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
                 >
-                  <Typography>{i({ id: "OCCASION.TYPE" })} :</Typography>
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-radio-buttons-group-label"
-                    // defaultValue="1"
-                    {...formik.getFieldProps("type")}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: 40,
+                      gap: 1.5,
+                      width: "100%",
+                    }}
                   >
-                    <FormControlLabel
-                      value="1"
-                      control={<AppRadio />}
-                      label={i({ id: "OCCASION.TYPES.HOLIDAY" })}
-                    />
-                    <FormControlLabel
-                      value="2"
-                      control={<AppRadio />}
-                      label={i({ id: "OCCASION.TYPES.EVENT" })}
-                    />
-                  </RadioGroup>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 600,
+                        color: "text.primary",
+                        fontSize: "13.5px",
+                        whiteSpace: "nowrap",
+                        m: 0,
+                      }}
+                    >
+                      {i({ id: "OCCASION.TYPE" })}:
+                    </Typography>
+                    <RadioGroup
+                      row
+                      aria-labelledby="occasion-type-radio-group-label"
+                      {...formik.getFieldProps("type")}
+                      sx={{ gap: 0.5 }}
+                    >
+                      <FormControlLabel
+                        value="1"
+                        control={<AppRadio size="small" />}
+                        label={i({ id: "OCCASION.TYPES.HOLIDAY" })}
+                        sx={{
+                          mr: 1,
+                          "& .MuiFormControlLabel-label": {
+                            fontSize: "13.5px",
+                            fontWeight: 500,
+                          },
+                        }}
+                      />
+                      <FormControlLabel
+                        value="2"
+                        control={<AppRadio size="small" />}
+                        label={i({ id: "OCCASION.TYPES.EVENT" })}
+                        sx={{
+                          mr: 0,
+                          "& .MuiFormControlLabel-label": {
+                            fontSize: "13.5px",
+                            fontWeight: 500,
+                          },
+                        }}
+                      />
+                    </RadioGroup>
+                  </Box>
                 </Grid>
 
                 <Grid
                   size={{
                     xs: 12,
-                    md: 6,
+                    sm: 6,
+                  }}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  <FormControlLabel
-                    control={
-                      <AppCheckbox
-                        checked={formik.values.recurring}
-                        name="recurring"
-                        onChange={(e, checked) => {
-                          formik.setFieldValue("recurring", checked);
-                        }}
-                      />
-                    }
-                    label={i({ id: "OCCASION.RECURRING" })}
-                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: 40,
+                      width: "100%",
+                    }}
+                  >
+                    <FormControlLabel
+                      sx={{
+                        ml: 0,
+                        "& .MuiFormControlLabel-label": {
+                          fontSize: "13.5px",
+                          fontWeight: 500,
+                        },
+                      }}
+                      control={
+                        <AppCheckbox
+                          size="small"
+                          checked={Boolean(formik.values.recurring)}
+                          name="recurring"
+                          onChange={(_e, checked) => {
+                            formik.setFieldValue("recurring", checked);
+                          }}
+                          sx={{ p: 0.5, mr: 0.5 }}
+                        />
+                      }
+                      label={i({ id: "OCCASION.RECURRING" })}
+                    />
+                  </Box>
                 </Grid>
 
                 <Grid size={12}>
                   <TextInput
+                    required={true}
                     label={i({
                       id: "OCCASION.DESCRIPTION",
                     })}
@@ -209,66 +281,120 @@ const HolidayForm: React.FC<PropsTypes> = ({
                     })}
                     name="description"
                     multiline={true}
+                    rows={3}
                     type="text"
+                    size="small"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        alignItems: "flex-start",
+                      },
+                    }}
                   />
+                </Grid>
+
+                <Grid size={12}>
+                  <FormLabel
+                    sx={{
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      color: "text.primary",
+                      mb: 1,
+                      display: "block",
+                    }}
+                  >
+                    {i({ id: "OCCASION.OCCASION_IMAGE" })}
+                  </FormLabel>
+                  <Box
+                    component="div"
+                    sx={{
+                      border: "1px dashed",
+                      borderColor:
+                        formik.touched.image && Boolean(formik.errors.image)
+                          ? "error.main"
+                          : "divider",
+                      borderRadius: "10px",
+                      bgcolor: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "rgba(255, 255, 255, 0.02)"
+                          : "rgba(248, 250, 252, 0.7)",
+                      p: 3,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      textAlign: "center",
+                      transition:
+                        "border-color 0.2s ease, background-color 0.2s ease",
+                      "&:hover": {
+                        borderColor: "primary.main",
+                        bgcolor: (theme) =>
+                          theme.palette.mode === "dark"
+                            ? "rgba(255, 255, 255, 0.04)"
+                            : "rgba(241, 245, 249, 0.8)",
+                      },
+                    }}
+                  >
+                    <AppIconButton
+                      component="label"
+                      role="button"
+                      aria-label="select cover image"
+                      sx={{
+                        border: 0,
+                        color:
+                          formik.touched.image && Boolean(formik.errors.image)
+                            ? "error.main"
+                            : "primary.main",
+                        mb: 0.5,
+                      }}
+                    >
+                      <CloudUploadOutlined sx={{ fontSize: 36 }} />
+                      <input
+                        name="image"
+                        type="file"
+                        accept=".jpg,.png,.jpeg,.webp"
+                        onChange={(e) => handleFileChange(e, formik)}
+                        hidden
+                      />
+                    </AppIconButton>
+                    <Stack spacing={0.5} alignItems="center">
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        {formik.values.image?.name
+                          ? formik.values.image.name
+                          : isEdit && formik.values.imageUrl
+                          ? formik.values.imageUrl.split("/").pop()
+                          : i(
+                              { id: "COMPANY_DETAILS.SELECTED_LOGO" },
+                              { image: "" }
+                            )}
+                      </Typography>
+                      {formik.touched.image && formik.errors.image ? (
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "error.main", fontWeight: 500 }}
+                        >
+                          {i({
+                            id: String(formik.errors.image),
+                            defaultMessage: String(formik.errors.image),
+                          })}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "text.secondary" }}
+                        >
+                          {i({ id: "VALIDATION_ERR.PICTURE_FORMAT" })}
+                        </Typography>
+                      )}
+                    </Stack>
+                  </Box>
                 </Grid>
               </Grid>
 
-              <Stack className="mt-4">
-                <FormLabel>{i({ id: "OCCASION.OCCASION_IMAGE" })}</FormLabel>
-                <Box
-                  component="div"
-                  sx={{
-                    border: 1,
-                    borderRadius: 1,
-                    borderColor: "text.disabled",
-                  }}
-                  className="d-flex flex-column align-items-center text-center p-4 "
-                >
-                  <AppIconButton
-                    component="label"
-                    role="button"
-                    aria-label="select logo"
-                    sx={{
-                      border: 0,
-                      color:
-                        formik.touched.imageUrl &&
-                        Boolean(formik.errors.imageUrl)
-                          ? "error.main"
-                          : "primary.main",
-                    }}
-                  >
-                    <CloudUploadOutlined className="fs-36" />
-                    <input
-                      name="image"
-                      type="file"
-                      accept=".jpg,.png,.webp"
-                      onChange={(e) => handleFileChange(e, formik)}
-                      hidden
-                    />
-                  </AppIconButton>
-                  <Stack>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {" "}
-                      {i(
-                        { id: "COMPANY_DETAILS.SELECTED_LOGO" },
-                        { image: formik.values.image?.name ?? "" }
-                      )}
-                    </Typography>
-                    {formik.touched.imageUrl && formik.errors.imageUrl ? (
-                      <Typography variant="body2" sx={{ color: "error.main" }}>
-                        {i({ id: formik.errors.imageUrl })}
-                      </Typography>
-                    ) : (
-                      <Typography variant="body2">
-                        {i({ id: "VALIDATION_ERR.PICTURE_FORMAT" })}
-                      </Typography>
-                    )}
-                  </Stack>
-                </Box>
-              </Stack>
-
-              <Stack className="flex-row justify-content-end gap-2 mt-4">
+              <Stack
+                direction="row"
+                justifyContent="flex-end"
+                spacing={1.5}
+                sx={{ mt: 3 }}
+              >
                 <CustomisedButton
                   variant="outlined"
                   label={i({ id: "BUTTON.CANCEL" })}

@@ -351,11 +351,13 @@ const EmployeeAttendance = () => {
           sx={{
             p: { xs: 1.5, sm: 2, md: 2.5 },
             borderRadius: 3,
-            bgcolor: "#FFFFFF",
-            borderColor: "#E2E8F0",
+            bgcolor: "background.paper",
+            borderColor: "divider",
             backdropFilter: "blur(20px) saturate(180%)",
             WebkitBackdropFilter: "blur(20px) saturate(180%)",
-            boxShadow: "0 10px 30px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
+            boxShadow: (theme) => theme.palette.mode === "dark"
+              ? "0 10px 30px 0 rgba(0, 0, 0, 0.35)"
+              : "0 10px 30px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03)",
           }}
         >
           <Stack
@@ -366,10 +368,10 @@ const EmployeeAttendance = () => {
             sx={{ mb: 2 }}
           >
             <Box>
-              <Typography fontWeight={800} sx={{ color: "#0F172A", fontSize: "1.05rem" }}>
+              <Typography fontWeight={800} sx={{ color: "text.primary", fontSize: "1.05rem" }}>
                 Today’s attendance overview
               </Typography>
-              <Typography variant="body2" sx={{ color: "#64748B", fontWeight: 500 }}>
+              <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
                 {todayOverview.startDate.format("dddd, DD MMMM YYYY")}
               </Typography>
             </Box>
@@ -381,12 +383,13 @@ const EmployeeAttendance = () => {
                 px: 1.25,
                 py: 0.5,
                 borderRadius: "999px",
-                bgcolor: "#EBF3FA",
-                border: "1px solid rgba(11, 92, 171, 0.22)",
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                border: "1px solid",
+                borderColor: (theme) => alpha(theme.palette.primary.main, 0.28),
               }}
             >
-              <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#0B5CAB" }} />
-              <Typography variant="caption" sx={{ color: "#0B5CAB", fontWeight: 700 }}>
+              <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "primary.main" }} />
+              <Typography variant="caption" sx={{ color: "primary.main", fontWeight: 700 }}>
                 Live summary for today
               </Typography>
             </Box>
@@ -394,7 +397,11 @@ const EmployeeAttendance = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(3, 1fr)",
+                lg: "repeat(6, 1fr)",
+              },
               gap: { xs: 1.25, sm: 1.5, md: 2 },
             }}
           >
@@ -480,18 +487,21 @@ const EmployeeAttendance = () => {
                   height: "100%",
                   cursor: stat.clickable ? "pointer" : "default",
                   borderRadius: "12px",
-                  bgcolor: "#F8FAFC !important",
-                  border: "1px solid #CBD5E1 !important",
+                  bgcolor: "action.hover",
+                  border: "1px solid",
+                  borderColor: "divider",
                   backdropFilter: "blur(12px) saturate(180%)",
                   WebkitBackdropFilter: "blur(12px) saturate(180%)",
                   borderLeft: `3.5px solid ${stat.accent} !important`,
-                   boxShadow: "0 4px 16px rgba(11, 92, 171, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important",
-                   transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, background-color 0.2s ease",
+                  boxShadow: (theme) => theme.palette.mode === "dark"
+                    ? "0 4px 16px rgba(0, 0, 0, 0.25)"
+                    : "0 4px 16px rgba(11, 92, 171, 0.04)",
+                  transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, background-color 0.2s ease",
                   "&:hover": {
                     transform: "translateY(-4px)",
-                    bgcolor: "#FFFFFF !important",
+                    bgcolor: "background.paper",
                     borderColor: `${stat.accent} !important`,
-                    boxShadow: `0 12px 24px -6px ${alpha(stat.accent, 0.22)}, 0 4px 10px -2px rgba(15, 23, 42, 0.06) !important`,
+                    boxShadow: `0 12px 24px -6px ${alpha(stat.accent, 0.28)}, 0 4px 10px -2px rgba(15, 23, 42, 0.12)`,
                   },
                   "&:focus-visible": {
                     outline: `2px solid ${stat.accent}`,
@@ -520,44 +530,156 @@ const EmployeeAttendance = () => {
           sx={{
             p: { xs: 1.5, md: 2.5 },
             borderRadius: 3,
-            bgcolor: "rgba(255, 255, 255, 0.78)",
+            bgcolor: "var(--mui-palette-background-card, var(--mui-palette-background-paper))",
             backdropFilter: "blur(20px) saturate(180%)",
             WebkitBackdropFilter: "blur(20px) saturate(180%)",
-            border: "1px solid rgba(255, 255, 255, 0.88)",
-            boxShadow: "0 10px 30px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: "0 10px 30px 0 rgba(0, 0, 0, 0.08)",
             containerType: "inline-size",
           }}
         >
-          <Typography component="h2" variant="h6" sx={{ mb: { xs: 1.5, sm: 2 }, textAlign: "center", fontWeight: 800, color: "#0F172A", fontSize: "clamp(1.05rem, 3.8vw, 1.25rem)", lineHeight: 1.25 }}>
-            Attendance Report
-          </Typography>
+          {/* Header Row: Title & Subtitle on left, Actions on right */}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            justifyContent="space-between"
+            spacing={1.5}
+            sx={{ mb: 2 }}
+          >
+            <Box>
+              <Typography
+                component="h2"
+                variant="h6"
+                sx={{
+                  fontWeight: 800,
+                  color: "text.primary",
+                  fontSize: "clamp(1.1rem, 2.5vw, 1.35rem)",
+                  lineHeight: 1.25,
+                }}
+              >
+                Attendance Report
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.secondary",
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 0.75,
+                  mt: 0.35,
+                }}
+              >
+                <span>
+                  {selectedPeriod === "today"
+                    ? `Today · ${dateRange.startDate.format("DD MMMM YYYY")}`
+                    : selectedPeriod === "this-week"
+                    ? `Week · ${dateRange.startDate.format("DD MMM")} – ${dateRange.startDate.endOf("week").format("DD MMM YYYY")}`
+                    : `Month · ${dateRange.startDate.format("MMMM YYYY")}`}
+                </span>
+              </Typography>
+            </Box>
+            {canViewAllAttendance && (
+              <Stack
+                direction="row"
+                spacing={1.25}
+                alignItems="center"
+                sx={{
+                  width: { xs: "100%", sm: "auto" },
+                  "& > *": { flex: { xs: 1, sm: "initial" } },
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  startIcon={<DownloadOutlined />}
+                  onClick={downloadMonthlyReport}
+                  disabled={isExporting}
+                  sx={{
+                    height: 40,
+                    minHeight: 40,
+                    borderRadius: "10px",
+                    fontWeight: 700,
+                    fontSize: 13.5,
+                    bgcolor: "background.paper",
+                    borderColor: "divider",
+                    backdropFilter: "blur(10px)",
+                    WebkitBackdropFilter: "blur(10px)",
+                    color: "text.primary",
+                    whiteSpace: "nowrap",
+                    px: 2,
+                    "&:hover": {
+                      bgcolor: "action.hover",
+                      borderColor: "primary.main",
+                      color: "primary.main",
+                    },
+                  }}
+                >
+                  {isExporting ? "Preparing..." : "Export month"}
+                </Button>
+                {canManageAttendance && (
+                  <Button
+                    variant="contained"
+                    startIcon={<UploadFile />}
+                    onClick={() => setImportModalOpen(true)}
+                    sx={{
+                      height: 40,
+                      minHeight: 40,
+                      borderRadius: "10px",
+                      fontWeight: 700,
+                      fontSize: 13.5,
+                      bgcolor: "#0B5CAB",
+                      color: "#FFFFFF",
+                      whiteSpace: "nowrap",
+                      px: 2,
+                      "&:hover": {
+                        bgcolor: "#094a8a",
+                      },
+                    }}
+                  >
+                    Import attendance
+                  </Button>
+                )}
+              </Stack>
+            )}
+          </Stack>
+
+          {/* Filter Toolbar: 4 cleanly aligned controls */}
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "minmax(220px, 1fr) minmax(150px, 190px) minmax(200px, 290px) auto",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, minmax(0, 1fr))",
+                lg: canViewAllAttendance
+                  ? "minmax(200px, 1.8fr) minmax(150px, 1fr) minmax(170px, 1fr) minmax(150px, 1fr)"
+                  : "minmax(200px, 2fr) minmax(170px, 1fr) minmax(190px, 1fr)",
+              },
               gap: 1.5,
               alignItems: "end",
               mb: 2.5,
               p: 1.75,
               borderRadius: "12px",
-              bgcolor: "#F8FAFC",
-              border: "1px solid #E2E8F0",
+              bgcolor: "var(--mui-palette-background-box, action.hover)",
+              border: "1px solid",
+              borderColor: "divider",
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
-              boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.85)",
-              "@container (max-width: 1050px)": {
-                gridTemplateColumns: "minmax(0, 1fr) minmax(150px, 190px)",
-                "& .attendance-report-period": { gridColumn: "1 / -1" },
-              },
-              "@container (max-width: 640px)": {
-                gridTemplateColumns: "minmax(0, 1fr)",
-                gap: 1.25,
-              },
+              boxShadow: "none",
             }}
           >
             <Box sx={{ minWidth: 0 }}>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.6, width: "100%", minWidth: 0, "& > *": { width: "100% !important", maxWidth: "100% !important", minWidth: 0 } }}>
-                <Typography variant="caption" sx={{ color: "#334155", fontWeight: 700, display: "block", minHeight: 17, lineHeight: "17px", letterSpacing: "0.01em" }}>
+              <Stack spacing={0.6}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    fontWeight: 700,
+                    minHeight: 17,
+                    lineHeight: "17px",
+                    letterSpacing: "0.01em",
+                  }}
+                >
                   Search employee
                 </Typography>
                 <SearchInput
@@ -569,30 +691,170 @@ const EmployeeAttendance = () => {
                     "& .MuiOutlinedInput-root": {
                       minHeight: 40,
                       height: 40,
-                      bgcolor: "#FFFFFF !important",
+                      borderRadius: "10px",
+                      bgcolor: "background.paper",
                       backdropFilter: "blur(8px)",
                       WebkitBackdropFilter: "blur(8px)",
                       "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#CBD5E1 !important",
+                        borderColor: "divider",
                       },
                       "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#64748B !important",
+                        borderColor: "text.secondary",
                       },
                       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#0B5CAB !important",
+                        borderColor: "primary.main",
                       },
                     },
                   }}
                 />
-                <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: { xs: "block", md: "none" }, mt: 0.75 }}>
-                  {dateRange.startDate.format("DD MMM YYYY")} – {dateRange.endDate.format("DD MMM YYYY")}
-                </Typography>
-              </Box>
+              </Stack>
             </Box>
+
+            <Box sx={{ minWidth: 0 }}>
+              <Stack spacing={0.6}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    fontWeight: 700,
+                    minHeight: 17,
+                    lineHeight: "17px",
+                    letterSpacing: "0.01em",
+                  }}
+                >
+                  Attendance Period
+                </Typography>
+                <AppSelect
+                  name="attendance-period"
+                  value={selectedPeriod}
+                  onChange={(event: any) => {
+                    setCalendarOffset(0);
+                    setSelectedPeriod(event.target.value as AttendancePeriod);
+                  }}
+                  sx={{
+                    height: 40,
+                    minHeight: 40,
+                    borderRadius: "10px",
+                    fontSize: 13.5,
+                    fontWeight: 600,
+                    bgcolor: "background.paper",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "divider",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "text.secondary",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "primary.main",
+                    },
+                  }}
+                >
+                  {attendancePeriods.map((item) => (
+                    <MenuItem key={item.value} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </AppSelect>
+              </Stack>
+            </Box>
+
+            <Box sx={{ minWidth: 0 }}>
+              <Stack spacing={0.6}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    fontWeight: 700,
+                    minHeight: 17,
+                    lineHeight: "17px",
+                    letterSpacing: "0.01em",
+                  }}
+                >
+                  Month
+                </Typography>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={0.5}
+                  sx={{
+                    width: "100%",
+                    height: 40,
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    borderRadius: "10px",
+                    px: 0.5,
+                    transition: "border-color 0.18s ease, box-shadow 0.18s ease",
+                    "&:hover": {
+                      borderColor: "text.secondary",
+                    },
+                  }}
+                >
+                  <Button
+                    size="small"
+                    onClick={() => setCalendarOffset((value) => value - 1)}
+                    aria-label="Previous month"
+                    sx={{
+                      minWidth: 32,
+                      height: 30,
+                      p: 0,
+                      borderRadius: "7px",
+                      color: "text.secondary",
+                      "&:hover": { bgcolor: "action.hover", color: "primary.main" },
+                    }}
+                  >
+                    <KeyboardArrowLeft fontSize="small" />
+                  </Button>
+                  <Typography
+                    fontWeight={700}
+                    noWrap
+                    sx={{
+                      minWidth: 0,
+                      textAlign: "center",
+                      px: 0.5,
+                      fontSize: "0.875rem",
+                      color: "text.primary",
+                    }}
+                  >
+                    {dateRange.startDate.format("MMMM YYYY")}
+                  </Typography>
+                  <Button
+                    size="small"
+                    onClick={() => setCalendarOffset((value) => value + 1)}
+                    aria-label="Next month"
+                    sx={{
+                      minWidth: 32,
+                      height: 30,
+                      p: 0,
+                      borderRadius: "7px",
+                      color: "text.secondary",
+                      "&:hover": { bgcolor: "action.hover", color: "primary.main" },
+                    }}
+                  >
+                    <KeyboardArrowRight fontSize="small" />
+                  </Button>
+                </Stack>
+              </Stack>
+            </Box>
+
             {canViewAllAttendance && (
               <Box sx={{ minWidth: 0 }}>
                 <Stack spacing={0.6}>
-                  <Typography variant="caption" sx={{ color: "#334155", fontWeight: 700, minHeight: 17, lineHeight: "17px", letterSpacing: "0.01em" }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontWeight: 700,
+                      minHeight: 17,
+                      lineHeight: "17px",
+                      letterSpacing: "0.01em",
+                    }}
+                  >
                     Shift
                   </Typography>
                   <AppSelect
@@ -607,19 +869,20 @@ const EmployeeAttendance = () => {
                     sx={{
                       height: 40,
                       minHeight: 40,
+                      borderRadius: "10px",
                       fontSize: 13.5,
                       fontWeight: 600,
-                      bgcolor: "#FFFFFF !important",
+                      bgcolor: "background.paper",
                       backdropFilter: "blur(8px)",
                       WebkitBackdropFilter: "blur(8px)",
                       "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#CBD5E1 !important",
+                        borderColor: "divider",
                       },
                       "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#64748B !important",
+                        borderColor: "text.secondary",
                       },
                       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#0B5CAB !important",
+                        borderColor: "primary.main",
                       },
                     }}
                   >
@@ -633,160 +896,6 @@ const EmployeeAttendance = () => {
                 </Stack>
               </Box>
             )}
-            <Box sx={{ minWidth: 0 }}>
-              <Stack spacing={0.6}>
-                <Typography variant="caption" sx={{ color: "#334155", fontWeight: 700, minHeight: 17, lineHeight: "17px", letterSpacing: "0.01em" }}>
-                  Month
-                </Typography>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  spacing={0.5}
-                  sx={{
-                    width: "100%",
-                    height: 40,
-                    bgcolor: "#FFFFFF",
-                    border: "1px solid #CBD5E1",
-                    backdropFilter: "blur(8px)",
-                    WebkitBackdropFilter: "blur(8px)",
-                    borderRadius: "10px",
-                    px: 0.5,
-                    transition: "border-color 0.18s ease, box-shadow 0.18s ease",
-                    "&:hover": {
-                      borderColor: "#64748B",
-                    },
-                  }}
-                >
-                  <Button
-                    size="small"
-                    onClick={() => setCalendarOffset((value) => value - 1)}
-                    aria-label="Previous month"
-                    sx={{
-                      minWidth: 32,
-                      height: 30,
-                      p: 0,
-                      borderRadius: "7px",
-                      color: "#475569",
-                      "&:hover": { bgcolor: "#EBF3FA", color: "#0B5CAB" },
-                    }}
-                  >
-                    <KeyboardArrowLeft fontSize="small" />
-                  </Button>
-                  <Typography fontWeight={700} noWrap sx={{ minWidth: 0, textAlign: "center", px: 0.5, fontSize: "0.875rem", color: "#0F172A" }}>
-                    {dateRange.startDate.format("MMMM YYYY")}
-                  </Typography>
-                  <Button
-                    size="small"
-                    onClick={() => setCalendarOffset((value) => value + 1)}
-                    aria-label="Next month"
-                    sx={{
-                      minWidth: 32,
-                      height: 30,
-                      p: 0,
-                      borderRadius: "7px",
-                      color: "#475569",
-                      "&:hover": { bgcolor: "#EBF3FA", color: "#0B5CAB" },
-                    }}
-                  >
-                    <KeyboardArrowRight fontSize="small" />
-                  </Button>
-                </Stack>
-              </Stack>
-            </Box>
-            <Box className="attendance-report-period" sx={{ minWidth: 0 }}>
-              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "flex-end" }} justifyContent="flex-start" gap={1.25} sx={{ width: "100%" }}>
-                <Stack spacing={0.6} sx={{ width: { xs: "100%", sm: 210 }, flexShrink: 0 }}>
-                  <Typography variant="caption" sx={{ color: "#334155", fontWeight: 700, minHeight: 17, lineHeight: "17px", letterSpacing: "0.01em" }}>
-                    Attendance Period
-                  </Typography>
-                  <AppSelect
-                    name="attendance-period"
-                    value={selectedPeriod}
-                    onChange={(event: any) => {
-                      setCalendarOffset(0);
-                      setSelectedPeriod(event.target.value as AttendancePeriod);
-                    }}
-                    sx={{
-                      height: 40,
-                      minHeight: 40,
-                      fontSize: 13.5,
-                      fontWeight: 600,
-                      bgcolor: "#FFFFFF !important",
-                      backdropFilter: "blur(8px)",
-                      WebkitBackdropFilter: "blur(8px)",
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#CBD5E1 !important",
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#64748B !important",
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#0B5CAB !important",
-                      },
-                    }}
-                  >
-                    {attendancePeriods.map((item) => (
-                      <MenuItem key={item.value} value={item.value}>
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                  </AppSelect>
-                </Stack>
-                {canViewAllAttendance && (
-                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ width: { xs: "100%", sm: "auto" }, alignSelf: { xs: "stretch", sm: "flex-end" } }}>
-                    <Button
-                      variant="outlined"
-                      startIcon={<DownloadOutlined />}
-                      onClick={downloadMonthlyReport}
-                      disabled={isExporting}
-                      sx={{
-                        height: 40,
-                        minHeight: 40,
-                        borderRadius: "10px",
-                        fontWeight: 700,
-                        bgcolor: "#FFFFFF",
-                        borderColor: "#CBD5E1",
-                        backdropFilter: "blur(10px)",
-                        WebkitBackdropFilter: "blur(10px)",
-                        color: "#1E293B",
-                        whiteSpace: "nowrap",
-                        width: { xs: "100%", sm: "auto" },
-                        "&:hover": {
-                          bgcolor: "#EBF3FA",
-                          borderColor: "#0B5CAB",
-                          color: "#0B5CAB",
-                        },
-                      }}
-                    >
-                      {isExporting ? "Preparing..." : "Export month"}
-                    </Button>
-                    {canManageAttendance && (
-                      <Button
-                        variant="contained"
-                        startIcon={<UploadFile />}
-                        onClick={() => setImportModalOpen(true)}
-                        sx={{
-                          height: 40,
-                          minHeight: 40,
-                          borderRadius: "10px",
-                          fontWeight: 700,
-                          bgcolor: "#0B5CAB",
-                          color: "#FFFFFF",
-                          whiteSpace: "nowrap",
-                          width: { xs: "100%", sm: "auto" },
-                          "&:hover": {
-                            bgcolor: "#094a8a",
-                          },
-                        }}
-                      >
-                        Import attendance
-                      </Button>
-                    )}
-                  </Stack>
-                )}
-              </Stack>
-            </Box>
           </Box>
           {selectedPeriod === "this-week" && <Box sx={{ mb: 2, px: 1.5, py: 1, borderRadius: 2, bgcolor: "action.hover", color: "text.secondary", fontSize: 13, fontWeight: 700 }}>{dateRange.startDate.format("DD MMM")} – {dateRange.startDate.endOf("week").format("DD MMM YYYY")} · Full week view</Box>}
           {!canViewAllAttendance && canManageAttendance && <Typography color="text.secondary" sx={{ mb: 2 }}>You can manage attendance for yourself or assigned employees.</Typography>}
@@ -837,7 +946,7 @@ const EmployeeAttendance = () => {
                 <Typography variant="body2" color="text.secondary">Send a correction request for HR or Admin review.</Typography>
               </Box>
             </Stack>
-            <Box sx={{ px: 1.25, py: 0.75, borderRadius: 2, bgcolor: alpha(theme.palette.background.paper, 0.8), color: "text.secondary", fontSize: 12, fontWeight: 700 }}>Attendance stays unchanged until reviewed</Box>
+            <Box sx={{ px: 1.25, py: 0.75, borderRadius: 2, bgcolor: "action.hover", color: "text.secondary", fontSize: 12, fontWeight: 700 }}>Attendance stays unchanged until reviewed</Box>
           </Stack>
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1.35fr) minmax(280px, 0.65fr)" }, gap: { xs: 2.5, lg: 3 } }}>
           <Box component="form" onSubmit={(event) => { event.preventDefault(); void submitCorrection(); }}>

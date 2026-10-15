@@ -10,6 +10,7 @@ import { coversConfigurationWindow, currentComponentVersions } from './payrollCo
 import type { PayrollPayGroup } from './PayrollPayGroupsPanel';
 import { calculateTemplate, type SalaryTemplate, type TemplateComponent } from './payrollTemplateCalculation';
 import { ConfirmationModal } from '../../../shared/components/ConfirmModal';
+import { useIsDark } from '../../theme/useIsDark';
 
 type Definition = Omit<TemplateComponent, 'componentId' | 'value' | 'sortOrder'> & {
   id?: string; effectiveFrom: string; effectiveTo?: string | null; isActive: boolean; version: number;
@@ -20,7 +21,7 @@ const amounts = [['basicPay', 'Basic pay'], ['hra', 'HRA'], ['lta', 'LTA'], ['ot
 
 export function PayrollSalaryTemplatesPanel({ templates, groups, components, canEdit, onSaved }: Props) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
+  const isDark = useIsDark();
   const [draft, setDraft] = useState<SalaryTemplate>(emptyDraft);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');

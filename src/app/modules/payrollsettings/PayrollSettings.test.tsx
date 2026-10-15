@@ -105,6 +105,7 @@ vi.mock("@mui/icons-material", () => ({
   LockOpenOutlined: () => null,
   CloudUploadRounded: () => null,
   PaymentsOutlined: () => null,
+  DownloadRounded: () => null,
 }));
 
 import PayrollSettings from "./PayrollSettings";
@@ -118,6 +119,14 @@ function renderSettings() {
   roots.push(root);
   return { container, root };
 }
+
+const testMessages = {
+  "MODULES.PAYROLL_SETTINGS": "Payroll Settings",
+  "PAYROLL_SETTINGS.PROCESS_MONTH": "Process Month",
+  "PAYROLL_SETTINGS.PROCESS_SALARY": "Process Salary",
+  "PAYROLL_SETTINGS.CONFIRM_PROCESS_TITLE": "Process Salary",
+  "PAYROLL_SETTINGS.CONFIRM_PROCESS_BODY": "This will generate/update payroll for all employees...",
+};
 
 describe("PayrollSettings Unified Tabs & Navigation", () => {
   beforeEach(() => {
@@ -150,7 +159,7 @@ describe("PayrollSettings Unified Tabs & Navigation", () => {
     const { container, root } = renderSettings();
     await act(async () => {
       root.render(
-        <IntlProvider locale="en" messages={{ "MODULES.PAYROLL_SETTINGS": "Payroll Settings" }}>
+        <IntlProvider locale="en" messages={testMessages}>
           <PayrollSettings />
         </IntlProvider>
       );
@@ -170,7 +179,7 @@ describe("PayrollSettings Unified Tabs & Navigation", () => {
     const { container, root } = renderSettings();
     await act(async () => {
       root.render(
-        <IntlProvider locale="en" messages={{ "MODULES.PAYROLL_SETTINGS": "Payroll Settings" }}>
+        <IntlProvider locale="en" messages={testMessages}>
           <PayrollSettings />
         </IntlProvider>
       );
@@ -198,7 +207,7 @@ describe("PayrollSettings Unified Tabs & Navigation", () => {
     const { container, root } = renderSettings();
     await act(async () => {
       root.render(
-        <IntlProvider locale="en" messages={{ "MODULES.PAYROLL_SETTINGS": "Payroll Settings" }}>
+        <IntlProvider locale="en" messages={testMessages}>
           <PayrollSettings />
         </IntlProvider>
       );

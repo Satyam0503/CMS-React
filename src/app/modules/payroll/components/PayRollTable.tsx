@@ -1,4 +1,5 @@
 import {
+  Box,
   Table,
   TableBody,
   Chip,
@@ -42,38 +43,41 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: "actions", label: "ACTION", minWidth: 108 },
-  { id: "employeeId", label: "PAYROLL.TABLE.EMP_ID", minWidth: 120 },
-  { id: "employeeName", label: "PAYROLL.TABLE.EMP_NAME", minWidth: 200 },
-  { id: "paidDate", label: "PAYROLL.TABLE.PAID_DATE", minWidth: 130 },
-  { id: "paymentStatus", label: "PAYROLL.TABLE.PAYMENT_STATUS", minWidth: 135 },
-  { id: "basicPay", label: "PAYROLL.TABLE.BASIC_PAY", minWidth: 100 },
-  { id: "bonus", label: "PAYROLL.TABLE.BONUS", minWidth: 100 },
-  { id: "paidDays", label: "PAYROLL.TABLE.PAID_DAYS", minWidth: 100 },
-  { id: "hra", label: "PAYROLL.TABLE.HRA", minWidth: 100 },
-  { id: "lta", label: "PAYROLL.TABLE.LTA", minWidth: 100 },
+  { id: "actions", label: "ACTION", minWidth: 92 },
+  { id: "employeeId", label: "PAYROLL.TABLE.EMP_ID", minWidth: 110 },
+  { id: "employeeName", label: "PAYROLL.TABLE.EMP_NAME", minWidth: 180 },
+  { id: "paidDate", label: "PAYROLL.TABLE.PAID_DATE", minWidth: 115 },
+  { id: "paymentStatus", label: "PAYROLL.TABLE.PAYMENT_STATUS", minWidth: 110 },
+  { id: "basicPay", label: "PAYROLL.TABLE.BASIC_PAY", minWidth: 100, align: "right" },
+  { id: "bonus", label: "PAYROLL.TABLE.BONUS", minWidth: 90, align: "right" },
+  { id: "paidDays", label: "PAYROLL.TABLE.PAID_DAYS", minWidth: 85, align: "right" },
+  { id: "hra", label: "PAYROLL.TABLE.HRA", minWidth: 95, align: "right" },
+  { id: "lta", label: "PAYROLL.TABLE.LTA", minWidth: 95, align: "right" },
   {
     id: "otherAllowance",
     label: "PAYROLL.TABLE.OTHER_ALLOWANCE",
-    minWidth: 130,
+    minWidth: 115,
+    align: "right",
   },
   {
     id: "lossOfPayDays",
     label: "PAYROLL.TABLE.LOSS_OF_PAID_DAYS",
-    minWidth: 130,
+    minWidth: 95,
+    align: "right",
   },
-  { id: "lossOfPay", label: "PAYROLL.TABLE.LOSS_OF_PAY", minWidth: 120 },
-  { id: "incomeTax", label: "PAYROLL.TABLE.INCOME_TAX", minWidth: 100 },
-  { id: "healthInsurance", label: "PAYROLL.TABLE.HEALTH_INS", minWidth: 150 },
-  { id: "epf", label: "PAYROLL.TABLE.EPF", minWidth: 100 },
-  { id: "esic", label: "PAYROLL.TABLE.ESIC", minWidth: 100 },
-  { id: "grossPay", label: "PAYROLL.TABLE.GROSS_PAY", minWidth: 120 },
+  { id: "lossOfPay", label: "PAYROLL.TABLE.LOSS_OF_PAY", minWidth: 105, align: "right" },
+  { id: "incomeTax", label: "PAYROLL.TABLE.INCOME_TAX", minWidth: 100, align: "right" },
+  { id: "healthInsurance", label: "PAYROLL.TABLE.HEALTH_INS", minWidth: 115, align: "right" },
+  { id: "epf", label: "PAYROLL.TABLE.EPF", minWidth: 95, align: "right" },
+  { id: "esic", label: "PAYROLL.TABLE.ESIC", minWidth: 95, align: "right" },
+  { id: "grossPay", label: "PAYROLL.TABLE.GROSS_PAY", minWidth: 115, align: "right" },
   {
     id: "totalDeductions",
     label: "PAYROLL.TABLE.TOTAL_DEDUCTION",
-    minWidth: 130,
+    minWidth: 120,
+    align: "right",
   },
-  { id: "netPay", label: "PAYROLL.TABLE.NET_PAY", minWidth: 100 },
+  { id: "netPay", label: "PAYROLL.TABLE.NET_PAY", minWidth: 115, align: "right" },
 ];
 
 const amountColumns = new Set<Column["id"]>([
@@ -187,19 +191,80 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
 
   return (
     <>
-      <TableContainer
-        className="flex-grow-1"
+      <Box
         sx={{
           width: "100%",
           minWidth: 0,
-          maxHeight: { xs: "60vh", md: "none" },
-          overflowX: "auto",
-          overflowY: { xs: "auto", md: "hidden" },
-          touchAction: "pan-x",
-          "&::-webkit-scrollbar": { height: 7, width: 7 },
+          borderRadius: "12px",
+          border: "1px solid",
+          borderColor: "divider",
+          overflow: "hidden",
+          bgcolor: "background.paper",
         }}
       >
-        <Table size="small" stickyHeader sx={{ minWidth: { xs: 900, sm: 1100, lg: 1440 } }}>
+        <TableContainer
+          className="flex-grow-1"
+          sx={{
+            width: "100%",
+            minWidth: 0,
+            maxHeight: { xs: "65vh", md: "calc(100vh - 350px)" },
+            minHeight: { xs: 320, sm: 380 },
+            overflowX: "auto",
+            overflowY: "auto",
+            touchAction: "pan-x",
+            scrollbarWidth: "auto",
+            scrollbarColor: (theme) =>
+              theme.palette.mode === "dark"
+                ? "rgba(99, 102, 241, 0.45) rgba(255, 255, 255, 0.06)"
+                : "rgba(11, 92, 171, 0.45) rgba(0, 0, 0, 0.05)",
+            "&::-webkit-scrollbar": { height: 10, width: 10 },
+            "&::-webkit-scrollbar-track": {
+              bgcolor: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.06)"
+                  : "rgba(0, 0, 0, 0.05)",
+              borderRadius: "5px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "rgba(99, 102, 241, 0.45)"
+                  : "rgba(11, 92, 171, 0.45)",
+              borderRadius: "5px",
+              border: (theme) =>
+                `2px solid ${theme.palette.mode === "dark" ? "#1e293b" : "#f8fafc"}`,
+              "&:hover": {
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark"
+                    ? "primary.main"
+                    : "primary.dark",
+              },
+            },
+          }}
+        >
+          <Table
+            size="small"
+            stickyHeader
+            sx={{
+              width: "max-content",
+              minWidth: "100%",
+              "& .MuiTableHead-root .MuiTableCell-root": {
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark"
+                    ? "rgba(15, 23, 42, 0.96)"
+                    : "rgba(248, 250, 252, 0.94)",
+                backdropFilter: "blur(10px)",
+                color: "text.secondary",
+                fontWeight: 700,
+                fontSize: "0.74rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                whiteSpace: "nowrap",
+                borderBottom: "1px solid",
+                borderColor: "divider",
+              },
+            }}
+          >
           <TableHead>
             <TableRow>
               {columns.map((col) => (
@@ -212,8 +277,11 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                     ...(col.id === "actions" ? {
                       position: "sticky",
                       left: 0,
-                      zIndex: 3,
-                      bgcolor: "background.paper",
+                      zIndex: 4,
+                      bgcolor: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? "rgba(15, 23, 42, 0.96)"
+                          : "rgba(248, 250, 252, 0.94)",
                     } : {}),
                   }}
                   align={col.align}
@@ -276,7 +344,16 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                         <TableCell
                           key={column.id}
                           className="pe-auto"
-                          sx={{ position: "sticky", left: 0, zIndex: 2, bgcolor: "background.paper", whiteSpace: "nowrap" }}
+                          sx={{
+                            position: "sticky",
+                            left: 0,
+                            zIndex: 2,
+                            bgcolor: "background.paper",
+                            whiteSpace: "nowrap",
+                            ".MuiTableRow-root:hover &": {
+                              bgcolor: "action.hover",
+                            },
+                          }}
                         >
                           <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flexWrap: "nowrap" }}>
                             <AppIconButton
@@ -313,13 +390,13 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                         ? (row.payData.deductionLines ?? []).filter((line) => line.code.toUpperCase() !== "LHD_ED_POLICY").map((line) => `${line.description}: ${currencyFormatter(line.amount)}`).join("; ")
                         : undefined;
                       return (
-                        <TableCell key={column.id} title={deductionDetails || undefined} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
+                        <TableCell key={column.id} align={column.align} title={deductionDetails || undefined} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
                           {currencyFormatter(row.payData[column.id] as number | null | undefined)}
                         </TableCell>
                       );
                     }
                     return (
-                      <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
+                      <TableCell key={column.id} align={column.align} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
                         {String(row.payData[column.id] ?? "")}
                       </TableCell>
                     );
@@ -358,6 +435,7 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
           "& .MuiTablePagination-actions": { ml: { xs: 1, sm: 2.5 } },
         }}
       />
+      </Box>
       {
         previewUrl &&
         <CustomisedModal open={true} handleClose={handleClosePreview} title={previewTitle} allowMaximize>

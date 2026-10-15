@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  alpha,
   Card,
   Stack,
   Typography,
@@ -46,7 +47,22 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   const isDisabled = disabled || isHardDisabled;
 
   return (
-    <Card elevation={0} className="module-card-styles">
+    <Card
+      elevation={0}
+      className="module-card-styles"
+      sx={{
+        bgcolor: "background.paper",
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 2.5,
+        p: { xs: 2, sm: 2.25 },
+        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+        "&:hover": {
+          borderColor: "primary.main",
+          boxShadow: (theme) => `0 6px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+        },
+      }}
+    >
       <Stack
         spacing={2}
         sx={{ height: "100%", justifyContent: "space-between" }}

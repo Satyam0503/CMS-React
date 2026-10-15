@@ -81,6 +81,15 @@ const getSnapshot = (): AppStyle => {
 // SSR-safe initial value (project is SPA, but useSyncExternalStore wants this).
 const getServerSnapshot = (): AppStyle => DEFAULT_THEME;
 
+export const clearStoredStyle = () => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    window.dispatchEvent(new Event(SAME_TAB_EVENT));
+  } catch {
+    // ignore
+  }
+};
+
 export const useAppStyle = () => {
   const style = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
@@ -88,5 +97,9 @@ export const useAppStyle = () => {
     persistStyle(normalizeAppStyle(next));
   }, []);
 
-  return { style, setStyle };
+  const clearStyle = useCallback(() => {
+    clearStoredStyle();
+  }, []);
+
+  return { style, setStyle, clearStyle, hasStoredStyle: hasStoredAppStyle() };
 };

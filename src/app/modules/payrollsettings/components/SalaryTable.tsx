@@ -20,6 +20,7 @@ import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { CompanySalaryResponseModel } from "../model";
 import { SalaryModel } from "../../employees/models";
+import { useIsDark } from "../../theme/useIsDark";
 
 interface Column {
   id: keyof SalaryModel | "employeeId" | "employeeName" | "status";
@@ -60,6 +61,7 @@ type TableProps = {
 };
 
 export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
+  const isDark = useIsDark();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { formatMessage: i } = useIntl();
@@ -91,7 +93,7 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
           border: "1px solid",
           borderColor: "divider",
           borderRadius: 3,
-          bgcolor: alpha(theme.palette.background.paper, 0.55),
+          bgcolor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.55)",
           backdropFilter: "blur(12px)",
           "&::-webkit-scrollbar": { height: 7 },
           "&::-webkit-scrollbar-thumb": {
@@ -112,8 +114,8 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
             },
             "& .MuiTableHead-root .MuiTableCell-root": {
               bgcolor:
-                theme.palette.mode === "dark"
-                  ? "rgba(15, 23, 42, 0.9)"
+                isDark
+                  ? "rgba(15, 23, 42, 0.95)"
                   : "rgba(248, 250, 252, 0.92)",
               backdropFilter: "blur(10px)",
               color: "text.secondary",
