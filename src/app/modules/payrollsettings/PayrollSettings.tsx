@@ -340,7 +340,7 @@ export default function PayrollSettings() {
 
   const canRunDraftGeneration =
     Boolean(processMonth) &&
-    Boolean(processMonth?.startOf("month").isBefore(dayjs().startOf("month"))) &&
+    Boolean(!processMonth?.startOf("month").isAfter(dayjs().startOf("month"))) &&
     !isProcessing &&
     !isLoadingPolicy &&
     !policyLoadError &&

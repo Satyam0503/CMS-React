@@ -33,9 +33,37 @@ export const deleteAttendance = async (attendanceId: string) => {
   );
 };
 
-export const exportMonthlyAttendance = async (year: number, month: number) => {
+export interface MonthlyAttendanceExportParams {
+  year: number;
+  month: number;
+  departmentId?: string;
+  search?: string;
+  employmentStatus?: string;
+  onlyEmployed?: boolean;
+}
+
+export const exportMonthlyAttendance = async (
+  yearOrParams: number | MonthlyAttendanceExportParams,
+  monthParam?: number
+) => {
+  const params: Record<string, any> =
+    typeof yearOrParams === "object"
+      ? {
+          year: yearOrParams.year,
+          month: yearOrParams.month,
+          departmentId: yearOrParams.departmentId || undefined,
+          search: yearOrParams.search || undefined,
+          employmentStatus: yearOrParams.employmentStatus || undefined,
+          onlyEmployed: yearOrParams.onlyEmployed ?? true,
+        }
+      : {
+          year: yearOrParams,
+          month: monthParam,
+          onlyEmployed: true,
+        };
+
   return getRequest<Blob>("api/admin/attendance/export/monthly", {
-    params: { year, month },
+    params,
     responseType: "blob",
     headers: { "Cache-Control": "no-cache" },
   });

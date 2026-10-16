@@ -33,6 +33,8 @@ import { AttendanceCalendarGrid } from "./component/AttendanceCalendar";
 import { getAllEmployees } from "../employees/employeeServices";
 import { exportMonthlyAttendance } from "./AttendanceServices";
 import { ImportAttendanceModal } from "./component/ImportAttendanceModal";
+import { ExportAttendanceModal, DepartmentOption } from "./component/ExportAttendanceModal";
+import { getAllDepartments } from "../admin/adminservices";
 
 import { AppSelect } from "../../shared/components/ui";
 import { CustomisedModal } from "../../shared/components/C_Modal";
@@ -104,6 +106,9 @@ const EmployeeAttendance = () => {
   const [submittingCorrection, setSubmittingCorrection] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
   const [importModalOpen, setImportModalOpen] = React.useState(false);
+  const [exportModalOpen, setExportModalOpen] = React.useState(false);
+  const [departments, setDepartments] = React.useState<DepartmentOption[]>([]);
+  const [selectedDepartmentId, setSelectedDepartmentId] = React.useState<string>("");
   const [refreshTrigger, setRefreshTrigger] = React.useState(0);
   const [correctionRequests, setCorrectionRequests] = React.useState<any[]>([]);
   const [reviewCorrection, setReviewCorrection] = React.useState<any | null>(null);
@@ -112,6 +117,24 @@ const EmployeeAttendance = () => {
   useEffect(() => {
     setPageTitle("Attendance Report");
   }, [setPageTitle]);
+
+  useEffect(() => {
+    if (!canViewAllAttendance) return;
+    void (async () => {
+      try {
+        const response = await getAllDepartments(true);
+        if (response?.data?.success) {
+          const list = (response.data.methodResults ?? []).map((d: any) => ({
+            departmentId: d.departmentId,
+            name: d.titles?.en || d.titles?.[0]?.label || d.departmentId,
+          }));
+          setDepartments(list);
+        }
+      } catch (e) {
+        console.error("Failed to load departments", e);
+      }
+    })();
+  }, [canViewAllAttendance]);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -298,29 +321,18 @@ const EmployeeAttendance = () => {
     }
   };
 
-  const downloadMonthlyReport = async () => {
-    try {
-      setIsExporting(true);
-      const response = await exportMonthlyAttendance(dateRange.startDate.year(), dateRange.startDate.month() + 1);
-      const url = URL.createObjectURL(response.data);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `attendance-report-${dateRange.startDate.format("YYYY-MM")}.xlsx`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Unable to export attendance report", error);
-      toast.error("Unable to download the attendance report. Please try again.");
-    } finally {
-      setIsExporting(false);
-    }
+  const downloadMonthlyReport = () => {
+    setExportModalOpen(true);
   };
 
   const employeesForCalendar = React.useMemo(() => {
     const query = debouncedSearch.trim().toLowerCase();
-    return Employee.filter((emp) => !query || `${emp.fullName ?? ""} ${emp.employeeId ?? ""}`.toLowerCase().includes(query)).map((emp) => ({
+    return Employee.filter((emp) => {
+      const matchesSearch = !query || `${emp.fullName ?? ""} ${emp.employeeId ?? ""}`.toLowerCase().includes(query);
+      const empDept = emp.departmentId || (typeof emp.department === "string" ? emp.department : emp.department?.en || emp.department?.departmentId);
+      const matchesDept = !selectedDepartmentId || empDept === selectedDepartmentId;
+      return matchesSearch && matchesDept;
+    }).map((emp) => ({
       id: emp.userId,
       userId: emp.userId,
       employeeId: emp.employeeId,
@@ -652,7 +664,7 @@ const EmployeeAttendance = () => {
                 xs: "1fr",
                 sm: "repeat(2, minmax(0, 1fr))",
                 lg: canViewAllAttendance
-                  ? "minmax(200px, 1.8fr) minmax(150px, 1fr) minmax(170px, 1fr) minmax(150px, 1fr)"
+                  ? "minmax(180px, 1.4fr) minmax(130px, 0.9fr) minmax(130px, 0.9fr) minmax(150px, 1fr) minmax(150px, 1fr)"
                   : "minmax(200px, 2fr) minmax(170px, 1fr) minmax(190px, 1fr)",
               },
               gap: 1.5,
@@ -896,6 +908,61 @@ const EmployeeAttendance = () => {
                 </Stack>
               </Box>
             )}
+
+            {canViewAllAttendance && (
+              <Box sx={{ minWidth: 0 }}>
+                <Stack spacing={0.6}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontWeight: 700,
+                      minHeight: 17,
+                      lineHeight: "17px",
+                      letterSpacing: "0.01em",
+                    }}
+                  >
+                    Department
+                  </Typography>
+                  <AppSelect
+                    displayEmpty
+                    value={selectedDepartmentId}
+                    onChange={(event: any) => setSelectedDepartmentId(event.target.value)}
+                    renderValue={(value: unknown) =>
+                      value
+                        ? departments.find((d) => d.departmentId === value)?.name ?? "Selected department"
+                        : "All departments"
+                    }
+                    sx={{
+                      height: 40,
+                      minHeight: 40,
+                      borderRadius: "10px",
+                      fontSize: 13.5,
+                      fontWeight: 600,
+                      bgcolor: "background.paper",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "divider",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "text.secondary",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "primary.main",
+                      },
+                    }}
+                  >
+                    <MenuItem value="">All departments</MenuItem>
+                    {departments.map((dept) => (
+                      <MenuItem key={dept.departmentId} value={dept.departmentId}>
+                        {dept.name}
+                      </MenuItem>
+                    ))}
+                  </AppSelect>
+                </Stack>
+              </Box>
+            )}
           </Box>
           {selectedPeriod === "this-week" && <Box sx={{ mb: 2, px: 1.5, py: 1, borderRadius: 2, bgcolor: "action.hover", color: "text.secondary", fontSize: 13, fontWeight: 700 }}>{dateRange.startDate.format("DD MMM")} – {dateRange.startDate.endOf("week").format("DD MMM YYYY")} · Full week view</Box>}
           {!canViewAllAttendance && canManageAttendance && <Typography color="text.secondary" sx={{ mb: 2 }}>You can manage attendance for yourself or assigned employees.</Typography>}
@@ -1001,6 +1068,16 @@ const EmployeeAttendance = () => {
         onImportSuccess={() => {
           setRefreshTrigger((prev) => prev + 1);
         }}
+      />
+
+      <ExportAttendanceModal
+        open={exportModalOpen}
+        onClose={() => setExportModalOpen(false)}
+        year={dateRange.startDate.year()}
+        month={dateRange.startDate.month() + 1}
+        initialSearch={searchValue}
+        initialDepartmentId={selectedDepartmentId}
+        departments={departments}
       />
     </Grid>
   );

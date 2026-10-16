@@ -197,6 +197,9 @@ const statusesWithTimes = new Set<AttendanceStatus>([
   "HD",
   "ED",
   "LHD",
+  "LC",
+  "EHD",
+  "LHD+ED",
   "WFH+WFO",
   "WFH-HD",
   "WFH+SL",
@@ -406,9 +409,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   const [modalData, setModalData] = useState<AttendanceData>(initialModalState);
   const scheduleTimePresets = useMemo(() => {
     const employee = selectedCell?.employee;
+    const checkInPresets = createPunchPresets(employee?.punchInAllowedFrom, employee?.punchInAllowedUntil, employee?.scheduledStartTime || "09:00");
+    const checkOutPresets = createPunchPresets(employee?.punchOutAllowedFrom, employee?.punchOutAllowedUntil, employee?.scheduledEndTime || "18:00");
+    const defaultIn = ["09:00", "09:15", "09:30", "10:00", "13:30"];
+    const defaultOut = ["13:30", "14:00", "16:00", "17:30", "18:00"];
+
     return {
-      checkIn: createPunchPresets(employee?.punchInAllowedFrom, employee?.punchInAllowedUntil, employee?.scheduledStartTime),
-      checkOut: createPunchPresets(employee?.punchOutAllowedFrom, employee?.punchOutAllowedUntil, employee?.scheduledEndTime),
+      checkIn: checkInPresets.length > 1 ? checkInPresets : defaultIn,
+      checkOut: checkOutPresets.length > 1 ? checkOutPresets : defaultOut,
     };
   }, [selectedCell]);
   const [holidays, setHolidays] = useState<Set<string>>(new Set());
@@ -2101,12 +2109,26 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   MenuListProps: { sx: { p: 0.75 } },
                 },
               }}
-              onChange={(e) =>
-                setModalData((prev) => ({
-                  ...prev,
-                  status: e.target.value as AttendanceData["status"],
-                }))
-              }
+              onChange={(e) => {
+                const newStatus = e.target.value as AttendanceData["status"];
+                setModalData((prev) => {
+                  let inTime = prev.checkIn || selectedCell?.employee?.scheduledStartTime || "09:00";
+                  let outTime = prev.checkOut || selectedCell?.employee?.scheduledEndTime || "18:00";
+                  if (newStatus === "ED" && (!prev.checkOut || prev.checkOut === "18:00")) {
+                    outTime = "14:00";
+                  } else if (newStatus === "LHD" && (!prev.checkIn || prev.checkIn === "09:00")) {
+                    inTime = "13:30";
+                  } else if (newStatus === "HD" && (!prev.checkOut || prev.checkOut === "18:00")) {
+                    outTime = "13:30";
+                  }
+                  return {
+                    ...prev,
+                    status: newStatus,
+                    checkIn: inTime,
+                    checkOut: outTime,
+                  };
+                });
+              }}
             >
               {statusOptions.map((option) => (
                 <MenuItem
@@ -2135,7 +2157,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     <Box sx={{ minWidth: 0 }}>
                       <Typography fontSize={14} fontWeight={700}>{option.label}</Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {option.requiresTime ? "Punch in and punch out required" : "Attendance status"}
+                        {option.requiresTime || statusesWithTimes.has(option.value as AttendanceStatus) ? "Punch in and punch out required" : "Attendance status"}
                       </Typography>
                     </Box>
                   </Stack>
@@ -2147,50 +2169,47 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               (statusOptions.find((x) => x.value === modalData.status)
                 ?.requiresTime ??
                 statusesWithTimes.has(modalData.status)) && (
-                <>
-                  {modalData.status !== "ED" && (
-                    <Stack spacing={0.75}>
-                      <AppTextField
-                        label="Punch in time"
-                        fullWidth
-                        value={modalData.checkIn}
-                        placeholder="HH:MM (for example, 09:00)"
-                        inputProps={{ inputMode: "numeric", maxLength: 5 }}
-                        onChange={(e) =>
-                          setModalData((prev) => ({ ...prev, checkIn: e.target.value }))
-                        }
-                      />
-                      <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
-                        {scheduleTimePresets.checkIn.map((time) => (
-                          <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkIn: time }))}>
-                            {formatTimePreset(time)}
-                          </AppButton>
-                        ))}
-                      </Stack>
+                <Stack spacing={2}>
+                  <Stack spacing={0.75}>
+                    <AppTextField
+                      label="Punch in time"
+                      fullWidth
+                      value={modalData.checkIn}
+                      placeholder="HH:MM (for example, 09:00)"
+                      inputProps={{ inputMode: "numeric", maxLength: 5 }}
+                      onChange={(e) =>
+                        setModalData((prev) => ({ ...prev, checkIn: e.target.value }))
+                      }
+                    />
+                    <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+                      {scheduleTimePresets.checkIn.map((time) => (
+                        <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkIn: time }))}>
+                          {formatTimePreset(time)}
+                        </AppButton>
+                      ))}
                     </Stack>
-                  )}
-                  {modalData.status !== "LHD" && (
-                    <Stack spacing={0.75}>
-                      <AppTextField
-                        label="Punch out time"
-                        fullWidth
-                        value={modalData.checkOut}
-                        placeholder="HH:MM (for example, 18:00)"
-                        inputProps={{ inputMode: "numeric", maxLength: 5 }}
-                        onChange={(e) =>
-                          setModalData((prev) => ({ ...prev, checkOut: e.target.value }))
-                        }
-                      />
-                      <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
-                        {scheduleTimePresets.checkOut.map((time) => (
-                          <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkOut: time }))}>
-                            {formatTimePreset(time)}
-                          </AppButton>
-                        ))}
-                      </Stack>
+                  </Stack>
+
+                  <Stack spacing={0.75}>
+                    <AppTextField
+                      label="Punch out time"
+                      fullWidth
+                      value={modalData.checkOut}
+                      placeholder="HH:MM (for example, 18:00)"
+                      inputProps={{ inputMode: "numeric", maxLength: 5 }}
+                      onChange={(e) =>
+                        setModalData((prev) => ({ ...prev, checkOut: e.target.value }))
+                      }
+                    />
+                    <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+                      {scheduleTimePresets.checkOut.map((time) => (
+                        <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkOut: time }))}>
+                          {formatTimePreset(time)}
+                        </AppButton>
+                      ))}
                     </Stack>
-                  )}
-                </>
+                  </Stack>
+                </Stack>
               )}
 
             <AppTextField
