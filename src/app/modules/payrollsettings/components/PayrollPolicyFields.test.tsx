@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { act } from "react-dom/test-utils";
+import React, { act, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PayrollPolicyFields } from "./PayrollPolicyFields";
 import type { PayrollDivisorPolicyConfig } from "./PayrollConfigurationPanel";
+
+Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
 const initialConfig: PayrollDivisorPolicyConfig = {
   payrollMode: "Standard",
@@ -53,13 +54,12 @@ function checkbox(label: string) {
   return input;
 }
 
-afterEach(async () => {
-  for (const root of roots.splice(0)) await act(async () => root.unmount());
-  document.body.innerHTML = "";
-  vi.clearAllMocks();
-});
-
 describe("PayrollPolicyFields", { timeout: 15000 }, () => {
+  afterEach(async () => {
+    for (const root of roots.splice(0)) await act(async () => root.unmount());
+    document.body.innerHTML = "";
+    vi.clearAllMocks();
+  });
   it("shows settings only for features selected by the company", async () => {
     const { root, Harness } = renderFields();
     await act(async () => root.render(<Harness />));

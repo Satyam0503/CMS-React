@@ -51,6 +51,13 @@ import {
   ATTENDANCE_EMPLOYEE_COLUMN_WIDTH,
   buildAttendanceGridScrollContainerSx,
 } from "../attendanceGridLayout";
+import {
+  formatTimePreset,
+  timeToMinutes,
+  formatMinutesToTime,
+  deriveAttendanceStatus,
+  getDerivedStatusExplanation,
+} from "../attendanceStatusCalculation";
 
 import { AppButton, AppTextField } from "../../../shared/components/ui";
 interface Employee {
@@ -185,6 +192,11 @@ const attendanceStatusOptions: Array<{
     label: "Unpaid Leave",
     colorHex: "#DC2626",
   },
+  {
+    value: "LHD+ED",
+    label: "Late Arrival + Early Departure",
+    colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
+  },
 ];
 
 const attendanceStatusLabels = Object.fromEntries(
@@ -206,12 +218,6 @@ const statusesWithTimes = new Set<AttendanceStatus>([
   "WFH+CL",
 ]);
 
-const formatTimePreset = (value: string) => dayjs(`2000-01-01T${value}`).format("h:mm A");
-const timeToMinutes = (value?: string | null) => {
-  if (!value || !/^\d{2}:\d{2}$/.test(value)) return null;
-  const [hours, minutes] = value.split(":").map(Number);
-  return hours < 24 && minutes < 60 ? hours * 60 + minutes : null;
-};
 const createPunchPresets = (from?: string | null, until?: string | null, fallback?: string | null) => {
   const start = timeToMinutes(from ?? fallback);
   const end = timeToMinutes(until ?? fallback);
@@ -419,6 +425,38 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       checkOut: checkOutPresets.length > 1 ? checkOutPresets : defaultOut,
     };
   }, [selectedCell]);
+
+  const handlePunchInChange = useCallback((newInTime: string) => {
+    setModalData((prev) => {
+      const derived = deriveAttendanceStatus(
+        newInTime,
+        prev.checkOut,
+        selectedCell?.employee,
+        statusOptions,
+      );
+      return {
+        ...prev,
+        checkIn: newInTime,
+        status: derived ?? prev.status,
+      };
+    });
+  }, [selectedCell, statusOptions]);
+
+  const handlePunchOutChange = useCallback((newOutTime: string) => {
+    setModalData((prev) => {
+      const derived = deriveAttendanceStatus(
+        prev.checkIn,
+        newOutTime,
+        selectedCell?.employee,
+        statusOptions,
+      );
+      return {
+        ...prev,
+        checkOut: newOutTime,
+        status: derived ?? prev.status,
+      };
+    });
+  }, [selectedCell, statusOptions]);
   const [holidays, setHolidays] = useState<Set<string>>(new Set());
   const [weeklyOffDays, setWeeklyOffDays] = useState<number[]>([0, 6]);
   useEffect(() => {
@@ -427,7 +465,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       .catch(() => setWeeklyOffDays([0, 6]));
   }, []);
 
-  const today = dayjs().startOf("day");
+  const today = useMemo(() => dayjs().startOf("day"), []);
+  const lastStatsRef = useRef<string>("");
   const visibleDates = useMemo(() => {
     const dates: Dayjs[] = [];
     const displayEndDate = showWholeMonth
@@ -774,7 +813,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
   useEffect(() => {
     if (!attendanceItems.length) {
-      onStatsChange?.({
+      const emptyPayload = {
         present: 0,
         absent: 0,
         leave: 0,
@@ -782,13 +821,18 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         halfDay: 0,
         exceptions: 0,
         members: {
-          Present: [],
-          Absent: [],
-          WFH: [],
-          Leave: [],
-          "Half Day": [],
+          Present: [] as string[],
+          Absent: [] as string[],
+          WFH: [] as string[],
+          Leave: [] as string[],
+          "Half Day": [] as string[],
         },
-      });
+      };
+      const serialized = JSON.stringify(emptyPayload);
+      if (lastStatsRef.current !== serialized) {
+        lastStatsRef.current = serialized;
+        onStatsChange?.(emptyPayload);
+      }
       return;
     }
 
@@ -862,7 +906,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       }
     });
 
-    onStatsChange?.({
+    const nextStats = {
       present,
       absent,
       leave,
@@ -876,7 +920,12 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         Leave: [...members.Leave],
         "Half Day": [...halfDayEmployees.values()],
       },
-    });
+    };
+    const serialized = JSON.stringify(nextStats);
+    if (lastStatsRef.current !== serialized) {
+      lastStatsRef.current = serialized;
+      onStatsChange?.(nextStats);
+    }
   }, [
     attendanceItems,
     dateRange,
@@ -1341,11 +1390,16 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const key = `${rowId}-${dateISO}`;
 
     try {
-      await addEditAttendance(payload);
+      const saveRes = await addEditAttendance(payload);
+      const savedAttendance = saveRes?.data as { status?: AttendanceStatus } | undefined;
+      const effectiveStatus = savedAttendance?.status || modalData.status;
 
       setAttendanceData((prev) => ({
         ...prev,
-        [key]: modalData,
+        [key]: {
+          ...modalData,
+          status: effectiveStatus,
+        },
       }));
       setReloadKey((key) => key + 1);
 
@@ -2166,8 +2220,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             </AppTextField>
 
             {modalData.status &&
-              (statusOptions.find((x) => x.value === modalData.status)
-                ?.requiresTime ??
+              (Boolean(statusOptions.find((x) => x.value === modalData.status)?.requiresTime) ||
                 statusesWithTimes.has(modalData.status)) && (
                 <Stack spacing={2}>
                   <Stack spacing={0.75}>
@@ -2177,13 +2230,11 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       value={modalData.checkIn}
                       placeholder="HH:MM (for example, 09:00)"
                       inputProps={{ inputMode: "numeric", maxLength: 5 }}
-                      onChange={(e) =>
-                        setModalData((prev) => ({ ...prev, checkIn: e.target.value }))
-                      }
+                      onChange={(e) => handlePunchInChange(e.target.value)}
                     />
                     <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
                       {scheduleTimePresets.checkIn.map((time) => (
-                        <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkIn: time }))}>
+                        <AppButton key={time} size="small" variant="outlined" onClick={() => handlePunchInChange(time)}>
                           {formatTimePreset(time)}
                         </AppButton>
                       ))}
@@ -2197,18 +2248,45 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       value={modalData.checkOut}
                       placeholder="HH:MM (for example, 18:00)"
                       inputProps={{ inputMode: "numeric", maxLength: 5 }}
-                      onChange={(e) =>
-                        setModalData((prev) => ({ ...prev, checkOut: e.target.value }))
-                      }
+                      onChange={(e) => handlePunchOutChange(e.target.value)}
                     />
                     <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
                       {scheduleTimePresets.checkOut.map((time) => (
-                        <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkOut: time }))}>
+                        <AppButton key={time} size="small" variant="outlined" onClick={() => handlePunchOutChange(time)}>
                           {formatTimePreset(time)}
                         </AppButton>
                       ))}
                     </Stack>
                   </Stack>
+
+                  {(() => {
+                    const explanation = getDerivedStatusExplanation(
+                      modalData.status,
+                      modalData.checkIn,
+                      modalData.checkOut,
+                      selectedCell?.employee,
+                    );
+                    if (!explanation) return null;
+                    return (
+                      <Box
+                        sx={{
+                          p: 1.25,
+                          borderRadius: 2,
+                          bgcolor: (theme) => theme.palette.mode === "dark" ? "rgba(99, 102, 241, 0.12)" : "rgba(99, 102, 241, 0.08)",
+                          border: "1px dashed",
+                          borderColor: "primary.main",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <Box component="span" sx={{ fontSize: 16 }}>⚡</Box>
+                        <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 600 }}>
+                          {explanation}
+                        </Typography>
+                      </Box>
+                    );
+                  })()}
                 </Stack>
               )}
 

@@ -101,6 +101,7 @@ vi.mock("./components/SalaryTable", () => ({
 }));
 
 vi.mock("@mui/icons-material", () => ({
+  default: () => null,
   LockOutlined: () => null,
   LockOpenOutlined: () => null,
   CloudUploadRounded: () => null,

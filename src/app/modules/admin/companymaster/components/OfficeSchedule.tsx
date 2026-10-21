@@ -1,14 +1,22 @@
 import {
+  AccessTimeRounded,
+  AddRounded,
   AlarmOnRounded,
+  CalendarMonthRounded,
   CheckCircleRounded,
   CoffeeRounded,
   DeleteOutlineRounded,
+  ExpandMoreRounded,
+  HelpOutlineRounded,
   InfoOutlined,
   LoginRounded,
   LogoutRounded,
   SaveRounded,
+  ScheduleRounded,
   StarRounded,
   TimerRounded,
+  WarningAmberRounded,
+  WorkOutlineRounded,
 } from "@mui/icons-material";
 import {
   Alert,
@@ -16,26 +24,28 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
+  Card,
   Checkbox,
+  Chip,
   CircularProgress,
   Divider,
-  FormControlLabel,
   FormControl,
+  FormControlLabel,
   Grid,
   IconButton,
+  InputAdornment,
   InputLabel,
   ListItemText,
   MenuItem,
   Paper,
-  Stack,
   Select,
+  Stack,
+  Switch,
   TextField,
-  Typography,
   Tooltip,
+  Typography,
   alpha,
 } from "@mui/material";
-import { AddRounded, ExpandMoreRounded } from "@mui/icons-material";
-import { createPortal } from "react-dom";
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { deleteRequest, getRequest, postRequest, putRequest } from "../../../../../server/axios";
@@ -96,38 +106,53 @@ const formatMinutes = (minutes: number) => {
   return `${hours}h${remainder ? ` ${remainder}m` : ""}`;
 };
 
-const ScheduleMetric = ({
+const MetricCard = ({
   icon,
   label,
   value,
   detail,
+  isError = false,
 }: {
   icon: ReactNode;
   label: string;
   value: string;
   detail: string;
+  isError?: boolean;
 }) => (
   <Paper
     variant="outlined"
     sx={{
       p: { xs: 1.25, sm: 1.5 },
       height: "100%",
-      borderRadius: 2,
-      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.035),
-      display: "flex",
-      alignItems: "center",
+      borderRadius: "12px",
+      bgcolor: (theme) =>
+        isError
+          ? alpha(theme.palette.error.main, 0.05)
+          : alpha(theme.palette.primary.main, 0.03),
+      borderColor: (theme) =>
+        isError ? alpha(theme.palette.error.main, 0.3) : "divider",
+      transition: "all 0.2s ease-in-out",
+      "&:hover": {
+        borderColor: (theme) =>
+          isError ? "error.main" : alpha(theme.palette.primary.main, 0.4),
+        boxShadow: (theme) =>
+          `0 4px 12px ${alpha(isError ? theme.palette.error.main : theme.palette.primary.main, 0.08)}`,
+      },
     }}
   >
-    <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0, width: "100%" }}>
+    <Stack direction="row" spacing={1.25} alignItems="center">
       <Box
         sx={{
           display: "grid",
           placeItems: "center",
-          width: 36,
-          height: 36,
-          borderRadius: 1.75,
-          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
-          color: "primary.main",
+          width: 38,
+          height: 38,
+          borderRadius: "10px",
+          bgcolor: (theme) =>
+            isError
+              ? alpha(theme.palette.error.main, 0.12)
+              : alpha(theme.palette.primary.main, 0.1),
+          color: isError ? "error.main" : "primary.main",
           flexShrink: 0,
         }}
       >
@@ -136,25 +161,28 @@ const ScheduleMetric = ({
       <Box sx={{ minWidth: 0, flex: 1 }}>
         <Typography
           variant="caption"
-          color="text.secondary"
+          color={isError ? "error.main" : "text.secondary"}
           fontWeight={700}
           sx={{
             display: "block",
-            fontSize: { xs: "0.72rem", sm: "0.76rem" },
-            lineHeight: 1.25,
+            fontSize: "0.72rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.03em",
+            lineHeight: 1.2,
             mb: 0.25,
-            wordBreak: "break-word",
           }}
+          noWrap
         >
           {label}
         </Typography>
         <Typography
           fontWeight={800}
+          color={isError ? "error.main" : "text.primary"}
           sx={{
-            fontSize: { xs: "0.92rem", sm: "1rem" },
-            lineHeight: 1.25,
-            wordBreak: "break-word",
+            fontSize: { xs: "0.95rem", sm: "1.05rem" },
+            lineHeight: 1.2,
           }}
+          noWrap
         >
           {value}
         </Typography>
@@ -163,11 +191,10 @@ const ScheduleMetric = ({
           color="text.secondary"
           sx={{
             display: "block",
-            fontSize: { xs: "0.7rem", sm: "0.75rem" },
-            lineHeight: 1.2,
+            fontSize: "0.7rem",
             mt: 0.25,
-            wordBreak: "break-word",
           }}
+          noWrap
         >
           {detail}
         </Typography>
@@ -188,13 +215,14 @@ export const OfficeSchedule = () => {
   const [savingDepartmentAssignments, setSavingDepartmentAssignments] = useState(false);
   const [draftDepartmentIds, setDraftDepartmentIds] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<string | false>(false);
-  const [editorHost, setEditorHost] = useState<HTMLDivElement | null>(null);
   const [schedulePendingDelete, setSchedulePendingDelete] = useState<OfficeScheduleForm | null>(null);
   const [offDays, setOffDays] = useState<number[]>([0, 6]);
   const [savingOffDays, setSavingOffDays] = useState(false);
+
   const visibleSchedules = form.scheduleId
     ? schedules
     : [...schedules, { ...form, scheduleId: "new" }];
+
   const nextShiftNumber = useMemo(
     () => Math.max(0, ...schedules.map((item) => Number(/^Shift\s+(\d+)$/i.exec(item.name)?.[1]) || 0)) + 1,
     [schedules],
@@ -213,7 +241,10 @@ export const OfficeSchedule = () => {
     const selected = items.find((item: OfficeScheduleForm) => item.scheduleId === selectedScheduleId)
       ?? items.find((item: OfficeScheduleForm) => item.isDefault)
       ?? items[0];
-    if (selected) { setForm(selected); setExpanded(selected.scheduleId ?? false); }
+    if (selected) {
+      setForm(selected);
+      setExpanded(selected.scheduleId ?? false);
+    }
   }, []);
 
   useEffect(() => {
@@ -241,15 +272,20 @@ export const OfficeSchedule = () => {
   }, []);
 
   const saveWeeklyOffs = async () => {
-    if (offDays.length === 0) { toast.error("Select at least one weekly off day."); return; }
+    if (offDays.length === 0) {
+      toast.error("Select at least one weekly off day.");
+      return;
+    }
     setSavingOffDays(true);
     try {
       const { data } = await postRequest<{ offDays: number[] }, any>("api/attendance/weekly-offs", { offDays });
       if (!data.success) throw new Error(data.message || "Weekly off days could not be saved.");
-      toast.success("Weekly off days saved.");
+      toast.success("Weekly off days saved successfully.");
     } catch (error) {
       toast.error((error as Error).message || "Weekly off days could not be saved.");
-    } finally { setSavingOffDays(false); }
+    } finally {
+      setSavingOffDays(false);
+    }
   };
 
   const schedule = useMemo(() => {
@@ -307,7 +343,7 @@ export const OfficeSchedule = () => {
       }
       await loadSchedules(saved.scheduleId);
       toast.success(
-        `Office schedule saved. Automatic Present starts at ${formatTime(saved.standardCheckIn)} on working days.`,
+        `Shift saved successfully. Automatic present starts at ${formatTime(saved.standardCheckIn)}.`,
       );
     } catch (error: any) {
       const message = error?.response?.data?.message || error.message;
@@ -384,265 +420,864 @@ export const OfficeSchedule = () => {
     }
   };
 
-  if (loading)
+  const getDepartmentCount = (scheduleId?: string) => {
+    if (!scheduleId || scheduleId === "new") return 0;
+    return departmentAssignments.filter((a) => a.scheduleId === scheduleId).length;
+  };
+
+  if (loading) {
     return (
-      <Box sx={{ minHeight: 320, display: "grid", placeItems: "center" }}>
-        <CircularProgress />
+      <Box sx={{ minHeight: 360, display: "grid", placeItems: "center" }}>
+        <CircularProgress size={36} thickness={4} />
       </Box>
     );
+  }
 
   return (
-    <Paper
-      variant="outlined"
-      sx={{
-        p: { xs: 1.25, sm: 2, md: 2.5 },
-        borderRadius: { xs: 2.5, md: 3.5 },
-        width: "100%",
-        overflow: "hidden",
-        borderColor: "divider",
-        boxShadow: "0 10px 28px rgba(24, 74, 82, .07)",
-        bgcolor: "background.paper",
-      }}
-    >
-      <Stack spacing={{ xs: 2.25, md: 3 }}>
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "stretch", sm: "center" }} spacing={1.25}>
-          <Typography variant="h6" fontWeight={800}>Shifts</Typography>
-          <AppButton size="small" startIcon={<AddRounded />} disabled={!form.scheduleId} sx={{ alignSelf: { xs: "stretch", sm: "auto" } }} onClick={() => { setForm({ ...initial, name: `Shift ${nextShiftNumber}`, isActive: true, isDefault: schedules.length === 0 }); setExpanded("new"); }}>Add shift</AppButton>
-        </Stack>
-        <Stack spacing={1}>
-          {visibleSchedules.map((item) => (
-            <Accordion key={item.scheduleId} expanded={expanded === item.scheduleId} onChange={(_, value) => { setExpanded(value ? item.scheduleId ?? false : false); if (value && item.scheduleId !== "new") setForm(item); }} sx={{ overflow: "hidden", transition: "opacity 220ms ease, transform 220ms ease, max-height 220ms ease, margin 220ms ease", ...(removingScheduleId === item.scheduleId ? { opacity: 0, transform: "translateX(16px) scale(0.98)", maxHeight: 0, mb: -1, pointerEvents: "none" } : {}), "& .MuiAccordionSummary-content": { minWidth: 0, my: 1.25 } }}>
-              <AccordionSummary expandIcon={<ExpandMoreRounded />} sx={{ px: { xs: 1.5, sm: 2 }, "& .MuiAccordionSummary-content": { mr: 0 } }}>
+    <Stack spacing={3} sx={{ width: "100%", minWidth: 0, flexGrow: 1 }}>
+      {/* Shifts Section */}
+      <Card
+        elevation={0}
+        sx={{
+          p: { xs: 2, sm: 2.5, md: 3 },
+          borderRadius: { xs: 2.5, sm: 3 },
+          border: "1px solid",
+          borderColor: "divider",
+          bgcolor: "background.paper",
+          boxShadow: "0 10px 28px rgba(24, 74, 82, .07)",
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
+        <Stack spacing={2.5}>
+          {/* Header Row */}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            spacing={1.5}
+          >
+            <Box>
+              <Stack direction="row" spacing={1.25} alignItems="center">
                 <Box
                   sx={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: "10px",
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                    color: "primary.main",
                     display: "grid",
-                    gridTemplateColumns: {
-                      xs: "minmax(0, 1fr) auto",
-                      sm: "minmax(0, 1fr) auto auto",
-                    },
-                    alignItems: "center",
-                    columnGap: { xs: 0.75, sm: 1.25 },
-                    rowGap: 0.5,
-                    width: "100%",
-                    minWidth: 0,
+                    placeItems: "center",
                   }}
                 >
-                  <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, flexWrap: "wrap" }}>
-                    <Typography fontWeight={750} sx={{ wordBreak: "break-word" }}>{item.name}</Typography>
-                  </Stack>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
+                  <ScheduleRounded sx={{ fontSize: 22 }} />
+                </Box>
+                <Box>
+                  <Typography variant="h6" fontWeight={800} sx={{ letterSpacing: "-0.015em" }}>
+                    Work Shifts & Hours
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Manage shift timings, arrival/departure tolerance, and department allocations.
+                  </Typography>
+                </Box>
+              </Stack>
+            </Box>
+
+            <AppButton
+              size="medium"
+              startIcon={<AddRounded />}
+              disabled={!form.scheduleId}
+              onClick={() => {
+                setForm({
+                  ...initial,
+                  name: `Shift ${nextShiftNumber}`,
+                  isActive: true,
+                  isDefault: schedules.length === 0,
+                });
+                setExpanded("new");
+              }}
+              sx={{
+                borderRadius: "10px",
+                px: 2.25,
+                fontWeight: 700,
+                textTransform: "none",
+                alignSelf: { xs: "stretch", sm: "auto" },
+                boxShadow: (theme) => `0 4px 12px ${alpha(theme.palette.primary.main, 0.25)}`,
+              }}
+            >
+              Add Shift
+            </AppButton>
+          </Stack>
+
+          {/* Shift Accordion List */}
+          <Stack spacing={1.5}>
+            {visibleSchedules.map((item) => {
+              const isItemExpanded = expanded === item.scheduleId;
+              const deptCount = getDepartmentCount(item.scheduleId);
+
+              return (
+                <Accordion
+                  key={item.scheduleId}
+                  expanded={isItemExpanded}
+                  onChange={(_, value) => {
+                    setExpanded(value ? item.scheduleId ?? false : false);
+                    if (value && item.scheduleId !== "new") setForm(item);
+                  }}
+                  disableGutters
+                  sx={{
+                    borderRadius: "14px !important",
+                    border: "1px solid",
+                    borderColor: isItemExpanded ? "primary.main" : "divider",
+                    bgcolor: isItemExpanded
+                      ? (theme) => alpha(theme.palette.primary.main, 0.015)
+                      : "background.paper",
+                    overflow: "hidden",
+                    boxShadow: isItemExpanded
+                      ? (theme) => `0 8px 24px ${alpha(theme.palette.primary.main, 0.08)}`
+                      : "none",
+                    transition: "all 0.22s ease-in-out",
+                    "&:before": { display: "none" },
+                    ...(removingScheduleId === item.scheduleId
+                      ? { opacity: 0, transform: "translateX(16px)", maxHeight: 0, pointerEvents: "none" }
+                      : {}),
+                  }}
+                >
+                  <AccordionSummary
+                    expandIcon={
+                      <ExpandMoreRounded
+                        sx={{
+                          color: isItemExpanded ? "primary.main" : "text.secondary",
+                          transition: "transform 0.2s ease",
+                        }}
+                      />
+                    }
                     sx={{
-                      fontSize: { xs: 12, sm: 14 },
-                      gridColumn: { xs: "1 / 2", sm: "auto" },
-                      fontWeight: 600,
+                      px: { xs: 1.5, sm: 2.25 },
+                      py: 0.5,
+                      "& .MuiAccordionSummary-content": { my: 1, minWidth: 0 },
                     }}
                   >
-                    {formatTime(item.standardCheckIn)} - {formatTime(item.standardCheckOut)}
-                  </Typography>
-                  <Box sx={{ width: 32, height: 32, display: "grid", placeItems: "center", gridColumn: { xs: "2 / 3", sm: "auto" }, gridRow: { xs: "1 / 3", sm: "auto" } }}>
-                    {item.isDefault ? (
-                      <Tooltip title="Company default"><StarRounded color="primary" fontSize="small" /></Tooltip>
-                    ) : item.scheduleId !== "new" && (
-                      <Tooltip title="Delete shift">
-                        <IconButton
-                          aria-label={`Delete ${item.name}`}
-                          color="error"
-                          size="small"
-                          onClick={(event) => { event.stopPropagation(); setSchedulePendingDelete(item); }}
+                    <Box sx={{ width: "100%", minWidth: 0 }}>
+                      <Stack
+                        direction={{ xs: "column", sm: "row" }}
+                        justifyContent="space-between"
+                        alignItems={{ xs: "flex-start", sm: "center" }}
+                        spacing={1}
+                      >
+                        {/* Title and Badges */}
+                        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                          <Typography fontWeight={750} sx={{ fontSize: "0.95rem" }}>
+                            {item.name}
+                          </Typography>
+                          {item.isDefault && (
+                            <Chip
+                              size="small"
+                              icon={<StarRounded sx={{ fontSize: "15px !important", color: "inherit" }} />}
+                              label="Default Shift"
+                              sx={{
+                                height: 22,
+                                fontSize: "0.7rem",
+                                fontWeight: 700,
+                                bgcolor: (theme) => alpha(theme.palette.warning.main, 0.12),
+                                color: "warning.dark",
+                                border: "1px solid",
+                                borderColor: (theme) => alpha(theme.palette.warning.main, 0.3),
+                              }}
+                            />
+                          )}
+                          <Chip
+                            size="small"
+                            label={deptCount === 0 ? "All Departments" : `${deptCount} Department${deptCount === 1 ? "" : "s"}`}
+                            variant="outlined"
+                            sx={{
+                              height: 22,
+                              fontSize: "0.7rem",
+                              fontWeight: 600,
+                              borderColor: "divider",
+                              color: "text.secondary",
+                            }}
+                          />
+                        </Stack>
+
+                        {/* Timing Badge and Delete */}
+                        <Stack direction="row" spacing={1} alignItems="center" sx={{ alignSelf: { xs: "flex-end", sm: "center" } }}>
+                          <Box
+                            sx={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 0.75,
+                              px: 1.25,
+                              py: 0.4,
+                              borderRadius: "8px",
+                              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                              color: "primary.main",
+                              fontWeight: 700,
+                              fontSize: "0.82rem",
+                            }}
+                          >
+                            <AccessTimeRounded sx={{ fontSize: 16 }} />
+                            {formatTime(item.standardCheckIn)} – {formatTime(item.standardCheckOut)}
+                          </Box>
+
+                          {!item.isDefault && item.scheduleId !== "new" && (
+                            <Tooltip title="Delete shift" arrow>
+                              <IconButton
+                                aria-label={`Delete ${item.name}`}
+                                color="error"
+                                size="small"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  setSchedulePendingDelete(item);
+                                }}
+                                sx={{
+                                  width: 32,
+                                  height: 32,
+                                  borderRadius: "8px",
+                                  bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
+                                  "&:hover": {
+                                    bgcolor: "error.main",
+                                    color: "common.white",
+                                    transform: "scale(1.05)",
+                                  },
+                                  transition: "all 0.18s ease",
+                                }}
+                              >
+                                <DeleteOutlineRounded sx={{ fontSize: 18 }} />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                        </Stack>
+                      </Stack>
+
+                      {/* Collapsed Subtitle Preview */}
+                      {!isItemExpanded && item.scheduleId !== "new" && (
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
                           sx={{
-                            width: 32,
-                            height: 32,
-                            p: 0.5,
-                            border: 0,
-                            bgcolor: "transparent",
-                            transition: "transform 160ms ease, background-color 160ms ease",
-                            "&:hover": { bgcolor: (theme) => alpha(theme.palette.error.main, 0.1), transform: "rotate(-10deg) scale(1.12)" }
+                            display: "block",
+                            mt: 0.75,
+                            fontSize: "0.76rem",
                           }}
                         >
-                          <DeleteOutlineRounded fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  </Box>
-                  {expanded !== item.scheduleId && item.scheduleId !== "new" && (
-                    <Typography gridColumn="1 / -1" variant="caption" color="text.secondary" sx={{ mt: 0.25, overflowWrap: "anywhere" }}>
-                      Punch in: {formatTime(item.checkInAllowedFrom)} - {formatTime(item.checkInAllowedUntil)} · Punch out: {formatTime(item.checkOutAllowedFrom)} - {formatTime(item.checkOutAllowedUntil)} · Break: {formatMinutes(item.breakMinutes)} · Required work: {formatMinutes(item.requiredWorkingMinutes)}
-                    </Typography>
-                  )}
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography variant="body2" color="text.secondary">{item.scheduleId === "new" ? "Configure this new shift using the same attendance fields below, then save it." : `Punch in: ${formatTime(item.checkInAllowedFrom)} - ${formatTime(item.checkInAllowedUntil)} · Punch out: ${formatTime(item.checkOutAllowedFrom)} - ${formatTime(item.checkOutAllowedUntil)} · Break: ${formatMinutes(item.breakMinutes)} · Required work: ${formatMinutes(item.requiredWorkingMinutes)}`}</Typography>
-                {expanded === item.scheduleId && <Box ref={setEditorHost} sx={{ mt: 2 }} />}
-              </AccordionDetails>
-            </Accordion>
-          ))}
+                          Punch In: {formatTime(item.checkInAllowedFrom)} - {formatTime(item.checkInAllowedUntil)} · Punch Out: {formatTime(item.checkOutAllowedFrom)} - {formatTime(item.checkOutAllowedUntil)} · Break: {formatMinutes(item.breakMinutes)} · Required: {formatMinutes(item.requiredWorkingMinutes)}
+                        </Typography>
+                      )}
+                    </Box>
+                  </AccordionSummary>
+
+                  {/* Expanded Form Details */}
+                  <AccordionDetails sx={{ px: { xs: 1.5, sm: 2.5 }, pb: 2.5, pt: 1 }}>
+                    <Divider sx={{ mb: 2.5 }} />
+                    <Stack spacing={2.5}>
+                      {/* Duplicate Timing Warning */}
+                      {duplicateTimingSchedule && (
+                        <Alert
+                          severity="warning"
+                          icon={<WarningAmberRounded />}
+                          sx={{ borderRadius: "12px", border: "1px solid", borderColor: "warning.light" }}
+                        >
+                          <Typography variant="body2" fontWeight={750} component="span">
+                            Duplicate shift timing:
+                          </Typography>
+                          {` ${duplicateTimingSchedule.name} already uses ${formatTime(form.standardCheckIn)} – ${formatTime(form.standardCheckOut)}. Please specify distinct standard hours.`}
+                        </Alert>
+                      )}
+
+                      {/* Metrics Summary Strip */}
+                      <Grid container spacing={{ xs: 1.25, sm: 1.5 }}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                          <MetricCard
+                            icon={<AlarmOnRounded fontSize="small" />}
+                            label="Automatic Present"
+                            value={formatTime(form.standardCheckIn)}
+                            detail="Effective office start"
+                          />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                          <MetricCard
+                            icon={<TimerRounded fontSize="small" />}
+                            label="Scheduled Span"
+                            value={formatMinutes(schedule.span)}
+                            detail={`${formatTime(form.standardCheckIn)} – ${formatTime(form.standardCheckOut)}`}
+                          />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                          <MetricCard
+                            icon={<CoffeeRounded fontSize="small" />}
+                            label="Break Allowance"
+                            value={formatMinutes(Number(form.breakMinutes))}
+                            detail={`${formatMinutes(schedule.available)} available time`}
+                          />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                          <MetricCard
+                            icon={
+                              schedule.isWorkTargetValid ? (
+                                <CheckCircleRounded fontSize="small" />
+                              ) : (
+                                <WarningAmberRounded fontSize="small" />
+                              )
+                            }
+                            label="Required Work"
+                            value={formatMinutes(schedule.required)}
+                            detail={
+                              schedule.isWorkTargetValid
+                                ? "Fits the scheduled day"
+                                : "Exceeds available span"
+                            }
+                            isError={!schedule.isWorkTargetValid}
+                          />
+                        </Grid>
+                      </Grid>
+
+                      {/* Basic Shift Identity */}
+                      <Grid container spacing={2}>
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <TextField
+                            fullWidth
+                            size="small"
+                            label="Schedule / Shift Name"
+                            placeholder="e.g. Morning Shift"
+                            value={form.name}
+                            onChange={(event) => set("name", event.target.value)}
+                            slotProps={{
+                              input: {
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <WorkOutlineRounded sx={{ fontSize: 18, color: "text.secondary" }} />
+                                  </InputAdornment>
+                                ),
+                              },
+                            }}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <FormControl
+                            fullWidth
+                            size="small"
+                            disabled={!form.scheduleId || savingDepartmentAssignments || departments.length === 0}
+                          >
+                            <InputLabel id="schedule-departments">Apply this shift to departments</InputLabel>
+                            <Select
+                              labelId="schedule-departments"
+                              multiple
+                              value={draftDepartmentIds}
+                              label="Apply this shift to departments"
+                              renderValue={(selected) =>
+                                selected.length === 0
+                                  ? "All Departments (Default)"
+                                  : `${selected.length} department${selected.length === 1 ? "" : "s"} selected`
+                              }
+                              MenuProps={{
+                                PaperProps: {
+                                  sx: {
+                                    maxHeight: 280,
+                                    borderRadius: "10px",
+                                    boxShadow: (theme) => `0 8px 24px ${alpha(theme.palette.common.black, 0.1)}`,
+                                  },
+                                },
+                              }}
+                              onChange={(event) => {
+                                const selected =
+                                  typeof event.target.value === "string"
+                                    ? event.target.value.split(",")
+                                    : event.target.value;
+                                setDraftDepartmentIds(selected);
+                              }}
+                            >
+                              {departments.map((department) => {
+                                const departmentName = Object.values(department.titles ?? {})[0] || "Department";
+                                return (
+                                  <MenuItem
+                                    key={department.departmentId}
+                                    value={department.departmentId}
+                                    sx={{ minHeight: 38, py: 0.5, borderRadius: "6px", mx: 0.5 }}
+                                  >
+                                    <Checkbox size="small" checked={draftDepartmentIds.includes(department.departmentId)} />
+                                    <ListItemText primary={departmentName} primaryTypographyProps={{ variant: "body2", noWrap: true }} />
+                                  </MenuItem>
+                                );
+                              })}
+                            </Select>
+                          </FormControl>
+                          {!form.scheduleId && (
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
+                              Save this shift first before assigning specific departments.
+                            </Typography>
+                          )}
+                        </Grid>
+                      </Grid>
+
+                      {/* Punch Windows - Side by Side */}
+                      <Grid container spacing={2}>
+                        {/* Punch In Card */}
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <Paper
+                            variant="outlined"
+                            sx={{
+                              p: { xs: 2, sm: 2.25 },
+                              borderRadius: "14px",
+                              height: "100%",
+                              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
+                              borderColor: (theme) => alpha(theme.palette.primary.main, 0.15),
+                            }}
+                          >
+                            <Stack spacing={1.75}>
+                              <Stack direction="row" spacing={1} alignItems="center">
+                                <Box
+                                  sx={{
+                                    width: 28,
+                                    height: 28,
+                                    borderRadius: "7px",
+                                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                                    color: "primary.main",
+                                    display: "grid",
+                                    placeItems: "center",
+                                  }}
+                                >
+                                  <LoginRounded sx={{ fontSize: 16 }} />
+                                </Box>
+                                <Box>
+                                  <Typography fontWeight={750} sx={{ fontSize: "0.9rem" }}>
+                                    Punch-In Window
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    Allowed check-in buffer & official arrival time
+                                  </Typography>
+                                </Box>
+                              </Stack>
+
+                              <Grid container spacing={1.5}>
+                                <Grid size={{ xs: 12, sm: 6 }}>
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    type="time"
+                                    label="Allowed From"
+                                    value={form.checkInAllowedFrom}
+                                    onChange={(event) => set("checkInAllowedFrom", event.target.value)}
+                                    slotProps={{ inputLabel: { shrink: true } }}
+                                  />
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 6 }}>
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    type="time"
+                                    label="Allowed Until"
+                                    value={form.checkInAllowedUntil}
+                                    onChange={(event) => set("checkInAllowedUntil", event.target.value)}
+                                    slotProps={{ inputLabel: { shrink: true } }}
+                                  />
+                                </Grid>
+                                <Grid size={12}>
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    type="time"
+                                    label="Standard Office Start (Auto-Present Time)"
+                                    value={form.standardCheckIn}
+                                    onChange={(event) => set("standardCheckIn", event.target.value)}
+                                    slotProps={{ inputLabel: { shrink: true } }}
+                                    helperText="Employees punching in before this time are automatically marked Present."
+                                  />
+                                </Grid>
+                              </Grid>
+                            </Stack>
+                          </Paper>
+                        </Grid>
+
+                        {/* Punch Out Card */}
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <Paper
+                            variant="outlined"
+                            sx={{
+                              p: { xs: 2, sm: 2.25 },
+                              borderRadius: "14px",
+                              height: "100%",
+                              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
+                              borderColor: (theme) => alpha(theme.palette.primary.main, 0.15),
+                            }}
+                          >
+                            <Stack spacing={1.75}>
+                              <Stack direction="row" spacing={1} alignItems="center">
+                                <Box
+                                  sx={{
+                                    width: 28,
+                                    height: 28,
+                                    borderRadius: "7px",
+                                    bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.12),
+                                    color: "secondary.main",
+                                    display: "grid",
+                                    placeItems: "center",
+                                  }}
+                                >
+                                  <LogoutRounded sx={{ fontSize: 16 }} />
+                                </Box>
+                                <Box>
+                                  <Typography fontWeight={750} sx={{ fontSize: "0.9rem" }}>
+                                    Punch-Out Window
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    Allowed check-out buffer & official departure time
+                                  </Typography>
+                                </Box>
+                              </Stack>
+
+                              <Grid container spacing={1.5}>
+                                <Grid size={{ xs: 12, sm: 6 }}>
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    type="time"
+                                    label="Allowed From"
+                                    value={form.checkOutAllowedFrom}
+                                    onChange={(event) => set("checkOutAllowedFrom", event.target.value)}
+                                    slotProps={{ inputLabel: { shrink: true } }}
+                                  />
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 6 }}>
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    type="time"
+                                    label="Allowed Until"
+                                    value={form.checkOutAllowedUntil}
+                                    onChange={(event) => set("checkOutAllowedUntil", event.target.value)}
+                                    slotProps={{ inputLabel: { shrink: true } }}
+                                  />
+                                </Grid>
+                                <Grid size={12}>
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    type="time"
+                                    label="Standard Office Departure"
+                                    value={form.standardCheckOut}
+                                    onChange={(event) => set("standardCheckOut", event.target.value)}
+                                    slotProps={{ inputLabel: { shrink: true } }}
+                                    helperText="Official end of working day for scheduled span calculation."
+                                  />
+                                </Grid>
+                              </Grid>
+                            </Stack>
+                          </Paper>
+                        </Grid>
+                      </Grid>
+
+                      {/* Rules & Durations */}
+                      <Grid container spacing={2}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
+                          <TextField
+                            fullWidth
+                            size="small"
+                            type="number"
+                            label="Grace Period (Late / Early)"
+                            value={form.graceMinutes}
+                            onChange={(event) => set("graceMinutes", Number(event.target.value))}
+                            slotProps={{
+                              input: {
+                                endAdornment: <InputAdornment position="end">mins</InputAdornment>,
+                                inputProps: { min: 0, max: 180 },
+                              },
+                            }}
+                            helperText="Buffer before Late Half-Day or Early Departure penalty applies."
+                          />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 4 }}>
+                          <TextField
+                            fullWidth
+                            size="small"
+                            type="number"
+                            label="Break Allowance"
+                            value={form.breakMinutes}
+                            onChange={(event) => set("breakMinutes", Number(event.target.value))}
+                            slotProps={{
+                              input: {
+                                endAdornment: <InputAdornment position="end">mins</InputAdornment>,
+                                inputProps: { min: 0, max: 180 },
+                              },
+                            }}
+                            helperText="Unpaid break time deducted from daily office span."
+                          />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 4 }}>
+                          <TextField
+                            fullWidth
+                            size="small"
+                            type="number"
+                            label="Required Work Duration"
+                            value={form.requiredWorkingMinutes}
+                            onChange={(event) => set("requiredWorkingMinutes", Number(event.target.value))}
+                            error={!schedule.isWorkTargetValid}
+                            slotProps={{
+                              input: {
+                                endAdornment: <InputAdornment position="end">mins</InputAdornment>,
+                                inputProps: { min: 0, max: 1440 },
+                              },
+                            }}
+                            helperText={
+                              schedule.isWorkTargetValid
+                                ? `Minimum net work time for full-day attendance (${formatMinutes(schedule.required)}).`
+                                : `Target exceeds available working span (${formatMinutes(schedule.available)}).`
+                            }
+                          />
+                        </Grid>
+                      </Grid>
+
+                      {/* Form Actions Footer */}
+                      <Stack
+                        direction={{ xs: "column", sm: "row" }}
+                        justifyContent="space-between"
+                        alignItems={{ xs: "flex-start", sm: "center" }}
+                        spacing={2}
+                        sx={{
+                          pt: 1.5,
+                          borderTop: "1px solid",
+                          borderColor: "divider",
+                        }}
+                      >
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={Boolean(form.isDefault)}
+                              disabled={Boolean(form.isDefault) || saving}
+                              onChange={(event) => set("isDefault", event.target.checked)}
+                              color="primary"
+                            />
+                          }
+                          label={
+                            <Box>
+                              <Typography variant="body2" fontWeight={700}>
+                                Set as Company Default Shift
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Automatically assigned to staff who don't have department shift overrides.
+                              </Typography>
+                            </Box>
+                          }
+                        />
+
+                        <AppButton
+                          variant="contained"
+                          color="primary"
+                          size="medium"
+                          startIcon={
+                            saving ? (
+                              <CircularProgress size={16} color="inherit" />
+                            ) : (
+                              <SaveRounded />
+                            )
+                          }
+                          disabled={saving || !schedule.isWorkTargetValid || Boolean(duplicateTimingSchedule)}
+                          onClick={save}
+                          sx={{
+                            borderRadius: "10px",
+                            px: 3,
+                            py: 1,
+                            fontWeight: 700,
+                            textTransform: "none",
+                            boxShadow: (theme) => `0 4px 14px ${alpha(theme.palette.primary.main, 0.28)}`,
+                            alignSelf: { xs: "stretch", sm: "auto" },
+                          }}
+                        >
+                          {saving ? "Saving..." : "Save Shift"}
+                        </AppButton>
+                      </Stack>
+                    </Stack>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })}
+          </Stack>
         </Stack>
-        {expanded && editorHost && createPortal(
-          <Paper
-            variant="outlined"
-            sx={{
-              p: { xs: 1.25, sm: 2, md: 2.5 },
-              borderRadius: 2.5,
-              borderColor: "divider",
-              bgcolor: "background.paper",
-              boxShadow: (theme) => `0 8px 24px ${alpha(theme.palette.common.black, 0.06)}`,
-              containerType: "inline-size",
-            }}
+      </Card>
+
+      {/* Weekly Off Days Card */}
+      <Card
+        elevation={0}
+        sx={{
+          p: { xs: 2, sm: 2.5, md: 3 },
+          borderRadius: { xs: 2.5, sm: 3 },
+          border: "1px solid",
+          borderColor: "divider",
+          bgcolor: "background.paper",
+          boxShadow: "0 10px 28px rgba(24, 74, 82, .07)",
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
+        <Stack spacing={2.5}>
+          {/* Header */}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            spacing={1.5}
           >
-            <Stack spacing={{ xs: 1.5, md: 2 }}>
-        {duplicateTimingSchedule && (
-          <Alert severity="warning" sx={{ borderRadius: 2.5 }}>
-            <Typography component="span" fontWeight={750}>Duplicate office timing.</Typography>
-            {` ${duplicateTimingSchedule.name} already uses ${formatTime(form.standardCheckIn)} - ${formatTime(form.standardCheckOut)}. Change either standard time before saving.`}
-          </Alert>
-        )}
-
-        <Grid container spacing={{ xs: 1, sm: 1.25 }}>
-          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-            <ScheduleMetric icon={<AlarmOnRounded fontSize="small" />} label="Automatic Present" value={formatTime(form.standardCheckIn)} detail="Effective office start" />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-            <ScheduleMetric icon={<TimerRounded fontSize="small" />} label="Scheduled span" value={formatMinutes(schedule.span)} detail={`${formatTime(form.standardCheckIn)} – ${formatTime(form.standardCheckOut)}`} />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-            <ScheduleMetric icon={<CoffeeRounded fontSize="small" />} label="Break allowance" value={formatMinutes(Number(form.breakMinutes))} detail={`${formatMinutes(schedule.available)} available time`} />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-            <ScheduleMetric icon={<CheckCircleRounded fontSize="small" />} label="Required work" value={formatMinutes(schedule.required)} detail={schedule.isWorkTargetValid ? "Fits the scheduled day" : "Exceeds available time"} />
-          </Grid>
-        </Grid>
-
-        <Divider />
-
-        <Grid container spacing={{ xs: 1.25, md: 1.5 }}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <TextField fullWidth size="small" label="Schedule name" value={form.name} onChange={(event) => set("name", event.target.value)} />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl fullWidth size="small" sx={{ minWidth: 0 }} disabled={!form.scheduleId || savingDepartmentAssignments || departments.length === 0}>
-              <InputLabel id="schedule-departments">Apply this shift to departments</InputLabel>
-              <Select
-                labelId="schedule-departments"
-                multiple
-                value={draftDepartmentIds}
-                label="Apply this shift to departments"
-                renderValue={(selected) => selected.length === 0
-                  ? "Company default"
-                  : `${selected.length} department${selected.length === 1 ? "" : "s"} selected`}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
-                      maxHeight: 280,
-                      maxWidth: { xs: "calc(100vw - 32px)", md: 440 },
-                      width: "100%",
-                    },
-                  },
-                  MenuListProps: { dense: true },
-                }}
-                onChange={(event) => {
-                  const selected = typeof event.target.value === "string" ? event.target.value.split(",") : event.target.value;
-                  setDraftDepartmentIds(selected);
+            <Stack direction="row" spacing={1.25} alignItems="center">
+              <Box
+                sx={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: "10px",
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                  color: "primary.main",
+                  display: "grid",
+                  placeItems: "center",
                 }}
               >
-                {departments.map((department) => {
-                  const departmentName = Object.values(department.titles ?? {})[0] || "Department";
-                  return (
-                    <MenuItem key={department.departmentId} value={department.departmentId} sx={{ minHeight: 38, py: 0.25 }}>
-                      <Checkbox size="small" checked={draftDepartmentIds.includes(department.departmentId)} />
-                      <ListItemText primary={departmentName} primaryTypographyProps={{ variant: "body2", noWrap: true }} />
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-            {!form.scheduleId && <Typography variant="caption" color="text.secondary">Save this shift before applying it to departments.</Typography>}
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Paper variant="outlined" sx={{ p: { xs: 1.5, md: 2 }, borderRadius: 2.5, height: "100%" }}>
-              <Stack spacing={1.25}>
-                <Stack direction="row" spacing={1} alignItems="center"><LoginRounded color="primary" fontSize="small" /><Typography fontWeight={800}>Punch-in window</Typography></Stack>
-                <Grid container spacing={1.5}>
-                  <Grid size={{ xs: 12, sm: 6, md: 12, lg: 6 }}><TextField fullWidth size="small" type="time" label="Allowed from" value={form.checkInAllowedFrom} onChange={(event) => set("checkInAllowedFrom", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
-                  <Grid size={{ xs: 12, sm: 6, md: 12, lg: 6 }}><TextField fullWidth size="small" type="time" label="Allowed until" value={form.checkInAllowedUntil} onChange={(event) => set("checkInAllowedUntil", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
-                  <Grid size={{ xs: 12 }}><TextField fullWidth size="small" type="time" label="Automatic present punch-in" value={form.standardCheckIn} onChange={(event) => set("standardCheckIn", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
-                </Grid>
-              </Stack>
-            </Paper>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Paper variant="outlined" sx={{ p: { xs: 1.5, md: 2 }, borderRadius: 2.5, height: "100%" }}>
-              <Stack spacing={1.25}>
-                <Stack direction="row" spacing={1} alignItems="center"><LogoutRounded color="primary" fontSize="small" /><Typography fontWeight={800}>Punch-out window</Typography></Stack>
-                <Grid container spacing={1.5}>
-                  <Grid size={{ xs: 12, sm: 6, md: 12, lg: 6 }}><TextField fullWidth size="small" type="time" label="Allowed from" value={form.checkOutAllowedFrom} onChange={(event) => set("checkOutAllowedFrom", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
-                  <Grid size={{ xs: 12, sm: 6, md: 12, lg: 6 }}><TextField fullWidth size="small" type="time" label="Allowed until" value={form.checkOutAllowedUntil} onChange={(event) => set("checkOutAllowedUntil", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
-                  <Grid size={{ xs: 12 }}><TextField fullWidth size="small" type="time" label="Standard punch-out" value={form.standardCheckOut} onChange={(event) => set("standardCheckOut", event.target.value)} slotProps={{ inputLabel: { shrink: true } }} /></Grid>
-                </Grid>
-              </Stack>
-            </Paper>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 4 }}><TextField fullWidth size="small" type="number" label="LHD/ED grace (min)" value={form.graceMinutes} onChange={(event) => set("graceMinutes", Number(event.target.value))} inputProps={{ min: 0, max: 180 }} /></Grid>
-          <Grid size={{ xs: 12, sm: 4 }}><TextField fullWidth size="small" type="number" label="Break (min)" value={form.breakMinutes} onChange={(event) => set("breakMinutes", Number(event.target.value))} inputProps={{ min: 0, max: 180 }} /></Grid>
-          <Grid size={{ xs: 12, sm: 4 }}><TextField fullWidth size="small" type="number" label="Required work (min)" value={form.requiredWorkingMinutes} onChange={(event) => set("requiredWorkingMinutes", Number(event.target.value))} inputProps={{ min: 0, max: 1440 }} error={!schedule.isWorkTargetValid} /></Grid>
-        </Grid>
-
-        <Stack direction={{ xs: "column-reverse", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1.5}>
-          <Typography variant="caption" color="text.secondary">
-            Applies on the next scheduler run.
-          </Typography>
-          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ alignSelf: { xs: "stretch", sm: "auto" } }}>
-            <Tooltip title={form.isDefault ? "Company default shift" : "Make this the company default shift"}>
-              <span>
-                <Checkbox
-                  aria-label="Make this the company default shift"
-                  checked={Boolean(form.isDefault)}
-                  disabled={Boolean(form.isDefault) || saving}
-                  onChange={(event) => set("isDefault", event.target.checked)}
-                />
-              </span>
-            </Tooltip>
-            <Tooltip title={saving ? "Saving schedule" : "Save schedule"} arrow>
-              <span>
-                <IconButton aria-label="Save schedule" color="primary" onClick={save} disabled={saving || !schedule.isWorkTargetValid || Boolean(duplicateTimingSchedule)} sx={{ width: 38, height: 38, borderRadius: 2, color: "primary.contrastText", bgcolor: "primary.main", boxShadow: "0 6px 14px rgba(21, 123, 122, .22)", "&:hover": { bgcolor: "primary.dark", transform: "translateY(-1px)", boxShadow: "0 9px 18px rgba(21, 123, 122, .28)" }, "&.Mui-disabled": { bgcolor: "action.disabledBackground", color: "action.disabled" }, transition: "transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease" }}><SaveRounded fontSize="small" /></IconButton>
-              </span>
-            </Tooltip>
-          </Stack>
-        </Stack>
+                <CalendarMonthRounded sx={{ fontSize: 22 }} />
+              </Box>
+              <Box>
+                <Typography variant="h6" fontWeight={800} sx={{ letterSpacing: "-0.015em" }}>
+                  Weekly Off Days
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Designate company-wide non-working days. Attendance ignores absence on these days.
+                </Typography>
+              </Box>
             </Stack>
-          </Paper>,
-          editorHost,
-        )}
-      </Stack>
-      <Paper variant="outlined" sx={{ mt: 2.5, p: { xs: 1.5, sm: 2 }, borderRadius: 2.5, bgcolor: "background.paper", borderColor: "divider" }}>
-        <Stack spacing={1.5}>
-          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1}>
-            <Typography fontWeight={800}>Weekly off days</Typography>
-            <Stack direction="row" spacing={0.75} alignItems="center" sx={{ alignSelf: { xs: "flex-end", sm: "auto" } }}>
-              <Tooltip title="These company-wide days are treated as Off in attendance. Public holidays are managed separately in Calendar." arrow>
-                <IconButton aria-label="About weekly off days" size="small" sx={{ width: 34, height: 34, border: "1px solid", borderColor: "divider", borderRadius: 1.75, color: "primary.main", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" } }}><InfoOutlined fontSize="small" /></IconButton>
-              </Tooltip>
-              <Tooltip title={savingOffDays ? "Saving weekly off days" : "Save weekly off days"} arrow>
-                <span>
-                  <IconButton aria-label="Save weekly off days" color="primary" disabled={savingOffDays} onClick={() => void saveWeeklyOffs()} sx={{ width: 34, height: 34, border: "1px solid", borderColor: "primary.main", borderRadius: 1.75, bgcolor: "background.paper", boxShadow: "none", "&:hover": { bgcolor: "primary.main", color: "primary.contrastText", boxShadow: "0 4px 10px rgba(21, 123, 122, .16)" }, transition: "background-color 160ms ease, color 160ms ease, box-shadow 160ms ease" }}><SaveRounded fontSize="small" /></IconButton>
-                </span>
-              </Tooltip>
-            </Stack>
+
+            <AppButton
+              variant="contained"
+              color="primary"
+              size="medium"
+              startIcon={
+                savingOffDays ? (
+                  <CircularProgress size={16} color="inherit" />
+                ) : (
+                  <SaveRounded />
+                )
+              }
+              disabled={savingOffDays}
+              onClick={() => void saveWeeklyOffs()}
+              sx={{
+                borderRadius: "10px",
+                px: 2.5,
+                fontWeight: 700,
+                textTransform: "none",
+                alignSelf: { xs: "stretch", sm: "auto" },
+                boxShadow: (theme) => `0 4px 12px ${alpha(theme.palette.primary.main, 0.25)}`,
+              }}
+            >
+              {savingOffDays ? "Saving..." : "Save Weekly Offs"}
+            </AppButton>
           </Stack>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(auto-fit, minmax(130px, 1fr))", md: "repeat(auto-fit, minmax(130px, 1fr))", xl: "repeat(7, minmax(0, 1fr))" }, gap: 1 }}>
-            {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((name, index) => (
-              <FormControlLabel key={name} sx={{ m: 0, minHeight: 44, px: 1, border: "1px solid", borderColor: offDays.includes(index) ? "primary.main" : "divider", borderRadius: 2, bgcolor: offDays.includes(index) ? "action.selected" : "background.paper", transition: "transform 160ms ease, background-color 160ms ease", "&:hover": { transform: "translateY(-1px)", bgcolor: "action.hover" }, "& .MuiFormControlLabel-label": { fontWeight: 700, fontSize: 13 } }} control={<Checkbox size="small" checked={offDays.includes(index)} onChange={(event) => setOffDays((current) => event.target.checked ? [...current, index] : current.filter((day) => day !== index))} />} label={name} />
-            ))}
+
+          {/* 7-Day Pill Selector Grid */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(4, 1fr)",
+                md: "repeat(7, 1fr)",
+              },
+              gap: 1.25,
+            }}
+          >
+            {[
+              { name: "Sunday", isWeekend: true },
+              { name: "Monday", isWeekend: false },
+              { name: "Tuesday", isWeekend: false },
+              { name: "Wednesday", isWeekend: false },
+              { name: "Thursday", isWeekend: false },
+              { name: "Friday", isWeekend: false },
+              { name: "Saturday", isWeekend: true },
+            ].map(({ name, isWeekend }, index) => {
+              const isSelected = offDays.includes(index);
+
+              return (
+                <Paper
+                  key={name}
+                  onClick={() =>
+                    setOffDays((current) =>
+                      isSelected
+                        ? current.filter((day) => day !== index)
+                        : [...current, index]
+                    )
+                  }
+                  variant="outlined"
+                  sx={{
+                    p: 1.5,
+                    cursor: "pointer",
+                    borderRadius: "12px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 0.5,
+                    minHeight: 64,
+                    userSelect: "none",
+                    border: isSelected ? "2px solid" : "1px solid",
+                    borderColor: isSelected ? "primary.main" : "divider",
+                    bgcolor: (theme) =>
+                      isSelected
+                        ? alpha(theme.palette.primary.main, 0.08)
+                        : "background.paper",
+                    color: isSelected ? "primary.main" : "text.primary",
+                    transition: "all 0.18s ease-in-out",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      bgcolor: (theme) =>
+                        isSelected
+                          ? alpha(theme.palette.primary.main, 0.12)
+                          : alpha(theme.palette.action.hover, 0.06),
+                      transform: "translateY(-2px)",
+                      boxShadow: (theme) =>
+                        `0 4px 12px ${alpha(theme.palette.primary.main, 0.12)}`,
+                    },
+                  }}
+                >
+                  <Stack direction="row" spacing={0.75} alignItems="center">
+                    <Typography fontWeight={isSelected ? 800 : 600} sx={{ fontSize: "0.85rem" }}>
+                      {name}
+                    </Typography>
+                    {isSelected && (
+                      <CheckCircleRounded sx={{ fontSize: 16, color: "primary.main" }} />
+                    )}
+                  </Stack>
+                  {isWeekend && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontSize: "0.68rem",
+                        fontWeight: 650,
+                        color: isSelected ? "primary.main" : "text.secondary",
+                        opacity: 0.85,
+                      }}
+                    >
+                      Weekend
+                    </Typography>
+                  )}
+                </Paper>
+              );
+            })}
           </Box>
+
+          <Stack direction="row" spacing={1} alignItems="center">
+            <InfoOutlined sx={{ fontSize: 16, color: "text.secondary" }} />
+            <Typography variant="caption" color="text.secondary">
+              Company gazetted holidays and optional holidays are configured separately under the <strong>Calendar</strong> module.
+            </Typography>
+          </Stack>
         </Stack>
-      </Paper>
-      {schedulePendingDelete && <ConfirmationModal open confirming={deleting} title={`Delete ${schedulePendingDelete.name}?`} content="This shift will no longer be available for future attendance scheduling. Default shifts cannot be deleted." handleClose={() => !deleting && setSchedulePendingDelete(null)} handleConfirmation={() => void deleteSchedule()} />}
-    </Paper>
+      </Card>
+
+      {/* Delete Confirmation Modal */}
+      {schedulePendingDelete && (
+        <ConfirmationModal
+          open
+          confirming={deleting}
+          title={`Delete ${schedulePendingDelete.name}?`}
+          content="This shift will be permanently removed. Employees assigned to this shift should be reassigned to another shift. Default shifts cannot be deleted."
+          handleClose={() => !deleting && setSchedulePendingDelete(null)}
+          handleConfirmation={() => void deleteSchedule()}
+        />
+      )}
+    </Stack>
   );
 };

@@ -18,6 +18,7 @@ vi.mock("../../payroll/services", () => ({
 }));
 vi.mock("react-toastify", () => ({ toast: { error: toastErrorMock, success: toastSuccessMock } }));
 vi.mock("@mui/icons-material", () => ({
+  default: () => null,
   CloudUploadRounded: () => null,
   CheckCircleRounded: () => null,
   DownloadRounded: () => null,

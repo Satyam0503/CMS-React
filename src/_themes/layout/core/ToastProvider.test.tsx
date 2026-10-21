@@ -19,6 +19,7 @@ vi.mock("@mui/material", () => ({
 }));
 
 vi.mock("@mui/icons-material", () => ({
+    default: () => null,
     CloseRounded: () => <span aria-hidden="true">×</span>,
     Groups2Rounded: () => <span aria-hidden="true" />,
     ShieldRounded: () => <span aria-hidden="true" />,

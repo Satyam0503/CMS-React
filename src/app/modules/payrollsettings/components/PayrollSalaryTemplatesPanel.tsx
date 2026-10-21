@@ -2,7 +2,7 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Alert, Box, Chip, FormControlLabel, Grid, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, alpha, useTheme } from '@mui/material';
 import { AppButton, AppCheckbox, AppTextField } from '../../../shared/components/ui';
-import { postRequest } from '../../../../server/axios';
+import { postRequest, deleteRequest } from '../../../../server/axios';
 import { toast } from 'react-toastify';
 import { currencyFormatter } from '../../../../utils/common';
 import { PayrollDateField } from './PayrollDateField';
@@ -26,6 +26,28 @@ export function PayrollSalaryTemplatesPanel({ templates, groups, components, can
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [retiring, setRetiring] = useState<SalaryTemplate | null>(null);
+  const [templateToDelete, setTemplateToDelete] = useState<SalaryTemplate | null>(null);
+
+  const deleteTemplate = async (template: SalaryTemplate) => {
+    if (!canEdit || !template.id || busy) return;
+    setBusy(true); setMessage('');
+    try {
+      const { data } = await deleteRequest<{ success: boolean; message?: string }>(
+        `api/payroll/configuration/salary-templates/${encodeURIComponent(template.id)}?version=${template.version ?? 1}`
+      );
+      if (!data.success) {
+        toast.error(data.message || 'Unable to delete salary template.');
+        return;
+      }
+      setTemplateToDelete(null);
+      toast.success(`Salary template "${template.name}" deleted.`);
+      await onSaved();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to delete salary template.');
+    } finally {
+      setBusy(false);
+    }
+  };
   const calculation = calculateTemplate(draft);
   const datesValid = Boolean(draft.effectiveFrom && dayjs(draft.effectiveFrom).isValid()) &&
     (!draft.effectiveTo || (dayjs(draft.effectiveTo).isValid() && draft.effectiveTo >= draft.effectiveFrom));
@@ -35,7 +57,8 @@ export function PayrollSalaryTemplatesPanel({ templates, groups, components, can
   const componentsValid = (draft.components ?? []).every(item => available.some(component => component.id === item.componentId));
   const patch = (value: Partial<SalaryTemplate>) => setDraft(current => ({ ...current, ...value }));
   const revise = (template: SalaryTemplate) => {
-    setDraft({ ...template, id: undefined, version: undefined, isRetired: false, isActive: true, name: `${template.name} (revision)`,
+    const baseName = template.name.replace(/\s*\(revision(?:\s+\d+)?\)\s*$/i, "").trim();
+    setDraft({ ...template, id: undefined, version: undefined, isRetired: false, isActive: true, name: `${baseName} (revision)`,
       effectiveFrom: dayjs(template.effectiveFrom).format('YYYY-MM-DD'), effectiveTo: template.effectiveTo ? dayjs(template.effectiveTo).format('YYYY-MM-DD') : '',
       sourceTemplateId: template.id, sourceTemplateVersion: template.version ?? 1,
       components: (template.components ?? []).map(component => ({ ...component })) });
@@ -264,6 +287,16 @@ export function PayrollSalaryTemplatesPanel({ templates, groups, components, can
                             Retire
                           </AppButton>
                         )}
+                        <AppButton
+                          size="small"
+                          variant="outlined"
+                          color="error"
+                          disabled={busy || !template.id}
+                          onClick={() => setTemplateToDelete(template)}
+                          sx={{ height: 28, fontSize: '0.75rem', textTransform: 'none', fontWeight: 700, borderRadius: '6px' }}
+                        >
+                          Delete
+                        </AppButton>
                       </Stack>
                     </TableCell>
                   )}
@@ -275,5 +308,16 @@ export function PayrollSalaryTemplatesPanel({ templates, groups, components, can
       </TableContainer>
     )}
     {retiring && <ConfirmationModal open title="Retire salary template?" content={`Retire ${retiring.name} from new selections? Existing employee assignments, approved salaries, and payroll history remain unchanged. Create a revision if you need a replacement.`} ok_btn confirming={busy} handleClose={() => { if (!busy) setRetiring(null); }} handleConfirmation={result => { if (result === 'ok') void retire(); }} />}
+    {templateToDelete && (
+      <ConfirmationModal
+        open
+        title="Delete salary template?"
+        content={`Permanently delete "${templateToDelete.name}"? If any employees are assigned to this template, deletion will be blocked and you should retire it instead.`}
+        ok_btn
+        confirming={busy}
+        handleClose={() => { if (!busy) setTemplateToDelete(null); }}
+        handleConfirmation={result => { if (result === 'ok') void deleteTemplate(templateToDelete); }}
+      />
+    )}
   </Stack>;
 }

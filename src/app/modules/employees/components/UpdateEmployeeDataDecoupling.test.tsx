@@ -4,7 +4,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { UpdateEmployeeData } from "./UpdateEmployeeData";
 import * as adminServices from "../../admin/adminservices";
 
-vi.mock("@mui/icons-material", () => ({}));
 
 vi.mock("react-intl", () => ({
   useIntl: () => ({ formatMessage: ({ id }: { id: string }) => id }),

@@ -2,7 +2,8 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { Alert, Box, Chip, FormControlLabel, Grid, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, alpha, useTheme } from "@mui/material";
 import { AppButton, AppCheckbox, AppTextField } from "../../../shared/components/ui";
-import { postRequest } from "../../../../server/axios";
+import { postRequest, deleteRequest } from "../../../../server/axios";
+import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
 import { toast } from "react-toastify";
 import { configurationWindowIssue, coversConfigurationWindow } from "./payrollConfigurationSelection";
 import { PayrollDateField } from "./PayrollDateField";
@@ -26,6 +27,28 @@ export function PayrollPayGroupsPanel({ groups, profiles, canEdit, onSaved }: Pr
   const [to, setTo] = useState("");
   const [active, setActive] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [groupToDelete, setGroupToDelete] = useState<PayrollPayGroup | null>(null);
+
+  const deleteGroup = async (group: PayrollPayGroup) => {
+    if (!canEdit || !group.id || busy) return;
+    setBusy(true);
+    try {
+      const { data } = await deleteRequest<{ success: boolean; message?: string }>(
+        `api/payroll/configuration/pay-groups/${encodeURIComponent(group.id)}`
+      );
+      if (!data.success) {
+        toast.error(data.message || "Unable to delete pay group.");
+        return;
+      }
+      setGroupToDelete(null);
+      toast.success(`Pay group "${group.name}" deleted.`);
+      await onSaved();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to delete pay group.");
+    } finally {
+      setBusy(false);
+    }
+  };
   const approvedProfiles = profiles.filter(profile => profile.isActive && profile.approvalStatus === "APPROVED" && profile.scope !== "ASSIGNMENT_ONLY");
   const eligibleProfiles = approvedProfiles.filter(profile => coversConfigurationWindow(profile, from, to));
   const selectedPolicy = profiles.find(profile => profile.id === policyId);
@@ -218,16 +241,29 @@ export function PayrollPayGroupsPanel({ groups, profiles, canEdit, onSaved }: Pr
                 </TableCell>
                 {canEdit && (
                   <TableCell align="right">
-                    <AppButton
-                      size="small"
-                      variant="outlined"
-                      disabled={busy}
-                      onClick={() => edit(group)}
-                      aria-label={"Edit " + group.name + " pay group"}
-                      sx={{ height: 28, fontSize: "0.75rem", textTransform: "none", fontWeight: 700, borderRadius: "6px" }}
-                    >
-                      Edit
-                    </AppButton>
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      <AppButton
+                        size="small"
+                        variant="outlined"
+                        disabled={busy}
+                        onClick={() => edit(group)}
+                        aria-label={"Edit " + group.name + " pay group"}
+                        sx={{ height: 28, fontSize: "0.75rem", textTransform: "none", fontWeight: 700, borderRadius: "6px" }}
+                      >
+                        Edit
+                      </AppButton>
+                      <AppButton
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        disabled={busy || !group.id}
+                        onClick={() => setGroupToDelete(group)}
+                        aria-label={"Delete " + group.name + " pay group"}
+                        sx={{ height: 28, fontSize: "0.75rem", textTransform: "none", fontWeight: 700, borderRadius: "6px" }}
+                      >
+                        Delete
+                      </AppButton>
+                    </Stack>
                   </TableCell>
                 )}
               </TableRow>
@@ -235,6 +271,17 @@ export function PayrollPayGroupsPanel({ groups, profiles, canEdit, onSaved }: Pr
           </TableBody>
         </Table>
       </TableContainer>
+    )}
+    {groupToDelete && (
+      <ConfirmationModal
+        open
+        title="Delete pay group?"
+        content={`Delete pay group "${groupToDelete.name}"? If any employees or salary templates are linked to this pay group, deletion will be blocked and you should deactivate it instead.`}
+        ok_btn
+        confirming={busy}
+        handleClose={() => { if (!busy) setGroupToDelete(null); }}
+        handleConfirmation={(result) => { if (result === "ok") void deleteGroup(groupToDelete); }}
+      />
     )}
   </Stack>;
 }

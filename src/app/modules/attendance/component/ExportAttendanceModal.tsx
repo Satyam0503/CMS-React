@@ -10,10 +10,10 @@ import {
   Stack,
   IconButton,
   MenuItem,
-  Alert,
   CircularProgress,
   TextField,
   Divider,
+  Grid,
   alpha,
 } from "@mui/material";
 import DownloadOutlined from "@mui/icons-material/DownloadOutlined";
@@ -127,8 +127,9 @@ export const ExportAttendanceModal: React.FC<ExportAttendanceModalProps> = ({
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 3,
-          boxShadow: "0 20px 40px -15px rgba(0,0,0,0.25)",
+          borderRadius: "16px",
+          boxShadow: "0 24px 48px -12px rgba(0,0,0,0.2)",
+          overflow: "hidden",
         },
       }}
     >
@@ -137,8 +138,8 @@ export const ExportAttendanceModal: React.FC<ExportAttendanceModalProps> = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          pb: 1,
           pt: 2.5,
+          pb: 1.5,
           px: 3,
         }}
       >
@@ -152,14 +153,14 @@ export const ExportAttendanceModal: React.FC<ExportAttendanceModalProps> = ({
               display: "flex",
             }}
           >
-            <DescriptionOutlined />
+            <DescriptionOutlined fontSize="small" />
           </Box>
           <Box>
-            <Typography variant="h6" fontWeight={750} sx={{ lineHeight: 1.2 }}>
+            <Typography variant="h6" fontWeight={750} sx={{ lineHeight: 1.25, fontSize: "1.1rem" }}>
               Export Attendance Muster
             </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Download monthly attendance register with department, designation & summaries
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
+              Download monthly attendance register (.xlsx)
             </Typography>
           </Box>
         </Stack>
@@ -177,147 +178,145 @@ export const ExportAttendanceModal: React.FC<ExportAttendanceModalProps> = ({
 
       <DialogContent sx={{ px: 3, py: 2.5 }}>
         <Stack spacing={2.5}>
-          {/* Month & Year Selection */}
-          <Box>
-            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ mb: 0.75, display: "block" }}>
-              Report Period
-            </Typography>
-            <Stack direction="row" spacing={1.5}>
-              <Box sx={{ flex: 2 }}>
-                <AppSelect
-                  value={selectedMonth}
-                  onChange={(e: any) => setSelectedMonth(Number(e.target.value))}
-                  sx={{ height: 40, borderRadius: "10px" }}
-                >
-                  {monthOptions.map((m) => (
-                    <MenuItem key={m.value} value={m.value}>
-                      {m.label}
-                    </MenuItem>
-                  ))}
-                </AppSelect>
-              </Box>
-              <Box sx={{ flex: 1 }}>
-                <AppSelect
-                  value={selectedYear}
-                  onChange={(e: any) => setSelectedYear(Number(e.target.value))}
-                  sx={{ height: 40, borderRadius: "10px" }}
-                >
-                  {yearOptions.map((y) => (
-                    <MenuItem key={y} value={y}>
-                      {y}
-                    </MenuItem>
-                  ))}
-                </AppSelect>
-              </Box>
-            </Stack>
-          </Box>
-
-          {/* Employee Status Filter */}
-          <Box>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.75 }}>
-              <Typography variant="caption" fontWeight={700} color="text.secondary">
-                Employee Eligibility
+          <Grid container spacing={2}>
+            {/* Report Period */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="caption"
+                fontWeight={700}
+                color="text.secondary"
+                sx={{ mb: 0.75, display: "block", textTransform: "uppercase", letterSpacing: "0.04em", fontSize: "0.72rem" }}
+              >
+                Report Period
               </Typography>
-              <Typography variant="caption" color="primary.main" fontWeight={600}>
-                {statusFilter === "Employed" ? "Excludes former / exited staff" : ""}
+              <Stack direction="row" spacing={1}>
+                <Box sx={{ flex: 1.4 }}>
+                  <AppSelect
+                    value={selectedMonth}
+                    onChange={(e: any) => setSelectedMonth(Number(e.target.value))}
+                    sx={{ height: 40, borderRadius: "10px", fontSize: "0.875rem" }}
+                  >
+                    {monthOptions.map((m) => (
+                      <MenuItem key={m.value} value={m.value}>
+                        {m.label}
+                      </MenuItem>
+                    ))}
+                  </AppSelect>
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <AppSelect
+                    value={selectedYear}
+                    onChange={(e: any) => setSelectedYear(Number(e.target.value))}
+                    sx={{ height: 40, borderRadius: "10px", fontSize: "0.875rem" }}
+                  >
+                    {yearOptions.map((y) => (
+                      <MenuItem key={y} value={y}>
+                        {y}
+                      </MenuItem>
+                    ))}
+                  </AppSelect>
+                </Box>
+              </Stack>
+            </Grid>
+
+            {/* Employee Eligibility */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="caption"
+                fontWeight={700}
+                color="text.secondary"
+                sx={{ mb: 0.75, display: "block", textTransform: "uppercase", letterSpacing: "0.04em", fontSize: "0.72rem" }}
+              >
+                Staff Eligibility
               </Typography>
-            </Stack>
-            <AppSelect
-              value={statusFilter}
-              onChange={(e: any) => setStatusFilter(e.target.value)}
-              sx={{ height: 40, borderRadius: "10px" }}
-            >
-              <MenuItem value="Employed">
-                <Box>
-                  <Typography variant="body2" fontWeight={650}>
-                    Employed Only (Active & Notice Period) — Recommended
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Excludes resigned, terminated, retired, and future joiners
-                  </Typography>
-                </Box>
-              </MenuItem>
-              <MenuItem value="Active">
-                <Box>
-                  <Typography variant="body2" fontWeight={600}>Active Staff Only</Typography>
-                </Box>
-              </MenuItem>
-              <MenuItem value="NoticePeriod">
-                <Box>
-                  <Typography variant="body2" fontWeight={600}>Notice Period Staff Only</Typography>
-                </Box>
-              </MenuItem>
-              <MenuItem value="All">
-                <Box>
-                  <Typography variant="body2" fontWeight={600}>All Staff (Including Former & Resigned)</Typography>
-                  <Typography variant="caption" color="text.secondary">Full historical record</Typography>
-                </Box>
-              </MenuItem>
-              <MenuItem value="Resigned">
-                <Box>
-                  <Typography variant="body2" fontWeight={600}>Resigned & Terminated Staff Only</Typography>
-                </Box>
-              </MenuItem>
-            </AppSelect>
-          </Box>
+              <AppSelect
+                value={statusFilter}
+                onChange={(e: any) => setStatusFilter(e.target.value)}
+                sx={{ height: 40, borderRadius: "10px", fontSize: "0.875rem" }}
+              >
+                <MenuItem value="Employed">Employed Only (Active & Notice)</MenuItem>
+                <MenuItem value="Active">Active Staff Only</MenuItem>
+                <MenuItem value="NoticePeriod">Notice Period Only</MenuItem>
+                <MenuItem value="All">All Staff (Include Exited)</MenuItem>
+                <MenuItem value="Resigned">Exited / Resigned Only</MenuItem>
+              </AppSelect>
+            </Grid>
 
-          {/* Department Filter */}
-          <Box>
-            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ mb: 0.75, display: "block" }}>
-              Department
-            </Typography>
-            <AppSelect
-              displayEmpty
-              value={departmentId}
-              onChange={(e: any) => setDepartmentId(e.target.value)}
-              renderValue={(val: unknown) => {
-                if (!val) return "All Departments";
-                const match = departments.find((d) => d.departmentId === val);
-                return match?.name ?? "Selected Department";
-              }}
-              sx={{ height: 40, borderRadius: "10px" }}
-            >
-              <MenuItem value="">All Departments</MenuItem>
-              {departments.map((dept) => (
-                <MenuItem key={dept.departmentId} value={dept.departmentId}>
-                  {dept.name}
-                </MenuItem>
-              ))}
-            </AppSelect>
-          </Box>
+            {/* Department */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="caption"
+                fontWeight={700}
+                color="text.secondary"
+                sx={{ mb: 0.75, display: "block", textTransform: "uppercase", letterSpacing: "0.04em", fontSize: "0.72rem" }}
+              >
+                Department
+              </Typography>
+              <AppSelect
+                displayEmpty
+                value={departmentId}
+                onChange={(e: any) => setDepartmentId(e.target.value)}
+                renderValue={(val: unknown) => {
+                  if (!val) return "All Departments";
+                  const match = departments.find((d) => d.departmentId === val);
+                  return match?.name ?? "Selected Department";
+                }}
+                sx={{ height: 40, borderRadius: "10px", fontSize: "0.875rem" }}
+              >
+                <MenuItem value="">All Departments</MenuItem>
+                {departments.map((dept) => (
+                  <MenuItem key={dept.departmentId} value={dept.departmentId}>
+                    {dept.name}
+                  </MenuItem>
+                ))}
+              </AppSelect>
+            </Grid>
 
-          {/* Search Filter */}
-          <Box>
-            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ mb: 0.75, display: "block" }}>
-              Filter by Employee Name or ID (Optional)
-            </Typography>
-            <TextField
-              size="small"
-              fullWidth
-              placeholder="e.g. Aarav Sharma or EMP-001"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  height: 40,
-                  borderRadius: "10px",
-                },
-              }}
-            />
-          </Box>
+            {/* Search by Employee */}
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography
+                variant="caption"
+                fontWeight={700}
+                color="text.secondary"
+                sx={{ mb: 0.75, display: "block", textTransform: "uppercase", letterSpacing: "0.04em", fontSize: "0.72rem" }}
+              >
+                Employee (Optional)
+              </Typography>
+              <TextField
+                size="small"
+                fullWidth
+                placeholder="Search name or ID..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: 40,
+                    borderRadius: "10px",
+                    fontSize: "0.875rem",
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
 
-          {/* Information Banner */}
-          <Alert
-            severity="info"
-            icon={<FilterListOutlined fontSize="small" />}
+          {/* Minimal info note */}
+          <Box
             sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.25,
+              px: 1.75,
+              py: 1.25,
               borderRadius: "10px",
-              py: 0.75,
-              "& .MuiAlert-message": { fontSize: "0.8125rem", lineHeight: 1.4 },
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
+              border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
             }}
           >
-            The export includes <strong>Employee ID</strong>, <strong>Name</strong>, <strong>Department</strong>, <strong>Designation</strong>, clean daily muster without internal logs, and month-end summaries (Present, Half Day, Absent, Leave, Weekly Off, Holiday, and Total Paid Days).
-          </Alert>
+            <FilterListOutlined sx={{ fontSize: 18, color: "primary.main", flexShrink: 0 }} />
+            <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.8rem", lineHeight: 1.4 }}>
+              Includes daily punch records, department, designation, and month-end paid day summaries.
+            </Typography>
+          </Box>
         </Stack>
       </DialogContent>
 
@@ -328,7 +327,7 @@ export const ExportAttendanceModal: React.FC<ExportAttendanceModalProps> = ({
           variant="outlined"
           onClick={onClose}
           disabled={isExporting}
-          sx={{ borderRadius: "10px", fontWeight: 650, px: 2 }}
+          sx={{ borderRadius: "10px", fontWeight: 650, px: 2.5 }}
         >
           Cancel
         </Button>
@@ -351,4 +350,3 @@ export const ExportAttendanceModal: React.FC<ExportAttendanceModalProps> = ({
     </Dialog>
   );
 };
-

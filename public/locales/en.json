@@ -30,7 +30,9 @@
     "POLICIES": "Policies",
     "PAYROLL_SETTINGS": "Payroll Settings",
     "LIFECYCLE_MANAGEMENT": "Employee Lifecycle",
-    "CAREER_PROFILE": "Career Profile"
+    "CAREER_PROFILE": "Career Profile",
+    "WORK_FROM_HOME": "Work From Home",
+    "OFFBOARDING": "Offboarding"
   },
   "GENDER": {
     "MALE": "Male",
@@ -1082,6 +1084,9 @@
     "PAYROLL_MANAGEMENT": "Payroll Management",
     "PAYROLL_MANAGEMENT_DESCRIPTION": "Manages end-to-end payroll operations by integrating attendance tracking, leave management, and salary processing. Calculates working hours, leave deductions, overtime, taxes, bonuses, and generates accurate payslips in compliance with organizational policies and statutory regulations.",
     "RECRUITMENT_MANAGEMENT": "Recruitment Management",
-    "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Manages the complete hiring lifecycle including job postings, candidate applications, interview stages, evaluations, and detailed process logs. Provides end-to-end visibility into recruitment progress, actions taken, and hiring decisions to streamline and track the talent acquisition process."
+    "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Manages the complete hiring lifecycle including job postings, candidate applications, interview stages, evaluations, and detailed process logs. Provides end-to-end visibility into recruitment progress, actions taken, and hiring decisions to streamline and track the talent acquisition process.",
+    "CAREER_PROFILE": "Career Profile",
+    "WORK_FROM_HOME": "Work From Home",
+    "OFFBOARDING": "Offboarding"
   }
 }

@@ -58,8 +58,10 @@ import { initialPayRollValues } from "./payrollDefaults";
 import { ConfirmationModal } from "../../shared/components/ConfirmModal";
 import { toast } from "react-toastify";
 import { AppButton } from "../../shared/components/ui";
+import { useIsDark } from "../theme/useIsDark";
 
 const PayRollManagement = () => {
+    const isDark = useIsDark();
     const { setPageTitle } = usePageData();
     const { formatMessage: i } = useIntl();
     const [search, setSearch] = useState<string>("");
@@ -389,8 +391,8 @@ const PayRollManagement = () => {
                         p: { xs: 1.25, sm: 1.5 },
                         border: "1px solid",
                         borderColor: "divider",
-                        borderRadius: "12px",
-                        bgcolor: "var(--mui-palette-background-box, action.hover)",
+                        borderRadius: "14px",
+                        bgcolor: isDark ? "rgba(15, 23, 42, 0.55)" : "rgba(248, 250, 252, 0.75)",
                         backdropFilter: "blur(12px)",
                         WebkitBackdropFilter: "blur(12px)",
                         boxShadow: "none",

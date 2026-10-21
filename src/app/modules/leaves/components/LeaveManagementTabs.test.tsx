@@ -15,6 +15,9 @@ vi.mock("@mui/icons-material", () => ({
 }));
 vi.mock("@mui/icons-material/Policy", () => ({
   default: () => <span>Icon</span>,
+  AccountBalanceWallet: () => <span>Icon</span>,
+  EditCalendar: () => <span>Icon</span>,
+  HomeWork: () => <span>Icon</span>,
 }));
 
 vi.mock("react-intl", () => ({

@@ -198,8 +198,8 @@ export function PayrollPolicyFields({
       <Box
         key={feature.key}
         sx={{
-          p: { xs: 1.5, sm: 1.75 },
-          minHeight: 74,
+          p: { xs: 1.25, sm: 1.5 },
+          minHeight: 64,
           display: "flex",
           alignItems: "flex-start",
           border: feature.checked ? "1.5px solid" : "1px solid",
@@ -352,7 +352,7 @@ export function PayrollPolicyFields({
           <Stack
             spacing={2}
             sx={{
-              p: { xs: 2, sm: 2.75 },
+              p: { xs: 1.5, sm: 2 },
               border: "1px solid",
               borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
               borderRadius: "16px",
@@ -1166,24 +1166,24 @@ export function PayrollPolicyFields({
         <Grid size={{ xs: 12 }}>
           <Box
             sx={{
-              p: 2,
               borderRadius: "12px",
               border: "1px solid",
               borderColor: isDark ? "rgba(11, 92, 171, 0.3)" : "rgba(11, 92, 171, 0.18)",
               bgcolor: isDark ? "rgba(11, 92, 171, 0.12)" : "rgba(11, 92, 171, 0.04)",
               display: "flex",
-              alignItems: "flex-start",
-              gap: 1.5,
+              alignItems: "center",
+              gap: 1.25,
+              p: { xs: 1.25, sm: 1.5 },
             }}
           >
-            <Box sx={{ color: "primary.main", mt: 0.25, flexShrink: 0 }}>
-              <FactCheckOutlined sx={{ fontSize: 20 }} />
+            <Box sx={{ color: "primary.main", display: "grid", placeItems: "center", flexShrink: 0 }}>
+              <FactCheckOutlined sx={{ fontSize: 18 }} />
             </Box>
             <Typography
-              variant="body2"
-              sx={{ fontSize: "0.825rem", color: "text.primary", lineHeight: 1.55 }}
+              variant="caption"
+              sx={{ fontSize: "0.78rem", color: "text.primary", lineHeight: 1.45, fontWeight: 500 }}
             >
-              Statutory and attendance rules apply only after authorized policy approval. Component selections create effective-dated versions; employees receive a component only when it is included in their salary structure.
+              Statutory rules apply after approval. Selected components take effect via employee salary structures.
             </Typography>
           </Box>
         </Grid>
@@ -1191,46 +1191,56 @@ export function PayrollPolicyFields({
 
       <Box
         sx={{
-          p: { xs: 2, sm: 2.5 },
-          borderRadius: "16px",
+          p: { xs: 1.5, sm: 2 },
+          borderRadius: "14px",
           border: "1px solid",
           borderColor: isDark ? "rgba(255,255,255,0.08)" : "#E2E8F0",
           bgcolor: isDark ? "rgba(30, 41, 59, 0.35)" : "#F8FAFC",
         }}
       >
         <Stack
-          direction={{ xs: "column", md: "row" }}
+          direction={{ xs: "column", lg: "row" }}
           justifyContent="space-between"
-          alignItems={{ xs: "flex-start", md: "center" }}
-          spacing={2}
+          alignItems={{ xs: "stretch", lg: "center" }}
+          spacing={{ xs: 1.5, lg: 2 }}
         >
-          <Box>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
             <Typography
-              variant="subtitle1"
+              variant="subtitle2"
               fontWeight={750}
-              sx={{ fontSize: "0.95rem", letterSpacing: "-0.01em", mb: 0.35 }}
+              sx={{ fontSize: "0.9rem", letterSpacing: "-0.01em", mb: 0.25 }}
             >
               Optional payroll setup
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.825rem" }}>
-              Use pay groups for different cohorts, salary templates for reusable packages, and components for bonus, allowances, or deductions.
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.78rem", lineHeight: 1.45, display: "block" }}>
+              Configure pay groups, reusable salary templates, and custom components.
             </Typography>
           </Box>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} flexShrink={0}>
+          <Stack
+            direction="row"
+            spacing={1}
+            useFlexGap
+            flexWrap="wrap"
+            sx={{
+              width: { xs: "100%", lg: "auto" },
+              justifyContent: { xs: "flex-start", sm: "flex-start", lg: "flex-end" },
+            }}
+          >
             <Button
               variant="outlined"
               size="small"
-              startIcon={<GroupsOutlined sx={{ fontSize: 17 }} />}
+              startIcon={<GroupsOutlined sx={{ fontSize: 16 }} />}
               onClick={onOpenGroups}
               sx={{
-                height: 36,
-                px: 1.75,
+                height: 32,
+                px: 1.5,
                 borderRadius: "8px",
                 fontWeight: 650,
-                fontSize: "0.82rem",
+                fontSize: "0.78rem",
                 textTransform: "none",
                 bgcolor: "background.paper",
                 borderColor: isDark ? "rgba(255,255,255,0.14)" : "#CBD5E1",
+                flex: { xs: "1 1 auto", sm: "none" },
                 transition: "all 0.18s ease",
                 "&:hover": {
                   borderColor: "primary.main",
@@ -1244,17 +1254,18 @@ export function PayrollPolicyFields({
             <Button
               variant="outlined"
               size="small"
-              startIcon={<ReceiptLongOutlined sx={{ fontSize: 17 }} />}
+              startIcon={<ReceiptLongOutlined sx={{ fontSize: 16 }} />}
               onClick={onOpenTemplates}
               sx={{
-                height: 36,
-                px: 1.75,
+                height: 32,
+                px: 1.5,
                 borderRadius: "8px",
                 fontWeight: 650,
-                fontSize: "0.82rem",
+                fontSize: "0.78rem",
                 textTransform: "none",
                 bgcolor: "background.paper",
                 borderColor: isDark ? "rgba(255,255,255,0.14)" : "#CBD5E1",
+                flex: { xs: "1 1 auto", sm: "none" },
                 transition: "all 0.18s ease",
                 "&:hover": {
                   borderColor: "primary.main",
@@ -1268,17 +1279,18 @@ export function PayrollPolicyFields({
             <Button
               variant="outlined"
               size="small"
-              startIcon={<PaymentsOutlined sx={{ fontSize: 17 }} />}
+              startIcon={<PaymentsOutlined sx={{ fontSize: 16 }} />}
               onClick={onOpenComponents}
               sx={{
-                height: 36,
-                px: 1.75,
+                height: 32,
+                px: 1.5,
                 borderRadius: "8px",
                 fontWeight: 650,
-                fontSize: "0.82rem",
+                fontSize: "0.78rem",
                 textTransform: "none",
                 bgcolor: "background.paper",
                 borderColor: isDark ? "rgba(255,255,255,0.14)" : "#CBD5E1",
+                flex: { xs: "1 1 auto", sm: "none" },
                 transition: "all 0.18s ease",
                 "&:hover": {
                   borderColor: "primary.main",

@@ -8,6 +8,7 @@ import { UpComingCelebration } from "./UpcomingCelebration";
 import { CelebrationModule } from "../model";
 
 vi.mock("@mui/icons-material", () => ({
+  default: () => null,
   CakeOutlined: () => <span data-testid="cake-icon" />,
   WorkspacePremiumOutlined: () => <span data-testid="premium-icon" />,
 }));

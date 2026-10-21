@@ -41,9 +41,17 @@ export const ApplicationModules: FC = () => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [option, setOPtion] = useState<boolean>(false);
   const friendlyModuleLabel = (module: ModulesInfoModel) => {
-    const translated = formatMessage({ id: `COMMON.${module.moduleConstant.toUpperCase()}` });
-    if (translated !== `COMMON.${module.moduleConstant.toUpperCase()}`) return translated;
-    return (module.moduleName || module.moduleConstant).replace(/[._-]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    const key = module.moduleConstant.toUpperCase();
+    const fallback = (module.moduleName || module.moduleConstant).replace(/[._-]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    try {
+      const modMsg = formatMessage({ id: `MODULES.${key}`, defaultMessage: "" });
+      if (modMsg && modMsg !== `MODULES.${key}`) return modMsg;
+      const comMsg = formatMessage({ id: `COMMON.${key}`, defaultMessage: "" });
+      if (comMsg && comMsg !== `COMMON.${key}`) return comMsg;
+    } catch {
+      // fallback
+    }
+    return fallback;
   };
 
   const closeConfirmationModal = () => {

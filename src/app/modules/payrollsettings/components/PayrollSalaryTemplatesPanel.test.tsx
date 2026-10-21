@@ -63,4 +63,12 @@ describe('Salary template lifecycle UI', () => {
     expect(container.textContent).toContain('amounts will not be silently discarded');
     expect(post).not.toHaveBeenCalled();
   });
+  it('prevents duplicate revision suffix recursion when revising an existing revision', async () => {
+    post.mockResolvedValue({ data: { success: true } });
+    const revisedTemplate = { ...template, id: 'revised-1', name: 'Engineer (revision)' };
+    await act(async () => root.render(<PayrollSalaryTemplatesPanel templates={[revisedTemplate]} groups={[]} components={[definition]} canEdit onSaved={vi.fn()} />));
+    await act(async () => button('Create revision').click());
+    await act(async () => button('Save new revision').click());
+    expect(post).toHaveBeenCalledWith('api/payroll/configuration/salary-templates', expect.objectContaining({ name: 'Engineer (revision)' }));
+  });
 });

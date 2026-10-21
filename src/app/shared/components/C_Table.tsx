@@ -14,7 +14,7 @@ import { TableSorting } from "./TableSorting";
 import { getKeyForTableRow } from "../../../utils/common";
 import { useIntl } from "react-intl";
 import { ModulesName } from "../../../utils/enums";
-import { LinkOff } from "@mui/icons-material";
+import LinkOff from "@mui/icons-material/LinkOff";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;

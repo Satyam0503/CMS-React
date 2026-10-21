@@ -13,6 +13,7 @@ vi.mock("../../../../server/axios", () => ({
 }));
 
 vi.mock("@mui/icons-material", () => ({
+  default: () => null,
   AddRounded: () => null, BadgeOutlined: () => null, CheckCircleRounded: () => null,
   CloudUploadRounded: () => null, ExpandMoreRounded: () => null, FolderOffOutlined: () => null,
   GroupsOutlined: () => null, HourglassEmptyRounded: () => null, PaymentsOutlined: () => null,
@@ -37,6 +38,7 @@ function renderPanel() {
   return { container, root };
 }
 
+describe("PayrollConfigurationPanel", () => {
 beforeEach(() => {
   profiles = [];
   assignments = [];
@@ -124,7 +126,7 @@ describe("PayrollConfigurationPanel statutory profile editor", { timeout: 15000 
     await act(async () => deleteButton?.click());
     expect(deleteRequestMock).not.toHaveBeenCalled();
     const dialog = document.querySelector('[role="dialog"]');
-    expect(dialog?.textContent).toContain('Delete draft "Draft policy"? This cannot be undone.');
+    expect(dialog?.textContent).toContain('Delete "Draft policy"? This cannot be undone.');
     const confirmButton = Array.from(dialog?.querySelectorAll("button") ?? []).find((button) => button.textContent?.trim() === "Delete");
     expect(confirmButton).toBeDefined();
     await act(async () => confirmButton?.click());
@@ -412,4 +414,5 @@ describe("PayrollConfigurationPanel optional salary components", () => {
     expect(codeInput?.value).toBe("HRA");
     expect(nameInput?.value).toBe("House Rent Allowance");
   });
+});
 });

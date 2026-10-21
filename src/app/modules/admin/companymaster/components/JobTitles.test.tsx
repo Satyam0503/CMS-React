@@ -6,7 +6,6 @@ import * as adminServices from "../../adminservices";
 
 let lastAttributeTableProps: any = null;
 
-vi.mock("@mui/icons-material", () => ({}));
 
 vi.mock("react-intl", () => ({
   useIntl: () => ({ formatMessage: ({ id }: { id: string }) => id }),

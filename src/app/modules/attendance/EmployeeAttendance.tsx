@@ -99,6 +99,27 @@ const EmployeeAttendance = () => {
     exceptions: 0,
     members: { Present: [] as string[], Absent: [] as string[], WFH: [] as string[], Leave: [] as string[], "Half Day": [] as string[] },
   });
+
+  const handleStatsChange = React.useCallback((nextStats: typeof attendanceStats) => {
+    setAttendanceStats((prev) => {
+      if (
+        prev.present === nextStats.present &&
+        prev.absent === nextStats.absent &&
+        prev.leave === nextStats.leave &&
+        prev.wfh === nextStats.wfh &&
+        prev.halfDay === nextStats.halfDay &&
+        prev.exceptions === nextStats.exceptions &&
+        prev.members.Present.length === nextStats.members.Present.length &&
+        prev.members.Absent.length === nextStats.members.Absent.length &&
+        prev.members.WFH.length === nextStats.members.WFH.length &&
+        prev.members.Leave.length === nextStats.members.Leave.length &&
+        prev.members["Half Day"].length === nextStats.members["Half Day"].length
+      ) {
+        return prev;
+      }
+      return nextStats;
+    });
+  }, []);
   const [summaryModal, setSummaryModal] = React.useState<{ title: string; people: string[] } | null>(null);
   const [correctionDate, setCorrectionDate] = React.useState("");
   const [correctionReason, setCorrectionReason] = React.useState("");
@@ -148,7 +169,7 @@ const EmployeeAttendance = () => {
           name: debouncedSearch,
           pageNo: 1,
           records: 1000,
-          departmentId: [],
+          departmentId: selectedDepartmentId ? [selectedDepartmentId] : [],
           gender: [],
           // Keep the operational attendance roster current. Completed exits
           // are available in employee/offboarding reporting, not as editable
@@ -167,7 +188,7 @@ const EmployeeAttendance = () => {
     };
 
     fetchEmployees();
-  }, [canViewAllAttendance, debouncedSearch, userData?.userId]);
+  }, [canViewAllAttendance, debouncedSearch, selectedDepartmentId, userData?.userId]);
 
   useEffect(() => {
     if (!canViewAllAttendance) return;
@@ -327,10 +348,23 @@ const EmployeeAttendance = () => {
 
   const employeesForCalendar = React.useMemo(() => {
     const query = debouncedSearch.trim().toLowerCase();
+    const selectedDeptObj = departments.find((d) => d.departmentId === selectedDepartmentId);
+    const selectedDeptName = selectedDeptObj?.name?.trim().toLowerCase();
+
     return Employee.filter((emp) => {
       const matchesSearch = !query || `${emp.fullName ?? ""} ${emp.employeeId ?? ""}`.toLowerCase().includes(query);
-      const empDept = emp.departmentId || (typeof emp.department === "string" ? emp.department : emp.department?.en || emp.department?.departmentId);
-      const matchesDept = !selectedDepartmentId || empDept === selectedDepartmentId;
+      const empDeptId = emp.departmentId || emp.department?.departmentId;
+      const empDeptName = (
+        typeof emp.department === "string"
+          ? emp.department
+          : emp.department?.en || emp.department?.name || ""
+      ).trim().toLowerCase();
+
+      const matchesDept =
+        !selectedDepartmentId ||
+        empDeptId === selectedDepartmentId ||
+        (selectedDeptName && empDeptName === selectedDeptName);
+
       return matchesSearch && matchesDept;
     }).map((emp) => ({
       id: emp.userId,
@@ -352,7 +386,7 @@ const EmployeeAttendance = () => {
       punchOutAllowedUntil: effectiveSchedules[emp.userId]?.punchOutAllowedUntil,
       scheduleSource: effectiveSchedules[emp.userId]?.source,
     }));
-  }, [Employee, debouncedSearch, effectiveSchedules]);
+  }, [Employee, debouncedSearch, effectiveSchedules, selectedDepartmentId, departments]);
 
   return (
     <Grid container spacing={2}>
@@ -972,7 +1006,7 @@ const EmployeeAttendance = () => {
               key={`calendar-${refreshTrigger}-${calendarOffset}`}
               employees={employeesForCalendar}
               searchValue={debouncedSearch}
-              onStatsChange={setAttendanceStats}
+              onStatsChange={handleStatsChange}
               dateRange={dateRange}
               showWholeMonth={selectedPeriod === "this-month" || calendarOffset !== 0}
               showWholeWeek={selectedPeriod === "this-week"}
