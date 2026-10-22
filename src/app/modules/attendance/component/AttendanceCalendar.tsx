@@ -948,12 +948,17 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const rowId = selectedCell.employee.userId || selectedCell.employee.id;
     const key = `${rowId}-${dateISO}`;
     const existing = attendanceData[key];
+    const isSystemDefault = [
+      "SYSTEM_DEFAULT_PRESENT",
+      "SYSTEM_OFFICE_START_PRESENT",
+    ].includes((existing?.sourceType ?? "").toUpperCase());
+    const fallbackCheckIn = selectedCell.employee.scheduledStartTime ?? "";
+    const fallbackCheckOut = selectedCell.employee.scheduledEndTime ?? "";
 
     setModalData({
       status: existing?.status ?? "",
-      checkIn: existing?.checkIn ?? selectedCell.employee.scheduledStartTime ?? "",
-      checkOut:
-        existing?.checkOut ?? selectedCell.employee.scheduledEndTime ?? "",
+      checkIn: isSystemDefault && fallbackCheckIn ? fallbackCheckIn : (existing?.checkIn ?? fallbackCheckIn),
+      checkOut: isSystemDefault && fallbackCheckOut ? fallbackCheckOut : (existing?.checkOut ?? fallbackCheckOut),
       remarks: existing?.remarks ?? "",
     });
   }, [selectedCell, attendanceData]);
@@ -1688,7 +1693,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                           Punch in
                         </Typography>
                         <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 700, fontSize: "0.8rem" }}>
-                          {value.checkIn || (isLegacySystemPresent ? "09:00" : "—")}
+                          {value.checkIn || (isLegacySystemPresent ? (row.scheduledStartTime || "09:00") : "—")}
                         </Typography>
                       </Box>
                       <Box sx={{ borderLeft: "1px solid", borderColor: "divider", pl: 1 }}>
@@ -1696,7 +1701,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                           Punch out
                         </Typography>
                         <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 700, fontSize: "0.8rem" }}>
-                          {value.checkOut || (isLegacySystemPresent ? "18:00" : "—")}
+                          {value.checkOut || (isLegacySystemPresent ? (row.scheduledEndTime || "18:00") : "—")}
                         </Typography>
                       </Box>
                     </Box>

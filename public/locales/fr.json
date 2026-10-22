@@ -31,7 +31,6 @@
     "LIFECYCLE_MANAGEMENT": "Gestion du cycle de vie",
     "CAREER_PROFILE": "Profil de carrière"
   },
-
   "GENDER": {
     "MALE": "Masculin",
     "FEMALE": "Féminin",
@@ -500,18 +499,18 @@
       "PERSONAL_INFO": "Informations personnelles",
       "OHTER_INFO": "Autres informations"
     },
-      "SALARY": {
-        "BASIC_PAY": "Salaire de base",
-        "HRA": "HRA",
-        "OTHER_ALLOWANCE": "Autres allocations",
-        "LTA": "LTA",
-        "BONUS": "Prime",
-        "HEALTH_INSURANCE": "Assurance santé",
-        "TOTAL_DEDUCTIONS": "Déductions totales",
-        "EFFECTIVE_FROM": "Valable à partir de",
-        "EFFECTIVE_TO": "Valable jusqu'au",
-        "PAYMENT_FREQUENCY": "Fréquence de paiement"
-      },
+    "SALARY": {
+      "BASIC_PAY": "Salaire de base",
+      "HRA": "HRA",
+      "OTHER_ALLOWANCE": "Autres allocations",
+      "LTA": "LTA",
+      "BONUS": "Prime",
+      "HEALTH_INSURANCE": "Assurance santé",
+      "TOTAL_DEDUCTIONS": "Déductions totales",
+      "EFFECTIVE_FROM": "Valable à partir de",
+      "EFFECTIVE_TO": "Valable jusqu'au",
+      "PAYMENT_FREQUENCY": "Fréquence de paiement"
+    },
     "LEAVE": {
       "ASSIGN_LEAVE": "Configurer l’allocation de congés de l’employé",
       "NOTE": "Sélectionnez les types de congés que vous souhaitez attribuer à cet employé. Vous pourrez modifier les soldes plus tard dans le profil de l’employé.",
@@ -604,7 +603,6 @@
   "PERMISSION.VIEW": "Voir",
   "PERMISSION.EDIT": "Modifier",
   "PERMISSION.DELETE": "Supprimer",
-
   "VACANCY.TEXT1": " Merci de visiter notre site web !",
   "VACANCY.TEXT2": " Nos offres sont actuellement en cours de mise à jour. Revenez bientôt pour voir les nouveaux postes disponibles. Merci de votre intérêt !",
   "VACANCY.TEXT3": " Nous acceptons les candidatures uniquement les jours ouvrables, de 9h00 à 18h00 IST.",
@@ -737,13 +735,13 @@
     "ADDRESS_NOTE": "L'adresse de l'entreprise est affichée sur les documents officiels et les dossiers des employés"
   },
   "ERROR": {
+    "404": "Désolé, la page demandée est introuvable. Veuillez revenir à la page d’accueil !",
+    "500": "Quelque chose s’est mal passé ! Veuillez réessayer plus tard.",
     "PAGE_NOT_FOUND": "Page non trouvée",
     "UNAUTHORIZED_ACCESS": "Accès non autorisé",
     "SOMETHING_WRONG": "Une erreur est survenue",
     "SYSTEM_ERROR": "Erreur système",
-    "404": "Désolé, la page demandée est introuvable. Veuillez revenir à la page d’accueil !",
     "OPPS": "Oups !",
-    "500": "Quelque chose s’est mal passé ! Veuillez réessayer plus tard.",
     "DOC_LOAD_FAILED": "échec du chargement du document"
   },
   "VALIDATION_ERR": {
@@ -818,7 +816,7 @@
   },
   "NOTIFICATION": {
     "TITLE": "Notifications",
-    "NEW": "Nouveau",
+    "NEW": "Non lu",
     "READ": "Lu",
     "ALL": "Tous",
     "NONE": "Aucune notification",
@@ -831,7 +829,8 @@
       "TODAY_BIRTHDAY": "🎂 Aujourd'hui, c'est l'anniversaire de {employeeName} — prenez un moment pour lui souhaiter",
       "TODAY_WORK_ANNIVERSARY": "🎉Aujourd'hui, c'est l'anniversaire de travail de {employeeName} — félicitez-le pour cette étape importante !",
       "FALLBACK": "Vous avez une nouvelle notification"
-    }
+    },
+    "UNREAD": "Non lu"
   },
   "WORKHISTORY": {
     "TITLE": "Historique professionnel",
@@ -876,7 +875,6 @@
     "EVENT_OCCASIONS": "Événements",
     "RECURRING": "Récurrent"
   },
-
   "MESSAGE": {
     "WELCOME": "Bienvenue",
     "NO_EMPLOYEE": "Aucun employé",
@@ -1053,4 +1051,3 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Gère l’intégralité du cycle de recrutement, y compris les offres d’emploi, les candidatures, les étapes d’entretien, les évaluations et les journaux de processus détaillés. Offre une visibilité complète sur l’avancement du recrutement et les décisions d’embauche."
   }
 }
-

@@ -153,6 +153,9 @@ export const UpcomingAnniversaries = ({
             maxHeight: { xs: 260, sm: 280, md: 300 },
             overflowY: "auto",
             pr: 0.5,
+            pt: 0.75,
+            pb: 0.75,
+            px: 0.5,
             "&::-webkit-scrollbar": {
               width: "4px",
             },
@@ -196,7 +199,7 @@ export const UpcomingAnniversaries = ({
                     : "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
                   backdropFilter: "blur(8px)",
                   WebkitBackdropFilter: "blur(8px)",
-                  transition: "all 0.18s ease",
+                  transition: "border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease",
                   "&:hover": {
                     backgroundColor: (theme) =>
                       isToday
@@ -206,8 +209,7 @@ export const UpcomingAnniversaries = ({
                         : "rgba(255, 255, 255, 0.95)",
                     borderColor: "success.main",
                     boxShadow: (theme) =>
-                      `0 6px 16px ${alpha(theme.palette.success.main || "#059669", 0.15)}`,
-                    transform: "translateY(-1px)",
+                      `0 4px 14px ${alpha(theme.palette.success.main || "#059669", 0.15)}`,
                   },
                 }}
               >

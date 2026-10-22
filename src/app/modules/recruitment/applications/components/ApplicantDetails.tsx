@@ -1,5 +1,7 @@
 import {
   Box,
+  Button,
+  Chip,
   Card,
   FormControl,
   Grid,
@@ -9,7 +11,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Close, Edit, Visibility } from "@mui/icons-material";
+import { Add, Close, Edit, Visibility, CheckCircleOutline } from "@mui/icons-material";
+import clsx from "clsx";
+import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
@@ -18,9 +22,12 @@ import {
   editApplicant,
   getApplicantById,
   getApplicantComments,
+  getFinalInterviewScore,
+  getRecruitmentOfferByApplicant,
 } from "../../services";
 
 import {
+  applicationStatusMapper,
   commentActionEncoderForApplicationStatus,
   dateFormatter,
   hasModuleFeaturePermission,
@@ -36,7 +43,7 @@ import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import CustomisedButton from "../../../../shared/components/C_Button";
 import { ApplicantStatus, ApplicationStatus, ModulesName, Permission } from "../../../../../utils/enums";
-import { Applicant, CommentResponseModel } from "../../models";
+import { Applicant, CommentResponseModel, RecruitmentFinalScoreResult } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
 import { usePageData } from "../../../../Context/PageDataProvider";
 import { PdfViewer } from "../../../../shared/components/PdfViewer";
@@ -56,6 +63,7 @@ export const ApplicantDetails = () => {
   const [refreshComment, setRefreshComment] = useState(false);
   const [comment, setComment] = useState("");
   const param = useParams();
+  const applicantId = param.applicantid ?? "";
   const [totalRecords, setTotalRecords] = useState(0);
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
@@ -63,6 +71,8 @@ export const ApplicantDetails = () => {
   });
   const [CvPreviewMode, setCVPreviewMode] = useState(false);
   const [lifecycleOpen, setLifecycleOpen] = useState(false);
+  const [candidateOffer, setCandidateOffer] = useState<{ offerId?: string; status?: string; salary?: number; currency?: string } | null>(null);
+  const [benchmarkDetails, setBenchmarkDetails] = useState<RecruitmentFinalScoreResult | null>(null);
 
   const [status, setStatus] = useState({
     applicationStatus: 0,
@@ -88,7 +98,33 @@ export const ApplicantDetails = () => {
         console.error(error);
         navigate("/error", { replace: true });
       });
-  }, [refresh]);
+    getRecruitmentOfferByApplicant(applicantId)
+      .then(({ data }) => {
+        if (data.success && data.methodResult) {
+          setCandidateOffer(data.methodResult);
+        } else {
+          setCandidateOffer(null);
+        }
+      })
+      .catch(() => setCandidateOffer(null));
+
+    getFinalInterviewScore(applicantId)
+      .then(({ data }) => {
+        if (data.success && data.methodResult && data.methodResult.finalInterviewScore > 0) {
+          setBenchmarkDetails(data.methodResult);
+          setApplicant(prev => ({
+            ...prev,
+            finalInterviewScore: data.methodResult.finalInterviewScore,
+            finalInterviewRating: data.methodResult.finalInterviewRating,
+            finalInterviewRecommendation: data.methodResult.finalInterviewRecommendation,
+            evaluatedRoundsCount: data.methodResult.evaluatedRoundsCount,
+          }));
+        } else {
+          setBenchmarkDetails(null);
+        }
+      })
+      .catch(() => setBenchmarkDetails(null));
+  }, [refresh, applicantId]);
 
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.APPLICANT" }));
@@ -120,7 +156,7 @@ export const ApplicantDetails = () => {
     navigate("/error", { replace: true });
   }
 
-  const applicantId = param.applicantid!;
+
 
   const handleEditApplicant = async (applicantStatus: ApplicantStatus) => {
     const payload = {
@@ -208,7 +244,9 @@ export const ApplicantDetails = () => {
 
   const getStatusLabel = (activityType: number) => {
     const configuredStatus = ApplicationEvaluationStatus.find(item => item.value === activityType);
-    return configuredStatus ? formatMessage({ id: configuredStatus.label }) : "Re-apply";
+    if (configuredStatus) return formatMessage({ id: configuredStatus.label });
+    if (applicationStatusMapper[activityType]) return formatMessage({ id: applicationStatusMapper[activityType] });
+    return "New";
   };
 
   const isStatusChangePending = status.applicationStatus !== applicant.activityType;
@@ -249,9 +287,20 @@ export const ApplicantDetails = () => {
             <Typography variant="h5" fontWeight={800}>
               {formatMessage({ id: "APPLICANT.APPLICANT_DETAILS" })}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Review candidate information and manage this application.
-            </Typography>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }} flexWrap="wrap">
+              <Typography variant="body2" color="text.secondary">
+                Review candidate information and manage this application.
+              </Typography>
+              {Boolean(applicant.finalInterviewScore && applicant.finalInterviewScore > 0) && (
+                <Chip
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  label={`Hiring Benchmark: ${applicant.finalInterviewScore}% (${applicant.finalInterviewRating || (Number(applicant.finalInterviewScore) / 20).toFixed(1)}/5 ⭐) • ${applicant.finalInterviewRecommendation || "Hire"}`}
+                  sx={{ fontWeight: 800, fontSize: "0.72rem" }}
+                />
+              )}
+            </Stack>
           </Box>
 
           <Stack direction="row" spacing={1} sx={{ alignSelf: { xs: "stretch", sm: "auto" }, justifyContent: "flex-end", flexWrap: "wrap", "& .ratio-1x1": { width: 40, height: 40, minWidth: 40, borderRadius: 1.75, bgcolor: "background.paper", border: "1px solid", borderColor: "divider" } }}>
@@ -275,6 +324,128 @@ export const ApplicantDetails = () => {
             }
           </Stack>
         </Stack>
+        {
+          applicant.isHired ? (
+            <Box
+              sx={{
+                mb: 2.5,
+                p: 2.25,
+                borderRadius: 2.5,
+                bgcolor: "success.lighter",
+                border: "1.5px solid",
+                borderColor: "success.main",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 1.5,
+              }}
+            >
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <CheckCircleOutline color="success" sx={{ fontSize: 32 }} />
+                <Box>
+                  <Typography variant="subtitle1" fontWeight={850} color="success.dark">
+                    Employee Successfully Created!
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Employee ID: <strong>{applicant.employeeId || "Assigned"}</strong> · Official Email: <strong>{applicant.email}</strong>. Candidate has completed recruitment handoff.
+                  </Typography>
+                </Box>
+              </Stack>
+              <Stack direction="row" spacing={1}>
+                {applicant.employeeUserId && (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    size="small"
+                    onClick={() => navigate(`/employees/profile/${applicant.employeeUserId}`)}
+                    sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2, px: 2, py: 0.75 }}
+                  >
+                    View Employee Profile →
+                  </Button>
+                )}
+                <Button
+                  variant="outlined"
+                  color="success"
+                  size="small"
+                  onClick={() => setLifecycleOpen(true)}
+                  sx={{ textTransform: "none", fontWeight: 700, borderRadius: 2, px: 2, py: 0.75 }}
+                >
+                  View Workflow
+                </Button>
+              </Stack>
+            </Box>
+          ) : candidateOffer?.status === "Accepted" ? (
+            <Box
+              sx={{
+                mb: 2.5,
+                p: 2,
+                borderRadius: 2.5,
+                bgcolor: "success.lighter",
+                border: "1px solid",
+                borderColor: "success.main",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 1.5,
+              }}
+            >
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <CheckCircleOutline color="success" sx={{ fontSize: 28 }} />
+                <Box>
+                  <Typography variant="subtitle2" fontWeight={850} color="success.dark">
+                    Offer Accepted by Candidate!
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Accepted Compensation: <strong>{candidateOffer.currency} {candidateOffer.salary?.toLocaleString()}</strong>. Candidate is ready for preboarding and employee onboarding.
+                  </Typography>
+                </Box>
+              </Stack>
+              {canEditApplicant && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  size="small"
+                  onClick={() => setLifecycleOpen(true)}
+                  sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2, px: 2, py: 0.75 }}
+                >
+                  Convert to Employee →
+                </Button>
+              )}
+            </Box>
+          ) : null
+        }
+        {candidateOffer?.status === "Sent" && (
+          <Box
+            sx={{
+              mb: 2.5,
+              p: 1.75,
+              borderRadius: 2.5,
+              bgcolor: "info.lighter",
+              border: "1px solid",
+              borderColor: "info.main",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 1.5,
+            }}
+          >
+            <Typography variant="body2" color="info.dark" fontWeight={650}>
+              Offer Sent to Candidate ({candidateOffer.currency} {candidateOffer.salary?.toLocaleString()}) · Awaiting candidate response
+            </Typography>
+            <Button
+              size="small"
+              variant="outlined"
+              color="info"
+              onClick={() => setLifecycleOpen(true)}
+              sx={{ textTransform: "none", fontWeight: 750, borderRadius: 1.5 }}
+            >
+              View Offer Details
+            </Button>
+          </Box>
+        )}
         {
           CvPreviewMode ?
             <PdfViewer pdfUrl={applicant.resumeUrl ?? ""} /> :
@@ -374,10 +545,104 @@ export const ApplicantDetails = () => {
                   </Typography>
 
                   <Typography variant="body1">
-                    {formatMessage({ id: "PLURAL.YEAR" }, { years: (applicant.experience / 12).toFixed(1) })}
+                    {applicant.experience != null ? (applicant.experience === 0 ? "Fresher (0 yr)" : applicant.experience >= 12 ? `${(applicant.experience / 12).toFixed(1)} ${applicant.experience >= 24 ? "years" : "year"}` : `${applicant.experience} months`) : "-"}
                   </Typography>
                 </Stack>
               </Grid>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
+                <Stack spacing={0.75} sx={{ alignItems: "flex-start" }}>
+                  <Typography className="fw-bold">
+                    INTERVIEW BENCHMARK
+                  </Typography>
+                  {applicant.finalInterviewScore && applicant.finalInterviewScore > 0 ? (
+                    <Stack spacing={0.5}>
+                      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                        <Chip
+                          size="small"
+                          color={
+                            applicant.finalInterviewScore >= 75
+                              ? "success"
+                              : applicant.finalInterviewScore >= 60
+                              ? "warning"
+                              : "error"
+                          }
+                          variant="filled"
+                          label={`${applicant.finalInterviewScore}% (${applicant.finalInterviewRating || (Number(applicant.finalInterviewScore) / 20).toFixed(1)}/5.0 ⭐)`}
+                          sx={{ fontWeight: 800, fontSize: "0.8rem", height: 26 }}
+                        />
+                        {applicant.finalInterviewRecommendation && (
+                          <Chip
+                            size="small"
+                            variant="outlined"
+                            color={
+                              applicant.finalInterviewRecommendation.includes("Hire") &&
+                              !applicant.finalInterviewRecommendation.includes("No")
+                                ? "success"
+                                : applicant.finalInterviewRecommendation.includes("Hold")
+                                ? "warning"
+                                : "error"
+                            }
+                            label={applicant.finalInterviewRecommendation}
+                            sx={{ fontWeight: 700, fontSize: "0.72rem", height: 24 }}
+                          />
+                        )}
+                      </Stack>
+                      <Stack direction="row" spacing={0.5} alignItems="center">
+                        <Typography variant="caption" color="text.secondary">
+                          {applicant.evaluatedRoundsCount
+                            ? `${applicant.evaluatedRoundsCount} technical round${applicant.evaluatedRoundsCount > 1 ? "s" : ""} evaluated`
+                            : "Substantive rounds evaluated"}
+                          {benchmarkDetails?.excludesHrRound ? " (excl. HR round)" : ""}
+                        </Typography>
+                        {canEditApplicant && (
+                          <Button
+                            size="small"
+                            variant="text"
+                            onClick={() => setLifecycleOpen(true)}
+                            sx={{ textTransform: "none", fontSize: "0.72rem", p: 0, minHeight: "auto", minWidth: "auto", ml: 0.5, fontWeight: 700 }}
+                          >
+                            View →
+                          </Button>
+                        )}
+                      </Stack>
+                    </Stack>
+                  ) : (
+                    <Stack spacing={0.5}>
+                      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          label="Pending Evaluation"
+                          sx={{ fontWeight: 700, fontSize: "0.75rem", height: 26, borderColor: "divider", color: "text.secondary" }}
+                        />
+                        {canEditApplicant && (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => setLifecycleOpen(true)}
+                            sx={{ textTransform: "none", fontSize: "0.75rem", py: 0.25, px: 1, minHeight: 26, borderRadius: 1.5 }}
+                          >
+                            Evaluate →
+                          </Button>
+                        )}
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary">
+                        {applicant.activityType === ApplicationStatus.New
+                          ? "Awaiting interview scheduling & panel scorecards."
+                          : applicant.activityType === ApplicationStatus.Shortlisted
+                          ? "Interviews in progress • scorecards pending."
+                          : "No technical evaluation completed yet."}
+                      </Typography>
+                    </Stack>
+                  )}
+                </Stack>
+              </Grid>
+
               <Grid
                 size={{
                   xs: 12,
@@ -404,30 +669,30 @@ export const ApplicantDetails = () => {
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
                   </Typography>
-                  <FormControl>
-                    <AppSelect
-                      name="applicantStatus"
-                      value={status.applicationStatus}
-                      sx={{ width: { xs: "100%", sm: "170px" } }}
-                      onChange={handleStatusChange}
-                      disabled
-                      className="select"
-                      label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
-                    >
-                      {ApplicationEvaluationStatus
-                        .filter((option) =>
-                          isTerminalStatus
-                            ? option.value === applicant.activityType
-                            : option.value === applicant.activityType || option.value === ApplicationStatus.Rejected || option.value > applicant.activityType
-                        )
-                        .map((status) => (
-                        <MenuItem key={status.id} value={status.value}>
-                          {formatMessage({ id: status.label })}
-                        </MenuItem>
-                      ))}
-                    </AppSelect>
-                  </FormControl>
-                  <Typography variant="caption" color="text.secondary">Use Next step to change the recruitment stage.</Typography>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    <StyleStatus
+                      label={applicant.isHired ? "Hired / Onboarded" : getStatusLabel(applicant.activityType)}
+                      className={clsx({
+                        info: applicant.activityType === ApplicationStatus.New && !applicant.isHired,
+                        warning: [ApplicationStatus.InProgress, ApplicationStatus.OnHold, ApplicationStatus.Shortlisted].includes(applicant.activityType) && !applicant.isHired,
+                        success: applicant.activityType === ApplicationStatus.Selected || applicant.isHired,
+                        danger: applicant.activityType === ApplicationStatus.Rejected && !applicant.isHired,
+                      })}
+                    />
+                    {canEditApplicant && (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => setLifecycleOpen(true)}
+                        sx={{ textTransform: "none", fontSize: "0.75rem", py: 0.25, px: 1, minHeight: 28, borderRadius: 1.5 }}
+                      >
+                        Manage Stage →
+                      </Button>
+                    )}
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary">
+                    {applicant.isHired ? `Employee record active (ID: ${applicant.employeeId || "Assigned"}).` : "Stage is managed via the recruitment workflow lifecycle."}
+                  </Typography>
                 </Stack>
               </Grid>
               <Grid

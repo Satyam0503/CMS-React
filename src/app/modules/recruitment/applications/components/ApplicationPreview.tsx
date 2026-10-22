@@ -72,7 +72,7 @@ export const ApplicationPreview: FC<PropsType> = ({
               <Typography variant="body1" sx={{
                 fontWeight: 400
               }}>
-                {i({ id: "PLURAL.YEAR" }, { years: experience })}
+                {applicantData.experience != null ? (applicantData.experience === 0 ? "Fresher (0 yr)" : applicantData.experience >= 12 ? `${(applicantData.experience / 12).toFixed(1)} ${applicantData.experience >= 24 ? "years" : "year"}` : `${applicantData.experience} months`) : "-"}
               </Typography>
             </Grid>
           </Grid>

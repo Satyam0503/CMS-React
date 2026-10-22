@@ -49,6 +49,7 @@ import WarningAmberRounded from "@mui/icons-material/WarningAmberRounded";
 import SyncAltRounded from "@mui/icons-material/SyncAltRounded";
 import RestartAltRounded from "@mui/icons-material/RestartAltRounded";
 import { toast } from "react-toastify";
+import { useIsDark } from "../../theme/useIsDark";
 import {
   EmployeeLifecycleCase,
   EmployeeLifecycleCaseSummary,
@@ -139,6 +140,7 @@ const evidenceIdOf = (evidence: {
   "";
 
 export const EmployeeLifecycleCaseQueue = () => {
+  const isDark = useIsDark();
   const [cases, setCases] = useState<EmployeeLifecycleCase[]>([]);
   const [selected, setSelected] = useState<EmployeeLifecycleCase | null>(null);
   const [loading, setLoading] = useState(true);
@@ -603,46 +605,51 @@ export const EmployeeLifecycleCaseQueue = () => {
         </Box>
       )}
 
-      {/* Integrated Filter Toolbar */}
+      {/* Integrated Filter Toolbar - Responsive & Cohesive */}
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 1.25,
-          mb: 2.5,
-          alignItems: { xs: "stretch", sm: "center" },
-          justifyContent: "space-between",
           flexWrap: "wrap",
+          gap: 1.5,
+          mb: 2.5,
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <Stack
-          direction="row"
-          spacing={1.25}
-          alignItems="center"
-          flexWrap="wrap"
-          sx={{ flex: 1, minWidth: 0 }}
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1.25,
+            alignItems: "center",
+            flex: { xs: "1 1 100%", md: "1 1 auto" },
+          }}
         >
           <SearchInput
             search={search}
             setSearch={setSearch}
-            placeholder="Search employee, ID, or case…"
+            placeholder="Search employee or case…"
             sx={{
-              width: { xs: "100%", sm: 220, md: 240 },
-              minWidth: 180,
+              width: { xs: "100%", sm: 240, md: 260 },
+              minWidth: { sm: 180 },
             }}
           />
 
           <FormControl
             size="small"
             sx={{
-              width: { xs: "100%", sm: 170 },
-              minWidth: 150,
+              width: { xs: "100%", sm: 165 },
+              minWidth: { sm: 150 },
+              "& .MuiOutlinedInput-root": {
+                height: 40,
+                borderRadius: "10px",
+              },
             }}
           >
-            <InputLabel id="case-status-filter-label">Filter by Case Status</InputLabel>
+            <InputLabel id="case-status-filter-label">Case Status</InputLabel>
             <Select
               labelId="case-status-filter-label"
-              label="Filter by Case Status"
+              label="Case Status"
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value)}
             >
@@ -659,17 +666,25 @@ export const EmployeeLifecycleCaseQueue = () => {
             variant={overdueOnly ? "contained" : "outlined"}
             color={overdueOnly ? "error" : "inherit"}
             onClick={() => setOverdueOnly((prev) => !prev)}
-            startIcon={overdueOnly ? <WarningAmberRounded /> : undefined}
+            startIcon={<WarningAmberRounded sx={{ fontSize: 18 }} />}
             sx={{
               height: 40,
+              borderRadius: "10px",
               whiteSpace: "nowrap",
               textTransform: "none",
-              fontWeight: 700,
-              borderRadius: 2,
+              fontWeight: 650,
+              fontSize: "0.84rem",
               px: 1.75,
+              borderColor: overdueOnly ? undefined : (t) => alpha(t.palette.divider, 0.8),
+              color: overdueOnly ? "#FFFFFF" : "text.primary",
+              bgcolor: overdueOnly ? undefined : isDark ? "rgba(255, 255, 255, 0.04)" : "#FFFFFF",
+              "&:hover": {
+                borderColor: overdueOnly ? undefined : "primary.main",
+                bgcolor: overdueOnly ? undefined : isDark ? "rgba(255, 255, 255, 0.08)" : "#F8FAFC",
+              },
             }}
           >
-            {overdueOnly ? "Showing Overdue Only" : "Filter Overdue Returns"}
+            {overdueOnly ? "Overdue Only" : "Overdue Returns"}
           </Button>
 
           {(Boolean(search) || Boolean(statusFilter) || overdueOnly) && (
@@ -681,24 +696,26 @@ export const EmployeeLifecycleCaseQueue = () => {
                 setStatusFilter("");
                 setOverdueOnly(false);
               }}
-              startIcon={<RestartAltRounded fontSize="small" />}
+              startIcon={<RestartAltRounded sx={{ fontSize: 18 }} />}
               sx={{
-                height: 36,
+                height: 40,
                 textTransform: "none",
                 fontWeight: 650,
                 color: "text.secondary",
-                borderRadius: 2,
+                borderRadius: "10px",
                 whiteSpace: "nowrap",
+                px: 1.25,
                 "&:hover": { color: "primary.main" },
               }}
             >
               Clear
             </Button>
           )}
-        </Stack>
+        </Box>
 
         <Chip
           size="small"
+          color="default"
           label={
             loading
               ? "Loading…"
@@ -708,7 +725,11 @@ export const EmployeeLifecycleCaseQueue = () => {
             fontWeight: 750,
             height: 32,
             px: 1.25,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.05),
+            fontSize: "0.8rem",
+            color: "text.primary",
+            bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+            border: "1px solid",
+            borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
             alignSelf: { xs: "flex-start", sm: "center" },
             flexShrink: 0,
           }}
@@ -875,8 +896,12 @@ export const EmployeeLifecycleCaseQueue = () => {
                                         sx={{
                                           height: 20,
                                           fontSize: "0.72rem",
-                                          fontWeight: 700,
-                                          bgcolor: (t) => alpha(t.palette.text.primary, 0.05),
+                                          fontWeight: 750,
+                                          color: "text.secondary",
+                                          bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+                                          border: "1px solid",
+                                          borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                                          letterSpacing: "0.02em",
                                         }}
                                       />
                                     )}
@@ -1054,7 +1079,16 @@ export const EmployeeLifecycleCaseQueue = () => {
                                 <Chip
                                   size="small"
                                   label={employeeCode}
-                                  sx={{ height: 20, fontSize: "0.72rem", fontWeight: 700 }}
+                                  sx={{
+                                    height: 20,
+                                    fontSize: "0.72rem",
+                                    fontWeight: 750,
+                                    color: "text.secondary",
+                                    bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+                                    border: "1px solid",
+                                    borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                                    letterSpacing: "0.02em",
+                                  }}
                                 />
                               )}
                             </Stack>
@@ -1324,7 +1358,15 @@ export const EmployeeLifecycleCaseQueue = () => {
                             <Chip
                               size="small"
                               label={cleanEmployeeId(selected.employeeId)}
-                              sx={{ height: 22, fontWeight: 750, fontSize: "0.75rem" }}
+                              sx={{
+                                height: 22,
+                                fontWeight: 750,
+                                fontSize: "0.75rem",
+                                color: "text.secondary",
+                                bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+                                border: "1px solid",
+                                borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                              }}
                             />
                           )}
                           <Chip

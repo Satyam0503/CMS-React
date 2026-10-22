@@ -611,29 +611,43 @@ export const getNotificationTitle = (
   intl: IntlShape
 ) => {
   const { formatMessage: i } = intl;
-  // WFH notifications carry a server-generated title but do not have a legacy
-  // translation entry, so use it instead of the generic fallback.
-  if (notification.title?.trim().startsWith("WFH")) return notification.title;
+  // WFH, withdrawn, or cancelled notifications carry a server-generated title
+  if (
+    notification.title?.trim().startsWith("WFH") ||
+    notification.title?.includes("Withdrawn") ||
+    notification.title?.includes("Cancelled")
+  ) {
+    return notification.title.trim();
+  }
   if (notification.targetId?.startsWith("employee-exit-")) {
     return notification.title?.trim() || "Offboarding action requires review";
   }
   switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE:
-      return i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });
+      return notification.title?.trim() || i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });
     case NOTIFICATION_TYPE.LEAVE_REQUEST:
-      return i(
-        { id: "NOTIFICATION.TITLES.LEAVE_REQUEST" },
-        { employeeName: notification.body }
+      return (
+        notification.title?.trim() ||
+        i(
+          { id: "NOTIFICATION.TITLES.LEAVE_REQUEST" },
+          { employeeName: notification.body }
+        )
       );
     case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
-      return i(
-        { id: "NOTIFICATION.TITLES.LEAVE_REQ_APPROVED" },
-        { employeeName: notification.body }
+      return (
+        notification.title?.trim() ||
+        i(
+          { id: "NOTIFICATION.TITLES.LEAVE_REQ_APPROVED" },
+          { employeeName: notification.body }
+        )
       );
     case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED:
-      return i(
-        { id: "NOTIFICATION.TITLES.LEAVE_REQ_REJECT" },
-        { employeeName: notification.body }
+      return (
+        notification.title?.trim() ||
+        i(
+          { id: "NOTIFICATION.TITLES.LEAVE_REQ_REJECT" },
+          { employeeName: notification.body }
+        )
       );
     case NOTIFICATION_TYPE.BIRTHDAY:
       return i(
@@ -646,7 +660,7 @@ export const getNotificationTitle = (
         { employeeName: notification.body }
       );
     default:
-      return i({ id: "NOTIFICATION.TITLES.FALLBACK" });
+      return notification.title?.trim() || i({ id: "NOTIFICATION.TITLES.FALLBACK" });
   }
 };
 
@@ -665,6 +679,12 @@ export const redirectUserToTargetUrl = (
     redirectOption.targetPath = `/employees/${notification.targetId.substring("employee-exit-".length)}/about`;
   } else if (notification.title?.startsWith("WFH")) {
     redirectOption.targetPath = "/leavemanagement/work-from-home";
+  } else if (notification.title?.includes("Withdrawn")) {
+    redirectOption.targetPath = "/leavemanagement/leaverequest";
+    redirectOption.data = notification.targetId;
+  } else if (notification.title?.includes("Cancelled")) {
+    redirectOption.targetPath = "/profile/leave";
+    redirectOption.data = notification.targetId;
   } else switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE: {
       redirectOption.targetPath = "/noticeboard/notices";

@@ -31,7 +31,6 @@
     "LIFECYCLE_MANAGEMENT": "Gestión del ciclo de vida",
     "CAREER_PROFILE": "Perfil profesional"
   },
-
   "GENDER": {
     "MALE": "Masculino",
     "FEMALE": "Femenino",
@@ -352,7 +351,6 @@
       "INACTIVE": "Inactivo"
     }
   },
-
   "LEAVE": {
     "TITLE": "Permiso",
     "EMPLOYEE_NAME": "Nombre del empleado",
@@ -428,7 +426,6 @@
       "NONE": "Ninguno"
     }
   },
-
   "PROFILE": {
     "TABS": {
       "ABOUT": "Acerca de",
@@ -502,18 +499,18 @@
       "PERSONAL_INFO": "Información personal",
       "OHTER_INFO": "Otra información"
     },
-      "SALARY": {
-        "BASIC_PAY": "Salario base",
-        "HRA": "HRA",
-        "OTHER_ALLOWANCE": "Otras asignaciones",
-        "LTA": "LTA",
-        "BONUS": "Bono",
-        "HEALTH_INSURANCE": "Seguro de salud",
-        "TOTAL_DEDUCTIONS": "Deducciones totales",
-        "EFFECTIVE_FROM": "Válido desde",
-        "EFFECTIVE_TO": "Válido hasta",
-        "PAYMENT_FREQUENCY": "Frecuencia de pago"
-      },
+    "SALARY": {
+      "BASIC_PAY": "Salario base",
+      "HRA": "HRA",
+      "OTHER_ALLOWANCE": "Otras asignaciones",
+      "LTA": "LTA",
+      "BONUS": "Bono",
+      "HEALTH_INSURANCE": "Seguro de salud",
+      "TOTAL_DEDUCTIONS": "Deducciones totales",
+      "EFFECTIVE_FROM": "Válido desde",
+      "EFFECTIVE_TO": "Válido hasta",
+      "PAYMENT_FREQUENCY": "Frecuencia de pago"
+    },
     "LEAVE": {
       "ASSIGN_LEAVE": "Configurar asignación de permisos del empleado",
       "NOTE": "Seleccione los tipos de permisos que desea asignar a este empleado. Puede modificar los saldos más adelante desde el perfil del empleado.",
@@ -557,7 +554,6 @@
   "INACTIVE": "Inactivo",
   "COMPANY.PRESENT": "Codeji Infotech Private Limited",
   "COMPANY.DESCRIPTION": "Codeji InfoTech Pvt. Ltd. es una empresa líder en desarrollo de software, especializada en soluciones confiables y de alta calidad para necesidades corporativas.",
-
   "FILE.SELECTED": "Archivo subido",
   "INFO.DESCRIPTION": "Descripción",
   "IMPORT.EXCEL": "Importar Excel",
@@ -607,7 +603,6 @@
   "PERMISSION.VIEW": "Ver",
   "PERMISSION.EDIT": "Editar",
   "PERMISSION.DELETE": "Eliminar",
-
   "VACANCY.TEXT1": "¡Gracias por visitar nuestro sitio web!",
   "VACANCY.TEXT2": "Nuestras vacantes están siendo actualizadas. Vuelve pronto para conocer las nuevas ofertas. ¡Agradecemos tu interés!",
   "VACANCY.TEXT3": "Ten en cuenta que aceptamos candidaturas solo en días laborables, entre las 9:00 y las 18:00 IST.",
@@ -740,13 +735,13 @@
     "ADDRESS_NOTE": "La dirección de la empresa se muestra en los documentos oficiales y los registros de los empleados"
   },
   "ERROR": {
+    "404": "Lo sentimos, la página que solicitaste no pudo ser encontrada. ¡Por favor regresa a la página principal!",
+    "500": "¡Algo salió mal! Por favor intenta más tarde.",
     "PAGE_NOT_FOUND": "Página no encontrada",
     "UNAUTHORIZED_ACCESS": "Acceso no autorizado",
     "SOMETHING_WRONG": "Algo salió mal",
     "SYSTEM_ERROR": "Error del sistema",
-    "404": "Lo sentimos, la página que solicitaste no pudo ser encontrada. ¡Por favor regresa a la página principal!",
     "OPPS": "¡Ups!",
-    "500": "¡Algo salió mal! Por favor intenta más tarde.",
     "DOC_LOAD_FAILED": "error al cargar el documento"
   },
   "VALIDATION_ERR": {
@@ -821,7 +816,7 @@
   },
   "NOTIFICATION": {
     "TITLE": "Notificaciones",
-    "NEW": "Nuevo",
+    "NEW": "No leídos",
     "READ": "Leído",
     "ALL": "Todos",
     "NONE": "Sin notificaciones",
@@ -834,7 +829,8 @@
       "TODAY_BIRTHDAY": "🎂 Hoy es el cumpleaños de {employeeName} — tómese un momento para felicitarlo",
       "TODAY_WORK_ANNIVERSARY": "🎉Hoy es el aniversario laboral de {employeeName} — felicítalo por su dedicación y compromiso",
       "FALLBACK": "Tienes una nueva notificación"
-    }
+    },
+    "UNREAD": "No leídos"
   },
   "WORKHISTORY": {
     "TITLE": "Historial laboral",
@@ -879,7 +875,6 @@
     "EVENT_OCCASIONS": "Eventos",
     "RECURRING": "Recurrente"
   },
-
   "MESSAGE": {
     "WELCOME": "Bienvenido",
     "NO_EMPLOYEE": "Sin empleados",
@@ -1056,4 +1051,3 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Gestiona todo el ciclo de contratación, incluyendo ofertas de empleo, solicitudes de candidatos, etapas de entrevistas, evaluaciones y registros detallados del proceso. Proporciona visibilidad completa del progreso del reclutamiento, las acciones realizadas y las decisiones de contratación."
   }
 }
-

@@ -11,6 +11,9 @@ export interface ShiftScheduleInfo {
   punchInAllowedUntil?: string | null;
   punchOutAllowedFrom?: string | null;
   punchOutAllowedUntil?: string | null;
+  graceMinutes?: number | null;
+  breakMinutes?: number | null;
+  requiredWorkingMinutes?: number | null;
   [key: string]: any;
 }
 
@@ -59,7 +62,7 @@ export const deriveAttendanceStatus = (
 
   const shiftStartMinutes = timeToMinutes(employee?.scheduledStartTime) ?? 9 * 60;
   const shiftEndMinutes = timeToMinutes(employee?.scheduledEndTime) ?? 18 * 60;
-  const graceMinutes = 15;
+  const graceMinutes = typeof employee?.graceMinutes === "number" && employee.graceMinutes >= 0 ? employee.graceMinutes : 15;
 
   const lateArrivalStart = shiftStartMinutes + graceMinutes;
   const earlyDepartureStart = shiftEndMinutes - graceMinutes;
@@ -120,7 +123,7 @@ export const getDerivedStatusExplanation = (
 
   const shiftStartMinutes = timeToMinutes(employee?.scheduledStartTime) ?? 9 * 60;
   const shiftEndMinutes = timeToMinutes(employee?.scheduledEndTime) ?? 18 * 60;
-  const graceMinutes = 15;
+  const graceMinutes = typeof employee?.graceMinutes === "number" && employee.graceMinutes >= 0 ? employee.graceMinutes : 15;
   const lateArrivalStart = shiftStartMinutes + graceMinutes;
   const earlyDepartureStart = shiftEndMinutes - graceMinutes;
   const halfDayCheckInBoundary =

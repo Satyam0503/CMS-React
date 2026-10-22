@@ -73,9 +73,10 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
     },
     {
       field: "status",
-      headerName: i({ id: "STATUS", }),
+      headerName: "Candidate Status",
       description: i({ id: "STATUS", }),
-      minWidth: 100,
+      minWidth: 135,
+      disableColumnMenu: true,
       hideable: false,
       flex: 1,
       renderCell: (param) => {
@@ -95,7 +96,9 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
       field: "applicationStatus",
       headerName: i({ id: "APPLICATION.STATUS_LABEL" }),
       description: i({ id: "APPLICATION.STATUS_LABEL" }),
-      minWidth: 100,
+      minWidth: 180,
+      flex: 1.2,
+      disableColumnMenu: true,
       hideable: true,
       sortable: false,
       filterable: false,
@@ -116,13 +119,18 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
       field: "experience",
       headerName: i({ id: "FORM.EXPERIENCE" }),
       description: i({ id: "FORM.EXPERIENCE" }),
-      minWidth: 100,
+      minWidth: 135,
+      disableColumnMenu: true,
       flex: 1,
       renderCell: (param) => {
-        const experience = (param.row.experience / 12).toFixed(1);
-        return (
-          <FormattedMessage id={"PLURAL.YEAR"} values={{ years: experience }} />
-        );
+        const exp = param.row.experience;
+        if (exp == null || exp === undefined) return "-";
+        if (exp === 0) return "Fresher (0 yr)";
+        if (exp >= 12) {
+          const yrs = (exp / 12).toFixed(1);
+          return `${yrs} ${exp >= 24 ? "years" : "year"}`;
+        }
+        return `${exp} months`;
       }
     },
     {
@@ -139,7 +147,8 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
       field: "action",
       headerName: i({ id: "ACTION", }),
       description: i({ id: "ACTION", }),
-      minWidth: 100,
+      minWidth: 80,
+      disableColumnMenu: true,
       resizable: false,
       sortable: false,
       flex: 1,

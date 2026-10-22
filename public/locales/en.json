@@ -827,7 +827,7 @@
   },
   "NOTIFICATION": {
     "TITLE": "Notifications",
-    "NEW": "New",
+    "NEW": "Unread",
     "READ": "Read",
     "ALL": "All",
     "NONE": "No notifications",
@@ -840,7 +840,8 @@
       "TODAY_BIRTHDAY": "🎂 Today is {employeeName}’s birthday — take a moment to wish them well",
       "TODAY_WORK_ANNIVERSARY": "🎉Today marks {employeeName}’s work anniversary — congratulate them on this milestone!",
       "FALLBACK": "You have new notification"
-    }
+    },
+    "UNREAD": "Unread"
   },
   "WORKHISTORY": {
     "TITLE": "Work History",

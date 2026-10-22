@@ -78,4 +78,24 @@ describe("Attendance Status Auto-Calculation", () => {
     expect(formatMinutesToTime(600)).toBe("10:00 AM");
     expect(formatMinutesToTime(1080)).toBe("6:00 PM");
   });
+
+  it("calculates Present (P) for Shift 2 (09:30-18:30) with custom 60-minute grace period", () => {
+    const shift2Employee: ShiftScheduleInfo = {
+      scheduledStartTime: "09:30",
+      scheduledEndTime: "18:30",
+      punchInAllowedFrom: "08:30",
+      punchInAllowedUntil: "10:30",
+      punchOutAllowedFrom: "17:30",
+      punchOutAllowedUntil: "19:30",
+      graceMinutes: 60,
+    };
+
+    const status = deriveAttendanceStatus("09:30", "18:30", shift2Employee);
+    expect(status).toBe("P");
+
+    const explanation = getDerivedStatusExplanation("P", "09:30", "18:30", shift2Employee);
+    expect(explanation).toContain("Present");
+    expect(explanation).toContain("9:30 AM");
+    expect(explanation).toContain("6:30 PM");
+  });
 });

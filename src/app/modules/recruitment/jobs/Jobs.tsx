@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Badge, Card, Stack, Tooltip, useMediaQuery } from "@mui/material";
+import { Badge, Card, Chip, Stack, Tooltip, useMediaQuery } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/C_IconButton";
@@ -82,6 +82,8 @@ const initialValues: JobModal = {
   publishToMasterPortal: false,
   isFeatured: false,
   isUrgentHiring: false,
+  screeningPassScore: null,
+  screeningCriteria: [],
 };
 
 const useJobTableColumnList = (): GridColDef<JobModal>[] => {
@@ -120,6 +122,42 @@ const useJobTableColumnList = (): GridColDef<JobModal>[] => {
       renderCell: (params: any) => {
         const values = jobTypeDecoder[params.row.jobType];
         return <Box component={"p"}>{i({ id: values })}</Box>;
+      },
+    },
+    {
+      field: "screeningPassScore",
+      headerName: "Screening Threshold",
+      description: "Minimum screening score required to advance candidates",
+      minWidth: 175,
+      hideable: true,
+      flex: 1,
+      renderCell: (params: any) => {
+        const score = params.row.screeningPassScore;
+        const hasScore = typeof score === "number" && score > 0;
+        const criteria = params.row.screeningCriteria as string[] | undefined;
+        const hasCriteria = criteria && criteria.length > 0;
+        const tooltip = hasCriteria
+          ? `Pass Threshold: ≥ ${hasScore ? score : 60}% | Role Criteria: ${criteria.join(", ")}`
+          : hasScore
+          ? `Role-specific Pass Threshold: ≥ ${score}%`
+          : "Using company enterprise default threshold (≥ 60%)";
+
+        return (
+          <Tooltip title={tooltip} arrow>
+            <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
+              <Chip
+                size="small"
+                variant={hasScore ? "filled" : "outlined"}
+                color={hasScore ? "primary" : "default"}
+                label={hasScore ? `≥ ${score}% (Role)` : "≥ 60% (Default)"}
+                sx={{
+                  fontWeight: 750,
+                  fontSize: "0.72rem",
+                }}
+              />
+            </Box>
+          </Tooltip>
+        );
       },
     },
     {

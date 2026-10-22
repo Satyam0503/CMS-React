@@ -427,7 +427,6 @@
       "NONE": "なし"
     }
   },
-
   "PROFILE": {
     "TABS": {
       "ABOUT": "自己紹介",
@@ -477,7 +476,6 @@
       "NONE": "学歴情報を追加してください"
     }
   },
-
   "EMPLOYEE": {
     "ADD_NEW_EMP": "新しい従業員を追加",
     "PROFILE": "プロフィール",
@@ -502,18 +500,18 @@
       "PERSONAL_INFO": "個人情報",
       "OHTER_INFO": "その他の情報"
     },
-      "SALARY": {
-        "BASIC_PAY": "基本給",
-        "HRA": "住宅手当",
-        "OTHER_ALLOWANCE": "その他手当",
-        "LTA": "LTA",
-        "BONUS": "ボーナス",
-        "HEALTH_INSURANCE": "健康保険",
-        "TOTAL_DEDUCTIONS": "総控除額",
-        "EFFECTIVE_FROM": "開始日",
-        "EFFECTIVE_TO": "終了日",
-        "PAYMENT_FREQUENCY": "支払い頻度"
-      },
+    "SALARY": {
+      "BASIC_PAY": "基本給",
+      "HRA": "住宅手当",
+      "OTHER_ALLOWANCE": "その他手当",
+      "LTA": "LTA",
+      "BONUS": "ボーナス",
+      "HEALTH_INSURANCE": "健康保険",
+      "TOTAL_DEDUCTIONS": "総控除額",
+      "EFFECTIVE_FROM": "開始日",
+      "EFFECTIVE_TO": "終了日",
+      "PAYMENT_FREQUENCY": "支払い頻度"
+    },
     "LEAVE": {
       "ASSIGN_LEAVE": "従業員の休暇割り当てを設定",
       "NOTE": "この従業員に割り当てたい休暇タイプを選択してください。休暇残高は後で従業員プロフィールから変更できます。",
@@ -541,7 +539,6 @@
   "NO": "いいえ",
   "DAY": "日",
   "DAYS": "日数",
-
   "APPLICATION.COPYRIGHT": "Copyright CodejiInfotech © 2022 Codeji InfoTech Pvt Ltd | ソフトウェア開発会社 | デハラドゥーンに所在",
   "ATTENDANCE.PRESENT": "出席",
   "ATTENDANCE.ABSENT": "欠席",
@@ -552,15 +549,12 @@
   "ATTENDANCE.GRAPH": "今年の出席グラフ",
   "ATTENDANCE.LATE": "遅刻",
   "APPLICATION.DURATION": "期間",
-
   "ALERT.HIRING": "採用中",
   "WORKING.CURRENT": "現在",
-
   "ACTIVE": "アクティブ",
   "INACTIVE": "非アクティブ",
   "COMPANY.PRESENT": "Codeji Infotech Private Limited",
   "COMPANY.DESCRIPTION": "Codeji InfoTech Pvt. Ltd.は、企業ニーズに対応した高品質で信頼性の高いソフトウェアソリューションを提供するリーディングソフトウェア開発会社です。",
-
   "FILE.SELECTED": "アップロードされたファイル",
   "INFO.DESCRIPTION": "説明",
   "IMPORT.EXCEL": "Excelをインポート",
@@ -572,7 +566,6 @@
   "Break": "休憩",
   "Total_Hours": "総労働時間",
   "Shift": "シフト",
-
   "MENU.TOP_PUNCTUAL": "最も時間を守る",
   "MENU.EMP_OF_MONTH": "月間従業員",
   "MENU.HELP": "ヘルプが必要ですか？",
@@ -585,7 +578,6 @@
   "MENU.ABOUT_US": "私たちについて",
   "MENU.PERFORMANCE": "全体のパフォーマンス",
   "MENU.DOCUMENTS": "ドキュメント",
-
   "PERFORMANCE.EMPLOYEE": "従業員のパフォーマンス",
   "PERFORMANCE.FEEDBACK": "フィードバック",
   "PERFORMANCE.ACHIEVEMENTS": "業績",
@@ -609,20 +601,16 @@
   "PROMOTION.SR_DEVELOPER": "シニア開発者に昇進",
   "POSITION.SR_DEVELOPER": "シニア開発者",
   "PROMOTION.JOINED": "Codejiに入社",
-
   "PERMISSION.VIEW": "表示",
   "PERMISSION.EDIT": "編集",
   "PERMISSION.DELETE": "削除",
-
   "VACANCY.TEXT1": "ウェブサイトのご覧いただきありがとうございます！",
   "VACANCY.TEXT2": "現在、利用可能なポジションは更新中です。最新の求人情報を再度チェックしてください。ご興味いただきありがとうございます。今後の機会にお会いできることを楽しみにしています。",
   "VACANCY.TEXT3": "ご注意: 求人応募は、平日の午前9時から午後6時までに限り受け付けております。",
-
   "MESSAGE.APPLICANT.ADD_SUCCESS": "応募が正常に送信されました",
   "MESSAGE.APPLICANT.ALREADY_APPLIED": "すでに応募されています。待機期間後に再度応募してください",
   "MESSAGE.APPLICANT.UPDATED": "応募者情報が正常に更新されました",
   "MESSAGE.APPLICATION.ACCESS_DENIED": "アプリへのアクセス権がありません",
-
   "NOT_AVAILABLE": "利用不可",
   "TRANSLATION_MISSING": "翻訳がありません",
   "UNDO": "元に戻す",
@@ -632,7 +620,6 @@
   "TO": "まで",
   "ONLINE": "オンライン",
   "OFFLINE": "オフライン",
-
   "USER": {
     "BLOOD_GROUP": "血液型",
     "GROUP": "グループ",
@@ -729,7 +716,7 @@
       "COMPANY_DETAIL": "会社詳細",
       "APPLICATIONS_MODULE": "アプリモジュール"
     },
-    "INSTALL_PLUGIN":  "プラグインをインストール",
+    "INSTALL_PLUGIN": "プラグインをインストール",
     "REMOVE_PLUGIN": "プラグインを削除",
     "APP_MODULE_NOTE": "会社に対して有効にしたいアプリモジュールを選択してください",
     "EDIT_BUTTON": "詳細を編集",
@@ -749,13 +736,13 @@
     "ADDRESS_NOTE": "会社住所は公式文書および従業員記録に表示されます"
   },
   "ERROR": {
+    "404": "申し訳ありません。お探しのページは見つかりませんでした。ホームページに戻ってください！",
+    "500": "問題が発生しました！後でもう一度お試しください！",
     "PAGE_NOT_FOUND": "ページが見つかりません",
     "UNAUTHORIZED_ACCESS": "アクセスが許可されていません",
     "SOMETHING_WRONG": "問題が発生しました",
     "SYSTEM_ERROR": "システムエラー",
-    "404": "申し訳ありません。お探しのページは見つかりませんでした。ホームページに戻ってください！",
     "OPPS": "おっと！",
-    "500": "問題が発生しました！後でもう一度お試しください！",
     "DOC_LOAD_FAILED": "ドキュメントの読み込みに失敗しました"
   },
   "VALIDATION_ERR": {
@@ -830,7 +817,7 @@
   },
   "NOTIFICATION": {
     "TITLE": "通知",
-    "NEW": "新着",
+    "NEW": "未読",
     "READ": "既読",
     "ALL": "すべて",
     "NONE": "通知はありません",
@@ -843,7 +830,8 @@
       "TODAY_BIRTHDAY": "🎂 今日は {employeeName} の誕生日です — ぜひお祝いの言葉をかけてください",
       "TODAY_WORK_ANNIVERSARY": "🎉今日は {employeeName} の勤続記念日です — ぜひお祝いの言葉をかけてください",
       "FALLBACK": "新しい通知があります"
-    }
+    },
+    "UNREAD": "未読"
   },
   "WORKHISTORY": {
     "TITLE": "職歴",
@@ -888,7 +876,6 @@
     "EVENT_OCCASIONS": "イベント",
     "RECURRING": "繰り返しの"
   },
-
   "MESSAGE": {
     "WELCOME": "ようこそ",
     "NO_EMPLOYEE": "従業員がいません",
@@ -1064,4 +1051,3 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "求人情報、応募者管理、選考および面接プロセス、評価、詳細なプロセスログを含む採用業務全体を管理します。採用の進捗状況や対応履歴、採用判断を可視化し、効率的な人材獲得を支援します。"
   }
 }
-

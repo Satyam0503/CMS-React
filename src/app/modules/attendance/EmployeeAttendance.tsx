@@ -89,7 +89,7 @@ const EmployeeAttendance = () => {
   const [searchValue, setSearchValue] = React.useState("");
   const [selectedShiftId, setSelectedShiftId] = React.useState("");
   const [shiftOptions, setShiftOptions] = React.useState<Array<{ scheduleId: string; name: string }>>([]);
-  const [effectiveSchedules, setEffectiveSchedules] = React.useState<Record<string, { scheduleId?: string | null; scheduleName?: string | null; startTime?: string | null; endTime?: string | null; punchInAllowedFrom?: string | null; punchInAllowedUntil?: string | null; punchOutAllowedFrom?: string | null; punchOutAllowedUntil?: string | null; source?: string }>>({});
+  const [effectiveSchedules, setEffectiveSchedules] = React.useState<Record<string, { scheduleId?: string | null; scheduleName?: string | null; startTime?: string | null; endTime?: string | null; punchInAllowedFrom?: string | null; punchInAllowedUntil?: string | null; punchOutAllowedFrom?: string | null; punchOutAllowedUntil?: string | null; graceMinutes?: number | null; breakMinutes?: number | null; requiredWorkingMinutes?: number | null; source?: string }>>({});
   const [attendanceStats, setAttendanceStats] = React.useState({
     present: 0,
     absent: 0,
@@ -384,6 +384,9 @@ const EmployeeAttendance = () => {
       punchInAllowedUntil: effectiveSchedules[emp.userId]?.punchInAllowedUntil,
       punchOutAllowedFrom: effectiveSchedules[emp.userId]?.punchOutAllowedFrom,
       punchOutAllowedUntil: effectiveSchedules[emp.userId]?.punchOutAllowedUntil,
+      graceMinutes: effectiveSchedules[emp.userId]?.graceMinutes,
+      breakMinutes: effectiveSchedules[emp.userId]?.breakMinutes,
+      requiredWorkingMinutes: effectiveSchedules[emp.userId]?.requiredWorkingMinutes,
       scheduleSource: effectiveSchedules[emp.userId]?.source,
     }));
   }, [Employee, debouncedSearch, effectiveSchedules, selectedDepartmentId, departments]);
