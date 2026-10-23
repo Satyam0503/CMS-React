@@ -29,7 +29,8 @@ import jobSchema from "../../../../../utils/Schema/jobSchema";
 import { JobType } from "../../../../../utils/constant/Constant";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
-import { JobModal } from "../../models";
+import { JobModal, RecruitmentEnterpriseConfig } from "../../models";
+import { getRecruitmentEnterpriseConfig } from "../../services";
 
 import { AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 import { getAllDepartments } from "../../../admin/adminservices";
@@ -113,6 +114,7 @@ export const AddEditJob: FC<PropsTypes> = ({
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector((state) => state.user.userData?.defaultLanguage) || "en";
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
+  const [enterpriseConfig, setEnterpriseConfig] = useState<RecruitmentEnterpriseConfig | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const [jobDescription, setJobDescription] = useState(
     initialValues.description ? initialValues.description : ""
@@ -157,6 +159,9 @@ export const AddEditJob: FC<PropsTypes> = ({
     getAllDepartments(true)
       .then(({ data }) => data.success && setDepartments(data.methodResults ?? []))
       .catch(() => setDepartments([]));
+    getRecruitmentEnterpriseConfig()
+      .then(({ data }) => data.success && setEnterpriseConfig(data.methodResult ?? null))
+      .catch(() => setEnterpriseConfig(null));
   }, [open]);
 
   const departmentName = (department: DepartmentModel) =>
@@ -164,6 +169,8 @@ export const AddEditJob: FC<PropsTypes> = ({
     department.titles[defaultLanguage] ||
     Object.values(department.titles)[0] ||
     "Unnamed department";
+
+  const showWorkflowCustomization = Boolean(enterpriseConfig?.allowJobWorkflowCustomization);
 
   return (
     <CustomisedModal open={open} handleClose={handleClose} maxWidth="lg" allowMaximize
@@ -623,63 +630,137 @@ export const AddEditJob: FC<PropsTypes> = ({
             </Grid>
           </Box>
 
-          {/* Section 3: Evaluation & Screening Criteria (Thresholds) */}
-          <Box sx={{ p: 2.25, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "action.hover" }}>
-            <Typography variant="subtitle1" fontWeight={850} sx={{ mb: 0.5, color: "primary.main" }}>
-              Screening Pass Threshold & Evaluation Criteria
-            </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
-              Define the minimum score needed to pass screening for this specific role, and list customized criteria evaluated during recruiter review.
-            </Typography>
-
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <AppTextField
-                  fullWidth
-                  name="screeningPassScore"
-                  label="Minimum Screening Pass Score (%)"
-                  type="number"
-                  placeholder="E.g. 70 (leave empty for company default)"
-                  value={values.screeningPassScore ?? ""}
-                  onChange={(e) => {
-                    const val = e.target.value === "" ? null : Math.max(0, Math.min(100, Number(e.target.value)));
-                    formik.setFieldValue("screeningPassScore", val);
-                  }}
-                  inputProps={{ min: 0, max: 100 }}
-                  helperText="Minimum score (0–100%) required to pass candidate screening and proceed to interview rounds."
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <AppTextField
-                  fullWidth
-                  label="Role Screening Criteria (comma-separated)"
-                  placeholder="E.g. Relevant experience, Test automation, API testing, Communication"
-                  value={listDrafts.screeningCriteria ?? ""}
-                  onChange={(e) => setListValue("screeningCriteria", e.target.value)}
-                  helperText="Criteria rated by recruiters when screening applicants for this JD."
-                />
-              </Grid>
-            </Grid>
-
-            {values.screeningCriteria && values.screeningCriteria.length > 0 && (
-              <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1.5, alignItems: "center" }}>
-                <Typography variant="caption" fontWeight={750} color="text.secondary">
-                  Active Criteria:
+          {showWorkflowCustomization && (
+            <>
+              {/* Section 3: Evaluation & Screening Criteria (Thresholds) */}
+              <Box sx={{ p: 2.25, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "action.hover" }}>
+                <Typography variant="subtitle1" fontWeight={850} sx={{ mb: 0.5, color: "primary.main" }}>
+                  Screening Pass Threshold & Evaluation Criteria
                 </Typography>
-                {values.screeningCriteria.map((crit, idx) => (
-                  <Chip
-                    key={idx}
-                    size="small"
-                    label={crit}
-                    color="primary"
-                    variant="outlined"
-                    sx={{ fontWeight: 600, fontSize: "0.75rem" }}
-                  />
-                ))}
-              </Stack>
-            )}
-          </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
+                  Define the minimum score needed to pass screening for this specific role, and list customized criteria evaluated during recruiter review.
+                </Typography>
+
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <AppTextField
+                      fullWidth
+                      name="screeningPassScore"
+                      label="Minimum Screening Pass Score (%)"
+                      type="number"
+                      placeholder="E.g. 70 (leave empty for company default)"
+                      value={values.screeningPassScore ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value === "" ? null : Math.max(0, Math.min(100, Number(e.target.value)));
+                        formik.setFieldValue("screeningPassScore", val);
+                      }}
+                      inputProps={{ min: 0, max: 100 }}
+                      helperText="Minimum score (0–100%) required to pass candidate screening and proceed to interview rounds."
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <AppTextField
+                      fullWidth
+                      label="Role Screening Criteria (comma-separated)"
+                      placeholder="E.g. Relevant experience, Test automation, API testing, Communication"
+                      value={listDrafts.screeningCriteria ?? ""}
+                      onChange={(e) => setListValue("screeningCriteria", e.target.value)}
+                      helperText="Criteria rated by recruiters when screening applicants for this JD."
+                    />
+                  </Grid>
+                </Grid>
+
+                {values.screeningCriteria && values.screeningCriteria.length > 0 && (
+                  <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1.5, alignItems: "center" }}>
+                    <Typography variant="caption" fontWeight={750} color="text.secondary">
+                      Active Criteria:
+                    </Typography>
+                    {values.screeningCriteria.map((crit, idx) => (
+                      <Chip
+                        key={idx}
+                        size="small"
+                        label={crit}
+                        color="primary"
+                        variant="outlined"
+                        sx={{ fontWeight: 600, fontSize: "0.75rem" }}
+                      />
+                    ))}
+                  </Stack>
+                )}
+              </Box>
+
+              {/* Section 4: Hiring Workflow & Governance */}
+              <Box sx={{ p: 2.25, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: (t) => alpha(t.palette.primary.main, 0.03) }}>
+                <Typography variant="subtitle1" fontWeight={850} sx={{ mb: 0.5, color: "text.primary" }}>
+                  Hiring Workflow & Governance
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
+                  Tailor the recruitment process for this specific vacancy. Fast-track junior or urgent positions with fewer steps, or enforce multi-round panel interviews, scorecards, and verification for senior/compliance roles.
+                </Typography>
+
+                <Grid container spacing={2}>
+                  {/* Workflow Mode Select */}
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <FormControl fullWidth>
+                      <InputLabel id="workflow-mode-select-label">Hiring Workflow Mode</InputLabel>
+                      <AppSelect
+                        labelId="workflow-mode-select-label"
+                        label="Hiring Workflow Mode"
+                        value={values.workflowMode ?? "Inherit"}
+                        onChange={(e) => {
+                          const mode = e.target.value as string;
+                          formik.setFieldValue("workflowMode", mode);
+                          if (mode === "Direct") {
+                            formik.setFieldValue("requireInterview", false);
+                            formik.setFieldValue("requirePreboarding", false);
+                          } else if (mode === "Enterprise") {
+                            formik.setFieldValue("requireInterview", true);
+                            formik.setFieldValue("requirePreboarding", true);
+                          } else if (mode === "Inherit") {
+                            formik.setFieldValue("requireInterview", null);
+                            formik.setFieldValue("requirePreboarding", null);
+                          }
+                        }}
+                      >
+                        <MenuItem value="Inherit">Company Default (Inherit standard company settings)</MenuItem>
+                        <MenuItem value="Direct">Fast-Track / Direct Hire (Screening → Direct Offer / Hire)</MenuItem>
+                        <MenuItem value="Standard">Standard (Screening → Interview & Scorecards → Offer)</MenuItem>
+                        <MenuItem value="Enterprise">Enterprise Governance (Panel Debrief Quorum & Strict Gates)</MenuItem>
+                      </AppSelect>
+                      <FormHelperText>
+                        {values.workflowMode === "Direct"
+                          ? "Fast-track mode: candidate can be approved directly after screening without mandatory interview rounds or debriefs."
+                          : values.workflowMode === "Enterprise"
+                          ? "Full governance: mandatory interview rounds, panel debriefs, offer approvals, and preboarding checks."
+                          : values.workflowMode === "Standard"
+                          ? "Structured workflow: screening pass and interview round debrief required before decision."
+                          : "Inherits the tenant's global Recruitment Mode and gate policies configured in Recruitment Settings."}
+                      </FormHelperText>
+                    </FormControl>
+                  </Grid>
+
+                  {/* Granular overrides */}
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Stack spacing={1.5}>
+                      <FormSwitch
+                        label="Require interview rounds before hiring decision"
+                        description="When disabled, allows approving candidate for an offer directly from screening."
+                        checked={values.requireInterview ?? (values.workflowMode === "Direct" ? false : values.workflowMode === "Enterprise" ? true : false)}
+                        onChange={(checked) => formik.setFieldValue("requireInterview", checked)}
+                      />
+                      <FormSwitch
+                        label="Require preboarding checklist before employee conversion"
+                        description="When disabled, enables 1-click employee creation and fast-track preboarding."
+                        checked={values.requirePreboarding ?? (values.workflowMode === "Direct" ? false : values.workflowMode === "Enterprise" ? true : false)}
+                        onChange={(checked) => formik.setFieldValue("requirePreboarding", checked)}
+                      />
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </Box>
+            </>
+          )}
         </Stack>
         <Divider sx={{ bgcolor: "grey", my: 1.5 }} />
         <Stack>

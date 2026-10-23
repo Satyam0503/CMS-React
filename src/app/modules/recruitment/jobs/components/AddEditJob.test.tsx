@@ -28,6 +28,17 @@ vi.mock("../../../admin/adminservices", () => ({
   }),
 }));
 
+vi.mock("../../services", () => ({
+  getRecruitmentEnterpriseConfig: vi.fn().mockResolvedValue({
+    data: {
+      success: true,
+      methodResult: {
+        allowJobWorkflowCustomization: true,
+      },
+    },
+  }),
+}));
+
 vi.mock("../../../../shared/components/TextEditor", () => ({
   default: () => <div data-testid="mock-text-editor" />,
 }));
@@ -109,6 +120,56 @@ describe("AddEditJob UI & Responsive Form", () => {
     expect(document.body.textContent).toContain("Education requirement");
     expect(document.body.textContent).toContain("Keywords");
     expect(document.body.textContent).toContain("Visibility and promotion");
+
+    // Verify Hiring Workflow & Governance section
+    expect(document.body.textContent).toContain("Hiring Workflow & Governance");
+    expect(document.body.textContent).toContain("Hiring Workflow Mode");
+    expect(document.body.textContent).toContain("Require interview rounds before hiring decision");
+    expect(document.body.textContent).toContain("Require preboarding checklist before employee conversion");
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
+
+  it("hides Hiring Workflow & Governance and Screening Criteria when company disables per-job customization", async () => {
+    const { getRecruitmentEnterpriseConfig } = await import("../../services");
+    vi.mocked(getRecruitmentEnterpriseConfig).mockResolvedValueOnce({
+      data: {
+        success: true,
+        methodResult: {
+          allowJobWorkflowCustomization: false,
+        },
+      },
+    } as any);
+
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <AddEditJob
+          initialValues={mockInitialValues}
+          isEdit={true}
+          open={true}
+          handleClose={vi.fn()}
+          handleAddEditJob={vi.fn()}
+        />
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    // Core role fields remain visible
+    expect(document.body.textContent).toContain("Role Overview & Status");
+    expect(document.body.textContent).toContain("Career portal details");
+    expect(document.body.textContent).toContain("Full job description");
+
+    // Per-job custom workflow and screening criteria sections are hidden
+    expect(document.body.textContent).not.toContain("Hiring Workflow & Governance");
+    expect(document.body.textContent).not.toContain("Screening Pass Threshold & Evaluation Criteria");
+    expect(document.body.textContent).not.toContain("Hiring Workflow Mode");
 
     await act(async () => {
       root.unmount();

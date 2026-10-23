@@ -59,6 +59,7 @@ const defaults: RecruitmentEnterpriseConfig = {
   requireInterviewBeforeDecision: false,
   requirePreboardingBeforeHandoff: false,
   allowMultiVacancyApplications: true,
+  allowJobWorkflowCustomization: false,
   screeningCriteria: ["Relevant experience", "Required skills", "Communication"],
   screeningPassScore: 60,
   preboardingChecklist: ["candidate-details", "documents", "verification"],
@@ -112,6 +113,7 @@ const modes: Record<
       requireInterviewBeforeDecision: false,
       requirePreboardingBeforeHandoff: false,
       allowMultiVacancyApplications: true,
+      allowJobWorkflowCustomization: false,
     },
   },
   Standard: {
@@ -139,6 +141,7 @@ const modes: Record<
       requireInterviewBeforeDecision: true,
       requirePreboardingBeforeHandoff: true,
       allowMultiVacancyApplications: true,
+      allowJobWorkflowCustomization: false,
     },
   },
   Enterprise: {
@@ -168,6 +171,7 @@ const modes: Record<
       requireInterviewBeforeDecision: true,
       requirePreboardingBeforeHandoff: true,
       allowMultiVacancyApplications: true,
+      allowJobWorkflowCustomization: true,
     },
   },
 };
@@ -191,6 +195,7 @@ const capabilityGroups: Array<{
     title: "Workflow & Evaluation",
     description: "Control which review and decision steps are available for this company.",
     fields: [
+      { key: "allowJobWorkflowCustomization", label: "Per-job hiring workflow & screening customization", help: "Allow job creators to customize hiring workflow modes (Direct Hire, Standard, Enterprise) and screening criteria on individual job postings. When disabled, this section is hidden on job postings and company defaults apply." },
       { key: "applicationReview", label: "Application review", help: "Require recruiter review before candidate advances." },
       { key: "hiringManagerReview", label: "Hiring-manager review", help: "Adds a hiring manager screening gate after recruiter review." },
       { key: "interviewRounds", label: "Multiple interview rounds", help: "Enables configuring two or more sequential interview rounds." },
@@ -327,6 +332,7 @@ export default function RecruitmentSettings() {
         requireInterviewBeforeDecision: resetToDefaults ? false : config.requireInterviewBeforeDecision,
         requirePreboardingBeforeHandoff: resetToDefaults ? false : config.requirePreboardingBeforeHandoff,
         allowMultiVacancyApplications: resetToDefaults ? true : config.allowMultiVacancyApplications,
+        allowJobWorkflowCustomization: resetToDefaults ? false : Boolean(config.allowJobWorkflowCustomization),
         screeningCriteria: resetToDefaults ? defaults.screeningCriteria : parsedCriteria,
         screeningPassScore: resetToDefaults ? 60 : Number(config.screeningPassScore ?? 60),
         preboardingChecklist: resetToDefaults ? defaults.preboardingChecklist : parsedChecklist,

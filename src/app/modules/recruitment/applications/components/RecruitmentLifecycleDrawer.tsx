@@ -137,7 +137,7 @@ type Mode = "screening" | "interview" | "offer" | "handoff";
 type UtilityTool = "resume" | "privacy" | "talentpool" | "merge" | null;
 type Feedback = { severity: "success" | "error" | "info" | "warning"; text: string; code?: string };
 
-const primarySteps: { id: Mode; label: string; helper: string }[] = [
+const defaultSteps: { id: Mode; label: string; helper: string }[] = [
   { id: "screening", label: "Screening", helper: "Candidate Review" },
   { id: "interview", label: "Interview", helper: "Schedule & Score" },
   { id: "offer", label: "Offer & Response", helper: "Terms & Acceptance" },
@@ -335,6 +335,46 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
   });
 
   const stage = applicant.activityType as ApplicationStatus;
+
+  // Effective Workflow & Governance (Vacancy Override -> Enterprise Config -> System Fallback)
+  const allowCustomWorkflows = enterpriseConfig?.allowJobWorkflowCustomization ?? true;
+  const effectiveRequireInterview =
+    allowCustomWorkflows && vacancyData?.requireInterview !== undefined && vacancyData?.requireInterview !== null
+      ? vacancyData.requireInterview
+      : allowCustomWorkflows && vacancyData?.workflowMode === "Direct"
+      ? false
+      : allowCustomWorkflows && (vacancyData?.workflowMode === "Enterprise" || vacancyData?.workflowMode === "Standard")
+      ? true
+      : (enterpriseConfig?.requireInterviewBeforeDecision ?? false) && (enterpriseConfig?.recruitmentMode !== "Simple");
+
+  const effectiveRequirePreboarding =
+    allowCustomWorkflows && vacancyData?.requirePreboarding !== undefined && vacancyData?.requirePreboarding !== null
+      ? vacancyData.requirePreboarding
+      : allowCustomWorkflows && vacancyData?.workflowMode === "Direct"
+      ? false
+      : allowCustomWorkflows && vacancyData?.workflowMode === "Enterprise"
+      ? true
+      : (enterpriseConfig?.requirePreboardingBeforeHandoff ?? false) && (enterpriseConfig?.recruitmentMode !== "Simple");
+
+  const workflowMode = (allowCustomWorkflows ? vacancyData?.workflowMode : null) ?? (enterpriseConfig?.recruitmentMode === "Simple" ? "Direct" : enterpriseConfig?.recruitmentMode === "Enterprise" ? "Enterprise" : "Standard");
+  const workflowLabel = (allowCustomWorkflows && vacancyData?.workflowMode === "Direct")
+    ? "Fast-Track / Direct Hire"
+    : (allowCustomWorkflows && vacancyData?.workflowMode === "Enterprise")
+    ? "Enterprise Governance"
+    : (allowCustomWorkflows && vacancyData?.workflowMode === "Standard")
+    ? "Standard"
+    : enterpriseConfig?.recruitmentMode
+    ? `${enterpriseConfig.recruitmentMode} (Company Default)`
+    : "Standard";
+  const workflowColor: "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" =
+    workflowMode === "Direct" ? "success" : workflowMode === "Enterprise" ? "warning" : "default";
+
+  const primarySteps = useMemo(() => [
+    { id: "screening" as Mode, label: "Screening", helper: "Candidate Review" },
+    { id: "interview" as Mode, label: "Interview", helper: effectiveRequireInterview ? "Schedule & Score" : "Optional / Fast-Track" },
+    { id: "offer" as Mode, label: "Offer & Response", helper: "Terms & Acceptance" },
+    { id: "handoff" as Mode, label: "Preboarding & Hire", helper: effectiveRequirePreboarding ? "Convert to Employee" : "1-Click Hire" },
+  ], [effectiveRequireInterview, effectiveRequirePreboarding]);
 
   // Stepper calculations
   const completedStep =
@@ -814,8 +854,20 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
             idempotencyKey: createIdempotencyKey(),
           });
         }
-        successMessage = "Screening review recorded. Candidate moved to next pipeline stage.";
-        setMode("interview");
+        if (screening.decision === "Pass" && !effectiveRequireInterview) {
+          await upsertRecruitmentHiringDecision({
+            applicantId: applicant.applicantId,
+            vacancyId: applicant.vacancyId,
+            decision: "Approve",
+            notes: "Direct hire fast-track approval after screening pass",
+            idempotencyKey: createIdempotencyKey(),
+          }).catch(() => undefined);
+          successMessage = "Screening passed! Candidate fast-tracked directly to Offer.";
+          setMode("offer");
+        } else {
+          successMessage = "Screening review recorded. Candidate moved to next pipeline stage.";
+          setMode("interview");
+        }
       } else if (mode === "interview") {
         if (interviewSubTab === 0) {
           if (!interview.startsAtUtc || !interview.endsAtUtc) throw new Error("Start and end time are required.");
@@ -1305,14 +1357,23 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                   })}
                 </Stepper>
 
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1.25 }}>
-                  <Chip
-                    size="small"
-                    label={"Current Stage: " + (ApplicationStatus[stage] ?? "New")}
-                    color="primary"
-                    variant="outlined"
-                    sx={{ fontWeight: 800 }}
-                  />
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1.25 }} flexWrap="wrap" gap={1}>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    <Chip
+                      size="small"
+                      label={"Current Stage: " + (ApplicationStatus[stage] ?? "New")}
+                      color="primary"
+                      variant="outlined"
+                      sx={{ fontWeight: 800 }}
+                    />
+                    <Chip
+                      size="small"
+                      label={`Workflow: ${workflowLabel}`}
+                      color={workflowColor}
+                      variant="filled"
+                      sx={{ fontWeight: 700, fontSize: "0.75rem" }}
+                    />
+                  </Stack>
                   <Typography variant="caption" color="text.secondary">
                     Step {activeStep + 1} of {primarySteps.length}
                   </Typography>
@@ -2589,7 +2650,13 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                 {mode !== "offer" && mode !== "handoff" && (
                   <CustomisedButton
                     variant="contained"
-                    label={busy ? "Saving…" : "Save & Advance"}
+                    label={
+                      busy
+                        ? "Saving…"
+                        : mode === "screening" && screening.decision === "Pass" && !effectiveRequireInterview
+                        ? "Fast-Track to Offer"
+                        : "Save & Advance"
+                    }
                     loading={busy}
                     handleClick={submit}
                     disabled={
