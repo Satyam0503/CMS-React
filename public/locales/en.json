@@ -30,7 +30,9 @@
     "POLICIES": "Policies",
     "PAYROLL_SETTINGS": "Payroll Settings",
     "LIFECYCLE_MANAGEMENT": "Employee Lifecycle",
-    "CAREER_PROFILE": "Career Profile"
+    "CAREER_PROFILE": "Career Profile",
+    "WORK_FROM_HOME": "Work From Home",
+    "OFFBOARDING": "Offboarding"
   },
   "GENDER": {
     "MALE": "Male",
@@ -231,7 +233,9 @@
     "UPCOMING_HOLIDAYS": "Upcoming Holidays",
     "UPCOMING_EVENTS": "Upcoming Events",
     "NO_EVENT_HOLIDAY": "No upcoming holidays or events at the moment",
-    "NO_UPCOMING_CELEBRATION": "No upcoming celebrations right now"
+    "NO_UPCOMING_CELEBRATION": "No upcoming celebrations right now",
+    "NO_UPCOMING_BIRTHDAY": "No upcoming birthdays right now",
+    "NO_UPCOMING_WORK_ANNIVERSARY": "No upcoming work anniversaries right now"
   },
   "FORM": {
     "FIRST_NAME": "First Name",
@@ -823,7 +827,7 @@
   },
   "NOTIFICATION": {
     "TITLE": "Notifications",
-    "NEW": "New",
+    "NEW": "Unread",
     "READ": "Read",
     "ALL": "All",
     "NONE": "No notifications",
@@ -836,7 +840,8 @@
       "TODAY_BIRTHDAY": "🎂 Today is {employeeName}’s birthday — take a moment to wish them well",
       "TODAY_WORK_ANNIVERSARY": "🎉Today marks {employeeName}’s work anniversary — congratulate them on this milestone!",
       "FALLBACK": "You have new notification"
-    }
+    },
+    "UNREAD": "Unread"
   },
   "WORKHISTORY": {
     "TITLE": "Work History",
@@ -1080,6 +1085,9 @@
     "PAYROLL_MANAGEMENT": "Payroll Management",
     "PAYROLL_MANAGEMENT_DESCRIPTION": "Manages end-to-end payroll operations by integrating attendance tracking, leave management, and salary processing. Calculates working hours, leave deductions, overtime, taxes, bonuses, and generates accurate payslips in compliance with organizational policies and statutory regulations.",
     "RECRUITMENT_MANAGEMENT": "Recruitment Management",
-    "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Manages the complete hiring lifecycle including job postings, candidate applications, interview stages, evaluations, and detailed process logs. Provides end-to-end visibility into recruitment progress, actions taken, and hiring decisions to streamline and track the talent acquisition process."
+    "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Manages the complete hiring lifecycle including job postings, candidate applications, interview stages, evaluations, and detailed process logs. Provides end-to-end visibility into recruitment progress, actions taken, and hiring decisions to streamline and track the talent acquisition process.",
+    "CAREER_PROFILE": "Career Profile",
+    "WORK_FROM_HOME": "Work From Home",
+    "OFFBOARDING": "Offboarding"
   }
 }

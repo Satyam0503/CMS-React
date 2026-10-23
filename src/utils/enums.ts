@@ -82,6 +82,8 @@ export enum ModulesName {
   PayrollSettings = "Payroll_Settings",
   CareerProfile = "Career_Profile",
   RecruitmentSettings = "Recruitment_Settings",
+  WorkFromHome = "Work_From_Home",
+  Offboarding = "Offboarding",
 }
 
 export enum ModulesTitles {
@@ -106,6 +108,7 @@ export enum ModulesTitles {
   CareerProfile = "MODULES.CAREER_PROFILE",
   RecruitmentSettings = "MODULES.RECRUITMENT_SETTINGS",
   LifecycleManagement = "MODULES.LIFECYCLE_MANAGEMENT",
+  WorkFromHome = "MODULES.WORK_FROM_HOME",
 }
 
 export enum PayRollModuleTitles {
@@ -170,7 +173,10 @@ export enum NOTIFICATION_TYPE {
   LEAVE_REQUEST_REJECTED = 4,
   BIRTHDAY = 5,
   WORK_ANNIVERSARY = 6,
-  MESSAGE = 7,
+  WORK_FROM_HOME_REQUEST = 7,
+  WORK_FROM_HOME_APPROVED = 8,
+  WORK_FROM_HOME_REJECTED = 9,
+  MESSAGE = 10,
 }
 
 export enum LEAVE_TYPE {

@@ -1,4 +1,5 @@
 import {
+  alpha,
   Autocomplete,
   Avatar,
   Box,
@@ -328,33 +329,31 @@ export const CompanyInfo = () => {
               />
           }
         </Stack>
-        <Divider sx={{ my: 2 }} />
-        <form onSubmit={handleSubmit} className="d-flex flex-column gap-6">
-          <Grid container sx={{ gap: 3 }}>
+        <Divider sx={{ my: { xs: 1.5, sm: 2 } }} />
+        <form onSubmit={handleSubmit} className="d-flex flex-column">
+          <Grid container spacing={{ xs: 2, md: 3 }} alignItems="flex-start">
             <Grid
               size={{
                 xs: 12,
-                sm: 4,
-                md: 5
+                md: 4,
               }}>
               <Typography variant="h6">
                 {formatMessage({
                   id: "COMPANY_DETAILS.LANGUAGES",
                 })}
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" color="text.secondary">
                 {formatMessage({ id: "COMPANY_DETAILS.LANGUAGES_NOTE" })}
               </Typography>
             </Grid>
             <Grid
-              sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+              sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
               size={{
                 xs: 12,
-                sm: 7,
-                md: 6
+                md: 8,
               }}>
-              <Stack spacing={1}>
-                <Typography variant="body1" id="defaultLanguage">
+              <Stack spacing={0.75} sx={{ maxWidth: { xs: "100%", sm: 520 } }}>
+                <Typography variant="body2" fontWeight={700} id="defaultLanguage">
                   {formatMessage({ id: "COMPANY_DETAILS.DEFAULT_LANG" })}
                 </Typography>
                 {
@@ -365,7 +364,7 @@ export const CompanyInfo = () => {
                       labelId="defaultLanguage"
                       id="default-language"
                       variant="outlined"
-                      sx={{ mt: 1 }}
+                      sx={{ mt: 0.5 }}
                       error={touched.defaultLanguage && Boolean(errors.defaultLanguage)}
                       {...getFieldProps("defaultLanguage")}
                     >
@@ -379,8 +378,8 @@ export const CompanyInfo = () => {
                     <Typography variant="body2">{formatMessage({ id: defaultLanguage })}</Typography>
                 }
               </Stack>
-              <Stack spacing={1}>
-                <Typography variant="body1" >
+              <Stack spacing={0.75} sx={{ maxWidth: { xs: "100%", sm: 520 } }}>
+                <Typography variant="body2" fontWeight={700}>
                   {formatMessage({ id: "COMPANY_DETAILS.APP_LANG" })}
                 </Typography>
                 {
@@ -419,143 +418,228 @@ export const CompanyInfo = () => {
                           </li>
                         );
                       }}
-                      sx={{ mt: 1 }}
+                      sx={{ mt: 0.5 }}
                     />
-                    : <Typography variant="body2">{applicationLanguages.map(lang => formatMessage({ id: lang }) + ", ")}</Typography>
+                    : <Typography variant="body2">{applicationLanguages.map(lang => formatMessage({ id: lang })).join(", ")}</Typography>
                 }
               </Stack>
-              <Stack spacing={1}>
-                <Typography variant="body1">Company theme</Typography>
-                {isEdit ? <AppSelect fullWidth {...getFieldProps("appTheme")}><MenuItem value="glass">Glass</MenuItem><MenuItem value="slate">Slate</MenuItem><MenuItem value="dawn">Dawn</MenuItem><MenuItem value="blush">Blush</MenuItem></AppSelect> : <Typography variant="body2" sx={{ textTransform: "capitalize" }}>{values.appTheme ?? "glass"}</Typography>}
+              <Stack spacing={0.75} sx={{ maxWidth: { xs: "100%", sm: 520 } }}>
+                <Typography variant="body2" fontWeight={700}>Company theme</Typography>
+                {isEdit ? <AppSelect fullWidth {...getFieldProps("appTheme")}><MenuItem value="glass">Glass</MenuItem><MenuItem value="slate">Slate</MenuItem><MenuItem value="dawn">Dawn</MenuItem><MenuItem value="blush">Blush</MenuItem></AppSelect> : <Typography variant="body2" sx={{ textTransform: "capitalize", fontWeight: 600 }}>{values.appTheme ?? "glass"}</Typography>}
                 <Typography variant="caption" color="text.secondary">Applied to all signed-in users and this company’s public careers pages.</Typography>
               </Stack>
             </Grid>
           </Grid>
-          {companyInfo.autoGenerateEmployeeId !== false && <><Divider sx={{ my: 1 }} /><Grid container sx={{ gap: 3 }}>
-            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+          {companyInfo.autoGenerateEmployeeId !== false && <><Divider sx={{ my: { xs: 2, sm: 2.5 } }} /><Grid container spacing={{ xs: 2, md: 3 }} alignItems="flex-start">
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, md: 4 }}>
               <Typography variant="h6">Employee ID sequence</Typography>
-              <Typography variant="body2">Control where automatic Employee ID generation continues. Existing employee IDs are never changed.</Typography>
+              <Typography variant="body2" color="text.secondary">Control where automatic Employee ID generation continues. Existing employee IDs are never changed.</Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
-              <Stack spacing={1.5}>
-                <Box sx={{ px: 1.5, py: 1.25, border: 1, borderColor: "primary.light", borderRadius: 2, bgcolor: "action.hover" }}>
-                  <Typography variant="caption" color="text.secondary">Next automatic Employee ID</Typography>
-                  <Typography variant="h6" fontWeight={800} color="primary.main">{nextEmployeeId || "Loading..."}</Typography>
-                  <Typography variant="caption" color="text.secondary">Required format: {employeeIdFormat || "TT-0001"}</Typography>
+            <Grid size={{ xs: 12, md: 8 }}>
+              <Stack spacing={1.5} sx={{ maxWidth: { xs: "100%", md: 580 } }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: 1.5,
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    border: "1px solid",
+                    borderColor: (theme) => alpha(theme.palette.primary.main, 0.25),
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
+                  }}
+                >
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" fontWeight={600} sx={{ display: "block", lineHeight: 1.1 }}>
+                      Next automatic ID
+                    </Typography>
+                    <Typography variant="h6" fontWeight={800} color="primary.main" sx={{ lineHeight: 1.25, mt: 0.25 }}>
+                      {nextEmployeeId || "Loading..."}
+                    </Typography>
+                  </Box>
+                  <Chip
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    label={`Format: ${employeeIdFormat || "TT-0001"}`}
+                    sx={{ fontWeight: 650, borderRadius: 1.5, height: 26, fontSize: "0.75rem" }}
+                  />
                 </Box>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch">
-                  <AppTextField size="small" sx={{ flex: 1, minWidth: 0 }} label="Skip unused IDs" placeholder="For example: 5" value={skipCount} onChange={e => setSkipCount(e.target.value)} inputProps={{ inputMode: "numeric", min: 1, step: 1 }} />
-                  <Button size="small" variant="contained" onClick={() => { void confirmSkip(); }} sx={{ flex: "0 0 auto", minWidth: { xs: "100%", sm: 108 }, minHeight: 40, whiteSpace: "nowrap" }}>Skip IDs</Button>
-                </Stack>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch">
-                  <AppTextField size="small" sx={{ flex: 1, minWidth: 0 }} label="Set next Employee ID" placeholder={nextEmployeeId || employeeIdFormat || "TT-0001"} value={startFromId} onChange={e => setStartFromId(e.target.value)} />
-                  <Button size="small" variant="outlined" onClick={() => { void confirmStartFrom(); }} sx={{ flex: "0 0 auto", minWidth: { xs: "100%", sm: 108 }, minHeight: 40, whiteSpace: "nowrap" }}>Set next ID</Button>
-                </Stack>
+
+                <Grid container spacing={1.25}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <Stack direction="row" spacing={0.75} alignItems="stretch">
+                      <AppTextField
+                        size="small"
+                        sx={{ flex: 1, minWidth: 0 }}
+                        label="Skip IDs"
+                        placeholder="e.g. 5"
+                        value={skipCount}
+                        onChange={(e) => setSkipCount(e.target.value)}
+                        inputProps={{ inputMode: "numeric", min: 1, step: 1 }}
+                      />
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => { void confirmSkip(); }}
+                        sx={{ flexShrink: 0, minWidth: 72, whiteSpace: "nowrap", textTransform: "none", fontWeight: 700 }}
+                      >
+                        Skip
+                      </Button>
+                    </Stack>
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <Stack direction="row" spacing={0.75} alignItems="stretch">
+                      <AppTextField
+                        size="small"
+                        sx={{ flex: 1, minWidth: 0 }}
+                        label="Set next ID"
+                        placeholder={nextEmployeeId || employeeIdFormat || "TT-0001"}
+                        value={startFromId}
+                        onChange={(e) => setStartFromId(e.target.value)}
+                      />
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => { void confirmStartFrom(); }}
+                        sx={{ flexShrink: 0, minWidth: 72, whiteSpace: "nowrap", textTransform: "none", fontWeight: 700 }}
+                      >
+                        Set
+                      </Button>
+                    </Stack>
+                  </Grid>
+                </Grid>
               </Stack>
             </Grid>
           </Grid></>}
-          <Divider sx={{ my: 1 }} />
-          <Grid container sx={{ gap: 3 }}>
-            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+          <Divider sx={{ my: { xs: 2, sm: 2.5 } }} />
+          <Grid container spacing={{ xs: 2, md: 3 }} alignItems="flex-start">
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, md: 4 }}>
               <Typography variant="h6">Former-employee portal</Typography>
-              <Typography variant="body2">Company-wide access control. Turning this off immediately revokes every former employee session; employee records and issued documents are retained.</Typography>
+              <Typography variant="body2" color="text.secondary">Company-wide access control. Turning this off immediately revokes every former employee session; employee records and issued documents are retained.</Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
-              <FormControlLabel control={<Switch checked={companyInfo.formerEmployeePortalEnabled !== false} onChange={(event) => void toggleFormerEmployeePortal(event.target.checked)} disabled={confirmationLoading} inputProps={{ "aria-label": "Enable former employee portal for this company" }} />} label={companyInfo.formerEmployeePortalEnabled !== false ? "Portal enabled for this company" : "Portal disabled for this company"} />
-              <Typography variant="caption" color="text.secondary" display="block">Former employees still need individual access enabled and a verified personal email to sign in with OTP.</Typography>
+            <Grid size={{ xs: 12, md: 8 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75, maxWidth: { xs: "100%", md: 580 } }}>
+                <FormControlLabel
+                  sx={{ ml: 0, gap: 1.5, alignItems: "center" }}
+                  control={
+                    <Switch
+                      checked={companyInfo.formerEmployeePortalEnabled !== false}
+                      onChange={(event) => void toggleFormerEmployeePortal(event.target.checked)}
+                      disabled={confirmationLoading}
+                      inputProps={{ "aria-label": "Enable former employee portal for this company" }}
+                    />
+                  }
+                  label={
+                    <Typography variant="body2" fontWeight={700}>
+                      {companyInfo.formerEmployeePortalEnabled !== false ? "Portal enabled for this company" : "Portal disabled for this company"}
+                    </Typography>
+                  }
+                />
+                <Typography variant="caption" color="text.secondary" display="block">
+                  Former employees still need individual access enabled and a verified personal email to sign in with OTP.
+                </Typography>
+              </Box>
             </Grid>
           </Grid>
-          <Divider sx={{ my: 1 }} />
-          <Grid container sx={{ gap: 3 }}>
-            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+          <Divider sx={{ my: { xs: 2, sm: 2.5 } }} />
+          <Grid container spacing={{ xs: 2, md: 3 }} alignItems="flex-start">
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, md: 4 }}>
               <Typography variant="h6">Employee ID format</Typography>
-              <Typography variant="body2">Set the company prefix, such as CD for Codeji. Automatic IDs use CD-0001; turn it off to enter IDs manually.</Typography>
+              <Typography variant="body2" color="text.secondary">Set the company prefix, such as CD for Codeji. Automatic IDs use CD-0001; turn it off to enter IDs manually.</Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
+            <Grid size={{ xs: 12, md: 8 }}>
               {isEdit ? (
-                <Stack spacing={1}>
+                <Stack spacing={1.25} sx={{ maxWidth: { xs: "100%", sm: 420 } }}>
                   <AppTextField label="Company employee code" inputProps={{ maxLength: 6 }} {...getFieldProps("employeeIdPrefix")} />
-                  <FormControlLabel control={<Switch checked={values.autoGenerateEmployeeId ?? true} onChange={(event) => setFieldValue("autoGenerateEmployeeId", event.target.checked)} />} label="Generate employee IDs automatically" />
+                  <FormControlLabel sx={{ ml: 0, gap: 1.25 }} control={<Switch checked={values.autoGenerateEmployeeId ?? true} onChange={(event) => setFieldValue("autoGenerateEmployeeId", event.target.checked)} />} label="Generate employee IDs automatically" />
                 </Stack>
               ) : (
-                <Typography variant="body1">{companyInfo.autoGenerateEmployeeId === false ? "Manual employee IDs" : employeeIdFormat || "Loading..."}</Typography>
+                <Chip
+                  variant="outlined"
+                  color={companyInfo.autoGenerateEmployeeId === false ? "default" : "primary"}
+                  label={companyInfo.autoGenerateEmployeeId === false ? "Manual employee IDs" : employeeIdFormat || "Loading..."}
+                  sx={{ fontWeight: 700, borderRadius: 1.75, px: 0.5 }}
+                />
               )}
             </Grid>
           </Grid>
-          <Divider sx={{ my: 1 }} />
-          <Grid container sx={{ gap: 3 }} >
+          <Divider sx={{ my: { xs: 2, sm: 2.5 } }} />
+          <Grid container spacing={{ xs: 2, md: 3 }} alignItems="center">
             <Grid
               className="d-flex flex-column gap-1"
               size={{
                 xs: 12,
-                sm: 4,
-                md: 5
+                md: 4,
               }}>
               <Typography variant="h6">
                 {formatMessage({
                   id: "COMPANY_DETAILS.COMPANY_NAME",
                 })}
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" color="text.secondary">
                 {formatMessage({ id: "COMPANY_DETAILS.NAME_NOTE" })}
               </Typography>
             </Grid>
             <Grid
               size={{
                 xs: 12,
-                sm: 7,
-                md: 6
+                md: 8,
               }}>
               {
                 isEdit ?
-                  <AppTextField id="company-name" fullWidth required {...getFieldProps("companyName")} error={touched.companyName && Boolean(errors.companyName)} />
+                  <Box sx={{ maxWidth: { xs: "100%", sm: 520 } }}>
+                    <AppTextField id="company-name" fullWidth required {...getFieldProps("companyName")} error={touched.companyName && Boolean(errors.companyName)} />
+                  </Box>
                   :
-                  <Typography variant="body1">{companyInfo.companyName}</Typography>
+                  <Typography variant="body1" fontWeight={650}>{companyInfo.companyName}</Typography>
               }
             </Grid>
           </Grid>
-          <Divider sx={{ my: 1 }} />
-          <Grid container sx={{ gap: 3 }} >
+          <Divider sx={{ my: { xs: 2, sm: 2.5 } }} />
+          <Grid container spacing={{ xs: 2, md: 3 }} alignItems="center">
             <Grid
               className="d-flex flex-column gap-1"
               size={{
                 xs: 12,
-                sm: 4,
-                md: 5
+                md: 4,
               }}>
               <Typography variant="h6">
                 {formatMessage({
                   id: "COMPANY_DETAILS.ADDRESS",
                 })}
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" color="text.secondary">
                 {formatMessage({ id: "COMPANY_DETAILS.ADDRESS_NOTE" })}
               </Typography>
             </Grid>
             <Grid
               size={{
                 xs: 12,
-                sm: 7,
-                md: 6
+                md: 8,
               }}>
               {
                 isEdit ?
-                  <AppTextField id="company-address" fullWidth required {...getFieldProps("address")} error={touched.address && Boolean(errors.address)} />
+                  <Box sx={{ maxWidth: { xs: "100%", sm: 520 } }}>
+                    <AppTextField id="company-address" fullWidth required {...getFieldProps("address")} error={touched.address && Boolean(errors.address)} />
+                  </Box>
                   :
-                  <Typography variant="body1">{companyInfo.address || formatMessage({ id: "NOT_AVAILABLE" })}</Typography>
+                  <Typography variant="body1" color={companyInfo.address ? "text.primary" : "text.secondary"}>{companyInfo.address || formatMessage({ id: "NOT_AVAILABLE" })}</Typography>
               }
             </Grid>
           </Grid>
-          <Divider sx={{ my: 1 }} />
-          <Grid container sx={{ gap: 3 }}>
+          <Divider sx={{ my: { xs: 2, sm: 2.5 } }} />
+          <Grid container spacing={{ xs: 2, md: 3 }}>
             <Grid
               size={{
                 xs: 12,
-                sm: 4,
-                md: 5
+                md: 4,
               }}>
               <Typography variant="h6">{formatMessage({ id: "COMPANY_DETAILS.LOGO" })}</Typography>
-              <Typography variant="body2" sx={{ fontSize: 12 }}>
+              <Typography variant="body2" color="text.secondary">
                 {formatMessage({ id: "COMPANY_DETAILS.LOGO_NOTE" })}
               </Typography>
             </Grid>
@@ -563,7 +647,7 @@ export const CompanyInfo = () => {
               className="company-logo-wrapper"
               size={{
                 xs: 12,
-                sm: 6
+                md: 8,
               }}>
               <Stack spacing={1}>
                 <Avatar
@@ -571,6 +655,7 @@ export const CompanyInfo = () => {
                   alt={formatMessage({ id: "COMPANY_DETAILS.LOGO" })}
                   src={userData.companyLogo ?? DEFAULT_COMPANY_LOGO}
                   sx={{
+                    maxWidth: "100%",
                     width: "250px",
                     height: "70px",
                     backgroundColor: 'background.sidebar',
@@ -612,8 +697,6 @@ export const CompanyInfo = () => {
 
             </Grid>
           </Grid>
-          <Divider sx={{ my: 1 }} />
-
         </form>
       </Card >
       {

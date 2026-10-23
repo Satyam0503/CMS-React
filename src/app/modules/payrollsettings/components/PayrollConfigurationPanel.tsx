@@ -1,20 +1,17 @@
-import {
-  AddRounded,
-  BadgeOutlined,
-  CheckCircleRounded,
-  CloudUploadRounded,
-  ExpandMoreRounded,
-  FolderOffOutlined,
-  GroupsOutlined,
-  HourglassEmptyRounded,
-  PaymentsOutlined,
-  ReceiptLongOutlined,
-  RefreshRounded,
-  RestartAltRounded,
-  SaveRounded,
-  SearchRounded,
-  TuneRounded,
-} from "@mui/icons-material";
+import AddRounded from "@mui/icons-material/AddRounded";
+import BadgeOutlined from "@mui/icons-material/BadgeOutlined";
+import CheckCircleRounded from "@mui/icons-material/CheckCircleRounded";
+import ExpandMoreRounded from "@mui/icons-material/ExpandMoreRounded";
+import FolderOffOutlined from "@mui/icons-material/FolderOffOutlined";
+import GroupsOutlined from "@mui/icons-material/GroupsOutlined";
+import HourglassEmptyRounded from "@mui/icons-material/HourglassEmptyRounded";
+import PaymentsOutlined from "@mui/icons-material/PaymentsOutlined";
+import ReceiptLongOutlined from "@mui/icons-material/ReceiptLongOutlined";
+import RefreshRounded from "@mui/icons-material/RefreshRounded";
+import RestartAltRounded from "@mui/icons-material/RestartAltRounded";
+import SaveRounded from "@mui/icons-material/SaveRounded";
+import SearchRounded from "@mui/icons-material/SearchRounded";
+import TuneRounded from "@mui/icons-material/TuneRounded";
 import {
   Alert,
   Accordion,
@@ -54,6 +51,7 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
+import { useIsDark } from "../../theme/useIsDark";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { deleteRequest, getRequest, postRequest } from "../../../../server/axios";
@@ -69,7 +67,6 @@ import {
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { toast } from "react-toastify";
 import { currencyFormatter } from "../../../../utils/common";
-import { EmployeeSalaryImportPanel } from "./EmployeeSalaryImportPanel";
 import { getAllEmployees } from "../../employees/employeeServices";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { PayrollPolicyFields } from "./PayrollPolicyFields";
@@ -185,10 +182,9 @@ const defaultPolicy = (): PayrollDivisorPolicyConfig => ({
 
 export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmployeeSalary = false, canApprovePolicy = false, canDeletePolicy = false }: { canEdit: boolean; canApprove: boolean; canApproveEmployeeSalary?: boolean; canApprovePolicy?: boolean; canDeletePolicy?: boolean }) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const isDark = useIsDark();
 
-  const [activeTab, setActiveTab] = useState<"policy" | "components" | "groups" | "templates" | "assignments" | "salary-import">("policy");
-  const [pendingSalaryApprovalCount, setPendingSalaryApprovalCount] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"policy" | "components" | "groups" | "templates" | "assignments">("policy");
 
   // Statutory Policy State
   const [policyConfig, setPolicyConfig] = useState<PayrollDivisorPolicyConfig>(defaultPolicy);
@@ -203,6 +199,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
   const [editingPolicy, setEditingPolicy] = useState<{ id: string; version: number; isActive: boolean } | null>(null);
   const [policyDraftSource, setPolicyDraftSource] = useState<string | null>(null);
   const [policyToDelete, setPolicyToDelete] = useState<StatutoryProfile | null>(null);
+  const [policyToRetire, setPolicyToRetire] = useState<StatutoryProfile | null>(null);
   const [showComponentHistory, setShowComponentHistory] = useState(false);
 
   const [policyName, setPolicyName] = useState("Standard statutory profile");
@@ -236,6 +233,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
   const [assignmentToReject, setAssignmentToReject] = useState<Assignment | null>(null);
   const [assignmentToCancel, setAssignmentToCancel] = useState<Assignment | null>(null);
   const [assignmentRejectionReason, setAssignmentRejectionReason] = useState("");
+  const [assignmentToEnd, setAssignmentToEnd] = useState<Assignment | null>(null);
+  const [assignmentEndToDate, setAssignmentEndToDate] = useState("");
+  const [assignmentToDelete, setAssignmentToDelete] = useState<Assignment | null>(null);
   const [employeeId, setEmployeeId] = useState("");
   const [assignmentGroupId, setAssignmentGroupId] = useState("");
   const [assignmentTemplateId, setAssignmentTemplateId] = useState("");
@@ -382,16 +382,17 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
   };
 
   const editOrRevisePolicy = (profile: StatutoryProfile) => {
-    const isDraft = profile.approvalStatus === "DRAFT";
-    setEditingPolicy(isDraft && profile.id ? { id: profile.id, version: profile.version, isActive: profile.isActive } : null);
+    const isDraftOrSubmitted = profile.approvalStatus === "DRAFT" || profile.approvalStatus === "SUBMITTED";
+    setEditingPolicy(isDraftOrSubmitted && profile.id ? { id: profile.id, version: profile.version, isActive: profile.isActive } : null);
     setPolicyDraftSource(profile.name);
-    setPolicyName(isDraft ? profile.name : `${profile.name} (revision)`);
+    const cleanBaseName = profile.name.replace(/\s*\((?:revision|revised)(?:\s+\d+)?\)/gi, "").trim() || profile.name;
+    setPolicyName(isDraftOrSubmitted ? profile.name : `${cleanBaseName} (revision)`);
     setPolicyScope(profile.scope ?? "COMPANY_DEFAULT");
-    setPolicyEffectiveFrom(isDraft
+    setPolicyEffectiveFrom(isDraftOrSubmitted
       ? dayjs(profile.effectiveFrom).format("YYYY-MM")
       : [dayjs(), dayjs(profile.effectiveFrom), ...(profile.effectiveTo ? [dayjs(profile.effectiveTo)] : [])]
         .sort((left, right) => right.valueOf() - left.valueOf())[0].startOf("month").add(1, "month").format("YYYY-MM"));
-    setPolicyEffectiveTo(isDraft && profile.effectiveTo ? dayjs(profile.effectiveTo).format("YYYY-MM") : "");
+    setPolicyEffectiveTo(isDraftOrSubmitted && profile.effectiveTo ? dayjs(profile.effectiveTo).format("YYYY-MM") : "");
     setStatutoryJurisdiction(profile.statutoryJurisdiction ?? "");
     setFinancialYear(profile.financialYear ?? "");
     setStatutoryRuleVersion(profile.statutoryRuleVersion ?? "");
@@ -414,20 +415,77 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
     if (typeof draftForm?.scrollIntoView === "function") draftForm.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const deletePolicyDraft = async (profile: StatutoryProfile) => {
-    if (!profile.id || profile.approvalStatus !== "DRAFT" || !canDeletePolicy) return;
+  const cancelPolicySubmission = async (profile: StatutoryProfile) => {
+    if (!profile.id || profile.approvalStatus !== "SUBMITTED" || !canEdit) return;
     setBusy(true);
     try {
-      const { data } = await deleteRequest<{ success: boolean; message?: string }>(
-        `api/payroll/configuration/policies/${encodeURIComponent(profile.id)}?version=${profile.version}`,
+      const { data } = await postRequest<unknown, { success: boolean; message?: string }>(
+        `api/payroll/configuration/policies/cancel?policyId=${encodeURIComponent(profile.id)}&version=${profile.version}`,
+        {},
       );
-      if (!data.success) throw new Error(data.message || "Unable to delete payroll policy draft.");
-      if (editingPolicy?.id === profile.id) setEditingPolicy(null);
-      toast.success("Payroll policy draft deleted.");
+      if (!data.success) {
+        toast.error(data.message || "Unable to withdraw policy submission.");
+        return;
+      }
+      toast.success("Policy submission withdrawn to draft.");
+      await loadAll();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to withdraw policy submission.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const retirePolicy = async (profile: StatutoryProfile) => {
+    if (!profile.id || !profile.isActive || !canEdit) return;
+    setBusy(true);
+    try {
+      const { data } = await postRequest<unknown, { success: boolean; message?: string }>(
+        `api/payroll/configuration/policies/retire?policyId=${encodeURIComponent(profile.id)}&version=${profile.version}`,
+        {},
+      );
+      if (!data.success) {
+        toast.error(data.message || "Unable to deactivate payroll policy.");
+        return;
+      }
+      toast.success("Payroll policy deactivated.");
+      setPolicyToRetire(null);
+      await loadAll();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to deactivate payroll policy.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const deletePolicyDraft = async (profile: StatutoryProfile) => {
+    if (!profile.id || !canDeletePolicy) return;
+    setBusy(true);
+    try {
+      if (profile.approvalStatus === "APPROVED") {
+        if (!profile.isActive) {
+          toast.info("This approved policy is already archived for tax audit compliance.");
+          setPolicyToDelete(null);
+          return;
+        }
+        const { data } = await postRequest<unknown, { success: boolean; message?: string }>(
+          `api/payroll/configuration/policies/retire?policyId=${encodeURIComponent(profile.id)}&version=${profile.version}`,
+          {},
+        );
+        if (!data.success) throw new Error(data.message || "Unable to retire payroll policy.");
+        toast.success(data.message || "Approved payroll policy safely retired/deactivated.");
+      } else {
+        const { data } = await deleteRequest<{ success: boolean; message?: string }>(
+          `api/payroll/configuration/policies/${encodeURIComponent(profile.id)}?version=${profile.version}`,
+        );
+        if (!data.success) throw new Error(data.message || "Unable to delete payroll policy.");
+        if (editingPolicy?.id === profile.id) setEditingPolicy(null);
+        toast.success(data.message || "Payroll policy removed.");
+      }
       setPolicyToDelete(null);
       await loadAll();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete payroll policy draft.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete payroll policy.");
     } finally {
       setBusy(false);
     }
@@ -773,6 +831,46 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
     finally { setBusy(false); }
   };
 
+  const endAssignment = async (assignment: Assignment, effectiveTo: string) => {
+    if (!effectiveTo) return;
+    setBusy(true);
+    try {
+      const { data } = await postRequest<unknown, { success: boolean; message?: string }>(
+        "api/payroll/configuration/assignments/end",
+        {
+          employeeId: assignment.employeeId,
+          effectiveFrom: assignment.effectiveFrom,
+          effectiveTo,
+        }
+      );
+      if (!data.success) throw new Error(data.message || "Unable to end assignment.");
+      setAssignmentToEnd(null);
+      await loadAll();
+      toast.success(`Assignment for ${assignment.employeeId} ended on ${dayjs(effectiveTo).format("DD MMM YYYY")}.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to end assignment.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const deleteAssignment = async (assignment: Assignment) => {
+    setBusy(true);
+    try {
+      const { data } = await deleteRequest<{ success: boolean; message?: string }>(
+        `api/payroll/configuration/assignments?employeeId=${encodeURIComponent(assignment.employeeId)}&effectiveFrom=${encodeURIComponent(assignment.effectiveFrom)}`
+      );
+      if (!data.success) throw new Error(data.message || "Unable to delete assignment.");
+      setAssignmentToDelete(null);
+      await loadAll();
+      toast.success(`Assignment for ${assignment.employeeId} deleted.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to delete assignment.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const approveBulkAssignments = async () => {
     if (selectedAssignments.length === 0) return;
     setBusy(true);
@@ -968,7 +1066,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
             />
           </Stack>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.825rem", mt: 0.35 }}>
-            Configure organization calculation policies, statutory compliance (EPF, ESIC, TDS), pay groups, and salary structures.
+            Configure statutory compliance (EPF, ESIC, TDS), calculation policies, pay groups, and salary templates. Employee salaries are managed under <strong>Payroll Settings</strong>.
           </Typography>
         </Box>
 
@@ -1048,21 +1146,6 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
           }}
         >
           <Tab
-            value="salary-import"
-            icon={<CloudUploadRounded sx={{ fontSize: 17 }} />}
-            iconPosition="start"
-            label={(
-              <Stack direction="row" spacing={0.85} alignItems="center" sx={{ whiteSpace: "nowrap" }}>
-                <span>Salary Import &amp; Review</span>
-                {pendingSalaryApprovalCount !== null && pendingSalaryApprovalCount > 0 && (
-                  <Box component="span" sx={{ px: 0.75, py: 0.1, borderRadius: "999px", bgcolor: "warning.main", color: "warning.contrastText", fontSize: "0.68rem", lineHeight: 1.5, fontWeight: 750 }}>
-                    {pendingSalaryApprovalCount} pending
-                  </Box>
-                )}
-              </Stack>
-            )}
-          />
-          <Tab
             value="policy"
             icon={<TuneRounded sx={{ fontSize: 17 }} />}
             iconPosition="start"
@@ -1132,40 +1215,174 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
       {/* ========================================================================= */}
       {/* TAB 1: STATUTORY & CALCULATION POLICY ENGINE                              */}
       {/* ========================================================================= */}
-      {activeTab === "salary-import" && (
-        <EmployeeSalaryImportPanel canEdit={canEdit} canApprove={canApproveEmployeeSalary} onPendingCountChange={setPendingSalaryApprovalCount} />
-      )}
-
       {activeTab === "policy" && (
         <Stack spacing={3}>
-          <AppAlert
-            severity="info"
+          {/* 1. Sleek Active Policy Status Hero Banner */}
+          <Box
             sx={{
-              borderRadius: "12px",
+              p: { xs: 1.75, sm: 2.25 },
+              borderRadius: "14px",
               border: "1px solid",
-              borderColor: isDark ? "rgba(11, 92, 171, 0.3)" : "rgba(11, 92, 171, 0.2)",
-              bgcolor: isDark ? "rgba(11, 92, 171, 0.12)" : "rgba(11, 92, 171, 0.04)",
-              fontSize: "0.825rem",
-              lineHeight: 1.55,
+              borderColor: activeApprovedProfile
+                ? isDark
+                  ? "rgba(16, 185, 129, 0.3)"
+                  : "rgba(16, 185, 129, 0.25)"
+                : isDark
+                ? "rgba(245, 158, 11, 0.3)"
+                : "rgba(245, 158, 11, 0.25)",
+              bgcolor: activeApprovedProfile
+                ? isDark
+                  ? "rgba(16, 185, 129, 0.05)"
+                  : "rgba(16, 185, 129, 0.02)"
+                : isDark
+                ? "rgba(245, 158, 11, 0.05)"
+                : "rgba(245, 158, 11, 0.02)",
+              boxShadow: isDark
+                ? "0 4px 18px rgba(0, 0, 0, 0.25)"
+                : "0 2px 8px rgba(15, 23, 42, 0.03)",
             }}
           >
-            Configure this company’s calculation rules and select its payroll features. PF, ESIC, and TDS changes are activated through a dated statutory profile after authorized approval, so unreviewed rates or regimes cannot reach payroll. Bonus and other earnings or deductions are managed in Salary Components.
-          </AppAlert>
-          {activeApprovedProfile && !policyDraftSource && (
-            <AppAlert
-              severity="success"
-              sx={{
-                borderRadius: "12px",
-                border: "1px solid",
-                borderColor: isDark ? "rgba(16, 185, 129, 0.3)" : "rgba(16, 185, 129, 0.25)",
-                bgcolor: isDark ? "rgba(16, 185, 129, 0.12)" : "rgba(16, 185, 129, 0.04)",
-                fontSize: "0.825rem",
-                lineHeight: 1.55,
-              }}
+            <Stack
+              direction={{ xs: "column", lg: "row" }}
+              spacing={2}
+              justifyContent="space-between"
+              alignItems={{ xs: "flex-start", lg: "center" }}
             >
-              For this payroll month, the approved company default is <strong>{activeApprovedProfile.name}</strong>, effective {dayjs(activeApprovedProfile.effectiveFrom).format("MMM YYYY")}{activeApprovedProfile.effectiveTo ? `–${dayjs(activeApprovedProfile.effectiveTo).format("MMM YYYY")}` : " onward"}. The checkboxes below show these approved rules; edits must be saved as a new monthly draft and approved before payroll uses them.
-            </AppAlert>
-          )}
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" sx={{ mb: 0.75 }}>
+                  <Chip
+                    size="small"
+                    label={activeApprovedProfile ? "🟢 Active Company Default" : "⚠️ No Active Default"}
+                    color={activeApprovedProfile ? "success" : "warning"}
+                    sx={{
+                      height: 22,
+                      fontWeight: 750,
+                      fontSize: "0.72rem",
+                      borderRadius: "6px",
+                    }}
+                  />
+                  {activeApprovedProfile && (
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={`v${activeApprovedProfile.version || 1}`}
+                      sx={{
+                        height: 22,
+                        fontWeight: 700,
+                        fontSize: "0.7rem",
+                        borderRadius: "6px",
+                        borderColor: isDark ? "rgba(255, 255, 255, 0.16)" : "#CBD5E1",
+                      }}
+                    />
+                  )}
+                  {activeApprovedProfile && (
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={activeApprovedProfile.scope === "ASSIGNMENT_ONLY" ? "Linked only" : "Company default"}
+                      sx={{
+                        height: 22,
+                        fontWeight: 650,
+                        fontSize: "0.7rem",
+                        borderRadius: "6px",
+                        borderColor: isDark ? "rgba(255, 255, 255, 0.16)" : "#CBD5E1",
+                      }}
+                    />
+                  )}
+                </Stack>
+
+                {activeApprovedProfile ? (
+                  <Box>
+                    <Stack direction="row" spacing={1} alignItems="baseline" flexWrap="wrap">
+                      <Typography
+                        variant="h6"
+                        fontWeight={750}
+                        sx={{
+                          fontSize: { xs: "1.05rem", sm: "1.15rem" },
+                          letterSpacing: "-0.015em",
+                          color: "text.primary",
+                        }}
+                      >
+                        {activeApprovedProfile.name.replace(/\s*\((?:revision|revised)(?:\s+\d+)?\)/gi, "").trim() || activeApprovedProfile.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.8rem", fontWeight: 500 }}>
+                        Effective: {dayjs(activeApprovedProfile.effectiveFrom).format("MMM YYYY")}{activeApprovedProfile.effectiveTo ? ` – ${dayjs(activeApprovedProfile.effectiveTo).format("MMM YYYY")}` : " onward"}
+                      </Typography>
+                    </Stack>
+
+                    {/* Key Policy Highlights Badges */}
+                    <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" alignItems="center" sx={{ mt: 1 }}>
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`⚙️ ${activeApprovedProfile.divisorPolicy === "CALENDAR_DAYS" ? "Calendar Days" : activeApprovedProfile.divisorPolicy === "FIXED_30_DAYS" ? "Fixed 30 Days" : "Working Days"}`}
+                        sx={{ height: 22, fontSize: "0.7rem", fontWeight: 650, borderRadius: "5px" }}
+                      />
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`🛡️ ${activeApprovedProfile.epfMode !== "EXEMPT" ? `EPF Capped (₹${activeApprovedProfile.epfWageCeiling?.toLocaleString() || "15,000"})` : "EPF Exempt"}`}
+                        sx={{ height: 22, fontSize: "0.7rem", fontWeight: 650, borderRadius: "5px" }}
+                      />
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`🏥 ${activeApprovedProfile.esicMode !== "EXEMPT" ? `ESIC Statutory (₹${activeApprovedProfile.esicWageCeiling?.toLocaleString() || "21,000"})` : "ESIC Exempt"}`}
+                        sx={{ height: 22, fontSize: "0.7rem", fontWeight: 650, borderRadius: "5px" }}
+                      />
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`💼 ${activeApprovedProfile.tdsMode !== "MANUAL_ONLY" ? "TDS Auto New Regime" : "TDS Manual"}`}
+                        sx={{ height: 22, fontSize: "0.7rem", fontWeight: 650, borderRadius: "5px" }}
+                      />
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={`🔒 ${activeApprovedProfile.requireAttendanceLock ? "Attendance Lock Active" : "No Attendance Lock"}`}
+                        sx={{ height: 22, fontSize: "0.7rem", fontWeight: 650, borderRadius: "5px" }}
+                      />
+                    </Stack>
+                  </Box>
+                ) : (
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight={700} sx={{ color: "text.primary" }}>
+                      No active statutory policy profile
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.78rem" }}>
+                      Create and approve an effective-dated statutory profile to establish the calculation rules for payroll.
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Action Buttons Top Right */}
+              <Stack direction="row" spacing={1} flexShrink={0} sx={{ width: { xs: "100%", lg: "auto" }, justifyContent: { xs: "flex-start", lg: "flex-end" } }}>
+                {canEdit && (
+                  <AppButton
+                    size="small"
+                    variant="contained"
+                    startIcon={<AddRounded />}
+                    onClick={startNewPolicyDraft}
+                    sx={{ borderRadius: "8px", fontWeight: 700, textTransform: "none", height: 34, px: 2, fontSize: "0.78rem" }}
+                  >
+                    Create policy version
+                  </AppButton>
+                )}
+                <AppButton
+                  size="small"
+                  variant="outlined"
+                  onClick={() => void loadAll()}
+                  disabled={loading}
+                  sx={{ borderRadius: "8px", fontWeight: 650, textTransform: "none", height: 34, px: 1.75, fontSize: "0.78rem" }}
+                >
+                  Refresh profiles
+                </AppButton>
+              </Stack>
+            </Stack>
+          </Box>
+
+          {/* Active Draft Banner */}
           {policyDraftSource && (
             <AppAlert
               severity="info"
@@ -1182,120 +1399,84 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
             </AppAlert>
           )}
 
-          <PayrollPolicyFields
-            config={policyConfig}
-            canEdit={canEdit}
-            onChange={setPolicyConfig}
-            onSaveLopBase={() => void handleSavePolicy()}
-            savingLopBase={isSavingPolicy}
-            onOpenComponents={() => setActiveTab("components")}
-            onOpenGroups={() => setActiveTab("groups")}
-            onOpenTemplates={() => setActiveTab("templates")}
-            componentFeatures={currentComponentFeatures}
-            componentsBusy={busy}
-            onToggleComponent={(feature, checked) => {
-              const component = currentComponentFeatures.find((candidate) => candidate.id === feature.id);
-              if (component) void toggleComponent(component, checked);
-            }}
-          />
-
-          <Divider sx={{ my: 2.5 }} />
-          <Stack spacing={2}>
-            <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1.5}>
-              <Box>
-                <Typography variant="subtitle1" fontWeight={750} sx={{ letterSpacing: "-0.01em" }}>Effective-dated statutory profiles</Typography>
-                <Typography variant="body2" color="text.secondary">Company defaults apply when no group or employee-specific profile is selected. Assignment-only profiles apply only when linked. Approved versions and payroll snapshots remain available for audit.</Typography>
-              </Box>
-              <Stack direction="row" spacing={1.25} flexShrink={0}>
-                {canEdit && (
-                  <AppButton size="small" variant="contained" startIcon={<AddRounded />} onClick={startNewPolicyDraft} sx={{ borderRadius: "8px", fontWeight: 700, textTransform: "none" }}>
-                    Create policy version
-                  </AppButton>
-                )}
-                <AppButton size="small" variant="outlined" onClick={() => void loadAll()} disabled={loading} sx={{ borderRadius: "8px", fontWeight: 650, textTransform: "none" }}>
-                  Refresh profiles
-                </AppButton>
-              </Stack>
-            </Stack>
-
-            {/* Stepper Guide */}
-            <Box
-              sx={{
-                p: { xs: 2, sm: 2.25 },
-                border: "1px solid",
-                borderColor: isDark ? "rgba(148, 163, 184, 0.16)" : "rgba(226, 232, 240, 0.9)",
-                borderRadius: "14px",
-                bgcolor: isDark ? "rgba(30, 41, 59, 0.35)" : alpha(theme.palette.primary.main, 0.02),
-              }}
-            >
-              <Typography variant="subtitle2" fontWeight={750} sx={{ mb: 1.5, fontSize: "0.875rem", color: "text.primary" }}>
-                How this policy reaches payroll
+          {/* 2. Effective-dated Statutory Profiles & Version History */}
+          <Stack spacing={1.5}>
+            <Box>
+              <Typography variant="subtitle1" fontWeight={750} sx={{ letterSpacing: "-0.01em", fontSize: "1.05rem" }}>
+                Effective-dated statutory profiles
               </Typography>
-              <Grid container spacing={1.5}>
-                {[
-                  ["1", "Choose company rules", "Enable only the statutory and attendance features your company uses."],
-                  ["2", "Set the effective months", "From starts the first covered payroll month; optional To is the last covered month."],
-                  ["3", "Submit and approve", "A dated draft is not active until an authorized approver signs it off."],
-                  ["4", "Assign and calculate", "Groups or employees can override the company default; each run freezes its chosen version."],
-                ].map(([number, title, detail]) => (
-                  <Grid key={number} size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <Stack
-                      direction="row"
-                      spacing={1.25}
-                      alignItems="flex-start"
-                      sx={{
-                        height: "100%",
-                        p: 1.5,
-                        border: "1px solid",
-                        borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(226, 232, 240, 0.8)",
-                        borderRadius: "10px",
-                        bgcolor: "background.paper",
-                        boxShadow: isDark ? "0 1px 4px rgba(0,0,0,0.2)" : "0 1px 3px rgba(0,0,0,0.02)",
-                        transition: "transform 0.18s ease, box-shadow 0.18s ease",
-                        "&:hover": {
-                          transform: "translateY(-1px)",
-                          boxShadow: isDark ? "0 4px 12px rgba(0,0,0,0.3)" : "0 4px 10px rgba(15,23,42,0.05)",
-                        },
-                      }}
-                    >
-                      <Chip size="small" color="primary" label={number} sx={{ minWidth: 26, height: 26, fontWeight: 800, borderRadius: "50%" }} />
-                      <Box minWidth={0}>
-                        <Typography variant="caption" fontWeight={750} display="block" sx={{ fontSize: "0.78rem" }}>{title}</Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.25, fontSize: "0.74rem", lineHeight: 1.35 }}>{detail}</Typography>
-                      </Box>
-                    </Stack>
-                  </Grid>
-                ))}
-              </Grid>
             </Box>
 
-            <PayrollPolicyProfileList profiles={statutoryProfiles} canEdit={canEdit} canDelete={canDeletePolicy}
-              canApprove={canApprovePolicy} busy={busy || isSavingProfile}
-              onEdit={editOrRevisePolicy} onDelete={setPolicyToDelete}
+            <PayrollPolicyProfileList
+              profiles={statutoryProfiles}
+              canEdit={canEdit}
+              canDelete={canDeletePolicy}
+              canApprove={canApprovePolicy}
+              busy={busy || isSavingProfile}
+              onEdit={editOrRevisePolicy}
+              onDelete={setPolicyToDelete}
               onSubmit={(profile) => void updatePolicyApproval(profile, "submit")}
-              onApprove={(profile) => void updatePolicyApproval(profile, "approve")} />
+              onApprove={(profile) => void updatePolicyApproval(profile, "approve")}
+              onCancelSubmission={(profile) => void cancelPolicySubmission(profile)}
+              onRetire={setPolicyToRetire}
+            />
 
+            {/* Profile Draft / Editor Accordion */}
             {canEdit && (
               <Accordion
                 id="payroll-policy-draft"
                 expanded={policyDraftExpanded}
                 onChange={(_, expanded) => setPolicyDraftExpanded(expanded)}
                 disableGutters
-                sx={{ ...sectionPanelSx, p: 0, overflow: "hidden", scrollMarginTop: 100, "&:before": { display: "none" } }}
+                sx={{
+                  ...sectionPanelSx,
+                  p: 0,
+                  overflow: "hidden",
+                  scrollMarginTop: 100,
+                  border: "1.5px solid",
+                  borderColor: isDark ? "rgba(37, 99, 235, 0.35)" : "rgba(37, 99, 235, 0.25)",
+                  boxShadow: isDark ? "0 4px 16px rgba(0,0,0,0.3)" : "0 2px 12px rgba(37, 99, 235, 0.05)",
+                  "&:before": { display: "none" },
+                }}
               >
-                <AccordionSummary expandIcon={<ExpandMoreRounded />} aria-controls="payroll-policy-draft-content" id="payroll-policy-draft-heading" sx={{ px: 2, minHeight: 64, "& .MuiAccordionSummary-content": { my: 1.25 } }}>
-                  <Stack direction="row" spacing={1.25} alignItems="center" minWidth={0}>
-                    <Box sx={{ width: 34, height: 34, display: "grid", placeItems: "center", borderRadius: 1.5, color: "primary.main", bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1), flexShrink: 0 }}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreRounded />}
+                  aria-controls="payroll-policy-draft-content"
+                  id="payroll-policy-draft-heading"
+                  sx={{
+                    px: { xs: 2, sm: 2.5 },
+                    minHeight: 64,
+                    bgcolor: isDark ? "rgba(37, 99, 235, 0.06)" : "rgba(37, 99, 235, 0.03)",
+                    "& .MuiAccordionSummary-content": { my: 1.25 },
+                  }}
+                >
+                  <Stack direction="row" spacing={1.5} alignItems="center" minWidth={0}>
+                    <Box
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        display: "grid",
+                        placeItems: "center",
+                        borderRadius: "10px",
+                        color: "primary.main",
+                        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                        flexShrink: 0,
+                      }}
+                    >
                       <SaveRounded fontSize="small" />
                     </Box>
                     <Box minWidth={0}>
-                      <Typography variant="subtitle2" fontWeight={750}>{editingPolicy ? "Update payroll policy draft" : "Create a dated policy version"}</Typography>
-                      <Typography variant="caption" color="text.secondary">Choose when these rules apply. A draft cannot affect payroll until approved.</Typography>
+                      <Typography variant="subtitle2" fontWeight={750} sx={{ fontSize: "0.925rem" }}>
+                        {editingPolicy ? "Update payroll policy draft" : "Create a dated policy version"}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Choose when these rules apply. A draft cannot affect payroll until approved.
+                      </Typography>
                     </Box>
                   </Stack>
                 </AccordionSummary>
                 <AccordionDetails id="payroll-policy-draft-content" sx={{ px: { xs: 2, sm: 2.5 }, pb: 2.5 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, fontSize: "0.825rem" }}>
                     Earlier approved versions remain in history. Use the optional end month only when you know when these rules stop applying.
                   </Typography>
                   <Grid container spacing={2} alignItems="flex-start">
@@ -1408,6 +1589,80 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
               </Accordion>
             )}
           </Stack>
+
+          <Divider sx={{ my: 1 }} />
+
+          {/* 3. Feature Selection & Configuration */}
+          <Box>
+            <PayrollPolicyFields
+              config={policyConfig}
+              canEdit={canEdit}
+              onChange={setPolicyConfig}
+              onSaveLopBase={() => void handleSavePolicy()}
+              savingLopBase={isSavingPolicy}
+              onOpenComponents={() => setActiveTab("components")}
+              onOpenGroups={() => setActiveTab("groups")}
+              onOpenTemplates={() => setActiveTab("templates")}
+              componentFeatures={currentComponentFeatures}
+              componentsBusy={busy}
+              onToggleComponent={(feature, checked) => {
+                const component = currentComponentFeatures.find((candidate) => candidate.id === feature.id);
+                if (component) void toggleComponent(component, checked);
+              }}
+            />
+          </Box>
+
+          {/* 4. Stepper Guide: How this policy reaches payroll */}
+          <Box
+            sx={{
+              p: { xs: 2, sm: 2.25 },
+              border: "1px solid",
+              borderColor: isDark ? "rgba(148, 163, 184, 0.16)" : "rgba(226, 232, 240, 0.9)",
+              borderRadius: "14px",
+              bgcolor: isDark ? "rgba(30, 41, 59, 0.35)" : alpha(theme.palette.primary.main, 0.02),
+            }}
+          >
+            <Typography variant="subtitle2" fontWeight={750} sx={{ mb: 1.5, fontSize: "0.875rem", color: "text.primary" }}>
+              How this policy reaches payroll
+            </Typography>
+            <Grid container spacing={1.5}>
+              {[
+                ["1", "Choose company rules", "Enable only the statutory and attendance features your company uses."],
+                ["2", "Set the effective months", "From starts the first covered payroll month; optional To is the last covered month."],
+                ["3", "Submit and approve", "A dated draft is not active until an authorized approver signs it off."],
+                ["4", "Assign and calculate", "Groups or employees can override the company default; each run freezes its chosen version."],
+              ].map(([number, title, detail]) => (
+                <Grid key={number} size={{ xs: 12, sm: 12, md: 6, lg: 3 }}>
+                  <Stack
+                    direction="row"
+                    spacing={1.25}
+                    alignItems="flex-start"
+                    sx={{
+                      height: "100%",
+                      p: 1.5,
+                      border: "1px solid",
+                      borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(226, 232, 240, 0.8)",
+                      borderRadius: "10px",
+                      bgcolor: "background.paper",
+                      boxShadow: isDark ? "0 1px 4px rgba(0,0,0,0.2)" : "0 1px 3px rgba(0,0,0,0.02)",
+                      transition: "transform 0.18s ease, box-shadow 0.18s ease",
+                      "&:hover": {
+                        transform: "translateY(-1px)",
+                        boxShadow: isDark ? "0 4px 12px rgba(0,0,0,0.3)" : "0 4px 10px rgba(15,23,42,0.05)",
+                      },
+                    }}
+                  >
+                    <Chip size="small" color="primary" label={number} sx={{ minWidth: 26, height: 26, fontWeight: 800, borderRadius: "50%" }} />
+                    <Box minWidth={0}>
+                      <Typography variant="caption" fontWeight={750} display="block" sx={{ fontSize: "0.78rem" }}>{title}</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.25, fontSize: "0.74rem", lineHeight: 1.35 }}>{detail}</Typography>
+                    </Box>
+                  </Stack>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+
           {/* Action Footer Bar */}
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -1676,14 +1931,14 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                     borderTop: "1px dashed",
                     borderColor: "divider",
                     display: "flex",
-                    flexDirection: { xs: "column", md: "row" },
+                    flexDirection: { xs: "column", lg: "row" },
                     justifyContent: "space-between",
-                    alignItems: { xs: "flex-start", md: "center" },
-                    gap: 2,
+                    alignItems: { xs: "flex-start", lg: "center" },
+                    gap: 1.5,
                   }}
                 >
-                  <Typography variant="caption" color="text.secondary" sx={{ flex: 1, maxWidth: 700, lineHeight: 1.5 }}>
-                    Saving an edit creates a new immutable version from its effective date; previous definitions and approved payroll snapshots remain unchanged. The newest version effective on a salary date controls whether the component is available.
+                  <Typography variant="caption" color="text.secondary" sx={{ flex: 1, maxWidth: 700, lineHeight: 1.45, fontSize: "0.76rem" }}>
+                    Saving an edit creates a new effective-dated version; past definitions and approved payroll runs remain unchanged.
                   </Typography>
                   <Stack direction="row" spacing={1.5} sx={{ alignSelf: { xs: "stretch", sm: "auto" } }}>
                     {componentId && (
@@ -2270,7 +2525,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Effective from</TableCell>
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Effective to</TableCell>
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Approval Status</TableCell>
-                    {canApprove && (
+                    {(canApprove || canEdit) && (
                       <TableCell align="right" sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>
                         Action
                       </TableCell>
@@ -2352,26 +2607,72 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                             />
                           )}
                         </TableCell>
-                        {canApprove && (
+                        {(canApprove || canEdit) && (
                           <TableCell align="right">
-                            {!a.isApproved && !a.isRejected && !a.isCancelled && (
-                              <AppButton
-                                size="small"
-                                variant="outlined"
-                                color="success"
-                                disabled={busy}
-                                onClick={() => void approveSingleAssignment(a)}
-                                sx={{ height: 26, fontSize: "0.75rem", fontWeight: 650, borderRadius: "6px" }}
-                              >
-                                Approve
-                              </AppButton>
-                            )}
-                            {canApprove && !a.isApproved && !a.isRejected && !a.isCancelled && (
-                              <Stack direction="row" spacing={0.5} justifyContent="flex-end" sx={{ mt: 0.5 }}>
-                                {canApprove && <AppButton size="small" color="error" variant="text" disabled={busy} onClick={() => { setAssignmentRejectionReason(""); setAssignmentToReject(a); }}>Reject</AppButton>}
-                                <AppButton size="small" variant="text" disabled={busy} onClick={() => setAssignmentToCancel(a)}>Withdraw</AppButton>
-                              </Stack>
-                            )}
+                            <Stack direction="row" spacing={0.75} justifyContent="flex-end" alignItems="center">
+                              {!a.isApproved && !a.isRejected && !a.isCancelled && canApprove && (
+                                <AppButton
+                                  size="small"
+                                  variant="outlined"
+                                  color="success"
+                                  disabled={busy}
+                                  onClick={() => void approveSingleAssignment(a)}
+                                  sx={{ height: 26, fontSize: "0.75rem", fontWeight: 650, borderRadius: "6px" }}
+                                >
+                                  Approve
+                                </AppButton>
+                              )}
+                              {!a.isApproved && !a.isRejected && !a.isCancelled && canApprove && (
+                                <AppButton
+                                  size="small"
+                                  color="error"
+                                  variant="text"
+                                  disabled={busy}
+                                  onClick={() => { setAssignmentRejectionReason(""); setAssignmentToReject(a); }}
+                                  sx={{ height: 26, fontSize: "0.75rem", fontWeight: 650, borderRadius: "6px" }}
+                                >
+                                  Reject
+                                </AppButton>
+                              )}
+                              {!a.isApproved && !a.isRejected && !a.isCancelled && (
+                                <AppButton
+                                  size="small"
+                                  variant="text"
+                                  disabled={busy}
+                                  onClick={() => setAssignmentToCancel(a)}
+                                  sx={{ height: 26, fontSize: "0.75rem", fontWeight: 650, borderRadius: "6px" }}
+                                >
+                                  Withdraw
+                                </AppButton>
+                              )}
+                              {a.isApproved && canEdit && (
+                                <AppButton
+                                  size="small"
+                                  variant="outlined"
+                                  color="primary"
+                                  disabled={busy}
+                                  onClick={() => {
+                                    setAssignmentToEnd(a);
+                                    setAssignmentEndToDate(dayjs().endOf("month").format("YYYY-MM-DD"));
+                                  }}
+                                  sx={{ height: 26, fontSize: "0.75rem", fontWeight: 650, borderRadius: "6px" }}
+                                >
+                                  End
+                                </AppButton>
+                              )}
+                              {canEdit && (
+                                <AppButton
+                                  size="small"
+                                  variant="text"
+                                  color="error"
+                                  disabled={busy}
+                                  onClick={() => setAssignmentToDelete(a)}
+                                  sx={{ height: 26, fontSize: "0.75rem", fontWeight: 650, borderRadius: "6px" }}
+                                >
+                                  Delete
+                                </AppButton>
+                              )}
+                            </Stack>
                           </TableCell>
                         )}
                       </TableRow>
@@ -2401,10 +2702,79 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
         content={`Withdraw the pending payroll assignment for ${assignmentToCancel.employeeId}? It will be retained in history and will not affect payroll.`}
         handleClose={() => { if (!busy) setAssignmentToCancel(null); }} confirming={busy}
         handleConfirmation={() => void cancelAssignment(assignmentToCancel)} />}
-      {policyToDelete && <ConfirmationModal open title="Delete payroll policy draft"
-        content={`Delete draft "${policyToDelete.name}"? This cannot be undone.`}
-        handleClose={() => { if (!busy) setPolicyToDelete(null); }} confirming={busy}
-        handleConfirmation={() => void deletePolicyDraft(policyToDelete)} />}
+      {assignmentToEnd && (
+        <Dialog open fullWidth maxWidth="xs" onClose={() => { if (!busy) setAssignmentToEnd(null); }}>
+          <DialogTitle>End employee payroll assignment</DialogTitle>
+          <DialogContent>
+            <Alert severity="info" sx={{ mb: 2 }}>
+              Set the concluding date for <strong>{assignmentToEnd.employeeId}</strong>. Once ended, a new payroll assignment can begin after this date without conflict.
+            </Alert>
+            <PayrollDateField
+              label="Assignment effective to"
+              value={assignmentEndToDate}
+              onChange={setAssignmentEndToDate}
+              minDate={dayjs(assignmentToEnd.effectiveFrom).format("YYYY-MM-DD")}
+              required
+            />
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 2 }}>
+            <AppButton variant="outlined" disabled={busy} onClick={() => setAssignmentToEnd(null)}>Cancel</AppButton>
+            <AppButton
+              color="primary"
+              variant="contained"
+              disabled={busy || !assignmentEndToDate || assignmentEndToDate < dayjs(assignmentToEnd.effectiveFrom).format("YYYY-MM-DD")}
+              onClick={() => void endAssignment(assignmentToEnd, assignmentEndToDate)}
+            >
+              End assignment
+            </AppButton>
+          </DialogActions>
+        </Dialog>
+      )}
+      {assignmentToDelete && (
+        <ConfirmationModal
+          open
+          title="Delete payroll assignment?"
+          content={`Permanently delete the assignment for employee ${assignmentToDelete.employeeId} (effective ${dayjs(assignmentToDelete.effectiveFrom).format("DD MMM YYYY")})?`}
+          ok_btn
+          confirming={busy}
+          handleClose={() => { if (!busy) setAssignmentToDelete(null); }}
+          handleConfirmation={(result) => { if (result === "ok") void deleteAssignment(assignmentToDelete); }}
+        />
+      )}
+      {policyToDelete && (
+        <ConfirmationModal
+          open
+          title={
+            policyToDelete.approvalStatus === "DRAFT"
+              ? "Delete payroll policy draft"
+              : policyToDelete.approvalStatus === "SUBMITTED"
+              ? "Delete submitted policy"
+              : "Delete or retire policy"
+          }
+          content={
+            policyToDelete.approvalStatus === "APPROVED"
+              ? `Delete or retire policy "${policyToDelete.name}"? If active employee assignments or past processed payroll reference this policy, it will be safely deactivated/retired to preserve audit compliance.`
+              : `Delete "${policyToDelete.name}"? This cannot be undone.`
+          }
+          handleClose={() => {
+            if (!busy) setPolicyToDelete(null);
+          }}
+          confirming={busy}
+          handleConfirmation={() => void deletePolicyDraft(policyToDelete)}
+        />
+      )}
+      {policyToRetire && (
+        <ConfirmationModal
+          open
+          title="Deactivate payroll policy"
+          content={`Deactivate approved policy "${policyToRetire.name}"? It will no longer apply to future payroll runs, but past processed payroll and audit logs will be safely preserved.`}
+          handleClose={() => {
+            if (!busy) setPolicyToRetire(null);
+          }}
+          confirming={busy}
+          handleConfirmation={() => void retirePolicy(policyToRetire)}
+        />
+      )}
     </Card>
   );
 }

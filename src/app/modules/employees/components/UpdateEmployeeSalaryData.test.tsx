@@ -324,4 +324,19 @@ describe("employee salary component configuration", () => {
 
     expect(container.textContent).not.toContain("Company Component Catalog Notice");
   });
+
+  it("does not report OTHER_ALLOWANCE as unconfigured when SPECIAL_ALLOWANCE is active in company catalog", async () => {
+    await renderSalaryForm([
+      { id: "sa", code: "SPECIAL_ALLOWANCE", name: "Special Allowance", kind: "EARNING", calculationType: "FIXED", isTaxable: true, isActive: true, effectiveFrom: "2026-01-01", version: 1 },
+      { id: "hra", code: "HRA", name: "HRA", kind: "EARNING", calculationType: "FIXED", isTaxable: true, isActive: true, effectiveFrom: "2026-01-01", version: 1 },
+      { id: "lta", code: "LTA", name: "LTA", kind: "EARNING", calculationType: "FIXED", isTaxable: true, isActive: true, effectiveFrom: "2026-01-01", version: 1 },
+      { id: "bonus", code: "BONUS", name: "Bonus", kind: "EARNING", calculationType: "FIXED", isTaxable: true, isActive: true, effectiveFrom: "2026-01-01", version: 1 },
+      { id: "health", code: "HEALTH_INSURANCE", name: "Health Insurance", kind: "DEDUCTION", calculationType: "FIXED", isTaxable: false, isActive: true, effectiveFrom: "2026-01-01", version: 1 },
+    ]);
+
+    expect(container.textContent).not.toContain("OTHER_ALLOWANCE");
+    expect(container.textContent).not.toContain("Company Component Catalog Notice");
+    expect(container.querySelector('input[name="otherAllowance"]')).not.toBeNull();
+  });
 });
+

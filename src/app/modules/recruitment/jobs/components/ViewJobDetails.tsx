@@ -1,7 +1,7 @@
 import { FC, memo } from "react";
 import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import CustomisedButton from "../../../../shared/components/C_Button";
-import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, Chip, Divider, Grid, Stack, Typography } from "@mui/material";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import {
   jobStatusMapper,
@@ -133,6 +133,32 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
           </Link>
           <Typography variant="body1"></Typography>
         </Grid>
+        <Grid size={{ xs: 4, md: 6 }}>
+          <Typography variant="body1" sx={{ fontWeight: 600 }}>Screening Threshold</Typography>
+        </Grid>
+        <Grid size={{ xs: 8, md: 6 }}>
+          <Chip
+            size="small"
+            color={jobData.screeningPassScore ? "primary" : "default"}
+            variant={jobData.screeningPassScore ? "filled" : "outlined"}
+            label={jobData.screeningPassScore ? `≥ ${jobData.screeningPassScore}% (Role Specific)` : "≥ 60% (Company Default)"}
+            sx={{ fontWeight: 750 }}
+          />
+        </Grid>
+        {jobData.screeningCriteria && jobData.screeningCriteria.length > 0 && (
+          <>
+            <Grid size={{ xs: 4, md: 6 }}>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>Screening Criteria</Typography>
+            </Grid>
+            <Grid size={{ xs: 8, md: 6 }}>
+              <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                {jobData.screeningCriteria.map((crit, idx) => (
+                  <Chip key={idx} size="small" label={crit} sx={{ fontSize: "0.75rem" }} />
+                ))}
+              </Stack>
+            </Grid>
+          </>
+        )}
       </Grid>
       <Divider className="my-4" />
       <Box

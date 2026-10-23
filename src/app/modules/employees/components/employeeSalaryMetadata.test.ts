@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { EmployeeSalaryComponentValueModel, PayrollSalaryComponentModel } from "../../payroll/models";
-import { calculateEmployeePayrollComponents, excludeImportedTemplateComponents, getSalaryComponentInputGuidance, isEmployeePayrollComponentEligible, normalizeImportedSalaryComponentValues, resolveEmployeePayrollComponents, resolveEmployeeSalaryMetadata, resolveSalaryImportEffectiveDate } from "./employeeSalaryMetadata";
+import { calculateEmployeePayrollComponents, excludeImportedTemplateComponents, getSalaryComponentInputGuidance, isEmployeePayrollComponentEligible, normalizeImportedSalaryComponentValues, resolveEmployeePayrollComponentDefinition, resolveEmployeePayrollComponents, resolveEmployeeSalaryMetadata, resolveSalaryImportEffectiveDate } from "./employeeSalaryMetadata";
 
 describe("monthly salary recurrence", () => {
   it("keeps one-time items out of recurring preview totals", () => {
@@ -222,4 +222,21 @@ describe("employee salary formula values", () => {
     ];
     expect(() => normalizeImportedSalaryComponentValues(components, definitions, "2026-10-06")).toThrow("base is zero or missing");
   });
+
+  it("aliases SPECIAL_ALLOWANCE and OTHER_ALLOWANCE so either satisfies eligibility and definition resolution", () => {
+    const definitions: PayrollSalaryComponentModel[] = [
+      { id: "sa-1", code: "SPECIAL_ALLOWANCE", name: "Special Allowance", kind: "EARNING", calculationType: "FIXED", isTaxable: true, isActive: true, effectiveFrom: "2026-01-01", version: 1 },
+    ];
+
+    expect(isEmployeePayrollComponentEligible(definitions, "SPECIAL_ALLOWANCE", "2026-10-14")).toBe(true);
+    expect(isEmployeePayrollComponentEligible(definitions, "OTHER_ALLOWANCE", "2026-10-14")).toBe(true);
+
+    const resolvedForOther = resolveEmployeePayrollComponentDefinition(definitions, "OTHER_ALLOWANCE", "2026-10-14");
+    expect(resolvedForOther?.code).toBe("SPECIAL_ALLOWANCE");
+    expect(resolvedForOther?.name).toBe("Special Allowance");
+
+    const resolvedForSpecial = resolveEmployeePayrollComponentDefinition(definitions, "SPECIAL_ALLOWANCE", "2026-10-14");
+    expect(resolvedForSpecial?.code).toBe("SPECIAL_ALLOWANCE");
+  });
 });
+

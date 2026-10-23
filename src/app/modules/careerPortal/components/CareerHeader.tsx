@@ -6,6 +6,7 @@ import {
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Btn } from "../../../shared/components/ui";
+import LightDarkMode from "../../../../_themes/layout/components/header/navbarmenus/LightDarkMode";
 
 export const CareerHeader = () => (
   <Box
@@ -48,7 +49,8 @@ export const CareerHeader = () => (
             <Typography variant="caption" color="text.secondary" sx={{ display: { xs: "none", sm: "block" } }}>Find work that fits</Typography>
           </Box>
         </Stack>
-        <Stack direction="row" spacing={0.5}>
+        <Stack direction="row" spacing={0.5} alignItems="center">
+          <LightDarkMode sx={{ width: 36, height: 36, mr: 0.5 }} />
           <Btn component={Link} to="/careers/saved" color="inherit" startIcon={<BookmarkBorderRounded />} sx={{ minWidth: { xs: 40, sm: "auto" }, px: { xs: 1, sm: 1.5 } }}>
             <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Saved jobs</Box>
           </Btn>

@@ -70,30 +70,56 @@ export const LeaveRequestFilter = () => {
     // console.log(errors);
     
     return (
-        <Box component="div" className="leave-request-filter" sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) auto" }, gap: 1.5, alignItems: "end" }}>
-            <Box component="div" className="filter-fields" sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" }, gap: 1.25, minWidth: 0 }}>
-                <FormControl className="mt-2" fullWidth>
-                    <InputLabel id="leave-request-status" >{i({ id: "LEAVE.APPROVAL_STATUS" })}</InputLabel>
+        <Box
+            component="div"
+            className="leave-request-filter"
+            sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                gap: 1.5,
+                alignItems: { xs: "stretch", md: "center" },
+                width: "100%",
+            }}
+        >
+            <Box
+                component="div"
+                className="filter-fields"
+                sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "repeat(2, minmax(0, 1fr))",
+                        md: "repeat(3, minmax(0, 1fr))",
+                    },
+                    gap: 1.5,
+                    flex: 1,
+                    minWidth: 0,
+                    alignItems: "center",
+                }}
+            >
+                <FormControl fullWidth size="small">
+                    <InputLabel id="leave-request-status">{i({ id: "LEAVE.APPROVAL_STATUS" })}</InputLabel>
                     <AppSelect
                         labelId="leave-request-status"
                         label={i({ id: "LEAVE.APPROVAL_STATUS" })}
                         size="small"
                         {...getFieldProps("status")}
                         value={values.status ?? ""}
+                        sx={{
+                            height: 40,
+                            borderRadius: "10px",
+                        }}
                     >
-                        {
-                            LeaveRequestStatusTypes.map(type => {
-                                return <MenuItem value={type.value} key={type.id}>{i({ id: type.label })}</MenuItem>
-                            })
-                        }
+                        {LeaveRequestStatusTypes.map((type) => (
+                            <MenuItem value={type.value} key={type.id}>
+                                {i({ id: type.label })}
+                            </MenuItem>
+                        ))}
                     </AppSelect>
                 </FormControl>
                 <CustomisedDatePicker
                     label={i({ id: "FORM.START_DATE" })}
-                    value={values.startDate
-                        ? dayjs(values.startDate)
-                        : null
-                    }
+                    value={values.startDate ? dayjs(values.startDate) : null}
                     setValue={(date: Dayjs | null) => {
                         setFieldValue(
                             "startDate",
@@ -103,10 +129,7 @@ export const LeaveRequestFilter = () => {
                 />
                 <CustomisedDatePicker
                     label={i({ id: "FORM.END_DATE" })}
-                    value={values.endDate
-                        ? dayjs(values.endDate)
-                        : null
-                    }
+                    value={values.endDate ? dayjs(values.endDate) : null}
                     minDate={values.startDate ? dayjs(values.startDate) : undefined}
                     setValue={(date: Dayjs | null) => {
                         setFieldValue(
@@ -116,17 +139,29 @@ export const LeaveRequestFilter = () => {
                     }}
                 />
             </Box>
-            <Stack direction="row" className="gap-2" sx={{ width: { xs: "100%", md: "auto" } }}>
+            <Stack
+                direction="row"
+                alignItems="center"
+                sx={{
+                    width: { xs: "100%", md: "auto" },
+                    flexShrink: 0,
+                }}
+            >
                 <CustomisedButton
                     variant="outlined"
-                    size="large"
-                    className="mt-2"
+                    size="medium"
                     label={i({ id: "BUTTON.CLEAR" })}
                     handleClick={handleResetFilter}
-                    sx={{ width: { xs: "100%", md: "auto" }, minWidth: { md: 96 } }}
+                    sx={{
+                        height: 40,
+                        minWidth: { xs: "100%", md: 88 },
+                        borderRadius: "10px",
+                        textTransform: "none",
+                        fontWeight: 600,
+                    }}
                 />
             </Stack>
         </Box>
-    )
+    );
 
 }

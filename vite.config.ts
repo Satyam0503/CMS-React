@@ -1,3 +1,4 @@
+import path from 'path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
@@ -5,6 +6,16 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
   base: "/",
+  resolve: {
+    alias: process.env.VITEST
+      ? [
+          {
+            find: /^@mui\/icons-material($|\/.*)/,
+            replacement: path.resolve(__dirname, 'src/test/iconMock.tsx'),
+          },
+        ]
+      : [],
+  },
   build: {
     chunkSizeWarningLimit: 3000,
   },

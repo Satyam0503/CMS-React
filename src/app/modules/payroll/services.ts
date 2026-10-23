@@ -64,6 +64,9 @@ export const getEmployeePayRollData = (payload: GetPayRollPayload) => {
   );
 };
 
+export const generateMonthlyPayroll = (payload: { payMonth: string; employeeIds?: string[] }) =>
+  postRequest<{ payMonth: string; employeeIds?: string[] }, ApiResponse>(ServiceUrl.PROCESS_PAYROLL, payload);
+
 export const approvePayrollMonth = (payload: { payMonth: string }) =>
   postRequest<{ payMonth: string }, ApiResponse>(ServiceUrl.APPROVE_PAYROLL_MONTH, payload);
 
@@ -172,6 +175,8 @@ export const submitEmployeeSalaryStructure = (id: string, version: number) =>
   postRequest<undefined, ApiResponse>(`api/payroll/configuration/employee-salaries/submit?id=${encodeURIComponent(id)}&version=${version}`, undefined);
 export const approveEmployeeSalaryStructure = (id: string, version: number) =>
   postRequest<undefined, ApiResponse>(`api/payroll/configuration/employee-salaries/approve?id=${encodeURIComponent(id)}&version=${version}`, undefined);
+export const rejectEmployeeSalaryStructure = (id: string, version: number, reason?: string) =>
+  postRequest<undefined, ApiResponse>(`api/payroll/configuration/employee-salaries/reject?id=${encodeURIComponent(id)}&version=${version}${reason ? `&reason=${encodeURIComponent(reason)}` : ""}`, undefined);
 
 
 export const getPayrollSalaryComponents = () => getRequest<PayrollSalaryComponentModel[]>("api/payroll/configuration/components");

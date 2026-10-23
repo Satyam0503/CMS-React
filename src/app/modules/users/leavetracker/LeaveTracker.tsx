@@ -19,6 +19,7 @@ import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { resolveLeaveBalanceTargetUserId } from "./leaveTrackerUtils";
 import { getRequest, postRequest } from "../../../../server/axios";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
+import { WfhClockOutModal } from "../../attendance/component/WfhClockOutModal";
 import { getEmployeeLifecycleSelfServicePolicies } from "../../employees/employeeServices";
 
 type WorkFromHomeContext = {
@@ -52,6 +53,10 @@ type WorkFromHomeTiming = {
   checkOutTime?: string;
   totalHours?: number;
   requiredHours: number;
+  halfDayRequiredHours?: number;
+  status?: string;
+  isHalfDay?: boolean;
+  isUnderHours?: boolean;
 };
 
 const initialLeaveRequestValue: RequestLeaveModel = {
@@ -76,19 +81,21 @@ export const LeaveTracker: FC = () => {
   const [wfhContext, setWfhContext] = useState<WorkFromHomeContext | null>(null);
   const [wfhRequests, setWfhRequests] = useState<WorkFromHomeRequest[]>([]);
   const [wfhRequestsOpen, setWfhRequestsOpen] = useState(false);
+  const [clockOutModalOpen, setClockOutModalOpen] = useState(false);
   const [todayWfhRequest, setTodayWfhRequest] = useState<WorkFromHomeRequest | null>(null);
   const [wfhTiming, setWfhTiming] = useState<WorkFromHomeTiming | null>(null);
   const [hasLifecycleLeavePolicy, setHasLifecycleLeavePolicy] = useState(false);
   const [clocking, setClocking] = useState(false);
   const modulePermission =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasWfhPermission = modulePermission.some((p) => p.startsWith("Work_From_Home."));
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleOpen = () => {
-    if (empLeaveTypeBalance.length > 0 || wfhContext?.isEligible || hasLifecycleLeavePolicy) {
+    if (empLeaveTypeBalance.length > 0 || (hasWfhPermission && wfhContext?.isEligible) || hasLifecycleLeavePolicy) {
       setOpen(true);
     } else {
       toast.error(i({ id: "VALIDATION_ERR.LEAVE_TYPES_NOT_AVAILABLE" }));
@@ -145,8 +152,11 @@ export const LeaveTracker: FC = () => {
   useEffect(() => {
     // The WFH context is identity-bound, so only load it on the employee's own
     // profile rather than while HR is viewing another employee.
-    if (employeeId) {
+    if (employeeId || !hasWfhPermission) {
       setWfhContext(null);
+      setWfhRequests([]);
+      setTodayWfhRequest(null);
+      setWfhTiming(null);
       return;
     }
 
@@ -173,7 +183,7 @@ export const LeaveTracker: FC = () => {
         }
       })
       .catch((error) => console.error("Unable to load WFH allowance.", error));
-  }, [employeeId, refresh]);
+  }, [employeeId, refresh, hasWfhPermission]);
 
   const withdrawWfhRequest = async (request: WorkFromHomeRequest) => {
     try {
@@ -200,18 +210,42 @@ export const LeaveTracker: FC = () => {
 
   const toggleWfhAttendance = async () => {
     if (!todayWfhRequest || clocking) return;
-    const action = wfhTiming?.checkInTime ? "check-out" : "check-in";
+    if (wfhTiming?.checkInTime) {
+      setClockOutModalOpen(true);
+      return;
+    }
     setClocking(true);
     try {
       const { data } = await postRequest<Record<string, never>, { success: boolean; message?: string }>(
-        `api/wfh/requests/${todayWfhRequest.requestId}/${action}`,
+        `api/wfh/requests/${todayWfhRequest.requestId}/check-in`,
         {}
       );
-      if (!data.success) throw new Error(data.message || `WFH ${action} could not be recorded.`);
-      toast.success(action === "check-in" ? "WFH check-in recorded." : "WFH check-out recorded.");
+      if (!data.success) throw new Error(data.message || "WFH check-in could not be recorded.");
+      toast.success("WFH check-in recorded.");
       handleRefresh();
     } catch (error) {
-      const message = (error as Error).message || `WFH ${action} could not be recorded.`;
+      const message = (error as Error).message || "WFH check-in could not be recorded.";
+      const [, ...details] = message.split(":");
+      toast.error(details.join(":").trim() || message);
+    } finally {
+      setClocking(false);
+    }
+  };
+
+  const handleConfirmClockOut = async (remarks: string) => {
+    if (!todayWfhRequest || clocking) return;
+    setClocking(true);
+    try {
+      const { data } = await postRequest<{ remarks: string }, { success: boolean; message?: string }>(
+        `api/wfh/requests/${todayWfhRequest.requestId}/check-out`,
+        { remarks }
+      );
+      if (!data.success) throw new Error(data.message || "WFH check-out could not be recorded.");
+      toast.success("WFH clock-out recorded successfully.");
+      setClockOutModalOpen(false);
+      handleRefresh();
+    } catch (error) {
+      const message = (error as Error).message || "WFH check-out could not be recorded.";
       const [, ...details] = message.split(":");
       toast.error(details.join(":").trim() || message);
     } finally {
@@ -251,7 +285,7 @@ export const LeaveTracker: FC = () => {
           handleClose={handleClose}
         />
       )}
-      {!employeeId && wfhContext && (
+      {!employeeId && hasWfhPermission && wfhContext && (
         <Card sx={{ p: { xs: 1.5, sm: 2.5 }, minWidth: 0 }}>
           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={2}>
             <Stack spacing={0.5}>
@@ -274,7 +308,16 @@ export const LeaveTracker: FC = () => {
            {todayWfhRequest && wfhTiming?.isApprovedForToday && (
              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} gap={1} sx={{ mt: 2 }}>
                {wfhTiming.checkOutTime ? (
-                 <Chip color="success" label="WFH attendance completed" />
+                 <Chip
+                    color={wfhTiming.isUnderHours ? "warning" : wfhTiming.isHalfDay ? "info" : "success"}
+                    label={
+                      wfhTiming.isUnderHours
+                        ? "Under-hours (Pending HR review)"
+                        : wfhTiming.isHalfDay
+                        ? "WFH half-day completed"
+                        : "WFH attendance completed"
+                    }
+                  />
                ) : (
                  <CustomisedButton
                    label={clocking ? "Saving..." : wfhTiming.checkInTime ? "Clock out from WFH" : "Clock in to WFH"}
@@ -284,8 +327,10 @@ export const LeaveTracker: FC = () => {
                  />
                )}
                <Typography variant="body2" color="text.secondary">
-                 {wfhTiming.checkInTime
-                   ? `Checked in at ${new Date(wfhTiming.checkInTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. Required: ${wfhTiming.requiredHours} hour(s).`
+                 {wfhTiming.checkOutTime && wfhTiming.checkInTime
+                   ? `Checked in at ${new Date(wfhTiming.checkInTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}, checked out at ${new Date(wfhTiming.checkOutTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} (${wfhTiming.totalHours ?? 0} hour(s) verified${wfhTiming.isHalfDay ? " · Half-Day" : ""}).`
+                   : wfhTiming.checkInTime
+                   ? `Checked in at ${new Date(wfhTiming.checkInTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. Required: ${wfhTiming.requiredHours} hour(s) (or clock out when done for half-day).`
                    : "Clock in is available only for your approved WFH request and policy time window."}
                </Typography>
              </Stack>
@@ -299,7 +344,7 @@ export const LeaveTracker: FC = () => {
           )}
         </Card>
       )}
-      {!employeeId && (
+      {!employeeId && hasWfhPermission && (
         <CustomisedModal
           open={wfhRequestsOpen}
           handleClose={() => setWfhRequestsOpen(false)}
@@ -333,6 +378,17 @@ export const LeaveTracker: FC = () => {
           </Stack>
           </Stack>
         </CustomisedModal>
+      )}
+      {todayWfhRequest && (
+        <WfhClockOutModal
+          open={clockOutModalOpen}
+          onClose={() => setClockOutModalOpen(false)}
+          onConfirm={handleConfirmClockOut}
+          checkInTime={wfhTiming?.checkInTime}
+          requiredHours={wfhTiming?.requiredHours}
+          halfDayRequiredHours={wfhTiming?.halfDayRequiredHours}
+          loading={clocking}
+        />
       )}
       <EmployeeLeaveTypesCharts
         isLoading={loading}

@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import CustomisedButton from "./C_Button";
-import { Home } from "@mui/icons-material";
+import Home from "@mui/icons-material/Home";
 import { FC } from "react";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { useIntl } from "react-intl";

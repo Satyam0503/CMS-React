@@ -37,23 +37,23 @@ export const passwordVisibilityButtonSx = {
 const defaultOutlinedFieldSx = {
   "& .MuiOutlinedInput-root, &.MuiOutlinedInput-root": {
     borderRadius: "10px",
-    bgcolor: "rgba(255, 255, 255, 0.65)",
+    bgcolor: "color-mix(in srgb, var(--mui-palette-background-paper) 80%, transparent)",
     backdropFilter: "blur(12px) saturate(160%)",
     WebkitBackdropFilter: "blur(12px) saturate(160%)",
     transition: "background-color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease",
     "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "rgba(203, 213, 225, 0.75)",
+      borderColor: "var(--mui-palette-divider, rgba(203, 213, 225, 0.75))",
       borderWidth: "1px",
     },
     "&:hover:not(.Mui-disabled)": {
-      bgcolor: "rgba(255, 255, 255, 0.85)",
+      bgcolor: "color-mix(in srgb, var(--mui-palette-background-paper) 95%, transparent)",
       "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: "rgba(11, 92, 171, 0.45)",
+        borderColor: "primary.main",
       },
     },
     "&.Mui-focused": {
-      bgcolor: "#FFFFFF",
-      boxShadow: "0 0 0 3px rgba(11, 92, 171, 0.14)",
+      bgcolor: "background.paper",
+      boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent)",
       "& .MuiOutlinedInput-notchedOutline": {
         borderColor: "primary.main",
         borderWidth: "1.5px",
@@ -61,7 +61,7 @@ const defaultOutlinedFieldSx = {
     },
   },
   "& .MuiSelect-icon": {
-    color: "#475569",
+    color: "text.secondary",
   },
 } as const;
 

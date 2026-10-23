@@ -1,4 +1,4 @@
-﻿import {
+import {
   AccountBalanceOutlined,
   CalendarMonthOutlined,
   HealthAndSafetyOutlined,
@@ -26,6 +26,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { AppButton } from "../../../shared/components/ui";
+import { useIsDark } from "../../theme/useIsDark";
 
 export type PayrollDivisorPolicyConfig = {
   id?: string;
@@ -62,7 +63,7 @@ export function PayrollPolicyConfigCard({
   canSavePolicy,
 }: Props) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
+  const isDark = useIsDark();
 
   const glassCardSx = {
     borderRadius: "16px",
@@ -386,25 +387,20 @@ export function PayrollPolicyConfigCard({
                       2. Statutory Contributions
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
-                      Employee PF and ESI compliance rules
+                      Managed via Approved Statutory Profiles
                     </Typography>
                   </Box>
                 </Stack>
 
                 <Stack spacing={2} sx={{ mt: 1 }}>
-                  <FormControl fullWidth size="small">
+                  <FormControl fullWidth size="small" disabled>
                     <InputLabel id="epf-mode-label">Provident Fund (EPF)</InputLabel>
                     <Select
                       labelId="epf-mode-label"
                       label="Provident Fund (EPF)"
                       value={policyConfig.epfMode}
-                      onChange={(e) =>
-                        setPolicyConfig((prev) => ({
-                          ...prev,
-                          epfMode: e.target.value as PayrollDivisorPolicyConfig["epfMode"],
-                        }))
-                      }
-                      sx={{ bgcolor: isDark ? "rgba(15, 23, 42, 0.6)" : "#FFFFFF", borderRadius: "8px" }}
+                      disabled
+                      sx={{ bgcolor: isDark ? "rgba(15, 23, 42, 0.4)" : "#F1F5F9", borderRadius: "8px" }}
                     >
                       <MenuItem value="CAPPED_CEILING">12% Capped at Wage Ceiling (₹1,800/mo)</MenuItem>
                       <MenuItem value="ACTUAL_BASIC_12">12% of Actual Basic Pay</MenuItem>
@@ -412,19 +408,14 @@ export function PayrollPolicyConfigCard({
                     </Select>
                   </FormControl>
 
-                  <FormControl fullWidth size="small">
+                  <FormControl fullWidth size="small" disabled>
                     <InputLabel id="esic-mode-label">State Insurance (ESIC)</InputLabel>
                     <Select
                       labelId="esic-mode-label"
                       label="State Insurance (ESIC)"
                       value={policyConfig.esicMode}
-                      onChange={(e) =>
-                        setPolicyConfig((prev) => ({
-                          ...prev,
-                          esicMode: e.target.value as PayrollDivisorPolicyConfig["esicMode"],
-                        }))
-                      }
-                      sx={{ bgcolor: isDark ? "rgba(15, 23, 42, 0.6)" : "#FFFFFF", borderRadius: "8px" }}
+                      disabled
+                      sx={{ bgcolor: isDark ? "rgba(15, 23, 42, 0.4)" : "#F1F5F9", borderRadius: "8px" }}
                     >
                       <MenuItem value="STATUTORY">Statutory 0.75% (Gross &le; ₹21,000)</MenuItem>
                       <MenuItem value="EXEMPT">Exempt / Not Applicable</MenuItem>
@@ -456,25 +447,20 @@ export function PayrollPolicyConfigCard({
                       3. Tax & Governance Gate
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
-                      TDS tax withholding & attendance freeze
+                      Managed via Approved Statutory Profiles
                     </Typography>
                   </Box>
                 </Stack>
 
                 <Stack spacing={2} sx={{ mt: 1 }}>
-                  <FormControl fullWidth size="small">
+                  <FormControl fullWidth size="small" disabled>
                     <InputLabel id="tds-mode-label">Income Tax (TDS) Engine</InputLabel>
                     <Select
                       labelId="tds-mode-label"
                       label="Income Tax (TDS) Engine"
                       value={policyConfig.tdsMode}
-                      onChange={(e) =>
-                        setPolicyConfig((prev) => ({
-                          ...prev,
-                          tdsMode: e.target.value as PayrollDivisorPolicyConfig["tdsMode"],
-                        }))
-                      }
-                      sx={{ bgcolor: isDark ? "rgba(15, 23, 42, 0.6)" : "#FFFFFF", borderRadius: "8px" }}
+                      disabled
+                      sx={{ bgcolor: isDark ? "rgba(15, 23, 42, 0.4)" : "#F1F5F9", borderRadius: "8px" }}
                     >
                       <MenuItem value="AUTO_NEW_REGIME">New Tax Regime (Sec 115BAC) &bull; Standard</MenuItem>
                       <MenuItem value="AUTO_OLD_REGIME">Old Tax Regime (Sec 87A Rebate)</MenuItem>

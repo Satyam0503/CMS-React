@@ -1,87 +1,493 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { getAllEmployees } from "../../../employees/employeeServices";
 import { getAllDepartments } from "../../../admin/adminservices";
 import { DepartmentModel } from "../../../admin/models";
-import { Avatar, Alert, Box, Chip, Divider, Drawer, MenuItem, Stack, Step, StepLabel, Stepper, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { Close, Visibility } from "@mui/icons-material";
+import {
+  Avatar,
+  Alert,
+  Autocomplete,
+  Box,
+  Button,
+  Checkbox,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  alpha,
+  Divider,
+  Drawer,
+  IconButton,
+  LinearProgress,
+  Menu,
+  MenuItem,
+  Rating,
+  Stack,
+  Step,
+  StepLabel,
+  Stepper,
+  Tooltip,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  OutlinedInput,
+  InputAdornment,
+} from "@mui/material";
+import {
+  Close,
+  Visibility,
+  MoreVert,
+  CheckCircleOutline,
+  CancelOutlined,
+  InfoOutlined,
+  LightbulbOutlined,
+  Add,
+  ArrowForward,
+  ContentCopy,
+  OpenInNew,
+  ExpandMore,
+  Check,
+  Delete,
+  ShieldOutlined,
+  FolderSpecialOutlined,
+  MergeTypeOutlined,
+  DocumentScannerOutlined,
+  Send,
+  PersonAdd,
+  EmailOutlined,
+} from "@mui/icons-material";
 import clsx from "clsx";
-import { AppButton, AppSwitch, AppTextField, CustomisedDatePicker, CustomisedDateTimePicker } from "../../../../shared/components";
+import {
+  AppButton,
+  AppSwitch,
+  AppTextField,
+  CustomisedDatePicker,
+  CustomisedDateTimePicker,
+} from "../../../../shared/components";
 import CustomisedButton from "../../../../shared/components/C_Button";
-import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { PdfViewer } from "../../../../shared/components/PdfViewer";
-import { ApplicationPreview } from "./ApplicationPreview";
 import { applicationStatusMapper } from "../../../../../utils/common";
-import { Applicant, CandidateHandoffRequest, RecruitmentApplicantMergeCommand, RecruitmentApplicationStageCommand, RecruitmentEnterpriseConfig, RecruitmentInterviewCommand, RecruitmentInterviewDebriefCommand, RecruitmentScreeningReviewCommand, RecruitmentOfferCommand, RecruitmentHiringDecisionCommand, RecruitmentCandidatePrivacyCommand, RecruitmentResumeExtractionReviewCommand, RecruitmentOfferVersionCommand, RecruitmentOfferVersion, RecruitmentOfferCounterRequest, RecruitmentOfferCounterCommand, RecruitmentScorecardCommand, RecruitmentTalentPoolCommand, RecruitmentWorkflow, RecruitmentOnboardingCase } from "../../models";
+import {
+  Applicant,
+  CandidateHandoffRequest,
+  RecruitmentApplicantMergeCommand,
+  RecruitmentApplicationStageCommand,
+  RecruitmentEnterpriseConfig,
+  RecruitmentInterviewCommand,
+  RecruitmentInterviewDebriefCommand,
+  RecruitmentScreeningReviewCommand,
+  RecruitmentOfferCommand,
+  RecruitmentHiringDecisionCommand,
+  RecruitmentCandidatePrivacyCommand,
+  RecruitmentResumeExtractionReviewCommand,
+  RecruitmentOfferVersionCommand,
+  RecruitmentOfferVersion,
+  RecruitmentOfferCounterRequest,
+  RecruitmentOfferCounterDecisionCommand,
+  RecruitmentScorecardCommand,
+  RecruitmentTalentPoolCommand,
+  RecruitmentOnboardingCase,
+  JobModal,
+  RecruitmentInterviewPlan,
+  RecruitmentFinalScoreResult,
+} from "../../models";
 import { ApplicationStatus } from "../../../../../utils/enums";
-import { completeRecruitmentInterviewDebrief, getRecruitmentWorkflow, handoffCandidateToPreboarding, upsertRecruitmentApplicationStage, mergeRecruitmentApplicants, upsertRecruitmentInterview, upsertRecruitmentOffer, upsertRecruitmentHiringDecision, applyRecruitmentCandidatePrivacy, reviewRecruitmentResumeExtraction, createRecruitmentOfferVersion, getRecruitmentOfferVersions, getRecruitmentOfferCounters, requestRecruitmentOfferCounter, upsertRecruitmentScreening, upsertRecruitmentScorecard, upsertRecruitmentTalentPool, getRecruitmentOnboarding, updateRecruitmentOnboarding, retryRecruitmentOnboardingActivation, retryRecruitmentInterviewCalendar, getRecruitmentInterviewRounds, getRecruitmentScorecards, getRecruitmentEnterpriseConfig, getRecruitmentResumeExtractionReview, getRecruitmentPendingOffers, getRecruitmentPreboardingQueue, updateRecruitmentPreboarding } from "../../services";
+import { getNextEmployeeId } from "../../../users/userservices";
+import {
+  handoffCandidateToPreboarding,
+  upsertRecruitmentApplicationStage,
+  mergeRecruitmentApplicants,
+  upsertRecruitmentInterview,
+  upsertRecruitmentOffer,
+  getRecruitmentOfferByApplicant,
+  issueRecruitmentExternalAction,
+  upsertRecruitmentHiringDecision,
+  applyRecruitmentCandidatePrivacy,
+  reviewRecruitmentResumeExtraction,
+  createRecruitmentOfferVersion,
+  getRecruitmentOfferVersions,
+  getRecruitmentOfferCounters,
+  decideRecruitmentOfferCounter,
+  upsertRecruitmentScreening,
+  upsertRecruitmentScorecard,
+  upsertRecruitmentTalentPool,
+  getRecruitmentOnboarding,
+  updateRecruitmentOnboarding,
+  getRecruitmentInterviewRounds,
+  getRecruitmentScorecards,
+  getFinalInterviewScore,
+  getRecruitmentInterviewPlan,
+  getRecruitmentEnterpriseConfig,
+  getRecruitmentResumeExtractionReview,
+  getRecruitmentPreboardingQueue,
+  updateRecruitmentPreboarding,
+  getJobVacancyDetails,
+  editJobVacancy,
+} from "../../services";
 
-type Props = { open: boolean; applicant: Applicant; onClose: () => void; onSaved?: () => void };
-type Mode = "screening" | "interview" | "offer" | "handoff" | "onboarding" | "decision" | "privacy" | "resume" | "negotiation" | "scorecard" | "talentpool" | "merge";
-type Feedback = { severity: "success" | "error"; text: string; code?: string };
-const primarySteps: { id: Mode; label: string; helper: string }[] = [{ id: "screening", label: "Screening", helper: "Review evidence" }, { id: "interview", label: "Interview", helper: "Schedule rounds" }, { id: "decision", label: "Decision", helper: "Approve or hold" }, { id: "offer", label: "Offer", helper: "Prepare offer" }, { id: "handoff", label: "Employee handoff", helper: "Create employee" }, { id: "onboarding", label: "Onboarding", helper: "Activate employee" }];
+type Props = {
+  open: boolean;
+  applicant: Applicant;
+  onClose: () => void;
+  onSaved?: () => void;
+};
+
+type Mode = "screening" | "interview" | "offer" | "handoff";
+type UtilityTool = "resume" | "privacy" | "talentpool" | "merge" | null;
+type Feedback = { severity: "success" | "error" | "info" | "warning"; text: string; code?: string };
+
+const defaultSteps: { id: Mode; label: string; helper: string }[] = [
+  { id: "screening", label: "Screening", helper: "Candidate Review" },
+  { id: "interview", label: "Interview", helper: "Schedule & Score" },
+  { id: "offer", label: "Offer & Response", helper: "Terms & Acceptance" },
+  { id: "handoff", label: "Preboarding & Hire", helper: "Convert to Employee" },
+];
+
 const createIdempotencyKey = () => `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-const getApiMessage = (response: { data?: { message?: string; errorCode?: string | null } }) => ({ text: response.data?.message ?? "Unable to save this recruitment action.", code: response.data?.errorCode });
+const getApiMessage = (response: { data?: { message?: string; errorCode?: string | null } }) => ({
+  text: response.data?.message ?? "Unable to save this recruitment action.",
+  code: response.data?.errorCode,
+});
 
 export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }: Props) => {
-  const reviewerUserId = useAppSelector((state) => state.user.userData?.userId) ?? "";
-  const [mode, setMode] = useState<Mode>("interview"); const [busy, setBusy] = useState(false); const [feedback, setFeedback] = useState<Feedback>();
-  const [workflow, setWorkflow] = useState<RecruitmentWorkflow>();
+  const navigate = useNavigate();
+  const currentUser = useAppSelector((state) => state.user.userData);
+  const reviewerUserId = currentUser?.userId ?? "";
+  const reviewerDisplayName =
+    currentUser?.fullName ||
+    (currentUser?.firstName ? `${currentUser.firstName} ${currentUser.lastName}`.trim() : "") ||
+    currentUser?.companyName ||
+    "Current User";
+
+  const quickDispositionPresets = [
+    {
+      label: "Candidate No-Show",
+      decision: "Reject" as const,
+      notes: "Candidate did not appear for scheduled interview (No-show) and did not respond to follow-up communications.",
+      color: "error" as const,
+    },
+    {
+      label: "Candidate Withdrew",
+      decision: "Reject" as const,
+      notes: "Candidate informed the hiring team that they have accepted another opportunity / withdrawn their application.",
+      color: "warning" as const,
+    },
+    {
+      label: "Did Not Meet Technical Bar",
+      decision: "Reject" as const,
+      notes: "Candidate did not meet required technical competencies for this role following technical assessment/interview.",
+      color: "error" as const,
+    },
+    {
+      label: "Hold for Comparison",
+      decision: "Hold" as const,
+      notes: "Strong profile, but placing on hold while evaluating remaining candidates in the panel pool.",
+      color: "warning" as const,
+    },
+    {
+      label: "Recommend for Hire",
+      decision: "Approve" as const,
+      notes: "Candidate successfully demonstrated required competencies across all criteria. Recommended for employment offer.",
+      color: "success" as const,
+    },
+  ];
+
+  const [mode, setMode] = useState<Mode>("offer");
+  const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback>();
   const [enterpriseConfig, setEnterpriseConfig] = useState<RecruitmentEnterpriseConfig | null>(null);
-  const [screening, setScreening] = useState({ score: 75, decision: "Pass" as RecruitmentScreeningReviewCommand["decision"], rejectionReason: "", evidence: "", criteria: [{ name: "Relevant experience", passed: true, notes: "" }] });
+
+  // Resume preview split pane toggle
+  const [showResumePreview, setShowResumePreview] = useState(false);
+
+  // Secondary Tools Dialog State
+  const [activeUtilityTool, setActiveUtilityTool] = useState<UtilityTool>(null);
+  const [moreToolsAnchorEl, setMoreToolsAnchorEl] = useState<null | HTMLElement>(null);
+
+  // Screening state
+  const [vacancyData, setVacancyData] = useState<JobModal | null>(null);
+  const [thresholdModalOpen, setThresholdModalOpen] = useState(false);
+  const [customThresholdScore, setCustomThresholdScore] = useState<number>(60);
+  const [customCriteriaText, setCustomCriteriaText] = useState<string>("");
+  const [savingThreshold, setSavingThreshold] = useState(false);
+
+  const handleOpenThresholdModal = () => {
+    setCustomThresholdScore(vacancyData?.screeningPassScore ?? passThreshold ?? 60);
+    setCustomCriteriaText((vacancyData?.screeningCriteria ?? []).join(", "));
+    setThresholdModalOpen(true);
+  };
+
+  const handleSaveRoleThreshold = async () => {
+    if (!vacancyData?.jobId) return;
+    setSavingThreshold(true);
+    try {
+      const parsedCriteria = customCriteriaText
+        .split(",")
+        .map((c) => c.trim())
+        .filter(Boolean);
+      const payload: JobModal = {
+        ...vacancyData,
+        screeningPassScore: customThresholdScore,
+        screeningCriteria: parsedCriteria,
+      };
+      const res = await editJobVacancy(payload, vacancyData.jobId);
+      if (res.data?.success) {
+        setVacancyData(payload);
+        if (parsedCriteria.length > 0) {
+          setScreening((curr) => ({
+            ...curr,
+            criteria: parsedCriteria.map((name) => {
+              const existing = curr.criteria.find((c) => c.name.toLowerCase() === name.toLowerCase());
+              return existing || { name, passed: true, notes: "" };
+            }),
+          }));
+        }
+        setFeedback({
+          severity: "success",
+          text: `Updated screening threshold for ${vacancyData.title || "job"} to ≥ ${customThresholdScore}%.`,
+        });
+        setThresholdModalOpen(false);
+      } else {
+        throw new Error(res.data?.message || "Failed to update role screening threshold.");
+      }
+    } catch (err) {
+      setFeedback({ severity: "error", text: (err as Error).message });
+    } finally {
+      setSavingThreshold(false);
+    }
+  };
+  const [screening, setScreening] = useState({
+    score: 75,
+    decision: "Pass" as RecruitmentScreeningReviewCommand["decision"],
+    rejectionReason: "",
+    evidence: "",
+    criteria: [{ name: "Relevant experience", passed: true, notes: "" }],
+  });
+
+  // Interview state
+  const [interviewSubTab, setInterviewSubTab] = useState<0 | 1>(0); // 0 = Schedule, 1 = Scorecard & Decision
   const [interviewRounds, setInterviewRounds] = useState<any[]>([]);
   const [savedScorecards, setSavedScorecards] = useState<any[]>([]);
-  const [interviewSearchBusy, setInterviewSearchBusy] = useState(false);
+  const [interviewPlan, setInterviewPlan] = useState<RecruitmentInterviewPlan | null>(null);
+  const [authoritativeScore, setAuthoritativeScore] = useState<RecruitmentFinalScoreResult | null>(null);
+  const [submittingScorecard, setSubmittingScorecard] = useState(false);
   const [interviewers, setInterviewers] = useState<any[]>([]);
-  const [departments, setDepartments] = useState<DepartmentModel[]>([]);
+  const [, setDepartments] = useState<DepartmentModel[]>([]);
   const [interviewerQuery, setInterviewerQuery] = useState("");
-  const [interviewerDepartment, setInterviewerDepartment] = useState("");
-  const [interview, setInterview] = useState({ title: "Interview", roundNumber: 1, roundType: "Technical", startsAtUtc: "", endsAtUtc: "", location: "", panelistUserIds: "" });
-  const [offer, setOffer] = useState({ offerId: "", salary: "", currency: "INR", startDateUtc: "", compensationComponents: { "Housing allowance": "", "Transport allowance": "", "Variable pay": "" } as Record<string, string>, approvalReference: "", expiresAtUtc: "", status: "Draft" as RecruitmentOfferCommand["status"] });
-  const [handoff, setHandoff] = useState({ firstName: applicant.firstName ?? "", lastName: applicant.lastName ?? "", email: applicant.email ?? "", employeeId: "", autoCompletePreboarding: true });
+  const [interview, setInterview] = useState({
+    title: "Technical Interview",
+    roundNumber: 1,
+    roundType: "Technical",
+    startsAtUtc: "",
+    endsAtUtc: "",
+    location: "",
+    meetingUrl: "",
+    panelistUserIds: "",
+  });
+
+  // Offer state
+  const [offer, setOffer] = useState({
+    offerId: "",
+    salary: "",
+    currency: "INR",
+    startDateUtc: "",
+    compensationComponents: {
+      "Housing allowance": "",
+      "Transport allowance": "",
+      "Variable pay": "",
+    } as Record<string, string>,
+    approvalReference: "",
+    expiresAtUtc: "",
+    status: "Draft" as RecruitmentOfferCommand["status"],
+  });
+
+  const [isAllowancesOpen, setIsAllowancesOpen] = useState(false);
+  const [isRevisionMode, setIsRevisionMode] = useState(false);
+  const [offerVersions, setOfferVersions] = useState<RecruitmentOfferVersion[]>([]);
+  const [counterRequests, setCounterRequests] = useState<RecruitmentOfferCounterRequest[]>([]);
+
+  // Revision form
+  const [revisionForm, setRevisionForm] = useState({
+    salary: "",
+    currency: "INR",
+    reason: "",
+    notes: "",
+  });
+
+  // Scorecard & Decision state
+  const [scorecard, setScorecard] = useState({
+    scorecardId: "",
+    interviewId: "",
+    roundNumber: 1,
+    reviewerUserId: reviewerUserId,
+    recommendation: "Strong Hire",
+    debriefDecision: "Advance" as RecruitmentInterviewDebriefCommand["decision"],
+    status: "Submitted" as RecruitmentScorecardCommand["status"],
+    criteria: [
+      { name: "Technical Competence", rating: 4, notes: "" },
+      { name: "Problem Solving & Analytical Ability", rating: 4, notes: "" },
+      { name: "Communication & Collaboration", rating: 4, notes: "" },
+      { name: "Culture Add & Values Alignment", rating: 4, notes: "" },
+    ],
+  });
+
+  const [decision, setDecision] = useState({
+    decision: "Approve" as RecruitmentHiringDecisionCommand["decision"],
+    notes: "",
+  });
+
+  // Preboarding & Handoff state
+  const [suggestedEmployeeId, setSuggestedEmployeeId] = useState("");
+  const [handoff, setHandoff] = useState({
+    firstName: applicant.firstName ?? "",
+    lastName: applicant.lastName ?? "",
+    email: applicant.email ?? "",
+    employeeId: "",
+    autoCompletePreboarding: true,
+  });
   const [preboardingCaseId, setPreboardingCaseId] = useState("");
-  const [preboardingTasks, setPreboardingTasks] = useState<Array<{ code: string; title: string; status: "Pending" | "InProgress" | "Completed" | "Skipped" }>>([
+  const [preboardingTasks, setPreboardingTasks] = useState<
+    Array<{ code: string; title: string; status: "Pending" | "InProgress" | "Completed" | "Skipped" }>
+  >([
     { code: "candidate-details", title: "Candidate details verified", status: "Completed" },
     { code: "documents", title: "Mandatory documents collected", status: "Completed" },
     { code: "verification", title: "Background & reference verification", status: "Completed" },
   ]);
-  const [merge, setMerge] = useState({ targetApplicantId: "", reason: "" });
-  const [scorecard, setScorecard] = useState({ scorecardId: "", interviewId: "", roundNumber: 1, reviewerUserId: reviewerUserId, recommendation: "Strong Hire", debriefDecision: "Advance" as RecruitmentInterviewDebriefCommand["decision"], status: "Submitted" as RecruitmentScorecardCommand["status"], criteria: [{ name: "Technical assessment", rating: 4, notes: "" }] });
-  const [talentPool, setTalentPool] = useState({ poolName: "Future hires", tags: "", notes: "", status: "Active" as RecruitmentTalentPoolCommand["status"] });
+
+  // Onboarding state
   const [onboarding, setOnboarding] = useState<RecruitmentOnboardingCase>();
-  const [decision, setDecision] = useState({ decision: "Approve" as RecruitmentHiringDecisionCommand["decision"], notes: "" });
-  const [privacy, setPrivacy] = useState({ action: "Grant" as RecruitmentCandidatePrivacyCommand["action"], retentionDays: "" as number | "", reason: "" });
-  const [negotiation, setNegotiation] = useState({ action: "Version" as "Version" | "Counter", offerId: "", salary: "", currency: "INR", compensationComponents: { "Housing allowance": "", "Transport allowance": "", "Variable pay": "" } as Record<string, string>, message: "" });
-  const [offerVersions, setOfferVersions] = useState<RecruitmentOfferVersion[]>([]); const [counterRequests, setCounterRequests] = useState<RecruitmentOfferCounterRequest[]>([]); const [versionsBusy, setVersionsBusy] = useState(false);
-  const [resumeReview, setResumeReview] = useState({ decision: "Pending" as RecruitmentResumeExtractionReviewCommand["decision"], fieldsText: "skills: \nexperience: \neducation: \n", notes: "" });
+  const [handoffCompleted, setHandoffCompleted] = useState(false);
+
+  // Utility modals state
+  const [privacy, setPrivacy] = useState({
+    action: "Grant" as RecruitmentCandidatePrivacyCommand["action"],
+    retentionDays: "" as number | "",
+    reason: "",
+  });
+  const [talentPool, setTalentPool] = useState({
+    poolName: "Future Hires Pool",
+    tags: "",
+    notes: "",
+    status: "Active" as RecruitmentTalentPoolCommand["status"],
+  });
+  const [merge, setMerge] = useState({ targetApplicantId: "", reason: "" });
+  const [resumeReview, setResumeReview] = useState({
+    decision: "Pending" as RecruitmentResumeExtractionReviewCommand["decision"],
+    fieldsText: "skills: React, TypeScript, C#\nexperience: 2 years\neducation: B.Tech",
+    notes: "",
+  });
+
   const stage = applicant.activityType as ApplicationStatus;
-  const isStartupSimpleMode = enterpriseConfig?.recruitmentMode === "Simple";
-  const utilityModes: { id: Mode; label: string }[] = [{ id: "resume", label: "Resume review" }, { id: "scorecard", label: "Scorecard" }, { id: "privacy", label: "Privacy" }, { id: "negotiation", label: "Offer negotiation" }, { id: "talentpool", label: "Talent pool" }, { id: "merge", label: "Merge" }];
-  const completedStep = stage === ApplicationStatus.New ? (isStartupSimpleMode ? 2 : -1) : stage === ApplicationStatus.InProgress ? (isStartupSimpleMode ? 2 : 0) : stage === ApplicationStatus.Shortlisted ? 2 : stage === ApplicationStatus.OnHold ? 2 : stage === ApplicationStatus.Selected ? 4 : -1;
+
+  // Effective Workflow & Governance (Vacancy Override -> Enterprise Config -> System Fallback)
+  const allowCustomWorkflows = enterpriseConfig?.allowJobWorkflowCustomization ?? true;
+  const effectiveRequireInterview =
+    allowCustomWorkflows && vacancyData?.requireInterview !== undefined && vacancyData?.requireInterview !== null
+      ? vacancyData.requireInterview
+      : allowCustomWorkflows && vacancyData?.workflowMode === "Direct"
+      ? false
+      : allowCustomWorkflows && (vacancyData?.workflowMode === "Enterprise" || vacancyData?.workflowMode === "Standard")
+      ? true
+      : (enterpriseConfig?.requireInterviewBeforeDecision ?? false) && (enterpriseConfig?.recruitmentMode !== "Simple");
+
+  const effectiveRequirePreboarding =
+    allowCustomWorkflows && vacancyData?.requirePreboarding !== undefined && vacancyData?.requirePreboarding !== null
+      ? vacancyData.requirePreboarding
+      : allowCustomWorkflows && vacancyData?.workflowMode === "Direct"
+      ? false
+      : allowCustomWorkflows && vacancyData?.workflowMode === "Enterprise"
+      ? true
+      : (enterpriseConfig?.requirePreboardingBeforeHandoff ?? false) && (enterpriseConfig?.recruitmentMode !== "Simple");
+
+  const workflowMode = (allowCustomWorkflows ? vacancyData?.workflowMode : null) ?? (enterpriseConfig?.recruitmentMode === "Simple" ? "Direct" : enterpriseConfig?.recruitmentMode === "Enterprise" ? "Enterprise" : "Standard");
+  const workflowLabel = (allowCustomWorkflows && vacancyData?.workflowMode === "Direct")
+    ? "Fast-Track / Direct Hire"
+    : (allowCustomWorkflows && vacancyData?.workflowMode === "Enterprise")
+    ? "Enterprise Governance"
+    : (allowCustomWorkflows && vacancyData?.workflowMode === "Standard")
+    ? "Standard"
+    : enterpriseConfig?.recruitmentMode
+    ? `${enterpriseConfig.recruitmentMode} (Company Default)`
+    : "Standard";
+  const workflowColor: "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" =
+    workflowMode === "Direct" ? "success" : workflowMode === "Enterprise" ? "warning" : "default";
+
+  const primarySteps = useMemo(() => [
+    { id: "screening" as Mode, label: "Screening", helper: "Candidate Review" },
+    { id: "interview" as Mode, label: "Interview", helper: effectiveRequireInterview ? "Schedule & Score" : "Optional / Fast-Track" },
+    { id: "offer" as Mode, label: "Offer & Response", helper: "Terms & Acceptance" },
+    { id: "handoff" as Mode, label: "Preboarding & Hire", helper: effectiveRequirePreboarding ? "Convert to Employee" : "1-Click Hire" },
+  ], [effectiveRequireInterview, effectiveRequirePreboarding]);
+
+  // Stepper calculations
+  const completedStep =
+    stage === ApplicationStatus.Selected || offer.status === "Accepted"
+      ? 2
+      : stage === ApplicationStatus.Shortlisted || stage === ApplicationStatus.OnHold
+      ? 1
+      : stage === ApplicationStatus.InProgress
+      ? 0
+      : -1;
+
   const activeStep = Math.max(0, primarySteps.findIndex((item) => item.id === mode));
-  const canScorecard = stage === ApplicationStatus.Shortlisted || stage === ApplicationStatus.OnHold || stage === ApplicationStatus.Selected || isStartupSimpleMode;
-  const canOffer = stage === ApplicationStatus.Selected || isStartupSimpleMode;
-  const canHandoff = stage === ApplicationStatus.Selected;
+
   const isActionEnabled = (id: Mode) => {
-    if (id === "onboarding" && !onboarding) return false;
-    if (id === "decision") return [ApplicationStatus.Shortlisted, ApplicationStatus.OnHold, ApplicationStatus.Selected].includes(stage) || isStartupSimpleMode || enterpriseConfig?.applicationReview === false;
-    if (id === "offer") return canOffer;
-    if (id === "handoff") return canHandoff;
-    if (id === "scorecard") return canScorecard;
-    if (id === "screening") return stage !== ApplicationStatus.Rejected && stage !== ApplicationStatus.Selected;
-    const serverAction = workflow?.actions.find(action => action.code === (id === "onboarding" ? "StartPreboarding" : id === "privacy" ? "ManageCandidatePrivacy" : id === "resume" ? "ReviewResumeExtraction" : id === "negotiation" ? "ManageOfferNegotiation" : id === "talentpool" ? "AddToTalentPool" : id === "merge" ? "MergeApplicant" : id === "interview" ? "ScheduleInterview" : "CreateOffer"));
-    return serverAction ? serverAction.enabled : id === "onboarding" ? Boolean(onboarding) : id === "privacy" ? true : id === "resume" ? stage !== ApplicationStatus.Rejected : id === "negotiation" ? stage === ApplicationStatus.Selected : true;
+    if (id === "handoff") return stage === ApplicationStatus.Selected || offer.status === "Accepted";
+    if (id === "offer") return true;
+    if (id === "screening") return stage !== ApplicationStatus.Rejected;
+    return true;
   };
-  useEffect(() => setHandoff((current) => ({ ...current, firstName: applicant.firstName ?? "", lastName: applicant.lastName ?? "", email: applicant.email ?? "" })), [applicant.firstName, applicant.lastName, applicant.email]);
+
+  useEffect(() => {
+    setHandoff((current) => ({
+      ...current,
+      firstName: applicant.firstName ?? "",
+      lastName: applicant.lastName ?? "",
+      email: applicant.email ?? "",
+      employeeId: current.employeeId || (applicant.applicantId ? `EMP-${applicant.applicantId.slice(0, 4).toUpperCase()}` : ""),
+    }));
+  }, [applicant.firstName, applicant.lastName, applicant.email, applicant.applicantId]);
+
+  // Load offer versions and counters
+  const loadOfferVersionsAndCounters = async (offerId: string) => {
+    if (!offerId?.trim()) return;
+    try {
+      const [verRes, cntRes] = await Promise.all([
+        getRecruitmentOfferVersions(offerId.trim()).catch(() => null),
+        getRecruitmentOfferCounters(offerId.trim()).catch(() => null),
+      ]);
+      if (verRes?.data?.success && verRes.data.methodResult) {
+        setOfferVersions(verRes.data.methodResult);
+      }
+      if (cntRes?.data?.success && cntRes.data.methodResult) {
+        setCounterRequests(cntRes.data.methodResult);
+      }
+    } catch {
+      // ignore
+    }
+  };
+
   useEffect(() => {
     if (!open) return;
-    if (stage === ApplicationStatus.New || stage === ApplicationStatus.InProgress) setMode("screening");
+    if (applicant.isHired) setMode("handoff");
+    else if (stage === ApplicationStatus.New || stage === ApplicationStatus.InProgress) setMode("screening");
     else if (stage === ApplicationStatus.Shortlisted || stage === ApplicationStatus.OnHold) setMode("interview");
     else if (stage === ApplicationStatus.Selected) setMode("offer");
-    void getAllDepartments(true).then(({ data }) => setDepartments((((data as any).methodResults ?? (data as any).methodResult ?? []) as unknown) as DepartmentModel[])).catch(() => setDepartments([]));
-    void getAllEmployees({ name: "", pageNo: 1, records: 500, departmentId: [], gender: [], employmentStatus: "Active" }).then(({ data }) => setInterviewers((((data as any).methodResults ?? []) as any[]))).catch(() => setInterviewers([]));
+    else if (stage === ApplicationStatus.Rejected) setMode("interview");
+
+    void getAllDepartments(true)
+      .then(({ data }) => setDepartments(((data as any).methodResults ?? (data as any).methodResult ?? []) as DepartmentModel[]))
+      .catch(() => setDepartments([]));
+
+    void getAllEmployees({ name: "", pageNo: 1, records: 500, departmentId: [], gender: [], employmentStatus: "Active" })
+      .then(({ data }) => setInterviewers(((data as any).methodResults ?? []) as any[]))
+      .catch(() => setInterviewers([]));
+
     if (applicant.applicantId) {
       void getRecruitmentInterviewRounds(applicant.applicantId, applicant.vacancyId).then(({ data }) => {
         if (data.success && data.methodResult?.length) {
@@ -96,7 +502,8 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
               roundType: latest.roundType ?? current.roundType,
               startsAtUtc: latest.startsAtUtc ? dayjs(latest.startsAtUtc).format("YYYY-MM-DDTHH:mm") : current.startsAtUtc,
               endsAtUtc: latest.endsAtUtc ? dayjs(latest.endsAtUtc).format("YYYY-MM-DDTHH:mm") : current.endsAtUtc,
-              location: latest.meetingUrl || latest.location || current.location,
+              location: latest.location || current.location,
+              meetingUrl: latest.meetingUrl || current.meetingUrl,
               panelistUserIds: (latest.panelistUserIds ?? []).join(", "),
             }));
             setScorecard((current) => ({
@@ -107,321 +514,2686 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
           }
         }
       }).catch(() => undefined);
+
       void getRecruitmentScorecards(applicant.applicantId, applicant.vacancyId).then(({ data }) => {
         if (data.success && data.methodResult) setSavedScorecards(data.methodResult);
       }).catch(() => undefined);
-      // REC-BUG-02 Fix: Pre-populate existing offer ID and compensation if an offer exists for this applicant
-      void getRecruitmentPendingOffers(applicant.vacancyId).then(({ data }) => {
-        const match = (data.methodResult ?? []).find((item) => item.applicantId === applicant.applicantId);
-        if (match) {
-          setOffer((current) => ({
+
+      void getFinalInterviewScore(applicant.applicantId).then(({ data }) => {
+        if (data.success && data.methodResult) setAuthoritativeScore(data.methodResult);
+      }).catch(() => undefined);
+    }
+
+    if (applicant.vacancyId) {
+      void getRecruitmentInterviewPlan(applicant.vacancyId).then(({ data }) => {
+        if (data.success && data.methodResult) setInterviewPlan(data.methodResult);
+      }).catch(() => undefined);
+
+      // Directly load applicant's latest active offer
+      void getRecruitmentOfferByApplicant(applicant.applicantId).then(({ data }) => {
+        const loadedOffer = data.methodResult;
+        if (data.success && loadedOffer) {
+          const loadedOfferId = loadedOffer.offerId || "";
+          setOffer({
+            offerId: loadedOfferId,
+            salary: loadedOffer.salary ? String(loadedOffer.salary) : "",
+            currency: loadedOffer.currency || "INR",
+            startDateUtc: loadedOffer.startDateUtc ? dayjs(loadedOffer.startDateUtc).format("YYYY-MM-DD") : "",
+            expiresAtUtc: loadedOffer.expiresAtUtc ? dayjs(loadedOffer.expiresAtUtc).format("YYYY-MM-DDTHH:mm") : "",
+            approvalReference: loadedOffer.approvalReference || "",
+            compensationComponents: Object.fromEntries(
+              Object.entries(loadedOffer.compensationComponents ?? {}).map(([k, v]) => [k, String(v)])
+            ),
+            status: (loadedOffer.status as RecruitmentOfferCommand["status"]) || "Draft",
+          });
+          setRevisionForm((current) => ({
             ...current,
-            offerId: match.offerId || current.offerId,
-            salary: match.salary ? String(match.salary) : current.salary,
-            currency: match.currency || current.currency,
-            status: (match.status as RecruitmentOfferCommand["status"]) || current.status,
+            salary: loadedOffer.salary ? String(loadedOffer.salary) : "",
+            currency: loadedOffer.currency || "INR",
           }));
-          setNegotiation((current) => ({ ...current, offerId: match.offerId || current.offerId, currency: match.currency || current.currency }));
+          if (loadedOfferId) {
+            void loadOfferVersionsAndCounters(loadedOfferId);
+          }
         }
       }).catch(() => undefined);
-      // REC-BUG-04 Fix: Load preboarding case ID if one exists
+
       void getRecruitmentPreboardingQueue().then(({ data }) => {
         const match = (data.methodResult ?? []).find((item) => item.applicantId === applicant.applicantId);
         if (match?.caseId) setPreboardingCaseId(match.caseId);
       }).catch(() => undefined);
     }
   }, [open, stage, applicant.applicantId, applicant.vacancyId]);
+
   useEffect(() => {
     if (!open || !applicant.applicantId) return;
+
     void getRecruitmentResumeExtractionReview(applicant.applicantId, applicant.vacancyId).then(({ data }) => {
       const review = data.methodResult;
       if (data.success && review) {
-        setResumeReview(current => ({ ...current, decision: review.decision, notes: review.notes ?? "", fieldsText: Object.entries(review.extractedFields ?? {}).map(([key, value]) => `${key}: ${value}`).join("\n") }));
+        let fieldsString = "";
+        if (review.extractedFields && typeof review.extractedFields === "object" && !Array.isArray(review.extractedFields)) {
+          fieldsString = Object.entries(review.extractedFields)
+            .filter(([k]) => isNaN(Number(k)))
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("\n");
+        } else if (typeof review.extractedFields === "string") {
+          fieldsString = review.extractedFields;
+        }
+
+        setResumeReview((current) => ({
+          ...current,
+          decision: review.decision,
+          notes: review.notes ?? "",
+          fieldsText: fieldsString || current.fieldsText,
+        }));
       }
     }).catch(() => undefined);
+
     void getRecruitmentEnterpriseConfig().then(({ data }) => {
       if (data.success && data.methodResult) {
         const cfg = data.methodResult;
         setEnterpriseConfig(cfg);
-        if (cfg.compensationCurrency) {
-          setOffer(current => ({ ...current, currency: current.offerId ? current.currency : cfg.compensationCurrency! }));
-          setNegotiation(current => ({ ...current, currency: cfg.compensationCurrency! }));
+        if (cfg.compensationCurrency && !offer.offerId) {
+          setOffer((current) => ({ ...current, currency: cfg.compensationCurrency! }));
+          setRevisionForm((current) => ({ ...current, currency: cfg.compensationCurrency! }));
         }
         if (cfg.screeningCriteria?.length) {
-          setScreening(current => ({ ...current, criteria: cfg.screeningCriteria!.map(name => ({ name, passed: true, notes: "" })) }));
+          setScreening((current) => ({
+            ...current,
+            criteria: cfg.screeningCriteria!.map((name) => ({ name, passed: true, notes: "" })),
+            score: current.score > 0 ? current.score : 100,
+          }));
         }
         if (cfg.preboardingChecklist?.length) {
-          setPreboardingTasks(cfg.preboardingChecklist.map(code => ({ code, title: code.replace(/-/g, " "), status: "Completed" })));
+          setPreboardingTasks(cfg.preboardingChecklist.map((code) => ({ code, title: code.replace(/-/g, " "), status: "Completed" })));
         }
       }
     }).catch(() => undefined);
-    void getRecruitmentWorkflow(applicant.applicantId).then(({ data }) => { if (data.success && data.methodResult) setWorkflow(data.methodResult); }).catch(() => setWorkflow(undefined));
-    void getRecruitmentOnboarding(applicant.applicantId).then(({ data }) => { if (data.success && data.methodResult) setOnboarding(data.methodResult); }).catch(() => setOnboarding(undefined));
+
+    if (applicant.vacancyId) {
+      void getJobVacancyDetails(applicant.vacancyId)
+        .then(({ data }) => {
+          if (data?.success && data?.methodResult) {
+            const vac = data.methodResult;
+            setVacancyData(vac);
+            if (vac.screeningCriteria && vac.screeningCriteria.length > 0) {
+              setScreening((current) => ({
+                ...current,
+                criteria: vac.screeningCriteria!.map((name) => ({ name, passed: true, notes: "" })),
+                score: 100,
+              }));
+            }
+          }
+        })
+        .catch(() => undefined);
+    }
+
+    void getNextEmployeeId().then(({ data }) => {
+      const nextId = (data as { methodResult?: string; message?: string })?.methodResult || data?.message;
+      if (data?.success && nextId) {
+        const cleanId = String(nextId);
+        setSuggestedEmployeeId(cleanId);
+        setHandoff((current) => ({
+          ...current,
+          employeeId: current.employeeId ? current.employeeId : cleanId,
+        }));
+      }
+    }).catch(() => undefined);
+
+    void getRecruitmentOnboarding(applicant.applicantId).then(({ data }) => {
+      if (data.success && data.methodResult) setOnboarding(data.methodResult);
+    }).catch(() => setOnboarding(undefined));
   }, [open, applicant.applicantId, applicant.vacancyId]);
-  const changeDate = (field: "startsAtUtc" | "endsAtUtc", value: Dayjs | null) => setInterview((current) => { const next = value?.format("YYYY-MM-DDTHH:mm") ?? ""; if (field === "startsAtUtc" && next && current.endsAtUtc && new Date(current.endsAtUtc).getTime() <= new Date(next).getTime()) return { ...current, startsAtUtc: next, endsAtUtc: "" }; return { ...current, [field]: next }; });
-  const saveResponse = (response: { data: { success: boolean; message?: string; errorCode?: string | null } }) => { if (!response.data.success) { const api = getApiMessage(response); throw Object.assign(new Error(api.text), { code: api.code }); } };
-  const offerComponentTotal = Number(offer.salary || 0) + Object.values(offer.compensationComponents).reduce((total, value) => total + (Number(value) || 0), 0);
-  const requireOfferApprovalRef = (enterpriseConfig?.offerApproval ?? false) && ["Approved", "Sent"].includes(offer.status);
-  const offerValidation = offer.startDateUtc && new Date(offer.startDateUtc).getTime() < new Date(new Date().toDateString()).getTime() ? "Offer start date cannot be in the past." : !offer.salary || !Number.isFinite(Number(offer.salary)) || Number(offer.salary) <= 0 ? "Enter a salary greater than zero." : !/^[A-Z]{3}$/.test(offer.currency.trim().toUpperCase()) ? "Currency must be a 3-letter code such as INR or USD." : requireOfferApprovalRef && !offer.approvalReference.trim() ? "Approval reference is required by your company's offer approval policy." : null;
-  const interviewValidation = !interview.title.trim() ? "Interview title is required." : !interview.startsAtUtc || !interview.endsAtUtc ? "Select both start and end times." : new Date(interview.startsAtUtc).getTime() <= Date.now() ? "Start time must be in the future." : new Date(interview.endsAtUtc).getTime() <= new Date(interview.startsAtUtc).getTime() ? "End time must be after the start time." : !interview.panelistUserIds.trim() ? "Select at least one interviewer." : null;
-  const loadOfferVersions = async () => { const offerId = negotiation.offerId.trim(); if (!offerId) throw new Error("Enter an offer ID before loading revisions."); setVersionsBusy(true); try { const { data } = await getRecruitmentOfferVersions(offerId); if (!data.success) throw new Error(data.message || "Unable to load offer revisions."); setOfferVersions(data.methodResult ?? []); } finally { setVersionsBusy(false); } }; const loadCounterRequests = async () => { const offerId = negotiation.offerId.trim(); if (!offerId) throw new Error("Enter an offer ID before loading counter requests."); setVersionsBusy(true); try { const { data } = await getRecruitmentOfferCounters(offerId); if (!data.success) throw new Error(data.message || "Unable to load counter requests."); setCounterRequests(data.methodResult ?? []); } finally { setVersionsBusy(false); } };
+
+  const saveResponse = (response: { data: { success: boolean; message?: string; errorCode?: string | null } }) => {
+    if (!response.data.success) {
+      const api = getApiMessage(response);
+      throw Object.assign(new Error(api.text), { code: api.code });
+    }
+  };
+
+  const offerComponentTotal =
+    Number(offer.salary || 0) +
+    Object.values(offer.compensationComponents).reduce((total, value) => total + (Number(value) || 0), 0);
+
+  const offerValidation =
+    offer.startDateUtc && new Date(offer.startDateUtc).getTime() < new Date(new Date().toDateString()).getTime()
+      ? "Offer start date cannot be in the past."
+      : !offer.salary || !Number.isFinite(Number(offer.salary)) || Number(offer.salary) <= 0
+      ? "Enter an annual base salary greater than zero."
+      : !/^[A-Z]{3}$/.test(offer.currency.trim().toUpperCase())
+      ? "Currency must be a 3-letter code such as INR or USD."
+      : offer.startDateUtc && offer.expiresAtUtc && new Date(offer.expiresAtUtc).getTime() > new Date(offer.startDateUtc).getTime()
+      ? "Offer expiry deadline must be on or before the joining start date."
+      : null;
+
+  const interviewValidation = !interview.title.trim()
+    ? "Interview title is required."
+    : !interview.startsAtUtc || !interview.endsAtUtc
+    ? "Select both start and end times."
+    : new Date(interview.startsAtUtc).getTime() <= Date.now()
+    ? "Start time must be in the future."
+    : new Date(interview.endsAtUtc).getTime() <= new Date(interview.startsAtUtc).getTime()
+    ? "End time must be after the start time."
+    : !interview.panelistUserIds.trim()
+    ? "Select at least one interviewer."
+    : null;
+
+  // Active candidate counter request (if any)
+  const pendingCounter = useMemo(() => {
+    return counterRequests.find((c) => c.status === "Pending") || counterRequests[0] || null;
+  }, [counterRequests]);
+
+  // Handle sending offer to candidate
+  const handleSendOffer = async (targetStatus: "Sent" | "Draft" = "Sent") => {
+    if (offerValidation) {
+      setFeedback({ severity: "error", text: offerValidation });
+      return;
+    }
+    setBusy(true);
+    setFeedback(undefined);
+    try {
+      const salary = Number(offer.salary);
+      const offerResponse = await upsertRecruitmentOffer({
+        offerId: offer.offerId.trim() || undefined,
+        applicantId: applicant.applicantId,
+        vacancyId: applicant.vacancyId,
+        salary,
+        currency: offer.currency.trim().toUpperCase(),
+        startDateUtc: offer.startDateUtc ? new Date(offer.startDateUtc).toISOString() : null,
+        compensationComponents: Object.fromEntries(
+          Object.entries(offer.compensationComponents)
+            .filter(([, value]) => value !== "")
+            .map(([key, value]) => [key, Number(value)])
+        ),
+        approvalReference: offer.approvalReference.trim() || null,
+        expiresAtUtc: offer.expiresAtUtc ? new Date(offer.expiresAtUtc).toISOString() : null,
+        status: targetStatus,
+        idempotencyKey: createIdempotencyKey(),
+      });
+      saveResponse(offerResponse);
+      const returnedOfferId = (offerResponse.data as any).methodResult || offer.offerId;
+      setOffer((prev) => ({ ...prev, offerId: returnedOfferId, status: targetStatus }));
+      if (targetStatus === "Sent") {
+        setFeedback({ severity: "success", text: "Formal offer letter dispatched directly to candidate via email." });
+      } else {
+        setFeedback({ severity: "success", text: "Offer saved as Draft." });
+      }
+      onSaved?.();
+    } catch (err) {
+      setFeedback({ severity: "error", text: (err as Error).message || "Failed to save offer." });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // Handle recruiter marking offer accepted offline
+  const handleMarkOfferAcceptedOffline = async () => {
+    setBusy(true);
+    setFeedback(undefined);
+    try {
+      const salary = Number(offer.salary);
+      const offerResponse = await upsertRecruitmentOffer({
+        offerId: offer.offerId.trim() || undefined,
+        applicantId: applicant.applicantId,
+        vacancyId: applicant.vacancyId,
+        salary,
+        currency: offer.currency.trim().toUpperCase(),
+        startDateUtc: offer.startDateUtc ? new Date(offer.startDateUtc).toISOString() : null,
+        compensationComponents: Object.fromEntries(
+          Object.entries(offer.compensationComponents)
+            .filter(([, value]) => value !== "")
+            .map(([key, value]) => [key, Number(value)])
+        ),
+        approvalReference: offer.approvalReference.trim() || null,
+        expiresAtUtc: offer.expiresAtUtc ? new Date(offer.expiresAtUtc).toISOString() : null,
+        status: "Accepted",
+        idempotencyKey: createIdempotencyKey(),
+      });
+      saveResponse(offerResponse);
+      setOffer((prev) => ({ ...prev, status: "Accepted" }));
+      setFeedback({ severity: "success", text: "Offer marked as Accepted! Candidate is now Selected and ready for Preboarding." });
+      onSaved?.();
+    } catch (err) {
+      setFeedback({ severity: "error", text: (err as Error).message || "Failed to update offer." });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // Handle accepting candidate counter-offer
+  const handleDecideCounter = async (counterId: string, counterDecision: "Approved" | "Rejected") => {
+    setBusy(true);
+    setFeedback(undefined);
+    try {
+      const targetCounter = counterRequests.find((c) => c.counterRequestId === counterId);
+      const payload: RecruitmentOfferCounterDecisionCommand = {
+        counterRequestId: counterId,
+        decision: counterDecision,
+        resolutionNote: counterDecision === "Approved" ? "Counter-offer accepted by HR." : "Counter-offer declined.",
+        approvedSalary: counterDecision === "Approved" ? targetCounter?.requestedSalary : undefined,
+        approvedCurrency: counterDecision === "Approved" ? targetCounter?.requestedCurrency : undefined,
+        approvedStartDateUtc: counterDecision === "Approved" ? targetCounter?.requestedStartDateUtc : undefined,
+        idempotencyKey: createIdempotencyKey(),
+        expectedBaseVersionNumber: targetCounter?.baseVersionNumber,
+      };
+
+      const res = await decideRecruitmentOfferCounter(payload);
+      saveResponse(res);
+      setFeedback({
+        severity: "success",
+        text: counterDecision === "Approved" ? "Candidate counter-offer approved! New offer version created." : "Candidate counter-offer declined.",
+      });
+
+      if (offer.offerId) {
+        await loadOfferVersionsAndCounters(offer.offerId);
+      }
+      onSaved?.();
+    } catch (err) {
+      setFeedback({ severity: "error", text: (err as Error).message || "Failed to process counter-offer." });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // Handle creating revised offer
+  const handleCreateOfferRevision = async () => {
+    if (!offer.offerId) {
+      setFeedback({ severity: "error", text: "Save the primary offer before creating a revision." });
+      return;
+    }
+    const salary = Number(revisionForm.salary);
+    if (!salary || salary <= 0) {
+      setFeedback({ severity: "error", text: "Please enter a valid revised salary greater than zero." });
+      return;
+    }
+
+    setBusy(true);
+    setFeedback(undefined);
+    try {
+      const payload: RecruitmentOfferVersionCommand = {
+        offerId: offer.offerId,
+        salary,
+        currency: revisionForm.currency.trim().toUpperCase(),
+        status: "PendingApproval",
+        versionReason: revisionForm.reason.trim() || "Offer revised during negotiation",
+        startDateUtc: offer.startDateUtc ? new Date(offer.startDateUtc).toISOString() : null,
+        expiresAtUtc: offer.expiresAtUtc ? new Date(offer.expiresAtUtc).toISOString() : null,
+        idempotencyKey: createIdempotencyKey(),
+      };
+
+      const res = await createRecruitmentOfferVersion(payload);
+      saveResponse(res);
+      setFeedback({ severity: "success", text: "Offer revision created successfully!" });
+      await loadOfferVersionsAndCounters(offer.offerId);
+      setIsRevisionMode(false);
+      onSaved?.();
+    } catch (err) {
+      setFeedback({ severity: "error", text: (err as Error).message || "Unable to create offer revision." });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // Main lifecycle submission
   const submit = async () => {
     let successMessage = "Saved successfully.";
-    setBusy(true); setFeedback(undefined);
+    setBusy(true);
+    setFeedback(undefined);
     try {
-      if (mode === "resume") { const extractedFields = Object.fromEntries(resumeReview.fieldsText.split("\n").map(line => line.split(":")).filter(parts => parts[0]?.trim()).map(parts => [parts[0].trim(), parts.slice(1).join(":").trim()])); if (!Object.keys(extractedFields).length) throw new Error("Enter at least one extracted field."); saveResponse(await reviewRecruitmentResumeExtraction({ applicantId: applicant.applicantId, vacancyId: applicant.vacancyId, decision: resumeReview.decision, extractedFields, notes: resumeReview.notes.trim() || null, idempotencyKey: createIdempotencyKey() } as RecruitmentResumeExtractionReviewCommand)); }
-      else if (mode === "negotiation") { const offerId = negotiation.offerId.trim(); const salary = Number(negotiation.salary); if (!offerId || !Number.isFinite(salary) || salary <= 0) throw new Error("Offer ID and a valid salary are required."); if (negotiation.action === "Version") saveResponse(await createRecruitmentOfferVersion({ offerId, salary, currency: negotiation.currency.trim().toUpperCase(), status: "PendingApproval", compensationComponents: Object.fromEntries(Object.entries(negotiation.compensationComponents).filter(([, value]) => value !== "").map(([key, value]) => [key, Number(value)])), versionReason: negotiation.message.trim() || "Recruiter revision", idempotencyKey: createIdempotencyKey() } as RecruitmentOfferVersionCommand)); else saveResponse(await requestRecruitmentOfferCounter({ offerId, requestedSalary: salary, requestedCurrency: negotiation.currency.trim().toUpperCase(), message: negotiation.message.trim() || null, idempotencyKey: createIdempotencyKey() } as RecruitmentOfferCounterCommand)); }
-      else if (mode === "privacy") { if (privacy.action === "Anonymize" && !privacy.reason.trim()) throw new Error("A reason is required before anonymization."); saveResponse(await applyRecruitmentCandidatePrivacy({ applicantId: applicant.applicantId, action: privacy.action, retentionDays: privacy.action === "Grant" && privacy.retentionDays !== "" ? Number(privacy.retentionDays) : undefined, reason: privacy.reason.trim() || null, idempotencyKey: createIdempotencyKey() })); }
-      else if (mode === "decision") { if (["Hold", "Reject"].includes(decision.decision) && !decision.notes.trim()) throw new Error("Decision notes are required for Hold or Reject outcomes."); saveResponse(await upsertRecruitmentHiringDecision({ applicantId: applicant.applicantId, vacancyId: applicant.vacancyId, decision: decision.decision, notes: decision.notes.trim() || null, idempotencyKey: createIdempotencyKey() })); }
-      else if (mode === "onboarding") { if (!onboarding) throw new Error("Onboarding case is not available. Complete preboarding handoff first."); const nextTasks = onboarding.tasks.map(task => ({ code: task.code, status: task.status })); const response = await updateRecruitmentOnboarding({ caseId: onboarding.caseId, status: onboarding.status, tasks: nextTasks, expectedVersion: onboarding.version, idempotencyKey: createIdempotencyKey() }); saveResponse(response); successMessage = response.data.message ?? successMessage; }
-      else if (mode === "interview") { if (!interview.startsAtUtc || !interview.endsAtUtc) throw new Error("Start and end time are required."); if (!interview.panelistUserIds.trim()) throw new Error("Select at least one interviewer before scheduling."); if (new Date(interview.startsAtUtc).getTime() <= Date.now()) throw new Error("Scheduled interviews must start in the future."); saveResponse(await upsertRecruitmentInterview({ applicantId: applicant.applicantId, vacancyId: applicant.vacancyId, title: interview.title.trim(), roundNumber: interview.roundNumber, roundType: interview.roundType.trim() || null, startsAtUtc: new Date(interview.startsAtUtc).toISOString(), endsAtUtc: new Date(interview.endsAtUtc).toISOString(), location: interview.location.trim() || null, panelistUserIds: interview.panelistUserIds.split(",").map((id) => id.trim()).filter(Boolean), idempotencyKey: createIdempotencyKey(), status: "Scheduled" } as RecruitmentInterviewCommand)); }
-      else if (mode === "offer") { const salary = Number(offer.salary); if (offerValidation) throw new Error(offerValidation); const offerResponse = await upsertRecruitmentOffer({ offerId: offer.offerId.trim() || undefined, applicantId: applicant.applicantId, vacancyId: applicant.vacancyId, salary, currency: offer.currency.trim().toUpperCase(), startDateUtc: offer.startDateUtc ? new Date(offer.startDateUtc).toISOString() : null, compensationComponents: Object.fromEntries(Object.entries(offer.compensationComponents).filter(([, value]) => value !== "").map(([key, value]) => [key, Number(value)])), approvalReference: offer.approvalReference.trim() || null, expiresAtUtc: offer.expiresAtUtc ? new Date(offer.expiresAtUtc).toISOString() : null, status: offer.status, idempotencyKey: createIdempotencyKey() }); saveResponse(offerResponse); const returnedOfferId = (offerResponse.data as any).methodResult; if (typeof returnedOfferId === "string" && returnedOfferId.trim()) { setOffer(current => ({ ...current, offerId: returnedOfferId.trim() })); setNegotiation(current => ({ ...current, offerId: returnedOfferId.trim() })); } }
-      else if (mode === "handoff") {
-        if (!handoff.employeeId.trim()) throw new Error("Employee ID is required.");
+      if (mode === "screening") {
+        const score = Number.isFinite(Number(screening.score)) && Number(screening.score) > 0
+          ? Number(screening.score)
+          : currentScreeningScore;
+        if (!Number.isFinite(score) || score < 0 || score > 100) throw new Error("Enter a screening score from 0 to 100.");
+        if (screening.decision === "Reject" && !screening.rejectionReason.trim()) throw new Error("A rejection reason is required.");
+        saveResponse(
+          await upsertRecruitmentScreening({
+            applicantId: applicant.applicantId,
+            vacancyId: applicant.vacancyId,
+            reviewerUserId,
+            score,
+            decision: screening.decision,
+            rejectionReason: screening.rejectionReason.trim() || null,
+            evidence: screening.evidence.trim() || null,
+            criteria: screening.criteria,
+            idempotencyKey: createIdempotencyKey(),
+          })
+        );
+        const nextStage =
+          screening.decision === "Pass" ? "Shortlisted" : screening.decision === "Hold" ? "OnHold" : screening.decision === "Reject" ? "Rejected" : null;
+        if (nextStage) {
+          await upsertRecruitmentApplicationStage({
+            applicantId: applicant.applicantId,
+            vacancyId: applicant.vacancyId,
+            stage: nextStage,
+            reason: screening.rejectionReason.trim() || screening.evidence.trim() || null,
+            idempotencyKey: createIdempotencyKey(),
+          });
+        }
+        if (screening.decision === "Pass" && !effectiveRequireInterview) {
+          await upsertRecruitmentHiringDecision({
+            applicantId: applicant.applicantId,
+            vacancyId: applicant.vacancyId,
+            decision: "Approve",
+            notes: "Direct hire fast-track approval after screening pass",
+            idempotencyKey: createIdempotencyKey(),
+          }).catch(() => undefined);
+          successMessage = "Screening passed! Candidate fast-tracked directly to Offer.";
+          setMode("offer");
+        } else {
+          successMessage = "Screening review recorded. Candidate moved to next pipeline stage.";
+          setMode("interview");
+        }
+      } else if (mode === "interview") {
+        if (interviewSubTab === 0) {
+          if (!interview.startsAtUtc || !interview.endsAtUtc) throw new Error("Start and end time are required.");
+          if (!interview.panelistUserIds.trim()) throw new Error("Select at least one interviewer.");
+          if (new Date(interview.startsAtUtc).getTime() <= Date.now()) throw new Error("Interview must start in the future.");
+          saveResponse(
+            await upsertRecruitmentInterview({
+              applicantId: applicant.applicantId,
+              vacancyId: applicant.vacancyId,
+              title: interview.title.trim(),
+              roundNumber: interview.roundNumber,
+              roundType: interview.roundType.trim() || null,
+              startsAtUtc: new Date(interview.startsAtUtc).toISOString(),
+              endsAtUtc: new Date(interview.endsAtUtc).toISOString(),
+              location: interview.location.trim() || null,
+              meetingUrl: interview.meetingUrl.trim() || null,
+              panelistUserIds: interview.panelistUserIds.split(",").map((id) => id.trim()).filter(Boolean),
+              idempotencyKey: createIdempotencyKey(),
+              status: "Scheduled",
+            } as RecruitmentInterviewCommand)
+          );
+          successMessage = "Interview round scheduled. Video meeting link & candidate briefing dispatched to panelists.";
+          setInterviewSubTab(1);
+        } else {
+          // Submit decision and scorecard
+          if ((decision.decision === "Reject" || decision.decision === "Hold") && !decision.notes.trim()) {
+            throw new Error(`A reason / note is required when marking an application as ${decision.decision}.`);
+          }
+          saveResponse(
+            await upsertRecruitmentHiringDecision({
+              applicantId: applicant.applicantId,
+              vacancyId: applicant.vacancyId,
+              decision: decision.decision,
+              notes: decision.notes.trim() || (decision.decision === "Approve" ? "Approved by hiring team" : "Decision recorded"),
+              idempotencyKey: createIdempotencyKey(),
+            })
+          );
+          successMessage = `Hiring decision recorded. Candidate is now ${decision.decision === "Approve" ? "Selected (Ready for Offer)" : decision.decision}.`;
+          if (decision.decision === "Approve") {
+            setMode("offer");
+          }
+        }
+      } else if (mode === "offer") {
+        await handleSendOffer("Sent");
+        return;
+      } else if (mode === "handoff") {
+        const resolvedEmpId = handoff.employeeId.trim() || suggestedEmployeeId.trim();
+        if (!resolvedEmpId) throw new Error("Employee ID could not be resolved. Please provide an Employee ID.");
         if (preboardingCaseId) {
           await updateRecruitmentPreboarding({
             caseId: preboardingCaseId,
-            status: preboardingTasks.every(t => t.status === "Completed" || t.status === "Skipped") ? "ReadyForHire" : "InProgress",
-            tasks: preboardingTasks.map(t => ({ code: t.code, status: t.status })),
+            status: preboardingTasks.every((t) => t.status === "Completed" || t.status === "Skipped") ? "ReadyForHire" : "InProgress",
+            tasks: preboardingTasks.map((t) => ({ code: t.code, status: t.status })),
             idempotencyKey: createIdempotencyKey(),
           }).catch(() => undefined);
         }
-        saveResponse(await handoffCandidateToPreboarding({
-          applicantId: applicant.applicantId,
-          idempotencyKey: createIdempotencyKey(),
-          firstName: handoff.firstName.trim(),
-          lastName: handoff.lastName.trim(),
-          email: handoff.email.trim(),
-          employeeId: handoff.employeeId.trim(),
-          autoCompletePreboarding: handoff.autoCompletePreboarding,
-        } as CandidateHandoffRequest));
+        saveResponse(
+          await handoffCandidateToPreboarding({
+            applicantId: applicant.applicantId,
+            idempotencyKey: createIdempotencyKey(),
+            firstName: handoff.firstName.trim(),
+            lastName: handoff.lastName.trim(),
+            email: handoff.email.trim(),
+            employeeId: resolvedEmpId,
+            autoCompletePreboarding: handoff.autoCompletePreboarding,
+          } as CandidateHandoffRequest)
+        );
+        successMessage = `Candidate handoff complete! Employee ${resolvedEmpId} has been created.`;
+        setHandoff((h) => ({ ...h, employeeId: resolvedEmpId }));
+        setHandoffCompleted(true);
       }
-      else if (mode === "screening") { const score = Number(screening.score); if (!Number.isFinite(score) || score < 0 || score > 100) throw new Error("Enter a screening score from 0 to 100."); if (screening.decision === "Reject" && !screening.rejectionReason.trim()) throw new Error("A rejection reason is required."); saveResponse(await upsertRecruitmentScreening({ applicantId: applicant.applicantId, vacancyId: applicant.vacancyId, reviewerUserId, score, decision: screening.decision, rejectionReason: screening.rejectionReason.trim() || null, evidence: screening.evidence.trim() || null, criteria: screening.criteria, idempotencyKey: createIdempotencyKey() })); const nextStage = screening.decision === "Pass" ? "Shortlisted" : screening.decision === "Hold" ? "OnHold" : screening.decision === "Reject" ? "Rejected" : null; if (nextStage) await upsertRecruitmentApplicationStage({ applicantId: applicant.applicantId, vacancyId: applicant.vacancyId, stage: nextStage, reason: screening.rejectionReason.trim() || screening.evidence.trim() || null, idempotencyKey: createIdempotencyKey() } as RecruitmentApplicationStageCommand).catch(() => undefined); }
-      else if (mode === "scorecard") {
-        if (!scorecard.interviewId.trim()) throw new Error("Load a saved interview round before submitting its scorecard.");
-        if (!scorecard.recommendation.trim()) throw new Error("Select an interviewer recommendation.");
-        const effectiveReviewer = scorecard.reviewerUserId?.trim() || selectedInterviewerIds[0] || reviewerUserId;
-        const scRes = await upsertRecruitmentScorecard({ scorecardId: scorecard.scorecardId || undefined, applicantId: applicant.applicantId, vacancyId: applicant.vacancyId, interviewId: scorecard.interviewId.trim(), reviewerUserId: effectiveReviewer, roundNumber: scorecard.roundNumber, recommendation: scorecard.recommendation.trim(), criteria: scorecard.criteria, status: scorecard.status, idempotencyKey: createIdempotencyKey() });
-        saveResponse(scRes);
-        const savedId = (scRes.data as any)?.methodResult;
-        if (typeof savedId === "string" && savedId.trim()) setScorecard((current) => ({ ...current, scorecardId: savedId.trim() }));
-        const refreshedCards = await getRecruitmentScorecards(applicant.applicantId, applicant.vacancyId).catch(() => undefined);
-        if (refreshedCards?.data?.success && refreshedCards.data.methodResult) setSavedScorecards(refreshedCards.data.methodResult);
-      }
-      else if (mode === "talentpool") { if (!talentPool.poolName.trim()) throw new Error("Pool name is required."); saveResponse(await upsertRecruitmentTalentPool({ applicantId: applicant.applicantId, poolName: talentPool.poolName.trim(), tags: talentPool.tags.split(",").map((tag) => tag.trim()).filter(Boolean), notes: talentPool.notes.trim() || null, status: talentPool.status, idempotencyKey: createIdempotencyKey() })); }
-      else { if (!merge.targetApplicantId.trim()) throw new Error("Target applicant ID is required."); if (merge.targetApplicantId.trim() === applicant.applicantId) throw new Error("Source and target applicants must be different."); saveResponse(await mergeRecruitmentApplicants({ sourceApplicantId: applicant.applicantId, targetApplicantId: merge.targetApplicantId.trim(), reason: merge.reason.trim() || null, idempotencyKey: createIdempotencyKey() } as RecruitmentApplicantMergeCommand)); }
-      setFeedback({ severity: "success", text: successMessage }); onSaved?.();
-    } catch (error) { const typed = error as Error & { code?: string }; const message = typed.message || "Unable to save."; if (mode === "decision" && stage === ApplicationStatus.Selected) setMode("offer"); else if (mode === "decision" && typed.code === "REC_INVALID_TRANSITION") { const lower = message.toLowerCase(); if (lower.includes("scorecard") || lower.includes("debrief")) setMode("scorecard"); else if (lower.includes("interview") || lower.includes("round")) setMode("interview"); } setFeedback({ severity: "error", text: message, code: typed.code }); } finally { setBusy(false); }
+      setFeedback({ severity: "success", text: successMessage });
+      onSaved?.();
+    } catch (error) {
+      setFeedback({ severity: "error", text: (error as Error).message || "An error occurred." });
+    } finally {
+      setBusy(false);
+    }
   };
-  const selectedInterviewerIds = interview.panelistUserIds.split(",").map((id) => id.trim()).filter(Boolean);
-  const visibleInterviewers = interviewers.filter((employee) => { const text = (employee.fullName + " " + (employee.employeeId ?? "") + " " + (employee.userId ?? "") + " " + (employee.email ?? "") + " " + Object.values(employee.jobRole ?? {}).join(" ")).toLowerCase(); const department = Object.values(employee.department ?? {}).join(" ").toLowerCase(); return (!interviewerQuery.trim() || text.includes(interviewerQuery.trim().toLowerCase())) && (!interviewerDepartment || department.includes(interviewerDepartment.toLowerCase())); }).slice(0, 12);
-  const toggleInterviewer = (userId: string) => setInterview((current) => { const ids = current.panelistUserIds.split(",").map((id) => id.trim()).filter(Boolean); const next = ids.includes(userId) ? ids.filter((id) => id !== userId) : [...ids, userId]; return { ...current, panelistUserIds: next.join(", ") }; });
-  const addScorecardCriterion = () => setScorecard(current => current.criteria.length >= 20 ? current : ({ ...current, criteria: [...current.criteria, { name: "", rating: 3, notes: "" }] }));
-  const prepareNextRound = () => { const currentRound = interviewRounds.find((round) => round.roundNumber === interview.roundNumber); if (!currentRound || currentRound.status !== "Completed" || currentRound.debriefStatus !== "Complete") { setFeedback({ severity: "error", text: `Complete and debrief round ${interview.roundNumber} before preparing the next round.` }); return; } setInterview((current) => ({ ...current, roundNumber: Math.min(50, Math.max(1, current.roundNumber + 1)), startsAtUtc: "", endsAtUtc: "" })); setScorecard((current) => ({ ...current, interviewId: "" })); };
-  const searchInterviewRounds = async () => { setInterviewSearchBusy(true); setFeedback(undefined); try { const response = await getRecruitmentInterviewRounds(applicant.applicantId, applicant.vacancyId); if (!response.data.success) throw new Error(response.data.message ?? "Unable to load interview rounds."); const rows = response.data.methodResult ?? []; setInterviewRounds(rows); const scorecardResponse = await getRecruitmentScorecards(applicant.applicantId, applicant.vacancyId); if (scorecardResponse.data.success) setSavedScorecards(scorecardResponse.data.methodResult ?? []); const latest = rows[0]; if (latest) { const latestPanelists: string[] = latest.panelistUserIds ?? []; const defaultReviewer = latestPanelists.includes(reviewerUserId) ? reviewerUserId : (latestPanelists[0] || reviewerUserId); setInterview((current) => ({ ...current, title: latest.title ?? current.title, roundNumber: latest.roundNumber ?? current.roundNumber, roundType: latest.roundType ?? current.roundType, startsAtUtc: latest.startsAtUtc ? dayjs(latest.startsAtUtc).format("YYYY-MM-DDTHH:mm") : current.startsAtUtc, endsAtUtc: latest.endsAtUtc ? dayjs(latest.endsAtUtc).format("YYYY-MM-DDTHH:mm") : current.endsAtUtc, location: latest.meetingUrl || latest.location || current.location, panelistUserIds: latestPanelists.join(", ") })); setScorecard((current) => ({ ...current, interviewId: latest.interviewId ?? current.interviewId, roundNumber: latest.roundNumber ?? current.roundNumber, reviewerUserId: defaultReviewer })); } setFeedback({ severity: "success", text: rows.length ? "Existing interview rounds loaded. The latest round is ready to review." : "No interview rounds found for this candidate." }); } catch (error) { setFeedback({ severity: "error", text: (error as Error).message }); } finally { setInterviewSearchBusy(false); } };
-  const retryOnboardingActivation = async () => { if (!onboarding?.caseId) return; setBusy(true); setFeedback(undefined); try { const response = await retryRecruitmentOnboardingActivation(onboarding.caseId); saveResponse(response); setFeedback({ severity: "success", text: response.data.message ?? "Onboarding activation retry completed." }); const refreshed = await getRecruitmentOnboarding(applicant.applicantId); if (refreshed.data.success && refreshed.data.methodResult) setOnboarding(refreshed.data.methodResult); } catch (error) { const typed = error as Error & { code?: string }; setFeedback({ severity: "error", text: typed.message || "Unable to retry onboarding activation.", code: typed.code }); } finally { setBusy(false); } };  const retryCalendar = async () => { if (!scorecard.interviewId.trim()) return; setBusy(true); setFeedback(undefined); try { const response = await retryRecruitmentInterviewCalendar(scorecard.interviewId.trim()); saveResponse(response); setFeedback({ severity: "success", text: response.data.message ?? "Calendar retry completed." }); } catch (error) { const typed = error as Error & { code?: string }; setFeedback({ severity: "error", text: typed.message || "Unable to retry calendar sync.", code: typed.code }); } finally { setBusy(false); } };
-  const completeInterview = async () => { if (!scorecard.interviewId.trim()) { setFeedback({ severity: "error", text: "Load a saved interview round before marking it complete." }); return; } setBusy(true); setFeedback(undefined); try { saveResponse(await upsertRecruitmentInterview({ interviewId: scorecard.interviewId.trim(), applicantId: applicant.applicantId, vacancyId: applicant.vacancyId, title: interview.title.trim(), roundNumber: interview.roundNumber, roundType: interview.roundType.trim() || null, startsAtUtc: new Date(interview.startsAtUtc).toISOString(), endsAtUtc: new Date(interview.endsAtUtc).toISOString(), location: interview.location.trim() || null, panelistUserIds: interview.panelistUserIds.split(",").map((id) => id.trim()).filter(Boolean), idempotencyKey: createIdempotencyKey(), status: "Completed" } as RecruitmentInterviewCommand)); setFeedback({ severity: "success", text: "Interview marked completed. Submit the scorecard next." }); onSaved?.(); } catch (error) { const typed = error as Error & { code?: string }; setFeedback({ severity: "error", text: typed.message || "Unable to complete interview.", code: typed.code }); } finally { setBusy(false); } };
-  const completeDebrief = async () => { if (!scorecard.interviewId.trim()) { setFeedback({ severity: "error", text: "Interview ID is required to complete a debrief." }); return; } setBusy(true); setFeedback(undefined); try { saveResponse(await completeRecruitmentInterviewDebrief({ interviewId: scorecard.interviewId.trim(), decision: scorecard.debriefDecision, notes: scorecard.criteria[0].notes || null, idempotencyKey: createIdempotencyKey() } as RecruitmentInterviewDebriefCommand)); const refreshedRounds = await getRecruitmentInterviewRounds(applicant.applicantId, applicant.vacancyId).catch(() => undefined); if (refreshedRounds?.data?.success && refreshedRounds.data.methodResult) setInterviewRounds(refreshedRounds.data.methodResult); setFeedback({ severity: "success", text: "Interview debrief completed." }); onSaved?.(); } catch (error) { const typed = error as Error & { code?: string }; setFeedback({ severity: "error", text: typed.message || "Unable to complete debrief.", code: typed.code }); } finally { setBusy(false); } };
-  const [showResumePreview, setShowResumePreview] = useState(false);
-  const theme = useTheme();
-  const isDesktopSplit = useMediaQuery(theme.breakpoints.up("md"));
-  const showSplitResumePane = showResumePreview && isDesktopSplit && Boolean(applicant.resumeUrl);
+
+  const handleSaveScorecard = async () => {
+    setSubmittingScorecard(true);
+    setFeedback(undefined);
+    try {
+      if (!scorecard.criteria || scorecard.criteria.length === 0) {
+        throw new Error("At least one evaluation criterion is required.");
+      }
+      const minR = interviewPlan?.ratingScale?.minRating ?? 1;
+      const maxR = interviewPlan?.ratingScale?.maxRating ?? 5;
+      for (const c of scorecard.criteria) {
+        if (!c.name.trim()) throw new Error("All criteria must have a name.");
+        if (c.rating < minR || c.rating > maxR) throw new Error(`Ratings must be between ${minR} and ${maxR}.`);
+      }
+      const targetReviewer = scorecard.reviewerUserId || reviewerUserId;
+      if (!targetReviewer) throw new Error("Please select an evaluator/reviewer.");
+
+      const activeInterview =
+        interviewRounds.find((r) => r.roundNumber === (scorecard.roundNumber || 1)) || interviewRounds[0];
+
+      const res = await upsertRecruitmentScorecard({
+        applicantId: applicant.applicantId,
+        vacancyId: applicant.vacancyId,
+        interviewId: scorecard.interviewId || activeInterview?.interviewId || undefined,
+        roundNumber: scorecard.roundNumber || 1,
+        reviewerUserId: targetReviewer,
+        recommendation: scorecard.recommendation,
+        criteria: scorecard.criteria.map((c: any) => ({
+          code: c.code,
+          name: c.name.trim(),
+          rating: Number(c.rating) || minR,
+          qualitativeLabel: c.qualitativeLabel,
+          weight: c.weight,
+          isMandatory: c.isMandatory,
+          notes: c.notes?.trim() || undefined,
+        })),
+        status: scorecard.status || "Submitted",
+        idempotencyKey: createIdempotencyKey(),
+      });
+      saveResponse(res);
+      setFeedback({ severity: "success", text: "Scorecard submitted successfully." });
+
+      // Refresh scorecards list & authoritative benchmark
+      void getRecruitmentScorecards(applicant.applicantId, applicant.vacancyId).then(({ data }) => {
+        if (data.success && data.methodResult) setSavedScorecards(data.methodResult);
+      });
+      void getFinalInterviewScore(applicant.applicantId).then(({ data }) => {
+        if (data.success && data.methodResult) setAuthoritativeScore(data.methodResult);
+      });
+    } catch (err) {
+      setFeedback({ severity: "error", text: (err as Error).message });
+    } finally {
+      setSubmittingScorecard(false);
+    }
+  };
+
+  const getEmployeeName = (emp: any) => {
+    if (!emp) return "";
+    if (typeof emp === "string") return emp;
+    if (emp.fullName && emp.fullName.trim()) return emp.fullName.trim();
+    const combined = `${emp.firstName ?? ""} ${emp.lastName ?? ""}`.trim();
+    if (combined) return combined;
+    if (emp.name && emp.name.trim()) return emp.name.trim();
+    return emp.email || emp.employeeId || emp.userId || "Employee";
+  };
+
+  const selectedInterviewerIds = useMemo(() => {
+    return interview.panelistUserIds
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
+  }, [interview.panelistUserIds]);
+
+  const selectedInterviewerObjs = useMemo(() => {
+    return selectedInterviewerIds.map((id) => {
+      const found = interviewers.find((e) => e.userId === id);
+      return found || { userId: id, fullName: id, email: "" };
+    });
+  }, [selectedInterviewerIds, interviewers]);
+
+  const quorumNeeded = Math.max(1, Math.floor((selectedInterviewerIds.length + 1) / 2));
+
+  // Screening threshold logic: active when role specifies or non-Simple company has active auto-pass gate
+  const isJobSpecificThreshold = Boolean(
+    vacancyData?.screeningPassScore &&
+    vacancyData.screeningPassScore > 0 &&
+    vacancyData?.workflowMode !== "Direct"
+  );
+  const isCompanyThresholdActive = Boolean(
+    enterpriseConfig &&
+    enterpriseConfig.recruitmentMode !== "Simple" &&
+    enterpriseConfig.autoAdvanceOnScreening &&
+    (enterpriseConfig.screeningPassScore ?? 0) > 0 &&
+    vacancyData?.workflowMode !== "Direct"
+  );
+  const isScreeningThresholdActive = isJobSpecificThreshold || isCompanyThresholdActive;
+  const passThreshold = isJobSpecificThreshold
+    ? vacancyData!.screeningPassScore!
+    : isCompanyThresholdActive
+    ? (enterpriseConfig?.screeningPassScore ?? 60)
+    : 0;
+
+  const finalInterviewEvaluation = useMemo(() => {
+    if (authoritativeScore && authoritativeScore.totalScorecardsCount > 0) {
+      return {
+        score: authoritativeScore.finalInterviewScore,
+        rating: authoritativeScore.finalInterviewRating,
+        consensus: authoritativeScore.finalInterviewRecommendation,
+        evaluatedRoundsCount: authoritativeScore.evaluatedRoundsCount,
+        evaluatedRounds: authoritativeScore.evaluatedRoundNumbers,
+        totalScorecards: authoritativeScore.totalScorecardsCount,
+        excludesHr: authoritativeScore.excludesHrRound,
+        passedMandatoryGates: authoritativeScore.passedMandatoryGates ?? true,
+        mandatoryGateFailures: authoritativeScore.mandatoryGateFailures ?? [],
+        targetScore: authoritativeScore.targetScore ?? 70,
+        meetsHiringTarget: authoritativeScore.meetsHiringTarget ?? true,
+        scaleType: authoritativeScore.scaleType ?? "Numeric1To5",
+      };
+    }
+
+    if (!savedScorecards || savedScorecards.length === 0) return null;
+    const validCards = savedScorecards.filter(
+      (c) => (c.status === "Submitted" || c.status === "Locked") && Array.isArray(c.criteria) && c.criteria.length > 0
+    );
+    if (validCards.length === 0) return null;
+
+    const isHrCard = (card: any) => {
+      const interview = interviewRounds.find(
+        (r) => (card.interviewId && r.interviewId === card.interviewId) || r.roundNumber === card.roundNumber
+      );
+      if (!interview) return false;
+      const title = (interview.title || "").toLowerCase();
+      const type = (interview.roundType || "").toLowerCase();
+      return type === "hr" || /\b(hr|human\s+resources?|salary|negotiation|offer\s+discussion|compensation)\b/i.test(title);
+    };
+
+    const nonHrCards = validCards.filter((c) => !isHrCard(c));
+    const targetCards = nonHrCards.length > 0 ? nonHrCards : validCards;
+    const excludesHr = validCards.length > nonHrCards.length && nonHrCards.length > 0;
+
+    const allCriteria = targetCards.flatMap((c) => c.criteria || []).filter((cr: any) => cr.rating >= 1 && cr.rating <= 5);
+    if (!allCriteria || allCriteria.length === 0) return null;
+
+    const avgRating = allCriteria.reduce((sum: number, c: any) => sum + Number(c.rating || 0), 0) / allCriteria.length;
+    const scorePct = Math.round((avgRating / 5) * 100);
+    const ratingNum = Math.round(avgRating * 100) / 100;
+
+    let strongHire = 0, hire = 0, noHire = 0, hold = 0;
+    targetCards.forEach((c) => {
+      const rec = (c.recommendation || "").toLowerCase();
+      const isReject = rec.includes("no") || rec.includes("reject");
+      if (rec.includes("strong") && !isReject) strongHire++;
+      else if (isReject) noHire++;
+      else if (rec.includes("hire")) hire++;
+      else if (rec.includes("hold")) hold++;
+    });
+
+    let consensus = "Hire";
+    if (noHire > 0 && noHire >= hire + strongHire) consensus = "No Hire";
+    else if (strongHire > 0 && strongHire >= hire) consensus = "Strong Hire";
+    else if (hire > 0) consensus = "Hire";
+    else if (hold > 0) consensus = "Hold";
+
+    const evaluatedRounds = Array.from(new Set(targetCards.map((c) => c.roundNumber || 1))).sort();
+
+    return {
+      score: scorePct,
+      rating: ratingNum,
+      consensus,
+      evaluatedRoundsCount: evaluatedRounds.length,
+      evaluatedRounds,
+      totalScorecards: targetCards.length,
+      excludesHr,
+      passedMandatoryGates: true,
+      mandatoryGateFailures: [] as string[],
+      targetScore: 70,
+      meetsHiringTarget: scorePct >= 70,
+      scaleType: "Numeric1To5",
+    };
+  }, [authoritativeScore, savedScorecards, interviewRounds]);
+
+  const passedCriteriaCount = screening.criteria.filter((c) => c.passed).length;
+  const calculatedCriteriaScore =
+    screening.criteria.length > 0 ? Math.round((passedCriteriaCount / screening.criteria.length) * 100) : 0;
+
+  // Real-time screening score: fallback to calculated criteria score if 0 with passed criteria
+  const currentScreeningScore =
+    Number(screening.score) === 0 && passedCriteriaCount > 0
+      ? calculatedCriteriaScore
+      : (Number(screening.score) || 0);
+
+  const meetsScreeningThreshold = !isScreeningThresholdActive || currentScreeningScore >= passThreshold;
+
   const fieldSx = { "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: "background.paper" } };
   const initials = ((applicant.firstName?.[0] ?? "") + (applicant.lastName?.[0] ?? "")).toUpperCase() || "CA";
-  return <>
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={onClose}
-      aria-labelledby="recruitment-lifecycle-title"
-      PaperProps={{
-        sx: {
-          width: {
-            xs: "100vw",
-            sm: 540,
-            md: showSplitResumePane ? 980 : 580,
-            lg: showSplitResumePane ? 1140 : 620,
-          },
-          maxWidth: "100vw",
-          height: "100dvh",
-          p: { xs: 2, sm: 2.5 },
-          overflow: "hidden",
-          transition: "width 220ms ease",
-        },
-      }}
-    >
-      <Stack spacing={{ xs: 1.5, sm: 2 }} sx={{ height: "100%", minWidth: 0 }}>
-        {/* Candidate Header Bar using shared CustomIconButton and StyleStatus */}
-        <Stack
-          direction="row"
-          spacing={1.5}
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{
-            flex: "0 0 auto",
-            p: 1.5,
-            borderRadius: 2.5,
-            border: "1px solid",
-            borderColor: "divider",
-            bgcolor: "background.default",
-          }}
-        >
-          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ minWidth: 0 }}>
-            <Avatar sx={{ width: 42, height: 42, fontWeight: 800, bgcolor: "primary.main", color: "primary.contrastText" }}>{initials}</Avatar>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography id="recruitment-lifecycle-title" variant="subtitle1" fontWeight={850} noWrap>{applicant.firstName} {applicant.lastName}</Typography>
-              <Typography variant="caption" color="text.secondary" noWrap display="block">{applicant.vacancyName || "Candidate Application"} · {applicant.email}</Typography>
-            </Box>
-          </Stack>
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
-            {applicant.resumeUrl && (
-              <CustomIconButton
-                icon={showResumePreview ? <Close /> : <Visibility />}
-                tooltip={showResumePreview ? "Hide CV" : "View CV"}
-                ariaLabel={showResumePreview ? "Hide CV" : "View CV"}
-                handleClick={() => setShowResumePreview((v) => !v)}
-                toolbar
-              />
-            )}
-            <StyleStatus
-              label={applicationStatusMapper[stage]}
-              className={clsx({
-                info: stage === ApplicationStatus.New,
-                warning: [
-                  ApplicationStatus.InProgress,
-                  ApplicationStatus.OnHold,
-                  ApplicationStatus.Shortlisted,
-                ].includes(stage),
-                success: stage === ApplicationStatus.Selected,
-                danger: stage === ApplicationStatus.Rejected,
-              })}
-            />
-          </Stack>
-        </Stack>
+  const showSplitResumePane = showResumePreview && Boolean(applicant.resumeUrl);
 
-        {/* Responsive Workspace Grid: Side-by-side Split on Desktop (md+), Single Column on Mobile */}
-        <Box
-          sx={{
-            flex: "1 1 auto",
-            minHeight: 0,
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              md: showSplitResumePane ? "minmax(360px, 45%) minmax(0, 55%)" : "1fr",
+  return (
+    <>
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={onClose}
+        aria-labelledby="recruitment-lifecycle-title"
+        PaperProps={{
+          sx: {
+            width: {
+              xs: "100vw",
+              sm: 620,
+              md: showSplitResumePane ? 1120 : 680,
+              lg: showSplitResumePane ? 1240 : 720,
             },
-            gap: 2,
+            maxWidth: "100vw",
+            height: "100dvh",
+            p: { xs: 2, sm: 2.5 },
             overflow: "hidden",
-          }}
-        >
-          {/* Left Column (Desktop Split View): Dedicated Scrollable CV Container (Zero Stepper Overlap) */}
-          {showSplitResumePane && (
-            <Stack
-              spacing={1}
-              sx={{
-                height: "100%",
-                minHeight: 0,
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2.5,
-                bgcolor: "background.default",
-                p: 1.25,
-                overflow: "hidden",
-              }}
-            >
-              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ flex: "0 0 auto" }}>
-                <Typography variant="subtitle2" fontWeight={800}>
-                  Candidate Resume
+            transition: "width 220ms ease",
+          },
+        }}
+      >
+        <Stack spacing={{ xs: 1.5, sm: 2 }} sx={{ height: "100%", minWidth: 0 }}>
+          {/* Header Bar */}
+          <Stack
+            direction="row"
+            spacing={1.5}
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{
+              flex: "0 0 auto",
+              p: 1.5,
+              borderRadius: 2.5,
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.default",
+            }}
+          >
+            <Stack direction="row" spacing={1.5} alignItems="center" sx={{ minWidth: 0 }}>
+              <Avatar sx={{ width: 42, height: 42, fontWeight: 800, bgcolor: "primary.main", color: "primary.contrastText" }}>
+                {initials}
+              </Avatar>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography id="recruitment-lifecycle-title" variant="subtitle1" fontWeight={850} noWrap>
+                  {applicant.firstName} {applicant.lastName}
                 </Typography>
-                <CustomisedButton
+                <Typography variant="caption" color="text.secondary" noWrap display="block">
+                  {applicant.vacancyName || "Applicant"} · {applicant.email}
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
+              {applicant.resumeUrl && (
+                <Tooltip title={showResumePreview ? "Hide Resume" : "View Resume"}>
+                  <IconButton
+                    size="small"
+                    onClick={() => setShowResumePreview((v) => !v)}
+                    sx={{
+                      borderRadius: 1.75,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      bgcolor: showResumePreview ? "primary.main" : "background.paper",
+                      color: showResumePreview ? "primary.contrastText" : "text.primary",
+                    }}
+                  >
+                    {showResumePreview ? <Close fontSize="small" /> : <Visibility fontSize="small" />}
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              <StyleStatus
+                label={applicationStatusMapper[stage]}
+                className={clsx({
+                  info: stage === ApplicationStatus.New,
+                  warning: [ApplicationStatus.InProgress, ApplicationStatus.OnHold, ApplicationStatus.Shortlisted].includes(stage),
+                  success: stage === ApplicationStatus.Selected,
+                  danger: stage === ApplicationStatus.Rejected,
+                })}
+              />
+
+              <Tooltip title="More Recruitment Actions">
+                <IconButton
                   size="small"
-                  variant="outlined"
-                  label="Hide CV"
-                  handleClick={() => setShowResumePreview(false)}
-                />
-              </Stack>
-              <Box
+                  onClick={(e) => setMoreToolsAnchorEl(e.currentTarget)}
+                  sx={{
+                    borderRadius: 1.75,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
+                  }}
+                >
+                  <MoreVert fontSize="small" />
+                </IconButton>
+              </Tooltip>
+
+              <Menu
+                anchorEl={moreToolsAnchorEl}
+                open={Boolean(moreToolsAnchorEl)}
+                onClose={() => setMoreToolsAnchorEl(null)}
+                PaperProps={{ sx: { minWidth: 220, borderRadius: 2, boxShadow: "0 8px 24px rgba(0,0,0,0.12)" } }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    setActiveUtilityTool("resume");
+                    setMoreToolsAnchorEl(null);
+                  }}
+                >
+                  <DocumentScannerOutlined sx={{ mr: 1.5, fontSize: 18, color: "text.secondary" }} />
+                  Resume Extraction Review
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setActiveUtilityTool("talentpool");
+                    setMoreToolsAnchorEl(null);
+                  }}
+                >
+                  <FolderSpecialOutlined sx={{ mr: 1.5, fontSize: 18, color: "text.secondary" }} />
+                  Add to Talent Pool
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setActiveUtilityTool("privacy");
+                    setMoreToolsAnchorEl(null);
+                  }}
+                >
+                  <ShieldOutlined sx={{ mr: 1.5, fontSize: 18, color: "text.secondary" }} />
+                  Candidate Privacy / GDPR
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setActiveUtilityTool("merge");
+                    setMoreToolsAnchorEl(null);
+                  }}
+                >
+                  <MergeTypeOutlined sx={{ mr: 1.5, fontSize: 18, color: "text.secondary" }} />
+                  Merge Duplicate Applicant
+                </MenuItem>
+              </Menu>
+            </Stack>
+          </Stack>
+
+          {/* Main Workspace Body */}
+          <Box
+            sx={{
+              flex: "1 1 auto",
+              minHeight: 0,
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: showSplitResumePane ? "minmax(360px, 45%) minmax(0, 55%)" : "1fr",
+              },
+              gap: 2,
+              overflow: "hidden",
+            }}
+          >
+            {/* Desktop Side-by-Side CV Preview */}
+            {showSplitResumePane && (
+              <Stack
+                spacing={1}
                 sx={{
-                  flex: "1 1 auto",
+                  height: "100%",
                   minHeight: 0,
-                  overflow: "auto",
-                  borderRadius: 1.5,
-                  bgcolor: "background.paper",
-                  "& .react-pdf__Document": { display: "flex", justifyContent: "center" },
-                  "& .react-pdf__Page": { maxWidth: "100% !important", overflow: "hidden" },
-                  "& .react-pdf__Page__canvas": { maxWidth: "100% !important", height: "auto !important" },
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2.5,
+                  bgcolor: "background.default",
+                  p: 1.25,
+                  overflow: "hidden",
                 }}
               >
-                <PdfViewer pdfUrl={applicant.resumeUrl ?? ""} />
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ flex: "0 0 auto" }}>
+                  <Typography variant="subtitle2" fontWeight={800}>
+                    Candidate Resume
+                  </Typography>
+                  <CustomisedButton size="small" variant="outlined" label="Hide CV" handleClick={() => setShowResumePreview(false)} />
+                </Stack>
+                <Box
+                  sx={{
+                    flex: "1 1 auto",
+                    minHeight: 0,
+                    overflow: "auto",
+                    borderRadius: 1.5,
+                    bgcolor: "background.paper",
+                  }}
+                >
+                  <PdfViewer pdfUrl={applicant.resumeUrl ?? ""} />
+                </Box>
+              </Stack>
+            )}
+
+            {/* Right Work Area */}
+            <Stack spacing={{ xs: 1.25, sm: 1.5 }} sx={{ height: "100%", minHeight: 0, minWidth: 0, overflow: "hidden" }}>
+              {/* Stepper Card */}
+              <Box
+                sx={{
+                  flex: "0 0 auto",
+                  p: { xs: 1.25, sm: 1.75 },
+                  border: 1,
+                  borderColor: "divider",
+                  borderRadius: 2.5,
+                  bgcolor: "action.hover",
+                }}
+              >
+                <Stepper
+                  activeStep={activeStep}
+                  alternativeLabel
+                  sx={{
+                    "& .MuiStepLabel-label": { fontSize: { xs: ".7rem", sm: ".8rem" }, mt: 0.5, fontWeight: 700 },
+                    "& .MuiStepConnector-line": { borderColor: "divider" },
+                  }}
+                >
+                  {primarySteps.map((item, index) => {
+                    const enabled = isActionEnabled(item.id) && (index <= completedStep + 1 || index === activeStep);
+                    return (
+                      <Step key={item.id} completed={index <= completedStep}>
+                        <StepLabel
+                          onClick={() => enabled && (setMode(item.id), setFeedback(undefined))}
+                          sx={{ cursor: enabled ? "pointer" : "not-allowed" }}
+                        >
+                          {item.label}
+                          <Typography component="span" variant="caption" sx={{ display: { xs: "none", sm: "block" }, color: "text.secondary" }}>
+                            {item.helper}
+                          </Typography>
+                        </StepLabel>
+                      </Step>
+                    );
+                  })}
+                </Stepper>
+
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1.25 }} flexWrap="wrap" gap={1}>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    <Chip
+                      size="small"
+                      label={"Current Stage: " + (ApplicationStatus[stage] ?? "New")}
+                      color={
+                        stage === ApplicationStatus.Rejected
+                          ? "error"
+                          : stage === ApplicationStatus.Selected
+                          ? "success"
+                          : stage === ApplicationStatus.Shortlisted || stage === ApplicationStatus.OnHold
+                          ? "warning"
+                          : "primary"
+                      }
+                      variant="filled"
+                      sx={{ fontWeight: 800 }}
+                    />
+                    <Chip
+                      size="small"
+                      label={`Workflow: ${workflowLabel}`}
+                      color={workflowColor}
+                      variant="filled"
+                      sx={{ fontWeight: 700, fontSize: "0.75rem" }}
+                    />
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary">
+                    Step {activeStep + 1} of {primarySteps.length}
+                  </Typography>
+                </Stack>
               </Box>
+
+              <Divider />
+
+              {/* Form Content Area */}
+              <Box sx={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", overflowX: "hidden", pr: { xs: 0.25, sm: 0.75 } }}>
+                <Stack spacing={2} sx={{ minWidth: 0 }}>
+                  {/* Concluded / Terminal State Banner */}
+                  {stage === ApplicationStatus.Rejected && (
+                    <Box
+                      sx={{
+                        p: 2.25,
+                        borderRadius: 2.5,
+                        border: "1.5px solid",
+                        borderColor: "error.main",
+                        bgcolor: alpha("#ef4444", 0.06),
+                        boxShadow: "0 4px 16px rgba(239, 68, 68, 0.08)",
+                      }}
+                    >
+                      <Stack direction="row" spacing={1.5} alignItems="flex-start">
+                        <CancelOutlined sx={{ color: "error.main", fontSize: 28, mt: 0.25, flexShrink: 0 }} />
+                        <Box sx={{ flex: 1 }}>
+                          <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={1}>
+                            <Typography variant="subtitle2" fontWeight={850} color="error.dark">
+                              Application Concluded — Rejected
+                            </Typography>
+                            <Chip size="small" label="Application Closed" color="error" sx={{ fontWeight: 800 }} />
+                          </Stack>
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, fontSize: "0.82rem" }}>
+                            This candidate was marked as <strong>Rejected</strong>. Active interview scheduling, scorecard submissions, and offer letters are locked. Past scorecards, interview history, and notes remain preserved below for audit and compliance.
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </Box>
+                  )}
+                  {/* STEP 1: SCREENING */}
+                  {mode === "screening" && (
+                    <Stack spacing={2}>
+                      {/* Pass Score Threshold & Policy Banner */}
+                      {isScreeningThresholdActive ? (
+                        <Box
+                          sx={{
+                            p: 2,
+                            borderRadius: 2.5,
+                            border: "1px solid",
+                            borderColor: meetsScreeningThreshold ? "success.main" : "warning.main",
+                            bgcolor: meetsScreeningThreshold ? "success.lighter" : "warning.lighter",
+                          }}
+                        >
+                          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1}>
+                            <Box>
+                              <Typography variant="subtitle2" fontWeight={800} color={meetsScreeningThreshold ? "success.dark" : "warning.dark"}>
+                                Screening Evaluation Policy
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Pass Threshold: <strong>≥ {passThreshold}%</strong>{" "}
+                                <Chip
+                                  size="small"
+                                  variant="outlined"
+                                  color={isJobSpecificThreshold ? "primary" : "default"}
+                                  label={isJobSpecificThreshold ? `From Job Description (${vacancyData?.title || "Role"})` : "Company Auto-Advance Policy"}
+                                  sx={{ height: 20, fontSize: "0.68rem", ml: 0.5, fontWeight: 700 }}
+                                />
+                                {" "}| Current Score: <strong>{currentScreeningScore}%</strong>
+                              </Typography>
+                            </Box>
+                            <Chip
+                              size="small"
+                              label={meetsScreeningThreshold ? `Meets Threshold (≥ ${passThreshold}%)` : `Below Threshold (< ${passThreshold}%)`}
+                              color={meetsScreeningThreshold ? "success" : "warning"}
+                              sx={{ fontWeight: 800 }}
+                            />
+                          </Stack>
+
+                          <Box sx={{ mt: 1.5 }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                              <Typography variant="caption" color="text.secondary">
+                                Evaluation Score Meter
+                              </Typography>
+                              <Typography variant="caption" fontWeight={700} color={meetsScreeningThreshold ? "success.dark" : "warning.dark"}>
+                                {currentScreeningScore} / 100
+                              </Typography>
+                            </Stack>
+                            <LinearProgress
+                              variant="determinate"
+                              value={Math.min(100, Math.max(0, currentScreeningScore))}
+                              color={meetsScreeningThreshold ? "success" : "warning"}
+                              sx={{ height: 8, borderRadius: 4 }}
+                            />
+                          </Box>
+
+                          {screening.criteria.length > 0 && (
+                            <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1 }}>
+                              <Button
+                                size="small"
+                                variant="text"
+                                onClick={() => setScreening((curr) => ({ ...curr, score: calculatedCriteriaScore }))}
+                                sx={{ textTransform: "none", fontSize: "0.75rem", fontWeight: 700 }}
+                              >
+                                Sync score from criteria ({passedCriteriaCount}/{screening.criteria.length} passed = {calculatedCriteriaScore}%)
+                              </Button>
+                            </Stack>
+                          )}
+                        </Box>
+                      ) : (
+                        <Box
+                          sx={{
+                            p: 2,
+                            borderRadius: 2.5,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            bgcolor: "background.paper",
+                          }}
+                        >
+                          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1}>
+                            <Box>
+                              <Typography variant="subtitle2" fontWeight={800} color="text.primary">
+                                Screening Evaluation (Flexible Review)
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {vacancyData?.workflowMode === "Direct"
+                                  ? "Fast-track / direct hire workflow active — no minimum screening score cutoff required."
+                                  : "Flexible review policy — no mandatory threshold cutoff enforced for this position."}
+                              </Typography>
+                            </Box>
+                            <Chip
+                              size="small"
+                              label={vacancyData?.workflowMode === "Direct" ? "Direct Hire" : "Flexible Review"}
+                              color="default"
+                              variant="outlined"
+                              sx={{ fontWeight: 700 }}
+                            />
+                          </Stack>
+
+                          {screening.criteria.length > 0 && (
+                            <Box sx={{ mt: 1.5 }}>
+                              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                                <Typography variant="caption" color="text.secondary">
+                                  Evaluation Score Meter
+                                </Typography>
+                                <Typography variant="caption" fontWeight={700} color="text.primary">
+                                  {currentScreeningScore} / 100
+                                </Typography>
+                              </Stack>
+                              <LinearProgress
+                                variant="determinate"
+                                value={Math.min(100, Math.max(0, currentScreeningScore))}
+                                color="primary"
+                                sx={{ height: 8, borderRadius: 4 }}
+                              />
+                              <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1 }}>
+                                <Button
+                                  size="small"
+                                  variant="text"
+                                  onClick={() => setScreening((curr) => ({ ...curr, score: calculatedCriteriaScore }))}
+                                  sx={{ textTransform: "none", fontSize: "0.75rem", fontWeight: 700 }}
+                                >
+                                  Sync score from criteria ({passedCriteriaCount}/{screening.criteria.length} passed = {calculatedCriteriaScore}%)
+                                </Button>
+                              </Stack>
+                            </Box>
+                          )}
+                        </Box>
+                      )}
+
+                      {/* Score Input & Outcome */}
+                      <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                        <AppTextField
+                          sx={{ ...fieldSx, flex: 1 }}
+                          label="Screening Score (0–100) *"
+                          type="number"
+                          value={screening.score > 0 ? screening.score : (currentScreeningScore > 0 ? currentScreeningScore : 0)}
+                          onChange={(event) => setScreening({ ...screening, score: Number(event.target.value) })}
+                          inputProps={{ min: 0, max: 100, step: 1 }}
+                          helperText={
+                            isScreeningThresholdActive
+                              ? `Pass requires ≥ ${passThreshold}% (${isJobSpecificThreshold ? "Job-specific threshold" : "Company auto-advance policy"})`
+                              : "Evaluation score (0–100). No mandatory pass threshold enforced."
+                          }
+                        />
+                        <AppTextField
+                          sx={{ ...fieldSx, flex: 1 }}
+                          select
+                          label="Screening Outcome *"
+                          value={screening.decision}
+                          onChange={(event) =>
+                            setScreening({ ...screening, decision: event.target.value as RecruitmentScreeningReviewCommand["decision"] })
+                          }
+                        >
+                          <MenuItem value="Pending">Pending</MenuItem>
+                          <MenuItem value="Pass">Pass (Advance to Interview)</MenuItem>
+                          <MenuItem value="Hold">Hold for Comparison</MenuItem>
+                          <MenuItem value="Reject">Reject Application</MenuItem>
+                        </AppTextField>
+                      </Stack>
+
+                      {/* Threshold warning alert if Pass is selected but score is insufficient */}
+                      {isScreeningThresholdActive && screening.decision === "Pass" && !meetsScreeningThreshold && (
+                        <Alert severity="warning" sx={{ borderRadius: 2 }}>
+                          <strong>Score below pass threshold:</strong> Evaluation policy requires a score of at least <strong>{passThreshold}%</strong> ({isJobSpecificThreshold ? "configured in the Job Description" : "company enterprise default"}) to mark an applicant as <strong>Pass</strong>. Please increase the score or select <strong>Hold</strong> / <strong>Reject</strong>.
+                        </Alert>
+                      )}
+
+                      {/* Screening Criteria Evaluation */}
+                      <Box sx={{ mt: 1 }}>
+                        <Typography variant="subtitle2" fontWeight={800} sx={{ mb: 1 }}>
+                          Role Qualification Criteria ({passedCriteriaCount} of {screening.criteria.length} met)
+                        </Typography>
+                        <Stack spacing={1.25}>
+                          {screening.criteria.map((criterion, index) => (
+                            <Box key={`${criterion.name}-${index}`} sx={{ p: 1.5, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "background.paper" }}>
+                              <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Box>
+                                  <Typography fontWeight={700} variant="body2">
+                                    {criterion.name}
+                                  </Typography>
+                                </Box>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                  <Chip
+                                    size="small"
+                                    label={criterion.passed ? "Met" : "Not Met"}
+                                    color={criterion.passed ? "success" : "default"}
+                                    variant={criterion.passed ? "filled" : "outlined"}
+                                    sx={{ fontWeight: 700, height: 22, fontSize: "0.7rem" }}
+                                  />
+                                  <AppSwitch
+                                    checked={criterion.passed}
+                                    onChange={(event) => {
+                                      const checked = event.target.checked;
+                                      setScreening((current) => {
+                                        const updatedCriteria = current.criteria.map((item, itemIndex) =>
+                                          itemIndex === index ? { ...item, passed: checked } : item
+                                        );
+                                        const passed = updatedCriteria.filter((c) => c.passed).length;
+                                        const autoScore = updatedCriteria.length > 0 ? Math.round((passed / updatedCriteria.length) * 100) : 0;
+                                        return {
+                                          ...current,
+                                          criteria: updatedCriteria,
+                                          score: autoScore,
+                                        };
+                                      });
+                                    }}
+                                  />
+                                </Stack>
+                              </Stack>
+                              <AppTextField
+                                sx={{ ...fieldSx, mt: 1 }}
+                                size="small"
+                                placeholder="Add specific evaluator notes or evidence..."
+                                value={criterion.notes ?? ""}
+                                onChange={(event) =>
+                                  setScreening((current) => ({
+                                    ...current,
+                                    criteria: current.criteria.map((item, itemIndex) =>
+                                      itemIndex === index ? { ...item, notes: event.target.value } : item
+                                    ),
+                                  }))
+                                }
+                              />
+                            </Box>
+                          ))}
+                        </Stack>
+                      </Box>
+
+                      <AppTextField
+                        sx={fieldSx}
+                        multiline
+                        minRows={2}
+                        label="Screening Evidence / Summary Notes"
+                        placeholder="Summary of resume evaluation, key skills verified, and recruiter recommendations..."
+                        value={screening.evidence}
+                        onChange={(event) => setScreening({ ...screening, evidence: event.target.value })}
+                      />
+
+                      {screening.decision === "Reject" && (
+                        <AppTextField
+                          sx={fieldSx}
+                          multiline
+                          minRows={2}
+                          label="Rejection Reason *"
+                          placeholder="Provide regulatory / compliance reason for rejection..."
+                          required
+                          value={screening.rejectionReason}
+                          onChange={(event) => setScreening({ ...screening, rejectionReason: event.target.value })}
+                        />
+                      )}
+                    </Stack>
+                  )}
+
+                  {/* STEP 2: INTERVIEW & DECISION */}
+                  {mode === "interview" && (
+                    <Stack spacing={2}>
+                      <Stack direction="row" spacing={1}>
+                        <Button
+                          variant={interviewSubTab === 0 ? "contained" : "outlined"}
+                          size="small"
+                          onClick={() => setInterviewSubTab(0)}
+                          sx={{ textTransform: "none", fontWeight: 750, borderRadius: 2 }}
+                        >
+                          1. Schedule Round
+                        </Button>
+                        <Button
+                          variant={interviewSubTab === 1 ? "contained" : "outlined"}
+                          size="small"
+                          onClick={() => setInterviewSubTab(1)}
+                          sx={{ textTransform: "none", fontWeight: 750, borderRadius: 2 }}
+                        >
+                          2. Scorecard & Hiring Decision
+                        </Button>
+                      </Stack>
+
+                      {interviewSubTab === 0 && (
+                        <Stack spacing={1.75}>
+                          <AppTextField
+                            sx={fieldSx}
+                            label="Interview Title *"
+                            value={interview.title}
+                            onChange={(event) => setInterview({ ...interview, title: event.target.value })}
+                          />
+                          <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                            <AppTextField
+                              sx={{ ...fieldSx, flex: 1 }}
+                              type="number"
+                              label="Round Number"
+                              value={interview.roundNumber}
+                              onChange={(event) => setInterview({ ...interview, roundNumber: Number(event.target.value) })}
+                              inputProps={{ min: 1, max: 10 }}
+                            />
+                            <AppTextField
+                              sx={{ ...fieldSx, flex: 2 }}
+                              select
+                              label="Round Type"
+                              value={interview.roundType}
+                              onChange={(event) => setInterview({ ...interview, roundType: event.target.value })}
+                            >
+                              {["HR", "Technical", "Management", "Culture"].map((v) => (
+                                <MenuItem key={v} value={v}>
+                                  {v}
+                                </MenuItem>
+                              ))}
+                            </AppTextField>
+                          </Stack>
+
+                          <CustomisedDateTimePicker
+                            label="Start Time (UTC) *"
+                            value={interview.startsAtUtc ? dayjs(interview.startsAtUtc) : null}
+                            minDateTime={dayjs()}
+                            onChange={(val) => setInterview({ ...interview, startsAtUtc: val?.format("YYYY-MM-DDTHH:mm") ?? "" })}
+                            slotProps={{ textField: { fullWidth: true, sx: fieldSx, size: "small" } }}
+                          />
+
+                          <CustomisedDateTimePicker
+                            label="End Time (UTC) *"
+                            value={interview.endsAtUtc ? dayjs(interview.endsAtUtc) : null}
+                            minDateTime={dayjs()}
+                            onChange={(val) => setInterview({ ...interview, endsAtUtc: val?.format("YYYY-MM-DDTHH:mm") ?? "" })}
+                            slotProps={{ textField: { fullWidth: true, sx: fieldSx, size: "small" } }}
+                          />
+
+                          <AppTextField
+                            sx={fieldSx}
+                            label="Video Meeting URL (Google Meet / Zoom / MS Teams)"
+                            placeholder="e.g. https://meet.google.com/abc-defg-hij"
+                            value={interview.meetingUrl}
+                            onChange={(event) => setInterview({ ...interview, meetingUrl: event.target.value })}
+                          />
+
+                          <AppTextField
+                            sx={fieldSx}
+                            label="Physical Location / Office (Optional for in-person)"
+                            placeholder="e.g. Conference Room 3B, HQ"
+                            value={interview.location}
+                            onChange={(event) => setInterview({ ...interview, location: event.target.value })}
+                          />
+
+                          <Box sx={{ p: 2, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "background.paper" }}>
+                            <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1} sx={{ mb: 1 }}>
+                              <Typography variant="subtitle2" fontWeight={800}>
+                                Select Panelists / Interviewers *
+                              </Typography>
+                              {selectedInterviewerIds.length > 0 && (
+                                <Chip
+                                  size="small"
+                                  label={`Debrief Quorum: ${quorumNeeded} of ${selectedInterviewerIds.length} votes required`}
+                                  color="info"
+                                  variant="outlined"
+                                  sx={{ fontWeight: 700, fontSize: "0.75rem" }}
+                                />
+                              )}
+                            </Stack>
+                            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1.5 }}>
+                              Select team members to evaluate this candidate. By policy, debrief requires a majority quorum of scorecards.
+                            </Typography>
+
+                            <Autocomplete
+                              multiple
+                              size="small"
+                              options={interviewers}
+                              value={selectedInterviewerObjs}
+                              getOptionLabel={(option) => getEmployeeName(option)}
+                              isOptionEqualToValue={(option, val) => option.userId === val.userId}
+                              onChange={(_, newValues) => {
+                                setInterview({
+                                  ...interview,
+                                  panelistUserIds: newValues.map((v) => v.userId).join(", "),
+                                });
+                              }}
+                              renderInput={(params) => (
+                                <AppTextField
+                                  {...params}
+                                  sx={fieldSx}
+                                  placeholder={selectedInterviewerObjs.length === 0 ? "Search by employee name, email or ID..." : "Add another interviewer..."}
+                                />
+                              )}
+                              renderOption={(props, option, { selected }) => (
+                                <li {...props} key={option.userId}>
+                                  <Checkbox size="small" checked={selected} sx={{ mr: 1, p: 0.5 }} />
+                                  <Avatar sx={{ width: 28, height: 28, mr: 1.5, fontSize: "0.75rem", bgcolor: "primary.main" }}>
+                                    {getEmployeeName(option).charAt(0).toUpperCase()}
+                                  </Avatar>
+                                  <Box sx={{ minWidth: 0, flexGrow: 1 }}>
+                                    <Typography variant="body2" fontWeight={600} noWrap>
+                                      {getEmployeeName(option)} {option.employeeId ? `(${option.employeeId})` : ""}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary" noWrap sx={{ display: "block" }}>
+                                      {option.email ?? ""} {option.jobRole?.roleName ? `• ${option.jobRole.roleName}` : option.department?.departmentName ? `• ${option.department.departmentName}` : ""}
+                                    </Typography>
+                                  </Box>
+                                </li>
+                              )}
+                              renderTags={(values, getTagProps) =>
+                                values.map((option, index) => (
+                                  <Chip
+                                    {...getTagProps({ index })}
+                                    key={option.userId}
+                                    avatar={<Avatar sx={{ width: 22, height: 22, fontSize: "0.7rem" }}>{getEmployeeName(option).charAt(0).toUpperCase()}</Avatar>}
+                                    label={`${getEmployeeName(option)}${option.employeeId ? ` (${option.employeeId})` : ""}`}
+                                    size="small"
+                                    color="primary"
+                                    variant="filled"
+                                    sx={{ fontWeight: 600, m: 0.25 }}
+                                  />
+                                ))
+                              }
+                            />
+                          </Box>
+                        </Stack>
+                      )}
+
+                      {interviewSubTab === 1 && (
+                        <Stack spacing={2}>
+                          {/* Live Authoritative Interview Benchmark */}
+                          {finalInterviewEvaluation && (
+                            <Box
+                              sx={{
+                                p: 2,
+                                borderRadius: 2.5,
+                                border: "1px solid",
+                                borderColor:
+                                  finalInterviewEvaluation.score >= 75
+                                    ? "success.main"
+                                    : finalInterviewEvaluation.score >= 60
+                                    ? "warning.main"
+                                    : "error.main",
+                                bgcolor:
+                                  finalInterviewEvaluation.score >= 75
+                                    ? "success.lighter"
+                                    : finalInterviewEvaluation.score >= 60
+                                    ? "warning.lighter"
+                                    : "error.lighter",
+                              }}
+                            >
+                              <Stack
+                                direction={{ xs: "column", sm: "row" }}
+                                justifyContent="space-between"
+                                alignItems={{ xs: "flex-start", sm: "center" }}
+                                spacing={1}
+                              >
+                                <Box>
+                                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                                    <Typography
+                                      variant="subtitle2"
+                                      fontWeight={850}
+                                      color={
+                                        finalInterviewEvaluation.score >= 75
+                                          ? "success.dark"
+                                          : finalInterviewEvaluation.score >= 60
+                                          ? "warning.dark"
+                                          : "error.dark"
+                                      }
+                                    >
+                                      Authoritative Interview Benchmark
+                                    </Typography>
+                                    <Chip
+                                      size="small"
+                                      variant="filled"
+                                      color={
+                                        finalInterviewEvaluation.consensus.includes("Hire") &&
+                                        !finalInterviewEvaluation.consensus.includes("No")
+                                          ? "success"
+                                          : finalInterviewEvaluation.consensus.includes("Hold")
+                                          ? "warning"
+                                          : "error"
+                                      }
+                                      label={finalInterviewEvaluation.consensus}
+                                      sx={{ fontWeight: 800, fontSize: "0.72rem", height: 22 }}
+                                    />
+                                  </Stack>
+                                  <Typography variant="caption" color="text.secondary">
+                                    Aggregated across {finalInterviewEvaluation.evaluatedRoundsCount} substantive technical round
+                                    {finalInterviewEvaluation.evaluatedRoundsCount > 1 ? "s" : ""} (
+                                    {finalInterviewEvaluation.totalScorecards} scorecard
+                                    {finalInterviewEvaluation.totalScorecards > 1 ? "s" : ""})
+                                    {finalInterviewEvaluation.excludesHr ? " • Excludes non-technical HR discussion" : ""}
+                                  </Typography>
+                                </Box>
+                                <Chip
+                                  size="medium"
+                                  label={`${finalInterviewEvaluation.score}% (${finalInterviewEvaluation.rating} / 5.0 ⭐)`}
+                                  color={
+                                    finalInterviewEvaluation.score >= 75
+                                      ? "success"
+                                      : finalInterviewEvaluation.score >= 60
+                                      ? "warning"
+                                      : "error"
+                                  }
+                                  sx={{ fontWeight: 850, fontSize: "0.85rem", py: 0.5 }}
+                                />
+                              </Stack>
+
+                              {finalInterviewEvaluation.passedMandatoryGates === false && (
+                                <Alert severity="error" sx={{ mt: 1.5, py: 0.5, fontSize: "0.78rem" }}>
+                                  <strong>Mandatory Evaluation Gate Failed:</strong> Candidate failed mandatory round or competency minimums. Final recommendation cannot be Hire.
+                                  {Array.isArray(finalInterviewEvaluation.mandatoryGateFailures) && finalInterviewEvaluation.mandatoryGateFailures.length > 0 && (
+                                    <Box component="ul" sx={{ m: "4px 0 0 0", pl: 2 }}>
+                                      {finalInterviewEvaluation.mandatoryGateFailures.map((msg: string, mIdx: number) => (
+                                        <li key={mIdx}>{msg}</li>
+                                      ))}
+                                    </Box>
+                                  )}
+                                </Alert>
+                              )}
+                            </Box>
+                          )}
+
+                          {/* Committee Consensus & Stage Disposition Gate (Prominent & Accessible) */}
+                          {stage !== ApplicationStatus.Rejected && (
+                            <Box
+                              sx={{
+                                p: 2.5,
+                                borderRadius: 2.5,
+                                bgcolor:
+                                  decision.decision === "Reject"
+                                    ? alpha("#ef4444", 0.05)
+                                    : decision.decision === "Hold"
+                                    ? alpha("#f59e0b", 0.05)
+                                    : alpha("#3b82f6", 0.05),
+                                border: "1.5px solid",
+                                borderColor:
+                                  decision.decision === "Reject"
+                                    ? "error.main"
+                                    : decision.decision === "Hold"
+                                    ? "warning.main"
+                                    : "primary.main",
+                                boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+                              }}
+                            >
+                              <Stack direction="row" justifyContent="space-between" alignItems="flex-start" flexWrap="wrap" gap={1}>
+                                <Box>
+                                  <Typography
+                                    variant="subtitle2"
+                                    fontWeight={850}
+                                    color={
+                                      decision.decision === "Reject"
+                                        ? "error.dark"
+                                        : decision.decision === "Hold"
+                                        ? "warning.dark"
+                                        : "primary.dark"
+                                    }
+                                  >
+                                    Hiring Committee Consensus & Stage Disposition
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    {decision.decision === "Approve"
+                                      ? "Approving candidate advances application to Selected and unlocks Step 3 (Offer Generation)."
+                                      : decision.decision === "Hold"
+                                      ? "Placing candidate on hold preserves interview history while reviewing remaining candidates."
+                                      : "Rejecting candidate immediately concludes the hiring process and records disposition reason."}
+                                  </Typography>
+                                </Box>
+                                <Chip
+                                  size="small"
+                                  label={`Action: ${decision.decision === "Approve" ? "Advance to Offer" : decision.decision === "Hold" ? "Place on Hold" : "Reject Application"}`}
+                                  color={
+                                    decision.decision === "Reject"
+                                      ? "error"
+                                      : decision.decision === "Hold"
+                                      ? "warning"
+                                      : "primary"
+                                  }
+                                  sx={{ fontWeight: 800 }}
+                                />
+                              </Stack>
+
+                              {/* Quick Preset Reason Chips */}
+                              <Box sx={{ mt: 1.5, p: 1.25, borderRadius: 2, bgcolor: "background.paper", border: 1, borderColor: "divider" }}>
+                                <Typography variant="caption" fontWeight={750} color="text.secondary" sx={{ display: "block", mb: 0.75 }}>
+                                  ⚡ 1-Click Preset Reasons:
+                                </Typography>
+                                <Stack direction="row" spacing={0.75} flexWrap="wrap" gap={0.75}>
+                                  {quickDispositionPresets.map((preset) => (
+                                    <Chip
+                                      key={preset.label}
+                                      size="small"
+                                      label={preset.label}
+                                      color={preset.color}
+                                      variant={decision.decision === preset.decision && decision.notes === preset.notes ? "filled" : "outlined"}
+                                      onClick={() => setDecision({ decision: preset.decision, notes: preset.notes })}
+                                      sx={{
+                                        fontWeight: 700,
+                                        fontSize: "0.72rem",
+                                        cursor: "pointer",
+                                        transition: "all 0.15s ease-in-out",
+                                        "&:hover": { transform: "translateY(-1px)" },
+                                      }}
+                                    />
+                                  ))}
+                                </Stack>
+                              </Box>
+
+                              <AppTextField
+                                sx={{ ...fieldSx, mt: 1.5 }}
+                                select
+                                label="Hiring Committee Decision *"
+                                value={decision.decision}
+                                onChange={(e) => setDecision({ ...decision, decision: e.target.value as any })}
+                              >
+                                <MenuItem value="Approve">Approve (Advance to Offer)</MenuItem>
+                                <MenuItem value="Hold">Hold for Comparison</MenuItem>
+                                <MenuItem value="Reject">Reject Application</MenuItem>
+                              </AppTextField>
+
+                              <AppTextField
+                                sx={{ ...fieldSx, mt: 1.5 }}
+                                multiline
+                                minRows={2}
+                                label={decision.decision === "Approve" ? "Hiring Committee Notes" : "Hiring Committee Notes / Reason *"}
+                                placeholder={
+                                  decision.decision === "Reject"
+                                    ? "Reason for rejection (e.g., candidate no-show, unresponsive, failed technical evaluation)..."
+                                    : decision.decision === "Hold"
+                                    ? "Reason for hold (e.g., evaluating other panel candidates, awaiting debrief)..."
+                                    : "Summary of committee consensus, strengths, and conditions for hire..."
+                                }
+                                value={decision.notes}
+                                onChange={(e) => setDecision({ ...decision, notes: e.target.value })}
+                                helperText={
+                                  decision.decision === "Reject"
+                                    ? "💡 Tip: Click 'Candidate No-Show' above to auto-fill this field if the candidate did not attend."
+                                    : undefined
+                                }
+                              />
+
+                              <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1.5 }}>
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  color={
+                                    decision.decision === "Reject"
+                                      ? "error"
+                                      : decision.decision === "Hold"
+                                      ? "warning"
+                                      : "primary"
+                                  }
+                                  onClick={submit}
+                                  disabled={busy || ((decision.decision === "Reject" || decision.decision === "Hold") && !decision.notes.trim())}
+                                  sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2, px: 2.5 }}
+                                >
+                                  {busy
+                                    ? "Saving..."
+                                    : decision.decision === "Reject"
+                                    ? "Confirm & Reject Application"
+                                    : decision.decision === "Hold"
+                                    ? "Confirm Hold"
+                                    : "Approve & Advance to Offer"}
+                                </Button>
+                              </Stack>
+                            </Box>
+                          )}
+
+                          {/* Saved / Submitted Scorecards Section */}
+                          <Box sx={{ p: 2, borderRadius: 2.5, border: 1, borderColor: "divider", bgcolor: "background.paper" }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
+                              <Box>
+                                <Typography variant="subtitle2" fontWeight={850}>
+                                  Panelist Evaluation Scorecards
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  Scores recorded in database ({savedScorecards.length} submitted)
+                                </Typography>
+                              </Box>
+                              {savedScorecards.length > 0 && (
+                                <Chip
+                                  size="small"
+                                  label={`${savedScorecards.filter((c) => c.status === "Submitted" || c.status === "Locked").length} / ${quorumNeeded} Quorum ${
+                                    savedScorecards.filter((c) => c.status === "Submitted" || c.status === "Locked").length >= quorumNeeded
+                                      ? "Met"
+                                      : "Pending"
+                                  }`}
+                                  color={
+                                    savedScorecards.filter((c) => c.status === "Submitted" || c.status === "Locked").length >= quorumNeeded
+                                      ? "success"
+                                      : "warning"
+                                  }
+                                  sx={{ fontWeight: 800 }}
+                                />
+                              )}
+                            </Stack>
+
+                            {savedScorecards.length === 0 ? (
+                              <Alert severity="info" sx={{ borderRadius: 2 }}>
+                                No scorecards submitted yet for this applicant. Assigned panelists can submit their feedback below.
+                              </Alert>
+                            ) : (
+                              <Stack spacing={1.5}>
+                                {savedScorecards.map((card, idx) => {
+                                  const panelist = interviewers.find((e) => e.userId === card.reviewerUserId);
+                                  const reviewerName = getEmployeeName(panelist) || card.reviewerUserId;
+                                  const isHire = card.recommendation?.toLowerCase().includes("hire");
+                                  const isReject = card.recommendation?.toLowerCase().includes("reject") || card.recommendation?.toLowerCase().includes("no hire");
+
+                                  return (
+                                    <Box
+                                      key={card.scorecardId || idx}
+                                      sx={{
+                                        p: 1.5,
+                                        borderRadius: 2,
+                                        border: 1,
+                                        borderColor: "divider",
+                                        bgcolor: "action.hover",
+                                      }}
+                                    >
+                                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                                        <Stack direction="row" spacing={1} alignItems="center">
+                                          <Avatar sx={{ width: 26, height: 26, fontSize: "0.75rem", bgcolor: "primary.main" }}>
+                                            {reviewerName.charAt(0).toUpperCase()}
+                                          </Avatar>
+                                          <Box>
+                                            <Typography variant="body2" fontWeight={750}>
+                                              {reviewerName}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                              Round {card.roundNumber ?? 1} • Status: {card.status}
+                                            </Typography>
+                                          </Box>
+                                        </Stack>
+                                        <Chip
+                                          size="small"
+                                          label={card.recommendation || "Evaluated"}
+                                          color={isHire ? "success" : isReject ? "error" : "warning"}
+                                          sx={{ fontWeight: 800 }}
+                                        />
+                                      </Stack>
+
+                                      {/* Criteria list */}
+                                      {Array.isArray(card.criteria) && card.criteria.length > 0 && (
+                                        <Stack spacing={0.5} sx={{ mt: 1, pl: 0.5 }}>
+                                          {card.criteria.map((c: any, cIdx: number) => (
+                                            <Stack key={cIdx} direction="row" justifyContent="space-between" alignItems="center">
+                                              <Typography variant="caption" fontWeight={600} color="text.secondary">
+                                                {c.name}:
+                                              </Typography>
+                                              <Stack direction="row" spacing={0.5} alignItems="center">
+                                                <Rating size="small" readOnly value={Number(c.rating) || 0} max={5} />
+                                                {c.notes && (
+                                                  <Typography variant="caption" color="text.secondary" sx={{ ml: 1, fontStyle: "italic" }}>
+                                                    "{c.notes}"
+                                                  </Typography>
+                                                )}
+                                              </Stack>
+                                            </Stack>
+                                          ))}
+                                        </Stack>
+                                      )}
+                                    </Box>
+                                  );
+                                })}
+                              </Stack>
+                            )}
+                          </Box>
+
+                          {/* Submit New / Edit Scorecard Form */}
+                          {stage !== ApplicationStatus.Rejected && (
+                            <Box sx={{ p: 2, borderRadius: 2.5, border: 1, borderColor: "divider", bgcolor: "background.paper" }}>
+                              <Typography variant="subtitle2" fontWeight={850} sx={{ mb: 1.5 }}>
+                                Record Panelist Scorecard
+                              </Typography>
+                              <Stack spacing={1.75}>
+                                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                                  <AppTextField
+                                    sx={{ ...fieldSx, flex: 2 }}
+                                    select
+                                    label="Evaluator / Reviewer *"
+                                    value={scorecard.reviewerUserId || reviewerUserId}
+                                    onChange={(e) => setScorecard({ ...scorecard, reviewerUserId: e.target.value })}
+                                  >
+                                    {selectedInterviewerObjs.length > 0 ? (
+                                      selectedInterviewerObjs.map((emp) => (
+                                        <MenuItem key={emp.userId} value={emp.userId}>
+                                          {getEmployeeName(emp)} {emp.employeeId ? `(${emp.employeeId})` : ""}
+                                        </MenuItem>
+                                      ))
+                                    ) : (
+                                      <MenuItem value={reviewerUserId}>{reviewerDisplayName} (You)</MenuItem>
+                                    )}
+                                  </AppTextField>
+
+                                <AppTextField
+                                  sx={{ ...fieldSx, flex: 1.5 }}
+                                  select
+                                  label="Recommendation *"
+                                  value={scorecard.recommendation}
+                                  onChange={(event) => setScorecard({ ...scorecard, recommendation: event.target.value })}
+                                >
+                                  {["Strong Hire", "Hire", "Hold", "Reject"].map((item) => (
+                                    <MenuItem key={item} value={item}>
+                                      {item}
+                                    </MenuItem>
+                                  ))}
+                                </AppTextField>
+                              </Stack>
+
+                              {/* Interactive Criteria with Configurable Scales & Competencies */}
+                              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1 }}>
+                                <Typography variant="caption" fontWeight={750} color="text.secondary">
+                                  Evaluation Criteria & Ratings ({interviewPlan?.ratingScale?.scaleType ? `Scale: ${interviewPlan.ratingScale.scaleType}` : "1–5 Stars"})
+                                </Typography>
+                                {interviewPlan?.competencies && interviewPlan.competencies.length > 0 && (
+                                  <Button
+                                    size="small"
+                                    variant="text"
+                                    onClick={() => {
+                                      const defaultRating = interviewPlan.ratingScale?.scaleType === "Numeric0To100" ? 75
+                                        : interviewPlan.ratingScale?.scaleType === "Numeric1To10" ? 7
+                                        : 4;
+                                      setScorecard((c) => ({
+                                        ...c,
+                                        criteria: interviewPlan.competencies!.map((comp) => ({
+                                          name: comp.name,
+                                          rating: defaultRating,
+                                          notes: comp.description || "",
+                                        })),
+                                      }));
+                                    }}
+                                    sx={{ textTransform: "none", fontSize: "0.74rem", fontWeight: 700 }}
+                                  >
+                                    Import Plan Competencies ({interviewPlan.competencies.length})
+                                  </Button>
+                                )}
+                              </Stack>
+                              <Stack spacing={1.25}>
+                                {scorecard.criteria.map((criterion, index) => (
+                                  <Box key={index} sx={{ p: 1.5, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover" }}>
+                                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }} justifyContent="space-between">
+                                      <AppTextField
+                                        sx={{ ...fieldSx, flex: 1.5 }}
+                                        size="small"
+                                        label="Criterion Name *"
+                                        value={criterion.name}
+                                        onChange={(e) =>
+                                          setScorecard((c) => ({
+                                            ...c,
+                                            criteria: c.criteria.map((it, idx) => (idx === index ? { ...it, name: e.target.value } : it)),
+                                          }))
+                                        }
+                                      />
+                                      <Stack direction="row" spacing={1} alignItems="center">
+                                        <Typography variant="caption" fontWeight={700}>
+                                          Rating:
+                                        </Typography>
+                                        {interviewPlan?.ratingScale?.scaleType === "Numeric0To100" ? (
+                                          <AppTextField
+                                            size="small"
+                                            type="number"
+                                            value={criterion.rating ?? 75}
+                                            inputProps={{ min: 0, max: 100 }}
+                                            onChange={(e) =>
+                                              setScorecard((c) => ({
+                                                ...c,
+                                                criteria: c.criteria.map((it, idx) => (idx === index ? { ...it, rating: Number(e.target.value) || 0 } : it)),
+                                              }))
+                                            }
+                                            sx={{ width: 100 }}
+                                          />
+                                        ) : interviewPlan?.ratingScale?.scaleType === "Numeric1To10" ? (
+                                          <Stack direction="row" spacing={0.75} alignItems="center">
+                                            <Typography variant="caption" fontWeight={700}>
+                                              {criterion.rating || 7}/10
+                                            </Typography>
+                                            <Rating
+                                              value={criterion.rating || 7}
+                                              max={10}
+                                              precision={0.5}
+                                              onChange={(_, val) =>
+                                                setScorecard((c) => ({
+                                                  ...c,
+                                                  criteria: c.criteria.map((it, idx) => (idx === index ? { ...it, rating: val || 5 } : it)),
+                                                }))
+                                              }
+                                            />
+                                          </Stack>
+                                        ) : interviewPlan?.ratingScale?.scaleType === "Qualitative" && (interviewPlan.ratingScale.levels?.length ?? 0) > 0 ? (
+                                          <AppTextField
+                                            select
+                                            size="small"
+                                            value={criterion.rating || 3}
+                                            onChange={(e) =>
+                                              setScorecard((c) => ({
+                                                ...c,
+                                                criteria: c.criteria.map((it, idx) => (idx === index ? { ...it, rating: Number(e.target.value) } : it)),
+                                              }))
+                                            }
+                                            sx={{ minWidth: 150 }}
+                                          >
+                                            {interviewPlan.ratingScale.levels.map((lvl) => (
+                                              <MenuItem key={lvl.value} value={lvl.value}>
+                                                {lvl.label} ({lvl.value})
+                                              </MenuItem>
+                                            ))}
+                                          </AppTextField>
+                                        ) : (
+                                          <Rating
+                                            value={criterion.rating || 4}
+                                            max={5}
+                                            precision={0.5}
+                                            onChange={(_, val) =>
+                                              setScorecard((c) => ({
+                                                ...c,
+                                                criteria: c.criteria.map((it, idx) => (idx === index ? { ...it, rating: val || 3 } : it)),
+                                              }))
+                                            }
+                                          />
+                                        )}
+                                        {scorecard.criteria.length > 1 && (
+                                          <IconButton
+                                            size="small"
+                                            color="error"
+                                            onClick={() =>
+                                              setScorecard((c) => ({
+                                                ...c,
+                                                criteria: c.criteria.filter((_, idx) => idx !== index),
+                                              }))
+                                            }
+                                          >
+                                            <Delete fontSize="small" />
+                                          </IconButton>
+                                        )}
+                                      </Stack>
+                                    </Stack>
+                                    <AppTextField
+                                      sx={{ ...fieldSx, mt: 1 }}
+                                      size="small"
+                                      placeholder="Specific notes or evidence for this criterion..."
+                                      value={criterion.notes ?? ""}
+                                      onChange={(e) =>
+                                        setScorecard((c) => ({
+                                          ...c,
+                                          criteria: c.criteria.map((it, idx) => (idx === index ? { ...it, notes: e.target.value } : it)),
+                                        }))
+                                      }
+                                    />
+                                  </Box>
+                                ))}
+                              </Stack>
+
+                              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: 0.5 }}>
+                                <Button
+                                  size="small"
+                                  startIcon={<Add />}
+                                  onClick={() =>
+                                    setScorecard((c) => ({
+                                      ...c,
+                                      criteria: [...c.criteria, { name: "", rating: 4, notes: "" }],
+                                    }))
+                                  }
+                                  sx={{ textTransform: "none", fontWeight: 700 }}
+                                >
+                                  Add Criterion
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  size="small"
+                                  onClick={handleSaveScorecard}
+                                  disabled={submittingScorecard}
+                                  sx={{ textTransform: "none", fontWeight: 750, borderRadius: 2 }}
+                                >
+                                  {submittingScorecard ? "Saving..." : "Submit Panelist Scorecard"}
+                                </Button>
+                              </Stack>
+                            </Stack>
+                          </Box>
+                        )}
+                      </Stack>
+                    )}
+                  </Stack>
+                  )}
+
+                  {/* STEP 3: CLEAN, SIMPLE OFFER & ACCEPTANCE */}
+                  {mode === "offer" && (
+                    <Stack spacing={2}>
+                      {/* 1. If Candidate ACCEPTED the offer */}
+                      {offer.status === "Accepted" && (
+                        <Box sx={{ p: 2.5, borderRadius: 3, bgcolor: "success.lighter", border: "1px solid", borderColor: "success.main" }}>
+                          <Stack spacing={1.5} alignItems="center" textAlign="center">
+                            <CheckCircleOutline sx={{ fontSize: 44, color: "success.main" }} />
+                            <Box>
+                              <Typography variant="h6" fontWeight={850} color="success.dark">
+                                Candidate Accepted Offer!
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                                {applicant.firstName} {applicant.lastName} accepted the employment offer of{" "}
+                                <strong>
+                                  {offer.currency} {Number(offer.salary || 0).toLocaleString()}
+                                </strong>
+                                . The applicant stage has been advanced to <strong>Selected</strong>.
+                              </Typography>
+                            </Box>
+                            <Button
+                              variant="contained"
+                              color="success"
+                              size="large"
+                              endIcon={<ArrowForward />}
+                              onClick={() => setMode("handoff")}
+                              sx={{ mt: 1, textTransform: "none", fontWeight: 800, px: 3, py: 1.25, borderRadius: 2.5 }}
+                            >
+                              Proceed to Employee Handoff →
+                            </Button>
+                          </Stack>
+                        </Box>
+                      )}
+
+                      {/* 2. If Candidate requested changes (Counter) */}
+                      {offer.status === "ChangeRequested" && pendingCounter && (
+                        <Box sx={{ p: 2, borderRadius: 2.5, bgcolor: "warning.lighter", border: "1px solid", borderColor: "warning.main" }}>
+                          <Stack spacing={1.5}>
+                            <Typography variant="subtitle2" fontWeight={800} color="warning.dark">
+                              Candidate Requested Compensation Changes (Round {pendingCounter.negotiationRound})
+                            </Typography>
+                            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ p: 1.5, bgcolor: "background.paper", borderRadius: 2 }}>
+                              <Box sx={{ flex: 1 }}>
+                                <Typography variant="caption" color="text.secondary">CURRENT OFFER</Typography>
+                                <Typography variant="h6" fontWeight={750}>{offer.currency} {Number(offer.salary || 0).toLocaleString()}</Typography>
+                              </Box>
+                              <Box sx={{ flex: 1 }}>
+                                <Typography variant="caption" color="warning.dark" fontWeight={700}>CANDIDATE REQUESTED</Typography>
+                                <Typography variant="h6" fontWeight={850} color="warning.dark">
+                                  {pendingCounter.requestedCurrency} {pendingCounter.requestedSalary.toLocaleString()}
+                                </Typography>
+                              </Box>
+                            </Stack>
+                            {pendingCounter.message && (
+                              <Typography variant="body2" sx={{ fontStyle: "italic", p: 1, bgcolor: "background.paper", borderRadius: 1.5 }}>
+                                "{pendingCounter.message}"
+                              </Typography>
+                            )}
+                            <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ pt: 1 }}>
+                              <Button
+                                variant="contained"
+                                color="success"
+                                size="small"
+                                onClick={() => handleDecideCounter(pendingCounter.counterRequestId, "Approved")}
+                                disabled={busy}
+                                sx={{ textTransform: "none", fontWeight: 750 }}
+                              >
+                                Accept Requested Salary ({pendingCounter.requestedCurrency} {pendingCounter.requestedSalary.toLocaleString()})
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                color="error"
+                                size="small"
+                                onClick={() => handleDecideCounter(pendingCounter.counterRequestId, "Rejected")}
+                                disabled={busy}
+                                sx={{ textTransform: "none" }}
+                              >
+                                Decline Request
+                              </Button>
+                            </Stack>
+                          </Stack>
+                        </Box>
+                      )}
+
+                      {/* 3. If Offer was SENT to candidate (Awaiting response) */}
+                      {offer.status === "Sent" && (
+                        <Box sx={{ p: 2.25, borderRadius: 2.5, bgcolor: (t) => alpha(t.palette.info.main, 0.05), border: "1px solid", borderColor: "info.main" }}>
+                          <Stack spacing={1.75}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                              <Stack direction="row" spacing={1.25} alignItems="center">
+                                <Box sx={{ width: 36, height: 36, borderRadius: "50%", bgcolor: "info.lighter", display: "grid", placeItems: "center", color: "info.main" }}>
+                                  <EmailOutlined sx={{ fontSize: 20 }} />
+                                </Box>
+                                <Box>
+                                  <Typography variant="subtitle2" fontWeight={850} color="info.dark">
+                                    Official Offer Dispatched via Email
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    Delivered to <strong>{applicant.email || "candidate's email"}</strong>
+                                  </Typography>
+                                </Box>
+                              </Stack>
+                              <Chip size="small" label="Sent · Awaiting Response" color="info" sx={{ fontWeight: 800, fontSize: "0.72rem" }} />
+                            </Stack>
+
+                            <Box sx={{ p: 1.75, bgcolor: "background.paper", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+                              <Typography variant="body2" color="text.primary">
+                                Offered Compensation: <strong>{offer.currency} {Number(offer.salary || 0).toLocaleString()}</strong>
+                                {offer.startDateUtc && ` · Expected Joining: ${offer.startDateUtc}`}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.75, lineHeight: 1.5 }}>
+                                The formal offer letter was sent directly to the candidate's email inbox. The candidate reviews the terms and replies with their written confirmation or signed copy.
+                              </Typography>
+                            </Box>
+
+                            {/* HR Candidate Acceptance Action */}
+                            <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" useFlexGap sx={{ pt: 0.5 }}>
+                              <Button
+                                variant="contained"
+                                color="success"
+                                size="small"
+                                startIcon={<CheckCircleOutline />}
+                                onClick={handleMarkOfferAcceptedOffline}
+                                disabled={busy}
+                                sx={{ textTransform: "none", fontWeight: 800, px: 2, py: 0.75, borderRadius: 1.5 }}
+                              >
+                                {busy ? "Recording..." : "Record Candidate Acceptance"}
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => setIsRevisionMode(!isRevisionMode)}
+                                sx={{ textTransform: "none", fontWeight: 700, borderRadius: 1.5 }}
+                              >
+                                {isRevisionMode ? "Cancel Revision" : "Revise Terms"}
+                              </Button>
+                            </Stack>
+                          </Stack>
+                        </Box>
+                      )}
+
+                      {/* 4. Primary Offer Form (When Draft, New, or Revising) */}
+                      {(offer.status === "Draft" || isRevisionMode || !offer.offerId) && (
+                        <Box sx={{ p: 2, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "background.paper" }}>
+                          <Typography variant="subtitle2" fontWeight={850} sx={{ mb: 1.5 }}>
+                            {offer.offerId ? "Offer Terms" : "Create New Employment Offer"}
+                          </Typography>
+                          <Stack spacing={1.75}>
+                            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                              <AppTextField
+                                sx={{ ...fieldSx, flex: 2 }}
+                                label="Base Annual Salary *"
+                                type="number"
+                                placeholder="E.g. 950000"
+                                value={offer.salary}
+                                onChange={(event) => setOffer({ ...offer, salary: event.target.value })}
+                                inputProps={{ min: 0, step: "any" }}
+                              />
+                              <AppTextField
+                                sx={{ ...fieldSx, flex: 1 }}
+                                label="Currency"
+                                value={offer.currency}
+                                onChange={(event) => setOffer({ ...offer, currency: event.target.value.toUpperCase() })}
+                              />
+                            </Stack>
+
+                            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                              <Box sx={{ flex: 1 }}>
+                                <CustomisedDatePicker
+                                  label="Planned Joining Date"
+                                  value={offer.startDateUtc ? dayjs(offer.startDateUtc) : null}
+                                  minDate={dayjs().startOf("day")}
+                                  setValue={(value) => setOffer({ ...offer, startDateUtc: value?.format("YYYY-MM-DD") ?? "" })}
+                                  sx={fieldSx}
+                                />
+                              </Box>
+                              <Box sx={{ flex: 1 }}>
+                                <CustomisedDateTimePicker
+                                  label="Offer Expiry Deadline"
+                                  value={offer.expiresAtUtc ? dayjs(offer.expiresAtUtc) : null}
+                                  minDateTime={dayjs()}
+                                  onChange={(value) => setOffer({ ...offer, expiresAtUtc: value?.format("YYYY-MM-DDTHH:mm") ?? "" })}
+                                  slotProps={{
+                                    textField: {
+                                      fullWidth: true,
+                                      sx: fieldSx,
+                                      size: "small",
+                                      helperText: "Formal offer response window expires after this timestamp.",
+                                    },
+                                  }}
+                                />
+                              </Box>
+                            </Stack>
+
+                            {/* Optional Allowances Collapsible Accordion */}
+                            <Accordion
+                              expanded={isAllowancesOpen}
+                              onChange={(_, expanded) => setIsAllowancesOpen(expanded)}
+                              sx={{ border: "1px solid", borderColor: "divider", borderRadius: "12px !important", "&:before": { display: "none" } }}
+                            >
+                              <AccordionSummary expandIcon={<ExpandMore />}>
+                                <Typography variant="body2" fontWeight={700}>
+                                  Allowances & Bonus Components (Optional)
+                                </Typography>
+                              </AccordionSummary>
+                              <AccordionDetails>
+                                <Stack spacing={1.5}>
+                                  {Object.entries(offer.compensationComponents).map(([name, value]) => (
+                                    <AppTextField
+                                      key={name}
+                                      sx={fieldSx}
+                                      label={name}
+                                      type="number"
+                                      placeholder="0"
+                                      value={value}
+                                      onChange={(event) =>
+                                        setOffer((current) => ({
+                                          ...current,
+                                          compensationComponents: { ...current.compensationComponents, [name]: event.target.value },
+                                        }))
+                                      }
+                                      inputProps={{ min: 0, step: "any" }}
+                                    />
+                                  ))}
+                                  <Box sx={{ p: 1.25, bgcolor: "action.hover", borderRadius: 1.5 }}>
+                                    <Typography variant="caption" color="text.secondary">TOTAL CTC</Typography>
+                                    <Typography variant="subtitle1" fontWeight={850} color="primary.main">
+                                      {offer.currency} {offerComponentTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                    </Typography>
+                                  </Box>
+                                </Stack>
+                              </AccordionDetails>
+                            </Accordion>
+
+                            {/* Single Clean Primary Action Button */}
+                            <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ pt: 1 }}>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                size="large"
+                                startIcon={<Send />}
+                                onClick={() => handleSendOffer("Sent")}
+                                disabled={busy || Boolean(offerValidation)}
+                                sx={{ flex: 2, textTransform: "none", fontWeight: 800, borderRadius: 2 }}
+                              >
+                                Send Offer to Candidate
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                size="large"
+                                onClick={() => handleSendOffer("Draft")}
+                                disabled={busy}
+                                sx={{ flex: 1, textTransform: "none", fontWeight: 700, borderRadius: 2 }}
+                              >
+                                Save Draft
+                              </Button>
+                            </Stack>
+                          </Stack>
+                        </Box>
+                      )}
+
+                      {/* Revision history (if any revisions exist) */}
+                      {offerVersions.length > 0 && (
+                        <Box sx={{ p: 1.5, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover" }}>
+                          <Typography variant="caption" fontWeight={800} color="text.secondary" sx={{ display: "block", mb: 0.75 }}>
+                            OFFER REVISION HISTORY ({offerVersions.length} versions)
+                          </Typography>
+                          <Stack spacing={0.75}>
+                            {offerVersions.map((v) => (
+                              <Stack key={v.offerVersionId} direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 1, bgcolor: "background.paper", borderRadius: 1.5 }}>
+                                <Typography variant="body2" fontWeight={750}>
+                                  v{v.versionNumber}: {v.currency} {(v.totalCtc ?? v.salary).toLocaleString()}
+                                </Typography>
+                                <Chip size="small" label={v.status} variant="outlined" />
+                              </Stack>
+                            ))}
+                          </Stack>
+                        </Box>
+                      )}
+                    </Stack>
+                  )}
+
+                  {/* STEP 4: PREBOARDING & EMPLOYEE HANDOFF */}
+                  {mode === "handoff" && (
+                    <Stack spacing={2}>
+                      {(handoffCompleted || applicant.isHired) ? (
+                        <Box sx={{ p: 3, borderRadius: 3, bgcolor: "success.lighter", border: "1px solid", borderColor: "success.main", textAlign: "center" }}>
+                          <CheckCircleOutline sx={{ fontSize: 50, color: "success.main", mb: 1 }} />
+                          <Typography variant="h6" fontWeight={850} color="success.dark">
+                            Employee Successfully Created!
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                            {applicant.firstName} {applicant.lastName} is officially an employee with ID: <strong>{applicant.employeeId || handoff.employeeId || suggestedEmployeeId}</strong>.
+                          </Typography>
+                          <Stack direction="row" spacing={1} justifyContent="center" sx={{ mt: 2 }}>
+                            {applicant.employeeUserId && (
+                              <Button
+                                variant="contained"
+                                color="success"
+                                onClick={() => {
+                                  const targetId = applicant.employeeUserId || applicant.employeeId;
+                                  if (targetId) {
+                                    navigate(`/employees/${targetId}`);
+                                  } else {
+                                    navigate("/employees");
+                                  }
+                                }}
+                                sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2 }}
+                              >
+                                View Employee Profile →
+                              </Button>
+                            )}
+                            <Button
+                              variant="outlined"
+                              color="success"
+                              onClick={onClose}
+                              sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2 }}
+                            >
+                              Close
+                            </Button>
+                          </Stack>
+                        </Box>
+                      ) : (
+                        <Stack spacing={2}>
+                          <Box sx={{ p: 2, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "background.paper" }}>
+                            <Typography variant="subtitle2" fontWeight={850} sx={{ mb: 1.5 }}>
+                              Candidate Details & Assigned Employee ID
+                            </Typography>
+                            <Stack spacing={1.75}>
+                              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                                <AppTextField
+                                  sx={{ ...fieldSx, flex: 1 }}
+                                  label="First Name *"
+                                  value={handoff.firstName}
+                                  onChange={(e) => setHandoff({ ...handoff, firstName: e.target.value })}
+                                  required
+                                />
+                                <AppTextField
+                                  sx={{ ...fieldSx, flex: 1 }}
+                                  label="Last Name *"
+                                  value={handoff.lastName}
+                                  onChange={(e) => setHandoff({ ...handoff, lastName: e.target.value })}
+                                  required
+                                />
+                              </Stack>
+
+                              <AppTextField
+                                sx={fieldSx}
+                                label="Official / Login Email *"
+                                type="email"
+                                value={handoff.email}
+                                onChange={(e) => setHandoff({ ...handoff, email: e.target.value })}
+                                required
+                              />
+
+                              <Box>
+                                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.75 }}>
+                                  <Typography variant="body2" fontWeight={750}>
+                                    Assigned Employee ID *
+                                  </Typography>
+                                  {suggestedEmployeeId && (
+                                    <Chip
+                                      size="small"
+                                      color="primary"
+                                      variant="outlined"
+                                      label={`Next in Sequence: ${suggestedEmployeeId}`}
+                                      sx={{ fontSize: "0.75rem", fontWeight: 700 }}
+                                    />
+                                  )}
+                                </Stack>
+                                <AppTextField
+                                  sx={fieldSx}
+                                  placeholder={suggestedEmployeeId || "E.g. CD-0137"}
+                                  value={handoff.employeeId}
+                                  onChange={(e) => setHandoff({ ...handoff, employeeId: e.target.value })}
+                                  required
+                                />
+                                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
+                                  Official ID generated sequentially from company policy ({suggestedEmployeeId || "CD-####"}). Keep as-is or enter a custom ID.
+                                </Typography>
+                              </Box>
+                            </Stack>
+                          </Box>
+
+                          {/* Preboarding Verification Checklist */}
+                          <Box sx={{ p: 2, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "action.hover" }}>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+                              <Typography variant="subtitle2" fontWeight={800}>
+                                Preboarding Checklist
+                              </Typography>
+                              <Stack direction="row" alignItems="center" spacing={1}>
+                                <Typography variant="caption" color="text.secondary">
+                                  Auto-complete verification
+                                </Typography>
+                                <AppSwitch
+                                  checked={handoff.autoCompletePreboarding}
+                                  onChange={(event) =>
+                                    setHandoff({ ...handoff, autoCompletePreboarding: event.target.checked })
+                                  }
+                                />
+                              </Stack>
+                            </Stack>
+                            {preboardingTasks.map((task, index) => (
+                              <Stack key={task.code} direction="row" spacing={1} alignItems="center" sx={{ py: 0.5 }}>
+                                <Typography variant="body2" sx={{ flex: 1 }}>
+                                  {task.title}
+                                </Typography>
+                                <Chip size="small" label={task.status} color={task.status === "Completed" ? "success" : "default"} />
+                              </Stack>
+                            ))}
+                          </Box>
+
+                          <Button
+                            variant="contained"
+                            color="success"
+                            size="large"
+                            startIcon={<PersonAdd />}
+                            onClick={submit}
+                            disabled={busy || (!handoff.employeeId.trim() && !suggestedEmployeeId.trim())}
+                            sx={{ py: 1.5, textTransform: "none", fontWeight: 850, borderRadius: 2.5, fontSize: "0.95rem" }}
+                          >
+                            {busy ? "Creating Employee…" : "Complete Handoff & Create Employee"}
+                          </Button>
+                        </Stack>
+                      )}
+                    </Stack>
+                  )}
+
+                  {/* Feedback Message */}
+                  {feedback && (
+                    <Alert severity={feedback.severity} onClose={() => setFeedback(undefined)}>
+                      {feedback.code ? `${feedback.code}: ` : ""}
+                      {feedback.text}
+                    </Alert>
+                  )}
+                </Stack>
+              </Box>
+
+              {/* Action Footer Buttons */}
+              <Stack
+                direction={{ xs: "column-reverse", sm: "row" }}
+                spacing={1}
+                justifyContent="flex-end"
+                sx={{ flex: "0 0 auto", pt: 1.25, borderTop: 1, borderColor: "divider" }}
+              >
+                <CustomisedButton
+                  variant="outlined"
+                  label="Close"
+                  handleClick={onClose}
+                  disabled={busy}
+                  sx={{ width: { xs: "100%", sm: "auto" } }}
+                />
+                {mode !== "offer" && mode !== "handoff" && stage !== ApplicationStatus.Rejected && (
+                  <CustomisedButton
+                    variant="contained"
+                    label={
+                      busy
+                        ? "Saving…"
+                        : mode === "screening" && screening.decision === "Pass" && !effectiveRequireInterview
+                        ? "Fast-Track to Offer"
+                        : mode === "screening" && screening.decision === "Reject"
+                        ? "Reject Candidate"
+                        : mode === "interview" && interviewSubTab === 0
+                        ? "Schedule Interview Round"
+                        : mode === "interview" && decision.decision === "Reject"
+                        ? "Reject Application"
+                        : mode === "interview" && decision.decision === "Hold"
+                        ? "Place on Hold"
+                        : mode === "interview" && decision.decision === "Approve"
+                        ? "Approve & Advance to Offer"
+                        : "Save & Advance"
+                    }
+                    loading={busy}
+                    handleClick={submit}
+                    disabled={
+                      busy ||
+                      (mode === "screening" && screening.decision === "Pass" && isScreeningThresholdActive && !meetsScreeningThreshold) ||
+                      (mode === "interview" && interviewSubTab === 0 && Boolean(interviewValidation)) ||
+                      (mode === "interview" && interviewSubTab === 1 && (decision.decision === "Reject" || decision.decision === "Hold") && !decision.notes.trim())
+                    }
+                    sx={{
+                      width: { xs: "100%", sm: "auto" },
+                      bgcolor:
+                        (mode === "screening" && screening.decision === "Reject") ||
+                        (mode === "interview" && interviewSubTab === 1 && decision.decision === "Reject")
+                          ? "error.main"
+                          : (mode === "interview" && interviewSubTab === 1 && decision.decision === "Hold")
+                          ? "warning.main"
+                          : undefined,
+                      "&:hover": {
+                        bgcolor:
+                          (mode === "screening" && screening.decision === "Reject") ||
+                          (mode === "interview" && interviewSubTab === 1 && decision.decision === "Reject")
+                            ? "error.dark"
+                            : (mode === "interview" && interviewSubTab === 1 && decision.decision === "Hold")
+                            ? "warning.dark"
+                            : undefined,
+                      },
+                    }}
+                  />
+                )}
+                {mode === "offer" && offer.status === "Accepted" && (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => setMode("handoff")}
+                    endIcon={<ArrowForward />}
+                    sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2 }}
+                  >
+                    Proceed to Handoff
+                  </Button>
+                )}
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
+            {/* Modal to configure role-specific screening threshold */}
+      <Dialog open={thresholdModalOpen} onClose={() => setThresholdModalOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" fontWeight={800}>
+            Role Screening Policy
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {vacancyData?.title ? `For role: ${vacancyData.title}` : "Configure job threshold"}
+          </Typography>
+        </DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={2} sx={{ pt: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Define the minimum screening pass score required for candidates applying to <strong>{vacancyData?.title || "this role"}</strong>.
+            </Typography>
+            <AppTextField
+              fullWidth
+              label="Role Screening Pass Score (%) *"
+              type="number"
+              value={customThresholdScore}
+              onChange={(e) => setCustomThresholdScore(Math.max(0, Math.min(100, Number(e.target.value) || 0)))}
+              inputProps={{ min: 0, max: 100 }}
+              helperText="Candidates must meet or exceed this score during screening to pass."
+            />
+            <AppTextField
+              fullWidth
+              multiline
+              rows={3}
+              label="Role Screening Criteria (comma-separated)"
+              value={customCriteriaText}
+              onChange={(e) => setCustomCriteriaText(e.target.value)}
+              placeholder="e.g. C#, .NET Core, Web API, SQL Server, Clean Architecture"
+              helperText="Evaluation checklist items recruiters check when screening candidates for this JD."
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setThresholdModalOpen(false)} color="inherit" sx={{ textTransform: "none" }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSaveRoleThreshold}
+            disabled={savingThreshold || !vacancyData?.jobId}
+            sx={{ textTransform: "none", fontWeight: 750 }}
+          >
+            {savingThreshold ? "Saving..." : "Save Policy for this Role"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Drawer>
+
+      {/* SECONDARY RECRUITMENT UTILITY TOOLS (Clean dialog instead of screen clutter) */}
+      <Dialog
+        open={Boolean(activeUtilityTool)}
+        onClose={() => setActiveUtilityTool(null)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 800 }}>
+          {activeUtilityTool === "resume" && "Resume Extraction Review"}
+          {activeUtilityTool === "privacy" && "Candidate Privacy & GDPR"}
+          {activeUtilityTool === "talentpool" && "Add to Talent Pool"}
+          {activeUtilityTool === "merge" && "Merge Duplicate Applicant"}
+        </DialogTitle>
+        <DialogContent dividers>
+          {activeUtilityTool === "resume" && (
+            <Stack spacing={1.5} sx={{ pt: 1 }}>
+              <Typography variant="body2" color="text.secondary">
+                Review parsed resume parameters. Corrections remain advisory and audit-logged.
+              </Typography>
+              <AppTextField
+                sx={fieldSx}
+                select
+                label="Extraction Decision"
+                value={resumeReview.decision}
+                onChange={(e) => setResumeReview({ ...resumeReview, decision: e.target.value as any })}
+              >
+                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="Approved">Approved</MenuItem>
+                <MenuItem value="Rejected">Rejected</MenuItem>
+              </AppTextField>
+              <AppTextField
+                sx={fieldSx}
+                multiline
+                minRows={5}
+                label="Extracted Candidate Attributes"
+                value={resumeReview.fieldsText}
+                onChange={(e) => setResumeReview({ ...resumeReview, fieldsText: e.target.value })}
+              />
+              <Button
+                variant="contained"
+                onClick={async () => {
+                  try {
+                    await reviewRecruitmentResumeExtraction({
+                      applicantId: applicant.applicantId,
+                      vacancyId: applicant.vacancyId,
+                      decision: resumeReview.decision,
+                      extractedFields: Object.fromEntries(
+                        resumeReview.fieldsText.split("\n").filter((l) => l.includes(":")).map((l) => {
+                          const [k, ...v] = l.split(":");
+                          return [k.trim(), v.join(":").trim()];
+                        })
+                      ),
+                      notes: resumeReview.notes || null,
+                      idempotencyKey: createIdempotencyKey(),
+                    });
+                    setActiveUtilityTool(null);
+                    setFeedback({ severity: "success", text: "Resume extraction review saved." });
+                  } catch (e) {
+                    setFeedback({ severity: "error", text: (e as Error).message });
+                  }
+                }}
+                sx={{ textTransform: "none", fontWeight: 750 }}
+              >
+                Save Review
+              </Button>
             </Stack>
           )}
 
-          {/* Right Column: Stepper + Tools + Scrollable Form + Shared Action Buttons */}
-          <Stack spacing={{ xs: 1.25, sm: 1.5 }} sx={{ height: "100%", minHeight: 0, minWidth: 0, overflow: "hidden" }}>
-            <Box sx={{ flex: "0 0 auto", p: { xs: 1, sm: 1.5 }, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover" }}><Stepper activeStep={activeStep} alternativeLabel sx={{ "& .MuiStepLabel-label": { fontSize: { xs: ".65rem", sm: ".75rem" }, mt: .5 }, "& .MuiStepConnector-line": { borderColor: "divider" } }}>{primarySteps.map((item, index) => { const enabled = isActionEnabled(item.id) && (index <= completedStep + 1 || index === activeStep); return <Step key={item.id} completed={index <= completedStep}><StepLabel error={!enabled && index === completedStep + 1} onClick={() => enabled && (setMode(item.id), setFeedback(undefined))} sx={{ cursor: enabled ? "pointer" : "not-allowed" }}>{item.label}<Typography component="span" variant="caption" sx={{ display: { xs: "none", sm: "block" }, color: "text.secondary" }}>{item.helper}</Typography></StepLabel></Step>; })}</Stepper><Stack direction="row" justifyContent="space-between" sx={{ mt: 1, gap: 1 }}><Chip size="small" label={"Current: " + (ApplicationStatus[stage] ?? "Unknown")} color="primary" variant="outlined" /><Typography variant="caption" color="text.secondary" sx={{ alignSelf: "center" }}>Complete the active step to unlock the next one.</Typography></Stack></Box><Divider /><Box sx={{ flex: "0 0 auto" }}><Typography variant="overline" color="text.secondary" sx={{ letterSpacing: ".08em" }}>Additional tools</Typography><Box sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(3, minmax(0, 1fr))" }, gap: .75, mt: .5 }}>{utilityModes.map((item) => <AppButton key={item.id} size="small" variant={mode === item.id ? "contained" : "outlined"} disabled={!isActionEnabled(item.id)} onClick={() => { setMode(item.id); setFeedback(undefined); }} sx={{ minWidth: 0, minHeight: 36, px: .75, borderRadius: 1.5, whiteSpace: "normal", lineHeight: 1.15, fontSize: { xs: ".68rem", sm: ".75rem" }, "&.Mui-disabled": { color: "text.secondary", borderColor: "divider", opacity: .75 } }}>{item.label}</AppButton>)}</Box></Box>
-            <Box sx={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", overflowX: "hidden", pr: { xs: .25, sm: .75 } }}><Stack spacing={1.5} sx={{ minWidth: 0 }}>
-              {mode === "screening" && <Stack spacing={1.5}><Typography variant="body2" color="text.secondary">Record a consistent first-pass review against explicit evidence before scheduling interviews.</Typography><AppTextField sx={fieldSx} label="Screening score (0–100)" type="number" value={screening.score} onChange={(event) => setScreening({ ...screening, score: Number(event.target.value) })} inputProps={{ min: 0, max: 100, step: 1 }} /><AppTextField sx={fieldSx} select label="Decision" value={screening.decision} onChange={(event) => setScreening({ ...screening, decision: event.target.value as RecruitmentScreeningReviewCommand["decision"] })}>{["Pending", "Pass", "Hold", "Reject"].map((value) => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField>{screening.criteria.map((criterion, index) => <Box key={`${criterion.name}-${index}`} sx={{ p: 1.25, border: 1, borderColor: "divider", borderRadius: 1.5 }}><Typography variant="caption" color="text.secondary">Criterion {index + 1}</Typography><Typography fontWeight={700}>{criterion.name}</Typography><Stack direction="row" alignItems="center" justifyContent="space-between"><Typography variant="body2">Evidence passed</Typography><AppSwitch checked={criterion.passed} onChange={(event) => setScreening(current => ({ ...current, criteria: current.criteria.map((item, itemIndex) => itemIndex === index ? { ...item, passed: event.target.checked } : item) }))} /></Stack><AppTextField sx={{ ...fieldSx, mt: 1 }} label="Notes" value={criterion.notes ?? ""} onChange={(event) => setScreening(current => ({ ...current, criteria: current.criteria.map((item, itemIndex) => itemIndex === index ? { ...item, notes: event.target.value } : item) }))} /></Box>)}<AppTextField sx={fieldSx} multiline minRows={2} label="Evidence" value={screening.evidence} onChange={(event) => setScreening({ ...screening, evidence: event.target.value })} /><AppTextField sx={fieldSx} multiline minRows={2} label="Rejection reason" value={screening.rejectionReason} onChange={(event) => setScreening({ ...screening, rejectionReason: event.target.value })} required={screening.decision === "Reject"} /></Stack>}
-              {mode === "interview" && <Stack spacing={1.5}><Alert severity={interviewValidation ? "warning" : "info"}>{interviewValidation ?? "Choose a future slot; calendar sync and interviewer invitations happen after saving."}</Alert><AppTextField sx={fieldSx} label="Title" value={interview.title} onChange={(event) => setInterview({ ...interview, title: event.target.value })} /><Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch"><AppTextField sx={{ ...fieldSx, flex: 1 }} label="Interview ID (for debrief / calendar retry)" value={scorecard.interviewId} onChange={(event) => setScorecard({ ...scorecard, interviewId: event.target.value })} placeholder="Paste the scheduled interview ID" /><Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ flex: { sm: 1 } }}><AppButton variant="outlined" onClick={() => void searchInterviewRounds()} disabled={busy || interviewSearchBusy} sx={{ flex: 1, alignSelf: { xs: "stretch", sm: "center" } }}>{interviewSearchBusy ? "Searching…" : "Search rounds"}</AppButton><AppButton variant="outlined" onClick={() => void retryCalendar()} disabled={busy || !scorecard.interviewId.trim()} sx={{ flex: 1, alignSelf: { xs: "stretch", sm: "center" } }}>Retry calendar</AppButton></Stack></Stack><Stack direction={{ xs: "column", sm: "row" }} spacing={1}><AppTextField sx={{ ...fieldSx, flex: 1 }} label="Round" type="number" value={interview.roundNumber} onChange={(event) => setInterview({ ...interview, roundNumber: Math.max(1, Number(event.target.value) || 1) })} inputProps={{ min: 1, max: 20 }} /><AppTextField sx={{ ...fieldSx, flex: 2 }} label="Round type" value={interview.roundType} onChange={(event) => setInterview({ ...interview, roundType: event.target.value })} placeholder="Technical, HR, panel" /></Stack><CustomisedDateTimePicker label="Starts" value={interview.startsAtUtc ? dayjs(interview.startsAtUtc) : null} minDateTime={dayjs()} onChange={(value) => changeDate("startsAtUtc", value)} slotProps={{ textField: { fullWidth: true, sx: fieldSx, size: "small" } }} /><CustomisedDateTimePicker label="Ends" value={interview.endsAtUtc ? dayjs(interview.endsAtUtc) : null} disabled={!interview.startsAtUtc} minDateTime={interview.startsAtUtc ? dayjs(interview.startsAtUtc).add(1, "minute") : dayjs()} onChange={(value) => changeDate("endsAtUtc", value)} slotProps={{ textField: { fullWidth: true, sx: fieldSx, size: "small", helperText: interview.startsAtUtc ? "Must be after the start time." : "Select a start time first." } }} /><AppTextField sx={fieldSx} label="Location or meeting URL" value={interview.location} onChange={(event) => setInterview({ ...interview, location: event.target.value })} />{interviewRounds.length > 0 && <Typography variant="caption" color="text.secondary">Loaded rounds: {interviewRounds.map((round) => "Round " + round.roundNumber + " · " + round.status).join("  |  ")}</Typography>}<Stack spacing={1} sx={{ p: 1.25, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover" }}><Stack direction={{ xs: "column", sm: "row" }} spacing={1}><AppTextField sx={{ ...fieldSx, flex: 2 }} label="Search interviewer" placeholder="Name, employee ID, user ID or email" value={interviewerQuery} onChange={(event) => setInterviewerQuery(event.target.value)} /><AppTextField sx={{ ...fieldSx, flex: 1 }} select label="Department" value={interviewerDepartment} onChange={(event) => setInterviewerDepartment(event.target.value)}><MenuItem value="">All departments</MenuItem>{departments.map((department) => <MenuItem key={department.departmentId} value={Object.values(department.titles ?? {})[0] ?? department.departmentId}>{Object.values(department.titles ?? {})[0] ?? department.departmentId}</MenuItem>)}</AppTextField></Stack><Typography variant="caption" color="text.secondary">Search results show active employees only. Selected: {selectedInterviewerIds.length}</Typography><Stack spacing={.5} sx={{ maxHeight: 180, overflowY: "auto" }}>{visibleInterviewers.map((employee) => { const selected = selectedInterviewerIds.includes(employee.userId); return <AppButton key={employee.userId} size="small" variant={selected ? "contained" : "outlined"} onClick={() => toggleInterviewer(employee.userId)} sx={{ justifyContent: "flex-start", textAlign: "left", minHeight: 38 }}>{employee.fullName || employee.email || employee.userId} · {employee.employeeId || employee.userId}{employee.department ? " · " + Object.values(employee.department).join(" ") : ""}</AppButton>; })}{!visibleInterviewers.length && <Typography variant="caption" color="text.secondary">No active employees match this search.</Typography>}</Stack></Stack></Stack>}
-              {mode === "offer" && <><AppTextField sx={fieldSx} label="Offer ID" value={offer.offerId} onChange={(event) => setOffer({ ...offer, offerId: event.target.value })} helperText="Automatically populated after the first save; keep it for revisions." /><Alert severity="info">Create the candidate offer after selection. Draft offers can be prepared now; Approved or Sent offers require an approval reference unless Offer Approval Gate is disabled in Settings.</Alert><Alert severity="success">Estimated total CTC: {offer.currency.trim().toUpperCase() || "—"} {offerComponentTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Alert><AppTextField sx={fieldSx} label="Salary" type="number" value={offer.salary} onChange={(event) => setOffer({ ...offer, salary: event.target.value })} inputProps={{ min: 0, step: "any" }} /><AppTextField sx={fieldSx} label="Currency" value={offer.currency} onChange={(event) => setOffer({ ...offer, currency: event.target.value.toUpperCase() })} /><Typography variant="subtitle2" fontWeight={800}>Compensation components</Typography>{Object.entries(offer.compensationComponents).map(([name, value]) => <AppTextField key={name} sx={fieldSx} label={name} type="number" value={value} onChange={(event) => setOffer(current => ({ ...current, compensationComponents: { ...current.compensationComponents, [name]: event.target.value } }))} inputProps={{ min: 0, step: "any" }} />)}<CustomisedDatePicker label="Start date (planned joining)" value={offer.startDateUtc ? dayjs(offer.startDateUtc) : null} minDate={dayjs().startOf("day")} setValue={(value) => setOffer({ ...offer, startDateUtc: value?.format("YYYY-MM-DD") ?? "" })} sx={fieldSx} /><CustomisedDateTimePicker label="Offer expiry" value={offer.expiresAtUtc ? dayjs(offer.expiresAtUtc) : null} minDateTime={dayjs()} onChange={(value) => setOffer({ ...offer, expiresAtUtc: value?.format("YYYY-MM-DDTHH:mm") ?? "" })} slotProps={{ textField: { fullWidth: true, sx: fieldSx, size: "small", helperText: "Candidate response links expire after this time." } }} /> <AppTextField sx={fieldSx} label="Approval reference" helperText={["Approved", "Sent", "Accepted"].includes(offer.status) ? "Required before approving or sending (in Standard/Enterprise mode)." : "Optional in Startup mode."} value={offer.approvalReference} onChange={(event) => setOffer({ ...offer, approvalReference: event.target.value })} /><AppTextField sx={fieldSx} select label="Status" value={offer.status} onChange={(event) => setOffer({ ...offer, status: event.target.value as RecruitmentOfferCommand["status"] })}>{["Draft", "PendingApproval", "Approved", "Sent", "Accepted", "Declined"].map((value) => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField></>}
-              {mode === "resume" && <Stack spacing={1.5}><Typography variant="body2" color="text.secondary">Review advisory extraction only. Nothing is applied to the candidate automatically.</Typography><AppTextField sx={fieldSx} select label="Review decision" value={resumeReview.decision} onChange={(event) => setResumeReview({ ...resumeReview, decision: event.target.value as RecruitmentResumeExtractionReviewCommand["decision"] })}>{["Pending", "Approved", "Rejected"].map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField><AppTextField sx={fieldSx} multiline minRows={5} label="Extracted fields" helperText="One field per line, for example: skills: C#, React" value={resumeReview.fieldsText} onChange={(event) => setResumeReview({ ...resumeReview, fieldsText: event.target.value })} /><AppTextField sx={fieldSx} multiline minRows={2} label="Reviewer notes" value={resumeReview.notes} onChange={(event) => setResumeReview({ ...resumeReview, notes: event.target.value })} /></Stack>}
-              {mode === "negotiation" && <Stack spacing={1.5}><Typography variant="body2" color="text.secondary">Create a versioned offer revision or submit a candidate counter request.</Typography><AppButton variant="outlined" onClick={() => void loadOfferVersions()} disabled={versionsBusy}>{versionsBusy ? "Loading revisions…" : "Load revision history"}</AppButton>{<AppButton variant="outlined" onClick={() => void loadCounterRequests()} disabled={versionsBusy}>{versionsBusy ? "Loading counters…" : "Load counter requests"}</AppButton>}{counterRequests.length > 0 && <Stack spacing={.75} sx={{ p: 1, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover", maxHeight: 180, overflowY: "auto" }}><Typography variant="caption" fontWeight={700}>Counter-offer history</Typography>{counterRequests.map((counter) => <Stack key={counter.counterRequestId} direction="row" justifyContent="space-between" gap={1}><Typography variant="caption">Round {counter.negotiationRound} · {counter.status}</Typography><Typography variant="caption" color="text.secondary">{counter.requestedCurrency} {counter.requestedSalary}</Typography></Stack>)}</Stack>}{offerVersions.length > 0 && <Stack spacing={.75} sx={{ p: 1, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover", maxHeight: 180, overflowY: "auto" }}><Typography variant="caption" fontWeight={700}>Offer revision history</Typography>{offerVersions.map((version) => <Stack key={version.offerVersionId} direction="row" justifyContent="space-between" gap={1}><Typography variant="caption">v{version.versionNumber} · {version.status}</Typography><Typography variant="caption" color="text.secondary">{version.currency} {version.totalCtc ?? version.salary}</Typography></Stack>)}</Stack>}<AppTextField sx={fieldSx} label="Offer ID" value={negotiation.offerId} onChange={(event) => setNegotiation({ ...negotiation, offerId: event.target.value })} required /><AppTextField sx={fieldSx} select label="Negotiation action" value={negotiation.action} onChange={(event) => setNegotiation({ ...negotiation, action: event.target.value as typeof negotiation.action })}><MenuItem value="Version">Create offer version</MenuItem><MenuItem value="Counter">Request candidate counter</MenuItem></AppTextField><AppTextField sx={fieldSx} label="Salary" type="number" value={negotiation.salary} onChange={(event) => setNegotiation({ ...negotiation, salary: event.target.value })} inputProps={{ min: 0, step: "any" }} required /><AppTextField sx={fieldSx} label="Currency" value={negotiation.currency} onChange={(event) => setNegotiation({ ...negotiation, currency: event.target.value.toUpperCase() })} />{negotiation.action === "Version" && <>{Object.entries(negotiation.compensationComponents).map(([name, value]) => <AppTextField key={name} sx={fieldSx} label={name} type="number" value={value} onChange={(event) => setNegotiation(current => ({ ...current, compensationComponents: { ...current.compensationComponents, [name]: event.target.value } }))} inputProps={{ min: 0, step: "any" }} />)}</>}<AppTextField sx={fieldSx} multiline minRows={2} label="Message / version reason" value={negotiation.message} onChange={(event) => setNegotiation({ ...negotiation, message: event.target.value })} /></Stack>}
-              {mode === "privacy" && <Stack spacing={1.5}><Typography variant="body2" color="text.secondary">Record consent or anonymize candidate personal data while preserving the audit trail.</Typography><AppTextField sx={fieldSx} select label="Privacy action" value={privacy.action} onChange={(event) => setPrivacy({ ...privacy, action: event.target.value as RecruitmentCandidatePrivacyCommand["action"] })}>{["Grant", "Revoke", "Anonymize"].map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField><AppTextField sx={fieldSx} label="Retention override (days)" type="number" value={privacy.retentionDays} onChange={(event) => setPrivacy({ ...privacy, retentionDays: event.target.value === "" ? "" : Math.max(30, Math.min(3650, Number(event.target.value) || 30)) })} disabled={privacy.action !== "Grant"} inputProps={{ min: 30, max: 3650, step: 1 }} helperText="Leave blank to use the company privacy policy." /><AppTextField sx={fieldSx} multiline minRows={3} label="Reason" value={privacy.reason} onChange={(event) => setPrivacy({ ...privacy, reason: event.target.value })} required={privacy.action === "Anonymize"} /></Stack>}
-              {mode === "decision" && <Stack spacing={1.5}><Alert severity="info">Approval becomes available only after every scheduled interview is marked completed and has a submitted scorecard plus debrief (unless disabled in Startup mode).</Alert><Stack direction={{ xs: "column", sm: "row" }} spacing={1}><AppButton variant="outlined" onClick={() => setMode("interview")} sx={{ flex: 1 }}>Review interviews</AppButton><AppButton variant="outlined" onClick={() => setMode("scorecard")} sx={{ flex: 1 }}>Open scorecards</AppButton></Stack><Typography variant="body2" color="text.secondary">Record the final hiring decision after interview review or resume screening.</Typography><AppTextField sx={fieldSx} select label="Decision" value={decision.decision} onChange={(event) => setDecision({ ...decision, decision: event.target.value as RecruitmentHiringDecisionCommand["decision"] })}>{["Approve", "Hold", "Reject"].map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField><AppTextField sx={fieldSx} multiline minRows={3} label="Decision notes" value={decision.notes} onChange={(event) => setDecision({ ...decision, notes: event.target.value })} /></Stack>}
-              {mode === "onboarding" && <Stack spacing={1.5}><Typography variant="body2" color="text.secondary">Track the employee activation work created by the preboarding handoff.</Typography>{onboarding ? <><Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch"><Typography variant="body2" color="text.secondary" sx={{ flex: 1 }}>Completed onboarding activates the linked employee. If the downstream employee update was unavailable, retry it here.</Typography><AppButton variant="outlined" onClick={() => void retryOnboardingActivation()} disabled={busy || onboarding.status !== "Completed"} sx={{ alignSelf: { xs: "stretch", sm: "center" } }}>Retry activation</AppButton></Stack><AppTextField sx={fieldSx} select label="Case status" value={onboarding.status} onChange={(event) => setOnboarding({ ...onboarding, status: event.target.value as RecruitmentOnboardingCase["status"] })}>{["PendingActivation", "InProgress", "Completed"].map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField>{onboarding.tasks.map((task, index) => <Stack key={task.code} direction="row" spacing={1} alignItems="center"><Typography variant="body2" sx={{ flex: 1 }}>{task.title}</Typography><AppTextField sx={{ ...fieldSx, width: 160 }} select label="Task status" value={task.status} onChange={(event) => setOnboarding({ ...onboarding, tasks: onboarding.tasks.map((item, taskIndex) => taskIndex === index ? { ...item, status: event.target.value as typeof item.status } : item) })}>{["Pending", "InProgress", "Completed", "Skipped"].map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField></Stack>)}</> : <Alert severity="info">No onboarding case exists yet. Complete the Preboarding handoff first.</Alert>}</Stack>}
-              {mode === "handoff" && <Stack spacing={1.5}><Box sx={{ p: 1.5, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover" }}><Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}><Typography variant="subtitle2" fontWeight={700}>Preboarding readiness checklist</Typography><Stack direction="row" alignItems="center" spacing={1}><Typography variant="caption" color="text.secondary">Auto-verify on handoff</Typography><AppSwitch checked={handoff.autoCompletePreboarding} onChange={(event) => setHandoff({ ...handoff, autoCompletePreboarding: event.target.checked })} /></Stack></Stack>{preboardingTasks.map((task, index) => <Stack key={task.code} direction="row" spacing={1} alignItems="center" sx={{ mb: .75 }}><Typography variant="body2" sx={{ flex: 1 }}>{task.title}</Typography><AppTextField sx={{ ...fieldSx, width: 150 }} select label="Status" value={task.status} onChange={(event) => setPreboardingTasks((current) => current.map((item, idx) => idx === index ? { ...item, status: event.target.value as typeof item.status } : item))}>{["Pending", "InProgress", "Completed", "Skipped"].map((value) => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField></Stack>)}</Box><AppTextField sx={fieldSx} label="First name" value={handoff.firstName} onChange={(event) => setHandoff({ ...handoff, firstName: event.target.value })} required /><AppTextField sx={fieldSx} label="Last name" value={handoff.lastName} onChange={(event) => setHandoff({ ...handoff, lastName: event.target.value })} required /><AppTextField sx={fieldSx} label="Email" type="email" value={handoff.email} onChange={(event) => setHandoff({ ...handoff, email: event.target.value })} required /><AppTextField sx={fieldSx} label="Employee ID" value={handoff.employeeId} onChange={(event) => setHandoff({ ...handoff, employeeId: event.target.value })} required /></Stack>}
-              {mode === "scorecard" && <><Typography variant="body2" color="text.secondary">Enter a manual score for each interview criterion. Scores are saved with the assigned interviewer and application history.</Typography>{interviewRounds.length > 0 && <Stack spacing={.75} sx={{ p: 1, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover" }}><Typography variant="caption" fontWeight={700}>Interview rounds requiring action</Typography>{interviewRounds.map((round) => { const pending = round.status !== "Completed" || round.debriefStatus !== "Complete"; const roundPanelists: string[] = round.panelistUserIds ?? []; const nextReviewer = roundPanelists.includes(reviewerUserId) ? reviewerUserId : (roundPanelists[0] || reviewerUserId); return <AppButton key={round.interviewId} size="small" variant={scorecard.interviewId === round.interviewId ? "contained" : "outlined"} color={pending ? "warning" : "success"} onClick={() => { setScorecard((current) => ({ ...current, scorecardId: "", interviewId: round.interviewId, roundNumber: round.roundNumber, reviewerUserId: nextReviewer })); setInterview((current) => ({ ...current, title: round.title ?? current.title, roundNumber: round.roundNumber ?? current.roundNumber, roundType: round.roundType ?? current.roundType, startsAtUtc: round.startsAtUtc ? dayjs(round.startsAtUtc).format("YYYY-MM-DDTHH:mm") : current.startsAtUtc, endsAtUtc: round.endsAtUtc ? dayjs(round.endsAtUtc).format("YYYY-MM-DDTHH:mm") : current.endsAtUtc, panelistUserIds: roundPanelists.join(", ") })); }} sx={{ justifyContent: "space-between", textAlign: "left", minHeight: 38 }}>{"Round " + round.roundNumber + " · " + (round.title ?? "Interview") + (pending ? " · Needs completion/debrief" : " · Completed")}</AppButton>; })}</Stack>}{savedScorecards.length > 0 && <Stack spacing={.75} sx={{ p: 1, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover" }}><Typography variant="caption" fontWeight={700}>Saved scores by round (click to load/edit)</Typography>{savedScorecards.map((card) => <AppButton key={card.scorecardId} size="small" variant="outlined" onClick={() => setScorecard((current) => ({ ...current, scorecardId: card.scorecardId || "", interviewId: card.interviewId || current.interviewId, roundNumber: card.roundNumber || current.roundNumber, reviewerUserId: card.reviewerUserId || current.reviewerUserId, recommendation: card.recommendation || current.recommendation, status: (card.status as RecruitmentScorecardCommand["status"]) || current.status, criteria: Array.isArray(card.criteria) && card.criteria.length > 0 ? card.criteria : current.criteria }))} sx={{ justifyContent: "space-between", textAlign: "left", minHeight: 34 }}><span>Round {card.roundNumber} · {card.reviewerUserId}</span><span>{card.criteria?.map((criterion: any) => criterion.rating).join(" / ")} · {card.status}</span></AppButton>)}</Stack>}<Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch"><AppTextField sx={{ ...fieldSx, flex: 1 }} label="Interview ID (for debrief / calendar retry)" value={scorecard.interviewId} onChange={(event) => setScorecard({ ...scorecard, interviewId: event.target.value })} placeholder="Paste the scheduled interview ID" /><Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ flex: { sm: 1 } }}><AppButton variant="outlined" onClick={() => void searchInterviewRounds()} disabled={busy || interviewSearchBusy} sx={{ flex: 1, alignSelf: { xs: "stretch", sm: "center" } }}>{interviewSearchBusy ? "Searching…" : "Search rounds"}</AppButton><AppButton variant="outlined" onClick={() => void retryCalendar()} disabled={busy || !scorecard.interviewId.trim()} sx={{ flex: 1, alignSelf: { xs: "stretch", sm: "center" } }}>Retry calendar</AppButton></Stack></Stack><AppTextField sx={fieldSx} select={selectedInterviewerIds.length > 0} label="Assigned interviewer / panelist" value={scorecard.reviewerUserId || selectedInterviewerIds[0] || reviewerUserId} onChange={(event) => setScorecard({ ...scorecard, scorecardId: "", reviewerUserId: event.target.value })} helperText="Select which assigned panelist's scorecard is being recorded.">{selectedInterviewerIds.map((id) => { const emp = interviewers.find((e) => e.userId === id); return <MenuItem key={id} value={id}>{emp ? `${emp.fullName || emp.email || id} (${id})` : id}</MenuItem>; })}</AppTextField><Stack direction={{ xs: "column", sm: "row" }} spacing={1}><AppTextField sx={{ ...fieldSx, flex: 1 }} label="Round" type="number" value={scorecard.roundNumber} onChange={(event) => setScorecard({ ...scorecard, roundNumber: Math.max(1, Number(event.target.value) || 1) })} inputProps={{ min: 1, max: 20 }} /><AppTextField sx={{ ...fieldSx, flex: 2 }} select label="Recommendation" value={scorecard.recommendation} onChange={(event) => { const nextRec = event.target.value; const nextDebrief = nextRec === "No Hire" ? "Reject" : nextRec === "Hold" ? "Hold" : "Advance"; setScorecard({ ...scorecard, recommendation: nextRec, debriefDecision: nextDebrief as RecruitmentInterviewDebriefCommand["decision"] }); }}>{["Strong Hire", "Hire", "Hold", "No Hire"].map((value) => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField></Stack>{scorecard.criteria.map((criterion, index) => <Stack key={`${index}-${criterion.name}`} spacing={1}><AppTextField sx={fieldSx} label={`Criterion ${index + 1}`} value={criterion.name} onChange={(event) => setScorecard(current => ({ ...current, criteria: current.criteria.map((item, itemIndex) => itemIndex === index ? { ...item, name: event.target.value } : item) }))} required /><AppTextField sx={fieldSx} label="Manual score (1–5)" type="number" value={criterion.rating} onChange={(event) => setScorecard(current => ({ ...current, criteria: current.criteria.map((item, itemIndex) => itemIndex === index ? { ...item, rating: Math.max(1, Math.min(5, Number(event.target.value) || 0)) } : item) }))} inputProps={{ min: 1, max: 5, step: 1 }} helperText="Enter a whole number from 1 to 5." /><AppTextField sx={fieldSx} multiline minRows={2} label="Notes / evidence" value={criterion.notes ?? ""} onChange={(event) => setScorecard(current => ({ ...current, criteria: current.criteria.map((item, itemIndex) => itemIndex === index ? { ...item, notes: event.target.value } : item) }))} /></Stack>)}<AppButton variant="outlined" onClick={addScorecardCriterion} disabled={scorecard.criteria.length >= 20}>Add criterion</AppButton><AppTextField sx={fieldSx} select label="Debrief decision" value={scorecard.debriefDecision} onChange={(event) => setScorecard({ ...scorecard, debriefDecision: event.target.value as RecruitmentInterviewDebriefCommand["decision"] })}><MenuItem value="Advance">Advance</MenuItem><MenuItem value="Hold">Hold</MenuItem><MenuItem value="Reject">Reject</MenuItem></AppTextField><AppTextField sx={fieldSx} select label="Review status" value={scorecard.status} onChange={(event) => setScorecard({ ...scorecard, status: event.target.value as RecruitmentScorecardCommand["status"] })}>{["Draft", "Submitted", "Locked"].map((value) => <MenuItem key={value} value={value}>{value}</MenuItem>)}</AppTextField></>}
-              {mode === "talentpool" && <><AppTextField sx={fieldSx} label="Pool name" value={talentPool.poolName} onChange={(event) => setTalentPool({ ...talentPool, poolName: event.target.value })} /><AppTextField sx={fieldSx} label="Tags" placeholder="senior, frontend, future-hire" helperText="Separate tags with commas" value={talentPool.tags} onChange={(event) => setTalentPool({ ...talentPool, tags: event.target.value })} /><AppTextField sx={fieldSx} multiline minRows={3} label="Notes" value={talentPool.notes} onChange={(event) => setTalentPool({ ...talentPool, notes: event.target.value })} /><AppTextField sx={fieldSx} select label="Status" value={talentPool.status} onChange={(event) => setTalentPool({ ...talentPool, status: event.target.value as RecruitmentTalentPoolCommand["status"] })}><MenuItem value="Active">Active</MenuItem><MenuItem value="Archived">Archived</MenuItem></AppTextField></>}
-              {mode === "merge" && <><Alert severity="warning">The source applicant stays in audit history after merge. Confirm the target applicant carefully.</Alert><AppTextField sx={fieldSx} label="Target applicant ID" placeholder="Paste the existing applicant ID" value={merge.targetApplicantId} onChange={(event) => setMerge({ ...merge, targetApplicantId: event.target.value })} /><AppTextField sx={fieldSx} multiline minRows={3} label="Reason" value={merge.reason} onChange={(event) => setMerge({ ...merge, reason: event.target.value })} /></>}
-              {feedback && <Alert severity={feedback.severity}>{feedback.code ? `${feedback.code}: ` : ""}{feedback.text}</Alert>}
-            </Stack></Box>
-            <Stack direction={{ xs: "column-reverse", sm: "row" }} spacing={1} justifyContent="flex-end" sx={{ flex: "0 0 auto", pt: 1, borderTop: 1, borderColor: "divider" }}>
-              {mode === "interview" && (
-                <>
-                  <CustomisedButton variant="outlined" label={interviewSearchBusy ? "Loading rounds…" : "Load saved rounds"} handleClick={() => void searchInterviewRounds()} disabled={busy || interviewSearchBusy} sx={{ width: { xs: "100%", sm: "auto" } }} />
-                  <CustomisedButton variant="outlined" label="Next round" handleClick={prepareNextRound} disabled={busy} sx={{ width: { xs: "100%", sm: "auto" } }} />
-                  <CustomisedButton variant="outlined" label="Mark completed" handleClick={() => void completeInterview()} disabled={busy || !scorecard.interviewId.trim() || Boolean(interviewValidation)} sx={{ width: { xs: "100%", sm: "auto" } }} />
-                </>
-              )}
-              {mode === "scorecard" && (
-                <CustomisedButton variant="outlined" label="Complete debrief" handleClick={completeDebrief} disabled={busy || !scorecard.interviewId.trim()} sx={{ width: { xs: "100%", sm: "auto" } }} />
-              )}
-              <CustomisedButton variant="outlined" label="Close" handleClick={onClose} disabled={busy} sx={{ width: { xs: "100%", sm: "auto" } }} />
-              <CustomisedButton variant="contained" label={busy ? "Saving…" : "Save"} loading={busy} handleClick={submit} disabled={busy || (mode === "interview" && Boolean(interviewValidation)) || (mode === "offer" && Boolean(offerValidation))} sx={{ width: { xs: "100%", sm: "auto" } }} />
+          {activeUtilityTool === "privacy" && (
+            <Stack spacing={1.5} sx={{ pt: 1 }}>
+              <Typography variant="body2" color="text.secondary">
+                Manage candidate consent or execute GDPR anonymization requests.
+              </Typography>
+              <AppTextField
+                sx={fieldSx}
+                select
+                label="Privacy Action"
+                value={privacy.action}
+                onChange={(e) => setPrivacy({ ...privacy, action: e.target.value as any })}
+              >
+                <MenuItem value="Grant">Grant Data Retention Consent</MenuItem>
+                <MenuItem value="Revoke">Revoke Consent</MenuItem>
+                <MenuItem value="Anonymize">Anonymize / Erase Candidate Record</MenuItem>
+              </AppTextField>
+              <AppTextField
+                sx={fieldSx}
+                multiline
+                minRows={2}
+                label="Privacy / Regulatory Reason *"
+                value={privacy.reason}
+                onChange={(e) => setPrivacy({ ...privacy, reason: e.target.value })}
+              />
+              <Button
+                variant="contained"
+                color={privacy.action === "Anonymize" ? "error" : "primary"}
+                onClick={async () => {
+                  try {
+                    await applyRecruitmentCandidatePrivacy({
+                      applicantId: applicant.applicantId,
+                      action: privacy.action,
+                      reason: privacy.reason || "Candidate GDPR privacy request",
+                      idempotencyKey: createIdempotencyKey(),
+                    });
+                    setActiveUtilityTool(null);
+                    setFeedback({ severity: "success", text: `Privacy action '${privacy.action}' applied successfully.` });
+                    onSaved?.();
+                  } catch (e) {
+                    setFeedback({ severity: "error", text: (e as Error).message });
+                  }
+                }}
+                sx={{ textTransform: "none", fontWeight: 750 }}
+              >
+                Apply Privacy Action
+              </Button>
             </Stack>
-          </Stack>
-        </Box>
-      </Stack>
-    </Drawer>
-    {showResumePreview && !isDesktopSplit && (
-      <ApplicationPreview
-        open={showResumePreview}
-        handleClose={() => setShowResumePreview(false)}
-        applicantData={applicant}
-      />
-    )}
-  </>;
+          )}
+
+          {activeUtilityTool === "talentpool" && (
+            <Stack spacing={1.5} sx={{ pt: 1 }}>
+              <AppTextField
+                sx={fieldSx}
+                label="Pool Name"
+                value={talentPool.poolName}
+                onChange={(e) => setTalentPool({ ...talentPool, poolName: e.target.value })}
+              />
+              <AppTextField
+                sx={fieldSx}
+                label="Tags (comma separated)"
+                placeholder="Senior, Frontend, Fast-Track"
+                value={talentPool.tags}
+                onChange={(e) => setTalentPool({ ...talentPool, tags: e.target.value })}
+              />
+              <Button
+                variant="contained"
+                onClick={async () => {
+                  try {
+                    await upsertRecruitmentTalentPool({
+                      applicantId: applicant.applicantId,
+                      poolName: talentPool.poolName,
+                      tags: talentPool.tags.split(",").map((t) => t.trim()).filter(Boolean),
+                      status: talentPool.status,
+                      notes: talentPool.notes || null,
+                      idempotencyKey: createIdempotencyKey(),
+                    });
+                    setActiveUtilityTool(null);
+                    setFeedback({ severity: "success", text: "Added to talent pool." });
+                  } catch (e) {
+                    setFeedback({ severity: "error", text: (e as Error).message });
+                  }
+                }}
+                sx={{ textTransform: "none", fontWeight: 750 }}
+              >
+                Add Candidate to Talent Pool
+              </Button>
+            </Stack>
+          )}
+
+          {activeUtilityTool === "merge" && (
+            <Stack spacing={1.5} sx={{ pt: 1 }}>
+              <AppTextField
+                sx={fieldSx}
+                label="Target Applicant ID to Merge Into *"
+                value={merge.targetApplicantId}
+                onChange={(e) => setMerge({ ...merge, targetApplicantId: e.target.value })}
+              />
+              <AppTextField
+                sx={fieldSx}
+                label="Merge Justification Reason *"
+                value={merge.reason}
+                onChange={(e) => setMerge({ ...merge, reason: e.target.value })}
+              />
+              <Button
+                variant="contained"
+                color="warning"
+                onClick={async () => {
+                  try {
+                    await mergeRecruitmentApplicants({
+                      sourceApplicantId: applicant.applicantId,
+                      targetApplicantId: merge.targetApplicantId.trim(),
+                      reason: merge.reason.trim(),
+                      idempotencyKey: createIdempotencyKey(),
+                    });
+                    setActiveUtilityTool(null);
+                    setFeedback({ severity: "success", text: "Applicants merged successfully." });
+                    onSaved?.();
+                  } catch (e) {
+                    setFeedback({ severity: "error", text: (e as Error).message });
+                  }
+                }}
+                sx={{ textTransform: "none", fontWeight: 750 }}
+              >
+                Confirm Merge Duplicate
+              </Button>
+            </Stack>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 import { Badge, Box, Card, Stack, Tooltip, useMediaQuery } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
+import { Add, AssignmentOutlined, FilterList, TuneRounded } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { ResponsiveTableToolbar } from "../../../shared/components/ResponsiveTableToolbar";
 import { AddApplicant } from "./components/AddApplicant";
@@ -9,6 +9,7 @@ import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ApplicationPreview } from "./components/ApplicationPreview";
+import { RecruitmentLifecycleDrawer } from "./components/RecruitmentLifecycleDrawer";
 import {
   ApplicationFilter,
   initialFilterValues,
@@ -41,7 +42,7 @@ const CustomDataGrid = lazy(() =>
   }))
 ) as typeof import("../../../shared/components/C_DataGrid")["CustomDataGrid"];
 
-const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
+const useApplicantTableColumnList = (onOpenLifecycle?: (app: Applicant) => void): GridColDef<Applicant>[] => {
   const { formatMessage: i } = useIntl();
   return [
     {
@@ -73,9 +74,10 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
     },
     {
       field: "status",
-      headerName: i({ id: "STATUS", }),
+      headerName: "Candidate Status",
       description: i({ id: "STATUS", }),
-      minWidth: 100,
+      minWidth: 135,
+      disableColumnMenu: true,
       hideable: false,
       flex: 1,
       renderCell: (param) => {
@@ -95,7 +97,9 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
       field: "applicationStatus",
       headerName: i({ id: "APPLICATION.STATUS_LABEL" }),
       description: i({ id: "APPLICATION.STATUS_LABEL" }),
-      minWidth: 100,
+      minWidth: 180,
+      flex: 1.2,
+      disableColumnMenu: true,
       hideable: true,
       sortable: false,
       filterable: false,
@@ -116,13 +120,18 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
       field: "experience",
       headerName: i({ id: "FORM.EXPERIENCE" }),
       description: i({ id: "FORM.EXPERIENCE" }),
-      minWidth: 100,
+      minWidth: 135,
+      disableColumnMenu: true,
       flex: 1,
       renderCell: (param) => {
-        const experience = (param.row.experience / 12).toFixed(1);
-        return (
-          <FormattedMessage id={"PLURAL.YEAR"} values={{ years: experience }} />
-        );
+        const exp = param.row.experience;
+        if (exp == null || exp === undefined) return "-";
+        if (exp === 0) return "Fresher (0 yr)";
+        if (exp >= 12) {
+          const yrs = (exp / 12).toFixed(1);
+          return `${yrs} ${exp >= 24 ? "years" : "year"}`;
+        }
+        return `${exp} months`;
       }
     },
     {
@@ -140,17 +149,18 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
       headerName: i({ id: "ACTION", }),
       description: i({ id: "ACTION", }),
       minWidth: 100,
+      disableColumnMenu: true,
       resizable: false,
       sortable: false,
-      flex: 1,
+      flex: 0.8,
       filterable: false,
       display: "flex",
-      renderCell: (param) => (<ActionsCell {...param} />)
+      renderCell: (param) => (<ActionsCell {...param} onOpenLifecycle={onOpenLifecycle} />)
     }
   ]
 }
 
-function ActionsCell(props: GridRenderCellParams) {
+function ActionsCell(props: GridRenderCellParams & { onOpenLifecycle?: (app: Applicant) => void }) {
   const { formatMessage: i } = useIntl();
   const [view, setView] = useState(false);
   const closePreview = () => {
@@ -171,11 +181,20 @@ function ActionsCell(props: GridRenderCellParams) {
             e.stopPropagation();
           }}
         />
-        {/* <GridActionsCellItem
-          icon={<Delete />}
-          label="Delete Application"
-          showInMenu
-        /> */}
+        {props.onOpenLifecycle && (
+          <GridActionsCellItem
+            icon={
+              <Tooltip title="Manage Pipeline Stage & Workflow">
+                <TuneRounded color="primary" sx={{ fontSize: 19 }} />
+              </Tooltip>
+            }
+            label="Manage Stage"
+            onClick={(e) => {
+              e.stopPropagation();
+              props.onOpenLifecycle?.(props.row);
+            }}
+          />
+        )}
       </GridActionsCell>
       {
         view &&
@@ -195,7 +214,8 @@ export const Applications = () => {
   const [searchParam] = useSearchParams();
   const dispatch = useAppDispatch();
   const intl = useIntl();
-  const columnList = useApplicantTableColumnList();
+  const [lifecycleApplicant, setLifecycleApplicant] = useState<Applicant | null>(null);
+  const columnList = useApplicantTableColumnList(setLifecycleApplicant);
   const compactView = useMediaQuery("(max-width:599px)");
   const responsiveColumns = useMemo(
     () => columnList
@@ -538,6 +558,17 @@ export const Applications = () => {
           setOpen={setAddModalOpen}
           refresh={refresh}
           setRefresh={setRefresh}
+        />
+      )}
+      {lifecycleApplicant && (
+        <RecruitmentLifecycleDrawer
+          open={Boolean(lifecycleApplicant)}
+          applicant={lifecycleApplicant}
+          onClose={() => setLifecycleApplicant(null)}
+          onSaved={() => {
+            setRefresh((prev) => !prev);
+            setLifecycleApplicant(null);
+          }}
         />
       )}
     </>

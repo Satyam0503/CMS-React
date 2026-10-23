@@ -1,3 +1,4 @@
+import { useAppSelector } from "../../../Redux/hooks";
 import {
   Grid,
   Box,
@@ -43,6 +44,8 @@ type Props = {
 
 export default function AddLeavePolicy(props: Props) {
   const { formatMessage: i } = useIntl();
+  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasWfhAccess = modulePermissions.some((p) => p.startsWith("Work_From_Home."));
   const [employeeList, setEmployeeList] = useState<Array<GetAllEmployeeResponseModel>>([]);
   const [state, setState] = useState({ open: false, loading: false });
   const [leaveStatuses, setLeaveStatuses] = useState<AttendanceStatusOption[]>([]);
@@ -194,7 +197,7 @@ export default function AddLeavePolicy(props: Props) {
                 ...values,
                 // WFH is an operational policy, not a leave entitlement.  Keep the
                 // shared request model valid without creating an employee balance.
-                ...(values.lifecycle?.enabled ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0 } : values.policyType === 2 ? { accrualAmount: 1, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: true, halfDayAllowed: values.workFromHome?.allowFirstHalf || values.workFromHome?.allowSecondHalf || false } : values.policyType === 3 ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: false } : {}),
+                ...(values.lifecycle?.enabled ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0 } : values.policyType === 2 ? { accrualAmount: 1, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: true, minNoticeDays: 0, halfDayAllowed: values.workFromHome?.allowFirstHalf || values.workFromHome?.allowSecondHalf || false } : values.policyType === 3 ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: false } : {}),
                 attendanceStatusCode: values.attendanceStatusCode?.trim().toUpperCase() || null,
                 workFromHome: values.workFromHome ? {
                   ...values.workFromHome,
@@ -216,7 +219,7 @@ export default function AddLeavePolicy(props: Props) {
                 // Keep updates consistent with creation: WFH is paid attendance,
                 // not a leave entitlement, so it must not be rejected for a zero
                 // leave accrual balance.
-                ...(values.lifecycle?.enabled ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0 } : values.policyType === 2 ? { accrualAmount: 1, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: true, halfDayAllowed: values.workFromHome?.allowFirstHalf || values.workFromHome?.allowSecondHalf || false } : values.policyType === 3 ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: false } : {}),
+                ...(values.lifecycle?.enabled ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0 } : values.policyType === 2 ? { accrualAmount: 1, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: true, minNoticeDays: 0, halfDayAllowed: values.workFromHome?.allowFirstHalf || values.workFromHome?.allowSecondHalf || false } : values.policyType === 3 ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: false } : {}),
                 attendanceStatusCode: values.attendanceStatusCode?.trim().toUpperCase() || null,
                 workFromHome: values.workFromHome ? {
                   ...values.workFromHome,
@@ -262,11 +265,11 @@ export default function AddLeavePolicy(props: Props) {
                                 const policyType = Number(e.target.value) as 1 | 2 | 3;
                                 setFieldValue("policyType", policyType);
                                 if (policyType === 2 && !values.workFromHome) {
-                                  setFieldValue("workFromHome", { approvalRequired:true, approverStrategy:"REPORTING_MANAGER", reasonRequired:true, allowFullDay:true, allowFirstHalf:false, allowSecondHalf:false, allowMixedHalfDayLeave:false, allowOnWeeklyOff:false, allowOnHoliday:false, fullDayAttendanceStatusCode:"", halfDayAttendanceStatusCode:"", mixedAttendanceStatusCode:"", useEffectiveOfficeSchedule:true, breakMinutes:0, maxDaysPerWeek:1, maxDaysPerMonth:null, fullDayRequiredWorkingMinutes:null, halfDayRequiredWorkingMinutes:null });
+                                  setFieldValue("workFromHome", { approvalRequired:true, approverStrategy:"REPORTING_MANAGER", reasonRequired:true, allowFullDay:true, allowFirstHalf:false, allowSecondHalf:false, allowMixedHalfDayLeave:false, allowOnWeeklyOff:false, allowOnHoliday:false, fullDayAttendanceStatusCode:"", halfDayAttendanceStatusCode:"", mixedAttendanceStatusCode:"", useEffectiveOfficeSchedule:true, breakMinutes:0, maxDaysPerWeek:1, maxDaysPerMonth:null, fullDayRequiredWorkingMinutes:null, halfDayRequiredWorkingMinutes:null, sameDayCutoffTime:"", sameDayGraceMinutes:0, allowLateApplicationWithApproval:true });
                                 }
                               }}>
                               <MenuItem value={1}>Leave</MenuItem>
-                              <MenuItem value={2}>Work From Home</MenuItem>
+                              {hasWfhAccess && <MenuItem value={2}>Work From Home</MenuItem>}
                               <MenuItem value={3}>Unpaid Leave (UL)</MenuItem>
                             </AppTextField>
                           </Grid>
@@ -337,12 +340,15 @@ export default function AddLeavePolicy(props: Props) {
                             <Grid size={{ xs:12, md:6 }}><AppTextField label="Maximum WFH days per week" type="number" inputProps={{min:1}} value={values.workFromHome.maxDaysPerWeek ?? ""} onChange={e=>setFieldValue("workFromHome.maxDaysPerWeek", e.target.value === "" ? null : Number(e.target.value))}/></Grid>
                             <Grid size={{ xs:12, md:6 }}><AppTextField label="Full-day required working minutes" type="number" inputProps={{min:0}} value={values.workFromHome.fullDayRequiredWorkingMinutes ?? ""} onChange={e=>setFieldValue("workFromHome.fullDayRequiredWorkingMinutes", e.target.value === "" ? null : Number(e.target.value))} helperText="Leave empty to use the effective office schedule." /></Grid>
                             <Grid size={{ xs:12, md:6 }}><AppTextField label="Break minutes" type="number" inputProps={{min:0}} value={values.workFromHome.breakMinutes} onChange={e=>setFieldValue("workFromHome.breakMinutes", Number(e.target.value))}/></Grid>
+<Grid size={{ xs:12, md:6 }}><AppTextField label="Same-day Cutoff Time (HH:mm)" placeholder="e.g. 10:30" value={values.workFromHome.sameDayCutoffTime ?? ""} onChange={e=>setFieldValue("workFromHome.sameDayCutoffTime", e.target.value.trim() || null)} helperText="Optional fixed cutoff time (HH:mm). Leave empty if there is no cutoff time."/></Grid>
+<Grid size={{ xs:12, md:6 }}><AppTextField label="Same-day Grace Period (minutes)" type="number" inputProps={{min:0}} value={values.workFromHome.sameDayGraceMinutes ?? ""} onChange={e=>setFieldValue("workFromHome.sameDayGraceMinutes", e.target.value === "" ? 0 : Math.max(0, Number(e.target.value)))} helperText="Extra minutes after cutoff before same-day WFH requests are considered late."/></Grid>
                             <Grid size={12}>
                               <Grid container spacing={1.5}>
                                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.status} onChange={e=>setFieldValue("status", e.target.checked)}/>} label={values.status ? "WFH policy active" : "WFH policy inactive"}/></Box></Grid>
                                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.workFromHome.approvalRequired} onChange={e=>setFieldValue("workFromHome.approvalRequired", e.target.checked)}/>} label="Require approval"/></Box></Grid>
                                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.workFromHome.allowFirstHalf || values.workFromHome.allowSecondHalf} onChange={e=>{ setFieldValue("workFromHome.allowFirstHalf",e.target.checked); setFieldValue("workFromHome.allowSecondHalf",e.target.checked); }}/>} label="Allow half-day WFH"/></Box></Grid>
                                 <Grid size={{ xs: 12, sm: 6, lg: 3 }}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.workFromHome.allowMixedHalfDayLeave} onChange={e=>setFieldValue("workFromHome.allowMixedHalfDayLeave",e.target.checked)}/>} label="Allow WFH combinations" /></Box></Grid>
+<Grid size={12}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.workFromHome.allowLateApplicationWithApproval ?? true} onChange={e=>setFieldValue("workFromHome.allowLateApplicationWithApproval", e.target.checked)}/>} label="Allow emergency / late same-day WFH requests (requires manager approval)"/></Box><Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5, ml: 1 }}>When enabled, employees applying after the cutoff time can still submit with a reason for manager approval instead of being hard-blocked.</Typography></Grid>
                               </Grid>
                             </Grid>
                             {(values.workFromHome.allowFirstHalf || values.workFromHome.allowSecondHalf) && (

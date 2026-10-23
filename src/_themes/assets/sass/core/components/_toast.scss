@@ -55,6 +55,39 @@
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
+.dark .app-toast.Toastify__toast,
+[data-bs-theme="dark"] .app-toast.Toastify__toast {
+  background: linear-gradient(135deg, rgba(26, 38, 57, .96), rgba(17, 24, 39, .96));
+  border-color: rgba(255, 255, 255, .12);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .45), 0 3px 10px rgba(0, 0, 0, .3);
+  color: #f1f5f9;
+
+  .Toastify__close-button {
+    color: #94a3b8;
+    background: rgba(255, 255, 255, .08);
+    &:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, .16);
+    }
+  }
+
+  .Toastify__action-button {
+    color: #2dd4bf;
+    background: rgba(45, 212, 191, .14);
+    border-color: rgba(45, 212, 191, .35);
+    &:hover {
+      background: rgba(45, 212, 191, .22);
+    }
+  }
+
+  .app-toast__dismiss {
+    color: #2dd4bf;
+    &:hover {
+      color: #5eead4;
+    }
+  }
+}
+
 .app-toast.Toastify__toast:hover {
   transform: translateX(-3px);
   box-shadow: 0 18px 40px rgba(15, 23, 42, .18), 0 5px 14px rgba(15, 23, 42, .08);

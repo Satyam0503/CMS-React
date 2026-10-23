@@ -47,7 +47,9 @@ import UploadFileRounded from "@mui/icons-material/UploadFileRounded";
 import VisibilityOutlined from "@mui/icons-material/VisibilityOutlined";
 import WarningAmberRounded from "@mui/icons-material/WarningAmberRounded";
 import SyncAltRounded from "@mui/icons-material/SyncAltRounded";
+import RestartAltRounded from "@mui/icons-material/RestartAltRounded";
 import { toast } from "react-toastify";
+import { useIsDark } from "../../theme/useIsDark";
 import {
   EmployeeLifecycleCase,
   EmployeeLifecycleCaseSummary,
@@ -80,7 +82,22 @@ const cleanEmployeeId = (id?: string): string => {
 const formatDate = (val?: string): string => {
   if (!val) return "Not recorded";
   const d = dayjs(val);
-  return d.isValid() ? d.format("DD-MM-YYYY") : new Date(val).toLocaleDateString("en-GB");
+  return d.isValid()
+    ? d.format("DD MMM YYYY")
+    : new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+};
+
+const formatDateRange = (start?: string, end?: string): string => {
+  if (!start) return "Not recorded";
+  const s = dayjs(start);
+  if (!s.isValid()) return start;
+  if (!end) return s.format("DD MMM YYYY");
+  const e = dayjs(end);
+  if (!e.isValid()) return s.format("DD MMM YYYY");
+  if (s.year() === e.year()) {
+    return `${s.format("DD MMM")} – ${e.format("DD MMM YYYY")}`;
+  }
+  return `${s.format("DD MMM YYYY")} – ${e.format("DD MMM YYYY")}`;
 };
 
 const getWorkflowStage = (status?: string): number => {
@@ -123,6 +140,7 @@ const evidenceIdOf = (evidence: {
   "";
 
 export const EmployeeLifecycleCaseQueue = () => {
+  const isDark = useIsDark();
   const [cases, setCases] = useState<EmployeeLifecycleCase[]>([]);
   const [selected, setSelected] = useState<EmployeeLifecycleCase | null>(null);
   const [loading, setLoading] = useState(true);
@@ -321,7 +339,7 @@ export const EmployeeLifecycleCaseQueue = () => {
   return (
     <Card
       sx={{
-        p: { xs: 2, sm: 2.5 },
+        p: { xs: 1.5, sm: 2.25 },
         border: "1px solid",
         borderColor: "divider",
         borderRadius: 3,
@@ -336,122 +354,302 @@ export const EmployeeLifecycleCaseQueue = () => {
             display: "grid",
             gridTemplateColumns: {
               xs: "repeat(2, 1fr)",
-              md: "repeat(4, 1fr)",
+              sm: "repeat(2, 1fr)",
+              lg: "repeat(4, 1fr)",
             },
-            gap: 1.5,
+            gap: { xs: 1.25, sm: 1.5 },
             mb: 2.5,
           }}
         >
+          {/* Active Cases */}
           <Card
             variant="outlined"
             sx={{
-              p: 1.5,
-              borderRadius: 2,
-              bgcolor: (t) => alpha(t.palette.warning.main, 0.03),
-              borderColor: (t) => alpha(t.palette.warning.main, 0.2),
+              p: { xs: 1.5, sm: 1.75 },
+              borderRadius: 2.5,
+              bgcolor: (t) => alpha(t.palette.warning.main, 0.04),
+              borderColor: (t) => alpha(t.palette.warning.main, 0.25),
+              transition: "all 0.2s ease",
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(237, 108, 2, 0.08)",
+                borderColor: "warning.main",
+              },
             }}
           >
-            <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase">
-              Active Cases
-            </Typography>
-            <Typography variant="h5" fontWeight={850} color="warning.dark" sx={{ mt: 0.25 }}>
-              {summary.active}
-            </Typography>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Box
+                sx={{
+                  width: { xs: 38, sm: 44 },
+                  height: { xs: 38, sm: 44 },
+                  borderRadius: 2,
+                  bgcolor: (t) => alpha(t.palette.warning.main, 0.12),
+                  color: "warning.main",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <AssignmentLateOutlined sx={{ fontSize: { xs: 20, sm: 24 } }} />
+              </Box>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight={750}
+                  textTransform="uppercase"
+                  sx={{
+                    fontSize: { xs: "0.68rem", sm: "0.72rem" },
+                    letterSpacing: "0.04em",
+                    display: "block",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Active Cases
+                </Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight={850}
+                  color="warning.dark"
+                  sx={{ mt: 0.25, fontSize: { xs: "1.35rem", sm: "1.65rem" }, lineHeight: 1.1 }}
+                >
+                  {summary.active}
+                </Typography>
+              </Box>
+            </Stack>
           </Card>
+
+          {/* Pending Documents */}
           <Card
             variant="outlined"
             sx={{
-              p: 1.5,
-              borderRadius: 2,
-              bgcolor: "background.paper",
+              p: { xs: 1.5, sm: 1.75 },
+              borderRadius: 2.5,
+              bgcolor: (t) => alpha(t.palette.primary.main, 0.04),
+              borderColor: (t) => alpha(t.palette.primary.main, 0.2),
+              transition: "all 0.2s ease",
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(25, 118, 210, 0.08)",
+                borderColor: "primary.main",
+              },
             }}
           >
-            <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase">
-              Pending Documents
-            </Typography>
-            <Typography variant="h5" fontWeight={850} color="text.primary" sx={{ mt: 0.25 }}>
-              {summary.pendingDocuments}
-            </Typography>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Box
+                sx={{
+                  width: { xs: 38, sm: 44 },
+                  height: { xs: 38, sm: 44 },
+                  borderRadius: 2,
+                  bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
+                  color: "primary.main",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <HourglassEmptyRounded sx={{ fontSize: { xs: 20, sm: 24 } }} />
+              </Box>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight={750}
+                  textTransform="uppercase"
+                  sx={{
+                    fontSize: { xs: "0.68rem", sm: "0.72rem" },
+                    letterSpacing: "0.04em",
+                    display: "block",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Pending Documents
+                </Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight={850}
+                  color="text.primary"
+                  sx={{ mt: 0.25, fontSize: { xs: "1.35rem", sm: "1.65rem" }, lineHeight: 1.1 }}
+                >
+                  {summary.pendingDocuments}
+                </Typography>
+              </Box>
+            </Stack>
           </Card>
+
+          {/* Overdue Returns */}
           <Card
             variant="outlined"
             sx={{
-              p: 1.5,
-              borderRadius: 2,
+              p: { xs: 1.5, sm: 1.75 },
+              borderRadius: 2.5,
               bgcolor: (t) =>
                 summary.overdueReturns
-                  ? alpha(t.palette.error.main, 0.03)
+                  ? alpha(t.palette.error.main, 0.05)
                   : "background.paper",
               borderColor: (t) =>
                 summary.overdueReturns
-                  ? alpha(t.palette.error.main, 0.25)
+                  ? alpha(t.palette.error.main, 0.3)
                   : "divider",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                boxShadow: summary.overdueReturns
+                  ? "0 4px 12px rgba(211, 47, 47, 0.1)"
+                  : "0 2px 8px rgba(0,0,0,0.04)",
+              },
             }}
           >
-            <Typography
-              variant="caption"
-              color={summary.overdueReturns ? "error.main" : "text.secondary"}
-              fontWeight={750}
-              textTransform="uppercase"
-            >
-              Overdue Returns
-            </Typography>
-            <Typography
-              variant="h5"
-              fontWeight={850}
-              color={summary.overdueReturns ? "error.main" : "text.primary"}
-              sx={{ mt: 0.25 }}
-            >
-              {summary.overdueReturns}
-            </Typography>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Box
+                sx={{
+                  width: { xs: 38, sm: 44 },
+                  height: { xs: 38, sm: 44 },
+                  borderRadius: 2,
+                  bgcolor: (t) =>
+                    summary.overdueReturns
+                      ? alpha(t.palette.error.main, 0.14)
+                      : alpha(t.palette.text.secondary, 0.08),
+                  color: summary.overdueReturns ? "error.main" : "text.secondary",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <WarningAmberRounded sx={{ fontSize: { xs: 20, sm: 24 } }} />
+              </Box>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography
+                  variant="caption"
+                  color={summary.overdueReturns ? "error.main" : "text.secondary"}
+                  fontWeight={750}
+                  textTransform="uppercase"
+                  sx={{
+                    fontSize: { xs: "0.68rem", sm: "0.72rem" },
+                    letterSpacing: "0.04em",
+                    display: "block",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Overdue Returns
+                </Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight={850}
+                  color={summary.overdueReturns ? "error.main" : "text.primary"}
+                  sx={{ mt: 0.25, fontSize: { xs: "1.35rem", sm: "1.65rem" }, lineHeight: 1.1 }}
+                >
+                  {summary.overdueReturns}
+                </Typography>
+              </Box>
+            </Stack>
           </Card>
+
+          {/* Upcoming Returns (30d) */}
           <Card
             variant="outlined"
             sx={{
-              p: 1.5,
-              borderRadius: 2,
-              bgcolor: "background.paper",
+              p: { xs: 1.5, sm: 1.75 },
+              borderRadius: 2.5,
+              bgcolor: (t) => alpha(t.palette.info.main, 0.04),
+              borderColor: (t) => alpha(t.palette.info.main, 0.2),
+              transition: "all 0.2s ease",
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(2, 136, 209, 0.08)",
+                borderColor: "info.main",
+              },
             }}
           >
-            <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase">
-              Upcoming Returns (30d)
-            </Typography>
-            <Typography variant="h5" fontWeight={850} color="text.primary" sx={{ mt: 0.25 }}>
-              {summary.upcomingReturns}
-            </Typography>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Box
+                sx={{
+                  width: { xs: 38, sm: 44 },
+                  height: { xs: 38, sm: 44 },
+                  borderRadius: 2,
+                  bgcolor: (t) => alpha(t.palette.info.main, 0.12),
+                  color: "info.main",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <DateRangeRounded sx={{ fontSize: { xs: 20, sm: 24 } }} />
+              </Box>
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  fontWeight={750}
+                  textTransform="uppercase"
+                  sx={{
+                    fontSize: { xs: "0.68rem", sm: "0.72rem" },
+                    letterSpacing: "0.04em",
+                    display: "block",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Upcoming Returns (30d)
+                </Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight={850}
+                  color="text.primary"
+                  sx={{ mt: 0.25, fontSize: { xs: "1.35rem", sm: "1.65rem" }, lineHeight: 1.1 }}
+                >
+                  {summary.upcomingReturns}
+                </Typography>
+              </Box>
+            </Stack>
           </Card>
         </Box>
       )}
 
-      {/* Integrated Filter Toolbar */}
+      {/* Integrated Filter Toolbar - Responsive & Cohesive */}
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
+          flexWrap: "wrap",
           gap: 1.5,
-          mb: 2,
-          alignItems: { sm: "center" },
+          mb: 2.5,
+          alignItems: "center",
           justifyContent: "space-between",
         }}
       >
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={1.5}
-          alignItems={{ sm: "center" }}
-          sx={{ flex: 1 }}
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1.25,
+            alignItems: "center",
+            flex: { xs: "1 1 100%", md: "1 1 auto" },
+          }}
         >
           <SearchInput
             search={search}
             setSearch={setSearch}
-            placeholder="Search employee, ID, or case…"
-            sx={{ width: { xs: "100%", sm: 260 } }}
+            placeholder="Search employee or case…"
+            sx={{
+              width: { xs: "100%", sm: 240, md: 260 },
+              minWidth: { sm: 180 },
+            }}
           />
 
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel id="case-status-filter-label">Filter by Case Status</InputLabel>
+          <FormControl
+            size="small"
+            sx={{
+              width: { xs: "100%", sm: 165 },
+              minWidth: { sm: 150 },
+              "& .MuiOutlinedInput-root": {
+                height: 40,
+                borderRadius: "10px",
+              },
+            }}
+          >
+            <InputLabel id="case-status-filter-label">Case Status</InputLabel>
             <Select
               labelId="case-status-filter-label"
-              label="Filter by Case Status"
+              label="Case Status"
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value)}
             >
@@ -468,32 +666,72 @@ export const EmployeeLifecycleCaseQueue = () => {
             variant={overdueOnly ? "contained" : "outlined"}
             color={overdueOnly ? "error" : "inherit"}
             onClick={() => setOverdueOnly((prev) => !prev)}
-            startIcon={overdueOnly ? <WarningAmberRounded /> : undefined}
+            startIcon={<WarningAmberRounded sx={{ fontSize: 18 }} />}
             sx={{
-              minHeight: 40,
+              height: 40,
+              borderRadius: "10px",
               whiteSpace: "nowrap",
               textTransform: "none",
-              fontWeight: 700,
-              borderRadius: 2,
+              fontWeight: 650,
+              fontSize: "0.84rem",
+              px: 1.75,
+              borderColor: overdueOnly ? undefined : (t) => alpha(t.palette.divider, 0.8),
+              color: overdueOnly ? "#FFFFFF" : "text.primary",
+              bgcolor: overdueOnly ? undefined : isDark ? "rgba(255, 255, 255, 0.04)" : "#FFFFFF",
+              "&:hover": {
+                borderColor: overdueOnly ? undefined : "primary.main",
+                bgcolor: overdueOnly ? undefined : isDark ? "rgba(255, 255, 255, 0.08)" : "#F8FAFC",
+              },
             }}
           >
-            {overdueOnly ? "Showing Overdue Only" : "Filter Overdue Returns"}
+            {overdueOnly ? "Overdue Only" : "Overdue Returns"}
           </Button>
-        </Stack>
+
+          {(Boolean(search) || Boolean(statusFilter) || overdueOnly) && (
+            <Button
+              size="small"
+              variant="text"
+              onClick={() => {
+                setSearch("");
+                setStatusFilter("");
+                setOverdueOnly(false);
+              }}
+              startIcon={<RestartAltRounded sx={{ fontSize: 18 }} />}
+              sx={{
+                height: 40,
+                textTransform: "none",
+                fontWeight: 650,
+                color: "text.secondary",
+                borderRadius: "10px",
+                whiteSpace: "nowrap",
+                px: 1.25,
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              Clear
+            </Button>
+          )}
+        </Box>
 
         <Chip
           size="small"
+          color="default"
           label={
             loading
               ? "Loading…"
               : `${filteredCases.length} case${filteredCases.length === 1 ? "" : "s"}`
           }
           sx={{
-            fontWeight: 700,
+            fontWeight: 750,
             height: 32,
-            px: 0.5,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.05),
+            px: 1.25,
+            fontSize: "0.8rem",
+            color: "text.primary",
+            bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+            border: "1px solid",
+            borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
             alignSelf: { xs: "flex-start", sm: "center" },
+            flexShrink: 0,
           }}
         />
       </Box>
@@ -514,7 +752,7 @@ export const EmployeeLifecycleCaseQueue = () => {
         </Alert>
       )}
 
-      {/* Corporate Data Table */}
+      {/* Data Presentation */}
       {!loading && !error && (
         <>
           {filteredCases.length === 0 ? (
@@ -525,135 +763,378 @@ export const EmployeeLifecycleCaseQueue = () => {
             </Alert>
           ) : (
             <>
-              <TableContainer
-              sx={{
-                borderRadius: 2,
-                border: "1px solid",
-                borderColor: "divider",
-                maxHeight: 520,
-              }}
-            >
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow sx={{ "& th": { bgcolor: "action.hover", fontWeight: 750, color: "text.secondary", py: 1.5 } }}>
-                    <TableCell>EMPLOYEE</TableCell>
-                    <TableCell>CASE TYPE</TableCell>
-                    <TableCell>DURATION</TableCell>
-                    <TableCell>LEAVE PERIOD</TableCell>
-                    <TableCell>DOCUMENTS</TableCell>
-                    <TableCell>STATUS</TableCell>
-                    <TableCell align="right">ACTIONS</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {paginatedCases.map((item) => {
-                    const employeeName = item.employeeName || "Employee";
-                    const employeeCode = cleanEmployeeId(item.employeeId) || item.employeeUserId?.slice(0, 8);
-                    const profileUrl = item.employeeUserId ? `/employees/${item.employeeUserId}/about` : undefined;
-
-                    return (
+              {/* Tablet & Desktop Table View (sm screens and above) with Sticky Employee Column */}
+              <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                <TableContainer
+                  tabIndex={0}
+                  role="region"
+                  aria-label="Employee lifecycle cases directory"
+                  sx={{
+                    borderRadius: 2.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    maxHeight: 560,
+                    overflowX: "auto",
+                    WebkitOverflowScrolling: "touch",
+                    scrollbarWidth: "thin",
+                    "&::-webkit-scrollbar": { height: 6 },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: (t) => alpha(t.palette.text.primary, 0.15),
+                      borderRadius: 3,
+                    },
+                  }}
+                >
+                  <Table size="medium" stickyHeader sx={{ width: "100%", minWidth: 880 }}>
+                    <TableHead>
                       <TableRow
-                        key={item.caseId}
-                        hover
                         sx={{
-                          cursor: "pointer",
-                          transition: "background-color 0.15s ease",
-                          "&:last-child td, &:last-child th": { border: 0 },
+                          "& th": {
+                            bgcolor: "action.hover",
+                            fontWeight: 750,
+                            color: "text.secondary",
+                            py: 1.5,
+                            fontSize: "0.78rem",
+                            letterSpacing: "0.03em",
+                            whiteSpace: "nowrap",
+                          },
                         }}
-                        onClick={() => setSelected(item)}
                       >
-                        {/* Employee Column */}
-                        <TableCell sx={{ py: 1.5 }}>
-                          <Stack direction="row" spacing={1.5} alignItems="center">
-                            <Avatar
-                              src={item.employeeProfileUrl}
+                        {/* Sticky Column Header */}
+                        <TableCell
+                          sx={{
+                            position: "sticky",
+                            left: 0,
+                            zIndex: 3,
+                            bgcolor: "action.hover !important",
+                            minWidth: 210,
+                            borderRight: "1px solid",
+                            borderColor: "divider",
+                          }}
+                        >
+                          EMPLOYEE
+                        </TableCell>
+                        <TableCell sx={{ minWidth: 120 }}>CASE TYPE</TableCell>
+                        <TableCell sx={{ minWidth: 80 }}>DURATION</TableCell>
+                        <TableCell sx={{ minWidth: 180 }}>LEAVE PERIOD</TableCell>
+                        <TableCell sx={{ minWidth: 130 }}>DOCUMENTS</TableCell>
+                        <TableCell sx={{ minWidth: 110 }}>STATUS</TableCell>
+                        <TableCell align="right" sx={{ minWidth: 105 }}>ACTIONS</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {paginatedCases.map((item) => {
+                        const employeeName = item.employeeName || "Employee";
+                        const employeeCode = cleanEmployeeId(item.employeeId) || item.employeeUserId?.slice(0, 8);
+                        const profileUrl = item.employeeUserId ? `/employees/${item.employeeUserId}/about` : undefined;
+
+                        return (
+                          <TableRow
+                            key={item.caseId}
+                            hover
+                            sx={{
+                              cursor: "pointer",
+                              transition: "background-color 0.15s ease",
+                              "&:last-child td, &:last-child th": { borderBottom: 0 },
+                            }}
+                            onClick={() => setSelected(item)}
+                          >
+                            {/* Sticky Employee Column */}
+                            <TableCell
                               sx={{
-                                width: 34,
-                                height: 34,
-                                bgcolor: "primary.main",
-                                fontSize: "0.85rem",
-                                fontWeight: 750,
+                                py: 1.5,
+                                position: "sticky",
+                                left: 0,
+                                zIndex: 2,
+                                bgcolor: "background.paper",
+                                borderRight: "1px solid",
+                                borderColor: "divider",
+                                minWidth: 210,
                               }}
                             >
-                              {employeeName.charAt(0).toUpperCase()}
-                            </Avatar>
-                            <Box sx={{ minWidth: 0 }}>
-                              <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
-                                {profileUrl ? (
-                                  <Typography
-                                    component="a"
-                                    href={profileUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    sx={{
-                                      fontWeight: 750,
-                                      fontSize: "0.88rem",
-                                      color: "text.primary",
-                                      textDecoration: "none",
-                                      "&:hover": { color: "primary.main", textDecoration: "underline" },
-                                    }}
-                                  >
-                                    {employeeName}
+                              <Stack direction="row" spacing={1.5} alignItems="center">
+                                <Avatar
+                                  src={item.employeeProfileUrl}
+                                  sx={{
+                                    width: 36,
+                                    height: 36,
+                                    bgcolor: "primary.main",
+                                    fontSize: "0.85rem",
+                                    fontWeight: 750,
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  {employeeName.charAt(0).toUpperCase()}
+                                </Avatar>
+                                <Box sx={{ minWidth: 0 }}>
+                                  <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
+                                    {profileUrl ? (
+                                      <Typography
+                                        component="a"
+                                        href={profileUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        sx={{
+                                          fontWeight: 750,
+                                          fontSize: "0.88rem",
+                                          color: "text.primary",
+                                          textDecoration: "none",
+                                          "&:hover": { color: "primary.main", textDecoration: "underline" },
+                                        }}
+                                      >
+                                        {employeeName}
+                                      </Typography>
+                                    ) : (
+                                      <Typography fontWeight={750} fontSize="0.88rem">
+                                        {employeeName}
+                                      </Typography>
+                                    )}
+                                    {employeeCode && (
+                                      <Chip
+                                        size="small"
+                                        label={employeeCode}
+                                        sx={{
+                                          height: 20,
+                                          fontSize: "0.72rem",
+                                          fontWeight: 750,
+                                          color: "text.secondary",
+                                          bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+                                          border: "1px solid",
+                                          borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                                          letterSpacing: "0.02em",
+                                        }}
+                                      />
+                                    )}
+                                  </Stack>
+                                  <Typography variant="caption" color="text.secondary" display="block" noWrap>
+                                    {cleanJobRole(item.employeeJobRole)}
+                                    {item.employeeDepartmentName || item.employeeDepartment
+                                      ? ` · ${item.employeeDepartmentName || item.employeeDepartment}`
+                                      : ""}
                                   </Typography>
-                                ) : (
-                                  <Typography fontWeight={750} fontSize="0.88rem">
-                                    {employeeName}
-                                  </Typography>
-                                )}
-                                {employeeCode && (
-                                  <Chip
-                                    size="small"
-                                    label={employeeCode}
-                                    sx={{
-                                      height: 20,
-                                      fontSize: "0.72rem",
-                                      fontWeight: 700,
-                                      bgcolor: (t) => alpha(t.palette.text.primary, 0.05),
-                                    }}
-                                  />
-                                )}
+                                </Box>
                               </Stack>
-                              <Typography variant="caption" color="text.secondary" display="block">
-                                {cleanJobRole(item.employeeJobRole)}
-                                {item.employeeDepartmentName || item.employeeDepartment
-                                  ? ` · ${item.employeeDepartmentName || item.employeeDepartment}`
-                                  : ""}
-                              </Typography>
-                            </Box>
-                          </Stack>
-                        </TableCell>
+                            </TableCell>
 
-                        {/* Case Type */}
-                        <TableCell sx={{ py: 1.5 }}>
-                          <Chip
-                            size="small"
-                            label={label(item.lifecycleStatus)}
-                            color="primary"
-                            variant="outlined"
-                            sx={{ fontWeight: 700, fontSize: "0.75rem", height: 24 }}
-                          />
-                        </TableCell>
+                            {/* Case Type */}
+                            <TableCell sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              <Chip
+                                size="small"
+                                label={label(item.lifecycleStatus)}
+                                color="primary"
+                                variant="outlined"
+                                sx={{ fontWeight: 700, fontSize: "0.75rem", height: 24, whiteSpace: "nowrap" }}
+                              />
+                            </TableCell>
 
-                        {/* Duration */}
-                        <TableCell sx={{ py: 1.5, fontWeight: 750 }}>
-                          {item.leaveTotalDays} {item.leaveTotalDays === 1 ? "day" : "days"}
-                        </TableCell>
+                            {/* Duration */}
+                            <TableCell sx={{ py: 1.5, fontWeight: 750, whiteSpace: "nowrap" }}>
+                              {item.leaveTotalDays} {item.leaveTotalDays === 1 ? "day" : "days"}
+                            </TableCell>
 
-                        {/* Leave Period */}
-                        <TableCell sx={{ py: 1.5 }}>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontSize: "0.84rem", display: "flex", alignItems: "center", gap: 0.5 }}
+                            {/* Leave Period */}
+                            <TableCell sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              <Stack direction="row" spacing={0.75} alignItems="center">
+                                <DateRangeRounded sx={{ fontSize: 16, color: "text.secondary", flexShrink: 0 }} />
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontSize: "0.84rem", fontWeight: 650, whiteSpace: "nowrap" }}
+                                >
+                                  {formatDateRange(item.effectiveFromUtc, item.expectedReturnDate)}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
+
+                            {/* Documents Status */}
+                            <TableCell sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              <Chip
+                                size="small"
+                                icon={
+                                  item.documentsVerified ? (
+                                    <CheckCircleRounded sx={{ fontSize: "14px !important" }} />
+                                  ) : (
+                                    <HourglassEmptyRounded sx={{ fontSize: "14px !important" }} />
+                                  )
+                                }
+                                label={item.documentsVerified ? "Docs Verified" : "Docs Pending"}
+                                color={item.documentsVerified ? "success" : "default"}
+                                variant="outlined"
+                                sx={{ fontWeight: 700, height: 24, fontSize: "0.73rem", whiteSpace: "nowrap" }}
+                              />
+                            </TableCell>
+
+                            {/* Case Status */}
+                            <TableCell sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              <Chip
+                                size="small"
+                                label={item.isReturnOverdue ? "Overdue Return" : label(item.status)}
+                                color={
+                                  item.isReturnOverdue
+                                    ? "error"
+                                    : item.status === "Completed"
+                                      ? "success"
+                                      : item.status === "Active"
+                                        ? "info"
+                                        : "warning"
+                                }
+                                sx={{ fontWeight: 700, height: 24, whiteSpace: "nowrap" }}
+                              />
+                            </TableCell>
+
+                            {/* Actions */}
+                            <TableCell align="right" sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelected(item);
+                                }}
+                                sx={{
+                                  textTransform: "none",
+                                  fontWeight: 700,
+                                  fontSize: "0.75rem",
+                                  borderRadius: 1.75,
+                                  py: 0.5,
+                                  px: 1.5,
+                                  whiteSpace: "nowrap",
+                                }}
+                              >
+                                View Details
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+
+              {/* Mobile Card List View (xs screens only) */}
+              <Stack spacing={1.5} sx={{ display: { xs: "flex", sm: "none" } }}>
+                {paginatedCases.map((item) => {
+                  const employeeName = item.employeeName || "Employee";
+                  const employeeCode = cleanEmployeeId(item.employeeId) || item.employeeUserId?.slice(0, 8);
+                  const profileUrl = item.employeeUserId ? `/employees/${item.employeeUserId}/about` : undefined;
+
+                  return (
+                    <Card
+                      key={item.caseId}
+                      variant="outlined"
+                      onClick={() => setSelected(item)}
+                      sx={{
+                        p: 1.75,
+                        borderRadius: 2.5,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        bgcolor: "background.paper",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        "&:active": { bgcolor: "action.hover" },
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                      }}
+                    >
+                      {/* Mobile Card Header */}
+                      <Stack direction="row" spacing={1.5} alignItems="flex-start" justifyContent="space-between">
+                        <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0, flex: 1 }}>
+                          <Avatar
+                            src={item.employeeProfileUrl}
+                            sx={{
+                              width: 38,
+                              height: 38,
+                              bgcolor: "primary.main",
+                              fontSize: "0.9rem",
+                              fontWeight: 800,
+                              flexShrink: 0,
+                            }}
                           >
-                            <DateRangeRounded sx={{ fontSize: 15, color: "text.secondary" }} />
-                            {formatDate(item.effectiveFromUtc)}
-                            {item.expectedReturnDate ? ` → ${formatDate(item.expectedReturnDate)}` : ""}
-                          </Typography>
-                        </TableCell>
+                            {employeeName.charAt(0).toUpperCase()}
+                          </Avatar>
+                          <Box sx={{ minWidth: 0 }}>
+                            <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap">
+                              {profileUrl ? (
+                                <Typography
+                                  component="a"
+                                  href={profileUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  sx={{
+                                    fontWeight: 800,
+                                    fontSize: "0.92rem",
+                                    color: "text.primary",
+                                    textDecoration: "none",
+                                    "&:hover": { color: "primary.main", textDecoration: "underline" },
+                                  }}
+                                >
+                                  {employeeName}
+                                </Typography>
+                              ) : (
+                                <Typography fontWeight={800} fontSize="0.92rem">
+                                  {employeeName}
+                                </Typography>
+                              )}
+                              {employeeCode && (
+                                <Chip
+                                  size="small"
+                                  label={employeeCode}
+                                  sx={{
+                                    height: 20,
+                                    fontSize: "0.72rem",
+                                    fontWeight: 750,
+                                    color: "text.secondary",
+                                    bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+                                    border: "1px solid",
+                                    borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                                    letterSpacing: "0.02em",
+                                  }}
+                                />
+                              )}
+                            </Stack>
+                            <Typography variant="caption" color="text.secondary" display="block" noWrap>
+                              {cleanJobRole(item.employeeJobRole)}
+                              {item.employeeDepartmentName || item.employeeDepartment
+                                ? ` · ${item.employeeDepartmentName || item.employeeDepartment}`
+                                : ""}
+                            </Typography>
+                          </Box>
+                        </Stack>
 
-                        {/* Documents Status */}
-                        <TableCell sx={{ py: 1.5 }}>
+                        <Chip
+                          size="small"
+                          label={item.isReturnOverdue ? "Overdue Return" : label(item.status)}
+                          color={
+                            item.isReturnOverdue
+                              ? "error"
+                              : item.status === "Completed"
+                                ? "success"
+                                : item.status === "Active"
+                                  ? "info"
+                                  : "warning"
+                          }
+                          sx={{ fontWeight: 750, height: 24, fontSize: "0.72rem", flexShrink: 0 }}
+                        />
+                      </Stack>
+
+                      <Divider sx={{ my: 1.25 }} />
+
+                      {/* Middle: Case Type, Duration, Leave Period, Documents */}
+                      <Stack spacing={1}>
+                        <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={0.75}>
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <Chip
+                              size="small"
+                              label={label(item.lifecycleStatus)}
+                              color="primary"
+                              variant="outlined"
+                              sx={{ fontWeight: 700, fontSize: "0.75rem", height: 24 }}
+                            />
+                            <Typography variant="body2" fontWeight={750} color="text.secondary">
+                              {item.leaveTotalDays} {item.leaveTotalDays === 1 ? "day" : "days"}
+                            </Typography>
+                          </Stack>
+
                           <Chip
                             size="small"
                             icon={
@@ -666,97 +1147,66 @@ export const EmployeeLifecycleCaseQueue = () => {
                             label={item.documentsVerified ? "Docs Verified" : "Docs Pending"}
                             color={item.documentsVerified ? "success" : "default"}
                             variant="outlined"
-                            sx={{ fontWeight: 700, height: 24, fontSize: "0.73rem" }}
+                            sx={{ fontWeight: 700, height: 24, fontSize: "0.72rem" }}
                           />
-                        </TableCell>
+                        </Stack>
 
-                        {/* Case Status */}
-                        <TableCell sx={{ py: 1.5 }}>
-                          <Chip
-                            size="small"
-                            label={item.isReturnOverdue ? "Overdue Return" : label(item.status)}
-                            color={
-                              item.isReturnOverdue
-                                ? "error"
-                                : item.status === "Completed"
-                                  ? "success"
-                                  : item.status === "Active"
-                                    ? "info"
-                                    : "warning"
-                            }
-                            sx={{ fontWeight: 700, height: 24 }}
-                          />
-                        </TableCell>
+                        <Stack direction="row" spacing={0.75} alignItems="center">
+                          <DateRangeRounded sx={{ fontSize: 16, color: "text.secondary", flexShrink: 0 }} />
+                          <Typography variant="body2" sx={{ fontSize: "0.82rem", color: "text.secondary", fontWeight: 650 }}>
+                            {formatDateRange(item.effectiveFromUtc, item.expectedReturnDate)}
+                          </Typography>
+                        </Stack>
+                      </Stack>
 
-                        {/* Actions */}
-                        <TableCell align="right" sx={{ py: 1.5 }}>
-                          <Stack direction="row" spacing={1} justifyContent="flex-end" alignItems="center">
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelected(item);
-                              }}
-                              sx={{
-                                textTransform: "none",
-                                fontWeight: 700,
-                                fontSize: "0.75rem",
-                                borderRadius: 1.75,
-                                py: 0.4,
-                                px: 1.25,
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              View Details
-                            </Button>
+                      {/* Footer: Action Button */}
+                      <Stack direction="row" spacing={1} justifyContent="flex-end" sx={{ mt: 1.5 }}>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelected(item);
+                          }}
+                          sx={{
+                            borderRadius: 2,
+                            textTransform: "none",
+                            fontWeight: 700,
+                            fontSize: "0.78rem",
+                            px: 1.5,
+                          }}
+                        >
+                          View Details
+                        </Button>
+                      </Stack>
+                    </Card>
+                  );
+                })}
+              </Stack>
 
-                            {profileUrl && (
-                              <Button
-                                component="a"
-                                href={profileUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                size="small"
-                                variant="text"
-                                onClick={(e) => e.stopPropagation()}
-                                endIcon={<LaunchRounded sx={{ fontSize: "14px !important" }} />}
-                                sx={{
-                                  textTransform: "none",
-                                  fontWeight: 700,
-                                  fontSize: "0.75rem",
-                                  py: 0.4,
-                                  px: 1,
-                                  minWidth: 0,
-                                  color: "text.secondary",
-                                  "&:hover": { color: "primary.main" },
-                                }}
-                              >
-                                Profile
-                              </Button>
-                            )}
-                          </Stack>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              component="div"
-              count={filteredCases.length}
-              page={page}
-              onPageChange={(_, newPage) => setPage(newPage)}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={(e) => {
-                setRowsPerPage(parseInt(e.target.value, 10));
-                setPage(0);
-              }}
-              rowsPerPageOptions={[5, 10, 25, 50]}
-              sx={{ borderTop: "1px solid", borderColor: "divider" }}
-            />
-          </>
+              <TablePagination
+                component="div"
+                count={filteredCases.length}
+                page={page}
+                onPageChange={(_, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                sx={{
+                  borderTop: "1px solid",
+                  borderColor: "divider",
+                  mt: 1.5,
+                  "& .MuiTablePagination-toolbar": {
+                    flexWrap: "wrap",
+                    gap: 1,
+                    px: { xs: 1, sm: 2 },
+                  },
+                }}
+              />
+            </>
           )}
         </>
       )}
@@ -908,7 +1358,15 @@ export const EmployeeLifecycleCaseQueue = () => {
                             <Chip
                               size="small"
                               label={cleanEmployeeId(selected.employeeId)}
-                              sx={{ height: 22, fontWeight: 750, fontSize: "0.75rem" }}
+                              sx={{
+                                height: 22,
+                                fontWeight: 750,
+                                fontSize: "0.75rem",
+                                color: "text.secondary",
+                                bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+                                border: "1px solid",
+                                borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                              }}
                             />
                           )}
                           <Chip

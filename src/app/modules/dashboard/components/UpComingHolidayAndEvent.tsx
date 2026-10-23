@@ -1,7 +1,7 @@
 import { CardSkeleton } from "./CardSkeleton";
 import { useIntl } from "react-intl";
 import dayjs from "dayjs";
-import { Avatar, Box, Card, Stack, Typography } from "@mui/material";
+import { alpha, Avatar, Box, Card, Stack, Typography } from "@mui/material";
 import { dateFormatter } from "../../../../utils/common";
 import React from "react";
 import {
@@ -14,8 +14,10 @@ import {
 import { UpComingHolidayAndEventModel } from "../model";
 import { Link } from "react-router-dom";
 import { useUpcomingEventsQuery } from "../dashboardQueries";
+import { useIsDark } from "../../theme/useIsDark";
 
 export const UpComingHolidayAndEvents = () => {
+  const isDark = useIsDark();
   const { formatMessage: i } = useIntl();
   const { data, isPending: isLoading } = useUpcomingEventsQuery();
   const holidayandEvent: UpComingHolidayAndEventModel = data?.success
@@ -67,7 +69,8 @@ export const UpComingHolidayAndEvents = () => {
                 sx={{
                   pb: 1.1,
                   mb: 1.25,
-                  borderBottom: "1px solid #E2E8F0",
+                  borderBottom: "1px solid",
+                  borderColor: "divider",
                 }}
               >
                 <Stack direction="row" spacing={1} alignItems="center">
@@ -76,11 +79,12 @@ export const UpComingHolidayAndEvents = () => {
                       width: 28,
                       height: 28,
                       borderRadius: "8px",
-                      backgroundColor: "#EBF3FA",
-                      border: "1px solid #C5DDF2",
+                      backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                      border: "1px solid",
+                      borderColor: (theme) => alpha(theme.palette.primary.main, 0.25),
                       display: "grid",
                       placeItems: "center",
-                      color: "#0B5CAB",
+                      color: "primary.main",
                     }}
                   >
                     <EventNoteOutlined sx={{ fontSize: 16 }} />
@@ -90,7 +94,7 @@ export const UpComingHolidayAndEvents = () => {
                       fontWeight: 700,
                       fontSize: "0.925rem",
                       letterSpacing: "-0.015em",
-                      color: "#0F172A",
+                      color: "text.primary",
                     }}
                   >
                     {i({ id: "TITLES.UPCOMING_HOLIDAYS" })}
@@ -101,11 +105,12 @@ export const UpComingHolidayAndEvents = () => {
                     px: 0.9,
                     py: 0.25,
                     borderRadius: "6px",
-                    backgroundColor: "#F1F5F9",
-                    border: "1px solid #E2E8F0",
+                    backgroundColor: isDark ? "action.hover" : "#F1F5F9",
+                    border: "1px solid",
+                    borderColor: "divider",
                     fontSize: "0.72rem",
                     fontWeight: 700,
-                    color: "#475569",
+                    color: "text.secondary",
                   }}
                 >
                   {holidayandEvent.holiday.length}
@@ -125,23 +130,30 @@ export const UpComingHolidayAndEvents = () => {
                       sx={{
                         p: 1.15,
                         borderRadius: "12px",
-                        backgroundColor: "rgba(255, 255, 255, 0.65)",
-                        border: "1px solid rgba(255, 255, 255, 0.85)",
-                        boxShadow: "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
+                        backgroundColor: isDark
+                          ? "rgba(255, 255, 255, 0.04)"
+                          : "rgba(255, 255, 255, 0.65)",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        boxShadow: isDark
+                          ? "none"
+                          : "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
                         backdropFilter: "blur(8px)",
                         WebkitBackdropFilter: "blur(8px)",
                         transition: "all 0.18s ease",
                         "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.92)",
-                          borderColor: "rgba(11, 92, 171, 0.3)",
-                          boxShadow: "0 6px 16px rgba(11, 92, 171, 0.08)",
+                          backgroundColor: isDark
+                            ? "rgba(255, 255, 255, 0.08)"
+                            : "rgba(255, 255, 255, 0.92)",
+                          borderColor: "primary.main",
+                          boxShadow: (theme) => `0 6px 16px ${alpha(theme.palette.primary.main, 0.15)}`,
                           transform: "translateY(-1px)",
                         },
                       }}
                     >
                       {item.imageUrl ? (
                         <Avatar
-                          sx={{ width: 42, height: 42, borderRadius: "10px", border: "1px solid rgba(255, 255, 255, 0.85)" }}
+                          sx={{ width: 42, height: 42, borderRadius: "10px", border: "1px solid", borderColor: "divider" }}
                           src={item.imageUrl}
                           variant="rounded"
                         />
@@ -151,9 +163,9 @@ export const UpComingHolidayAndEvents = () => {
                             width: 42,
                             height: 42,
                             borderRadius: "10px",
-                            backgroundColor: "rgba(11, 92, 171, 0.08)",
-                            border: "1px solid rgba(11, 92, 171, 0.18)",
-                            boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.8)",
+                            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                            border: "1px solid",
+                            borderColor: (theme) => alpha(theme.palette.primary.main, 0.25),
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
@@ -167,7 +179,7 @@ export const UpComingHolidayAndEvents = () => {
                               fontWeight: 700,
                               textTransform: "uppercase",
                               letterSpacing: "0.06em",
-                              color: "#0B5CAB",
+                              color: "primary.main",
                               lineHeight: 1.1,
                             }}
                           >
@@ -177,7 +189,7 @@ export const UpComingHolidayAndEvents = () => {
                             sx={{
                               fontSize: "0.95rem",
                               fontWeight: 800,
-                              color: "#0F172A",
+                              color: "text.primary",
                               lineHeight: 1.15,
                             }}
                           >
@@ -191,7 +203,7 @@ export const UpComingHolidayAndEvents = () => {
                           sx={{
                             fontWeight: 600,
                             fontSize: "0.875rem",
-                            color: "#0F172A",
+                            color: "text.primary",
                           }}
                         >
                           {item.name}
@@ -200,7 +212,7 @@ export const UpComingHolidayAndEvents = () => {
                           sx={{
                             fontSize: "0.75rem",
                             fontWeight: 500,
-                            color: isToday ? "#0B5CAB" : "#64748B",
+                            color: isToday ? "primary.main" : "text.secondary",
                           }}
                         >
                           {isToday
@@ -208,7 +220,7 @@ export const UpComingHolidayAndEvents = () => {
                             : `${d.format("dddd")}, ${dateFormatter(item.date, "DD MMM YYYY")}`}
                         </Typography>
                       </Stack>
-                      <CalendarMonthOutlined sx={{ fontSize: 17, color: "#94A3B8", flexShrink: 0 }} />
+                      <CalendarMonthOutlined sx={{ fontSize: 17, color: "text.secondary", flexShrink: 0 }} />
                     </Stack>
                   );
                 })}
@@ -225,7 +237,8 @@ export const UpComingHolidayAndEvents = () => {
                 sx={{
                   pb: 1.1,
                   mb: 1.25,
-                  borderBottom: "1px solid #E2E8F0",
+                  borderBottom: "1px solid",
+                  borderColor: "divider",
                 }}
               >
                 <Stack direction="row" spacing={1} alignItems="center">
@@ -234,11 +247,12 @@ export const UpComingHolidayAndEvents = () => {
                       width: 28,
                       height: 28,
                       borderRadius: "8px",
-                      backgroundColor: "#F0F9FF",
-                      border: "1px solid #BAE6FD",
+                      backgroundColor: (theme) => alpha(theme.palette.info.main || "#0284C7", 0.12),
+                      border: "1px solid",
+                      borderColor: (theme) => alpha(theme.palette.info.main || "#0284C7", 0.25),
                       display: "grid",
                       placeItems: "center",
-                      color: "#0284C7",
+                      color: "info.main",
                     }}
                   >
                     <GroupsOutlined sx={{ fontSize: 16 }} />
@@ -248,7 +262,7 @@ export const UpComingHolidayAndEvents = () => {
                       fontWeight: 700,
                       fontSize: "0.925rem",
                       letterSpacing: "-0.015em",
-                      color: "#0F172A",
+                      color: "text.primary",
                     }}
                   >
                     {i({ id: "TITLES.UPCOMING_EVENTS" })}
@@ -259,11 +273,12 @@ export const UpComingHolidayAndEvents = () => {
                     px: 0.9,
                     py: 0.25,
                     borderRadius: "6px",
-                    backgroundColor: "#F1F5F9",
-                    border: "1px solid #E2E8F0",
+                    backgroundColor: isDark ? "action.hover" : "#F1F5F9",
+                    border: "1px solid",
+                    borderColor: "divider",
                     fontSize: "0.72rem",
                     fontWeight: 700,
-                    color: "#475569",
+                    color: "text.secondary",
                   }}
                 >
                   {holidayandEvent.event.length}
@@ -283,23 +298,30 @@ export const UpComingHolidayAndEvents = () => {
                       sx={{
                         p: 1.15,
                         borderRadius: "12px",
-                        backgroundColor: "rgba(255, 255, 255, 0.65)",
-                        border: "1px solid rgba(255, 255, 255, 0.85)",
-                        boxShadow: "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
+                        backgroundColor: isDark
+                          ? "rgba(255, 255, 255, 0.04)"
+                          : "rgba(255, 255, 255, 0.65)",
+                        border: "1px solid",
+                        borderColor: "divider",
+                        boxShadow: isDark
+                          ? "none"
+                          : "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
                         backdropFilter: "blur(8px)",
                         WebkitBackdropFilter: "blur(8px)",
                         transition: "all 0.18s ease",
                         "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.92)",
-                          borderColor: "rgba(2, 132, 199, 0.35)",
-                          boxShadow: "0 6px 16px rgba(2, 132, 199, 0.08)",
+                          backgroundColor: isDark
+                            ? "rgba(255, 255, 255, 0.08)"
+                            : "rgba(255, 255, 255, 0.92)",
+                          borderColor: "info.main",
+                          boxShadow: (theme) => `0 6px 16px ${alpha(theme.palette.info.main || "#0284C7", 0.15)}`,
                           transform: "translateY(-1px)",
                         },
                       }}
                     >
                       {item.imageUrl ? (
                         <Avatar
-                          sx={{ width: 42, height: 42, borderRadius: "10px", border: "1px solid rgba(255, 255, 255, 0.85)" }}
+                          sx={{ width: 42, height: 42, borderRadius: "10px", border: "1px solid", borderColor: "divider" }}
                           src={item.imageUrl}
                           variant="rounded"
                         />
@@ -309,9 +331,9 @@ export const UpComingHolidayAndEvents = () => {
                             width: 42,
                             height: 42,
                             borderRadius: "10px",
-                            backgroundColor: "rgba(2, 132, 199, 0.08)",
-                            border: "1px solid rgba(2, 132, 199, 0.20)",
-                            boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.8)",
+                            backgroundColor: (theme) => alpha(theme.palette.info.main || "#0284C7", 0.12),
+                            border: "1px solid",
+                            borderColor: (theme) => alpha(theme.palette.info.main || "#0284C7", 0.25),
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
@@ -325,7 +347,7 @@ export const UpComingHolidayAndEvents = () => {
                               fontWeight: 700,
                               textTransform: "uppercase",
                               letterSpacing: "0.06em",
-                              color: "#0284C7",
+                              color: "info.main",
                               lineHeight: 1.1,
                             }}
                           >
@@ -335,7 +357,7 @@ export const UpComingHolidayAndEvents = () => {
                             sx={{
                               fontSize: "0.95rem",
                               fontWeight: 800,
-                              color: "#0F172A",
+                              color: "text.primary",
                               lineHeight: 1.15,
                             }}
                           >
@@ -349,7 +371,7 @@ export const UpComingHolidayAndEvents = () => {
                           sx={{
                             fontWeight: 600,
                             fontSize: "0.875rem",
-                            color: "#0F172A",
+                            color: "text.primary",
                           }}
                         >
                           {item.name}
@@ -358,7 +380,7 @@ export const UpComingHolidayAndEvents = () => {
                           sx={{
                             fontSize: "0.75rem",
                             fontWeight: 500,
-                            color: isToday ? "#0284C7" : "#64748B",
+                            color: isToday ? "info.main" : "text.secondary",
                           }}
                         >
                           {isToday
@@ -366,7 +388,7 @@ export const UpComingHolidayAndEvents = () => {
                             : `${d.format("dddd")}, ${dateFormatter(item.date, "DD MMM YYYY")}`}
                         </Typography>
                       </Stack>
-                      <EventAvailableOutlined sx={{ fontSize: 17, color: "#94A3B8", flexShrink: 0 }} />
+                      <EventAvailableOutlined sx={{ fontSize: 17, color: "text.secondary", flexShrink: 0 }} />
                     </Stack>
                   );
                 })}
@@ -375,7 +397,7 @@ export const UpComingHolidayAndEvents = () => {
           )}
 
           {(holidayandEvent.event.length !== 0 || holidayandEvent.holiday.length !== 0) && (
-            <Link to="/calendar" style={{ alignSelf: "flex-start" }}>
+            <Link to="/calendar" style={{ alignSelf: "flex-start", textDecoration: "none" }}>
               <Stack
                 direction="row"
                 spacing={0.6}
@@ -384,14 +406,15 @@ export const UpComingHolidayAndEvents = () => {
                   px: 1.25,
                   py: 0.55,
                   borderRadius: "8px",
-                  backgroundColor: "#F8FAFC",
-                  border: "1px solid #E2E8F0",
-                  color: "#334155",
+                  backgroundColor: isDark ? "action.hover" : "#F8FAFC",
+                  border: "1px solid",
+                  borderColor: "divider",
+                  color: "text.secondary",
                   transition: "all 0.18s ease",
                   "&:hover": {
-                    backgroundColor: "#EEF2FF",
-                    borderColor: "#C7D2FE",
-                    color: "#4F46E5",
+                    backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                    borderColor: "primary.main",
+                    color: "primary.main",
                   },
                 }}
               >

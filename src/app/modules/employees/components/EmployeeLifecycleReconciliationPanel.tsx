@@ -22,11 +22,28 @@ import {
   Typography,
 } from "@mui/material";
 import LaunchRounded from "@mui/icons-material/LaunchRounded";
+import CalendarTodayOutlined from "@mui/icons-material/CalendarTodayOutlined";
+import RestartAltRounded from "@mui/icons-material/RestartAltRounded";
 import { useEffect, useMemo, useState } from "react";
 import { getEmployeeLifecycleCases, EmployeeLifecycleCase } from "../employeeServices";
 import { SearchInput } from "../../../shared/components/SearchInput";
+import { useIsDark } from "../../theme/useIsDark";
+
+const isGuid = (val?: string): boolean =>
+  Boolean(val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val.trim()));
+
+const cleanJobRole = (role?: string): string => {
+  if (!role || isGuid(role)) return "Team Member";
+  return role;
+};
+
+const cleanEmployeeId = (id?: string): string => {
+  if (!id || isGuid(id)) return "";
+  return id;
+};
 
 export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { showHeader?: boolean }) => {
+  const isDark = useIsDark();
   const [cases, setCases] = useState<EmployeeLifecycleCase[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -104,9 +121,12 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
         border: "1px solid",
         borderColor: "divider",
         borderRadius: 3,
-        p: { xs: 2, sm: 2.5 },
+        p: { xs: 1.75, sm: 2.5 },
         boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
         bgcolor: "background.paper",
+        minWidth: 0,
+        maxWidth: "100%",
+        boxSizing: "border-box",
       }}
     >
       {/* Accessible Title to support test invariant */}
@@ -127,31 +147,35 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
         Leave-to-employment reconciliation
       </Typography>
 
-      {/* KPI Overview Strip */}
+      {/* KPI Overview Strip - 2x2 grid on mobile/split-window, 4 columns on desktop */}
       <Box
         sx={{
           display: "grid",
           gridTemplateColumns: {
             xs: "repeat(2, 1fr)",
-            md: "repeat(4, 1fr)",
+            lg: "repeat(4, 1fr)",
           },
           gap: 1.5,
           mb: 2.5,
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         <Card
           variant="outlined"
           sx={{
-            p: 1.5,
+            p: { xs: 1.25, sm: 1.75 },
             borderRadius: 2,
             bgcolor: (t) => alpha(t.palette.primary.main, 0.03),
             borderColor: (t) => alpha(t.palette.primary.main, 0.2),
+            minWidth: 0,
+            boxSizing: "border-box",
           }}
         >
-          <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase">
+          <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase" noWrap display="block">
             Total Linked
           </Typography>
-          <Typography variant="h5" fontWeight={850} color="primary.main" sx={{ mt: 0.25 }}>
+          <Typography variant="h5" fontWeight={850} color="primary.main" sx={{ mt: 0.25, fontSize: { xs: "1.25rem", sm: "1.5rem" } }}>
             {cases.length}{" "}
             <Box component="span" sx={{ fontSize: "0.82rem", fontWeight: 700, color: "text.primary" }}>
               linked cases
@@ -162,15 +186,17 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
         <Card
           variant="outlined"
           sx={{
-            p: 1.5,
+            p: { xs: 1.25, sm: 1.75 },
             borderRadius: 2,
             bgcolor: "background.paper",
+            minWidth: 0,
+            boxSizing: "border-box",
           }}
         >
-          <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase">
+          <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase" noWrap display="block">
             Leave Volume
           </Typography>
-          <Typography variant="h5" fontWeight={850} color="text.primary" sx={{ mt: 0.25 }}>
+          <Typography variant="h5" fontWeight={850} color="text.primary" sx={{ mt: 0.25, fontSize: { xs: "1.25rem", sm: "1.5rem" } }}>
             {totalDays}{" "}
             <Box component="span" sx={{ fontSize: "0.82rem", fontWeight: 700, color: "text.primary" }}>
               leave days
@@ -181,16 +207,18 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
         <Card
           variant="outlined"
           sx={{
-            p: 1.5,
+            p: { xs: 1.25, sm: 1.75 },
             borderRadius: 2,
             bgcolor: (t) => alpha(t.palette.success.main, 0.03),
             borderColor: (t) => alpha(t.palette.success.main, 0.2),
+            minWidth: 0,
+            boxSizing: "border-box",
           }}
         >
-          <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase">
+          <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase" noWrap display="block">
             Reconciled
           </Typography>
-          <Typography variant="h5" fontWeight={850} color="success.main" sx={{ mt: 0.25 }}>
+          <Typography variant="h5" fontWeight={850} color="success.main" sx={{ mt: 0.25, fontSize: { xs: "1.25rem", sm: "1.5rem" } }}>
             {statuses["Reconciled"] ?? 0}
           </Typography>
           <Typography variant="caption" sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)" }}>
@@ -201,16 +229,18 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
         <Card
           variant="outlined"
           sx={{
-            p: 1.5,
+            p: { xs: 1.25, sm: 1.75 },
             borderRadius: 2,
             bgcolor: (t) => alpha(t.palette.warning.main, 0.03),
             borderColor: (t) => alpha(t.palette.warning.main, 0.2),
+            minWidth: 0,
+            boxSizing: "border-box",
           }}
         >
-          <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase">
+          <Typography variant="caption" color="text.secondary" fontWeight={750} textTransform="uppercase" noWrap display="block">
             Pending
           </Typography>
-          <Typography variant="h5" fontWeight={850} color="warning.main" sx={{ mt: 0.25 }}>
+          <Typography variant="h5" fontWeight={850} color="warning.main" sx={{ mt: 0.25, fontSize: { xs: "1.25rem", sm: "1.5rem" } }}>
             {statuses["Pending"] ?? 0}
           </Typography>
           <Typography variant="caption" sx={{ position: "absolute", width: 1, height: 1, p: 0, m: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)" }}>
@@ -219,30 +249,48 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
         </Card>
       </Box>
 
-      {/* Integrated Filter Toolbar */}
+      {/* Integrated Filter Toolbar - Responsive & Cohesive */}
       <Box
         sx={{
           display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
+          flexWrap: "wrap",
           gap: 1.5,
-          mb: 2,
-          alignItems: { sm: "center" },
+          mb: 2.5,
+          alignItems: "center",
           justifyContent: "space-between",
         }}
       >
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }} sx={{ flex: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1.25,
+            alignItems: "center",
+            flex: { xs: "1 1 100%", md: "1 1 auto" },
+          }}
+        >
           <SearchInput
             search={search}
             setSearch={setSearch}
             placeholder="Search employee or case…"
-            sx={{ width: { xs: "100%", sm: 260 } }}
+            sx={{ width: { xs: "100%", sm: 240, md: 260 }, minWidth: { sm: 180 } }}
           />
 
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel id="reconciliation-filter-label">Reconciliation Status</InputLabel>
+          <FormControl
+            size="small"
+            sx={{
+              width: { xs: "100%", sm: 175 },
+              minWidth: { sm: 150 },
+              "& .MuiOutlinedInput-root": {
+                height: 40,
+                borderRadius: "10px",
+              },
+            }}
+          >
+            <InputLabel id="reconciliation-filter-label">Reconcile Status</InputLabel>
             <Select
               labelId="reconciliation-filter-label"
-              label="Reconciliation Status"
+              label="Reconcile Status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -252,17 +300,47 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
               <MenuItem value="Completed">Completed</MenuItem>
             </Select>
           </FormControl>
-        </Stack>
+
+          {(Boolean(search) || Boolean(statusFilter)) && (
+            <Button
+              size="small"
+              variant="text"
+              onClick={() => {
+                setSearch("");
+                setStatusFilter("");
+              }}
+              startIcon={<RestartAltRounded sx={{ fontSize: 18 }} />}
+              sx={{
+                height: 40,
+                textTransform: "none",
+                fontWeight: 650,
+                color: "text.secondary",
+                borderRadius: "10px",
+                whiteSpace: "nowrap",
+                px: 1.25,
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              Clear
+            </Button>
+          )}
+        </Box>
 
         <Chip
           size="small"
+          color="default"
           label={`${filteredCases.length} records`}
           sx={{
             fontWeight: 700,
             height: 32,
-            px: 0.5,
-            bgcolor: (t) => alpha(t.palette.text.primary, 0.05),
+            px: 1.25,
+            fontSize: "0.8rem",
+            color: "text.primary",
+            bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+            border: "1px solid",
+            borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
             alignSelf: { xs: "flex-start", sm: "center" },
+            flexShrink: 0,
           }}
         />
       </Box>
@@ -292,121 +370,296 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
             </Alert>
           ) : (
             <>
-              <TableContainer
-              sx={{
-                borderRadius: 2,
-                border: "1px solid",
-                borderColor: "divider",
-                maxHeight: 520,
-              }}
-            >
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow sx={{ "& th": { bgcolor: "action.hover", fontWeight: 750, color: "text.secondary", py: 1.5 } }}>
-                    <TableCell>EMPLOYEE</TableCell>
-                    <TableCell>LIFECYCLE EVENT</TableCell>
-                    <TableCell>DURATION</TableCell>
-                    <TableCell>EFFECTIVE PERIOD</TableCell>
-                    <TableCell>RECONCILIATION</TableCell>
-                    <TableCell align="right">ACTIONS</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {paginatedCases.map((item) => {
-                    const employeeName = item.employeeName || "Employee";
-                    const employeeCode = item.employeeId || item.employeeUserId?.slice(0, 8);
-                    const profileUrl = item.employeeUserId ? `/employees/${item.employeeUserId}/about` : undefined;
-
-                    return (
+              {/* Tablet & Desktop Table View (≥ sm screens) */}
+              <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                <TableContainer
+                  tabIndex={0}
+                  role="region"
+                  aria-label="Reconciliation records table"
+                  sx={{
+                    borderRadius: 2.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    maxHeight: 540,
+                    overflowX: "auto",
+                    WebkitOverflowScrolling: "touch",
+                    scrollbarWidth: "thin",
+                    "&::-webkit-scrollbar": { height: 6 },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: (t) => alpha(t.palette.text.primary, 0.15),
+                      borderRadius: 3,
+                    },
+                  }}
+                >
+                  <Table size="medium" stickyHeader sx={{ width: "100%", minWidth: 780 }}>
+                    <TableHead>
                       <TableRow
-                        key={item.caseId}
-                        hover
                         sx={{
-                          transition: "background-color 0.15s ease",
-                          "&:last-child td, &:last-child th": { border: 0 },
+                          "& th": {
+                            bgcolor: "action.hover",
+                            fontWeight: 750,
+                            color: "text.secondary",
+                            py: 1.5,
+                            fontSize: "0.78rem",
+                            letterSpacing: "0.03em",
+                            whiteSpace: "nowrap",
+                          },
                         }}
                       >
-                        <TableCell sx={{ py: 1.5 }}>
-                          <Stack direction="row" spacing={1.5} alignItems="center">
-                            <Avatar
-                              src={item.employeeProfileUrl}
-                              sx={{
-                                width: 34,
-                                height: 34,
-                                bgcolor: "primary.main",
-                                fontSize: "0.85rem",
-                                fontWeight: 750,
-                              }}
-                            >
-                              {employeeName.charAt(0).toUpperCase()}
-                            </Avatar>
-                            <Box sx={{ minWidth: 0 }}>
-                              {profileUrl ? (
-                                <Typography
+                        <TableCell sx={{ minWidth: 220, position: "sticky", left: 0, zIndex: 3, bgcolor: "action.hover !important" }}>
+                          EMPLOYEE
+                        </TableCell>
+                        <TableCell sx={{ minWidth: 140 }}>LIFECYCLE EVENT</TableCell>
+                        <TableCell sx={{ minWidth: 90 }}>DURATION</TableCell>
+                        <TableCell sx={{ minWidth: 180 }}>EFFECTIVE PERIOD</TableCell>
+                        <TableCell sx={{ minWidth: 130 }}>RECONCILIATION</TableCell>
+                        <TableCell align="right" sx={{ minWidth: 100 }}>ACTIONS</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {paginatedCases.map((item) => {
+                        const employeeName = item.employeeName || "Employee";
+                        const rawCode = item.employeeId || item.employeeUserId;
+                        const employeeCode = cleanEmployeeId(rawCode) || item.employeeUserId?.slice(0, 8);
+                        const profileUrl = item.employeeUserId ? `/employees/${item.employeeUserId}/about` : undefined;
+
+                        return (
+                          <TableRow
+                            key={item.caseId}
+                            hover
+                            sx={{
+                              transition: "background-color 0.15s ease",
+                              "&:last-child td, &:last-child th": { border: 0 },
+                            }}
+                          >
+                            <TableCell sx={{ py: 1.5, position: "sticky", left: 0, zIndex: 1, bgcolor: "background.paper" }}>
+                              <Stack direction="row" spacing={1.5} alignItems="center">
+                                <Avatar
+                                  src={item.employeeProfileUrl}
+                                  sx={{
+                                    width: 36,
+                                    height: 36,
+                                    bgcolor: "primary.main",
+                                    fontSize: "0.85rem",
+                                    fontWeight: 750,
+                                    flexShrink: 0,
+                                    border: "1px solid",
+                                    borderColor: "divider",
+                                  }}
+                                >
+                                  {employeeName.charAt(0).toUpperCase()}
+                                </Avatar>
+                                <Box sx={{ minWidth: 0, flex: 1 }}>
+                                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="nowrap" useFlexGap>
+                                    {profileUrl ? (
+                                      <Typography
+                                        component="a"
+                                        href={profileUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        sx={{
+                                          fontWeight: 750,
+                                          fontSize: "0.88rem",
+                                          color: "text.primary",
+                                          textDecoration: "none",
+                                          whiteSpace: "nowrap",
+                                          "&:hover": { color: "primary.main", textDecoration: "underline" },
+                                        }}
+                                      >
+                                        {employeeName}
+                                      </Typography>
+                                    ) : (
+                                      <Typography fontWeight={750} fontSize="0.88rem" noWrap>
+                                        {employeeName}
+                                      </Typography>
+                                    )}
+                                    {employeeCode && (
+                                      <Chip
+                                        size="small"
+                                        label={employeeCode}
+                                        sx={{
+                                          height: 20,
+                                          fontSize: "0.72rem",
+                                          fontWeight: 750,
+                                          color: "text.secondary",
+                                          bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+                                          border: "1px solid",
+                                          borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                                          letterSpacing: "0.02em",
+                                          flexShrink: 0,
+                                        }}
+                                      />
+                                    )}
+                                  </Stack>
+                                  <Typography variant="caption" color="text.secondary" display="block" noWrap sx={{ mt: 0.25 }}>
+                                    {cleanJobRole(item.employeeJobRole)}
+                                    {item.employeeDepartmentName || item.employeeDepartment
+                                      ? ` · ${item.employeeDepartmentName || item.employeeDepartment}`
+                                      : ""}
+                                  </Typography>
+                                </Box>
+                              </Stack>
+                            </TableCell>
+
+                            <TableCell sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              <Chip
+                                size="small"
+                                label={item.lifecycleStatus?.replace(/([a-z])([A-Z])/g, "$1 $2") || "Lifecycle Leave"}
+                                color="primary"
+                                variant="outlined"
+                                sx={{ fontWeight: 700, fontSize: "0.75rem", height: 24 }}
+                              />
+                            </TableCell>
+
+                            <TableCell sx={{ py: 1.5, fontWeight: 750, whiteSpace: "nowrap" }}>
+                              {item.leaveTotalDays} {item.leaveTotalDays === 1 ? "day" : "days"}
+                            </TableCell>
+
+                            <TableCell sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              <Stack direction="row" spacing={0.75} alignItems="center">
+                                <CalendarTodayOutlined sx={{ fontSize: 15, color: "text.secondary", flexShrink: 0 }} />
+                                <Typography variant="body2" sx={{ fontSize: "0.84rem", color: "text.primary", whiteSpace: "nowrap" }}>
+                                  {formatDate(item.effectiveFromUtc)} → {formatDate(item.expectedReturnDate)}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
+
+                            <TableCell sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              <Chip
+                                size="small"
+                                label={item.leaveReconciliationStatus || "Not available"}
+                                color={
+                                  item.leaveReconciliationStatus === "Reconciled"
+                                    ? "success"
+                                    : item.leaveReconciliationStatus === "Pending"
+                                      ? "warning"
+                                      : item.leaveReconciliationStatus === "Completed"
+                                        ? "success"
+                                        : "default"
+                                }
+                                sx={{ fontWeight: 750, height: 24, fontSize: "0.72rem" }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="right" sx={{ py: 1.5, whiteSpace: "nowrap" }}>
+                              {profileUrl && (
+                                <Button
                                   component="a"
                                   href={profileUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
+                                  size="small"
+                                  variant="outlined"
+                                  endIcon={<LaunchRounded fontSize="small" />}
                                   sx={{
-                                    fontWeight: 750,
-                                    fontSize: "0.88rem",
-                                    color: "text.primary",
-                                    textDecoration: "none",
-                                    "&:hover": { color: "primary.main", textDecoration: "underline" },
+                                    borderRadius: 1.75,
+                                    textTransform: "none",
+                                    fontWeight: 700,
+                                    fontSize: "0.75rem",
+                                    py: 0.4,
+                                    px: 1.5,
                                   }}
                                 >
-                                  {employeeName}
-                                </Typography>
-                              ) : (
-                                <Typography fontWeight={750} fontSize="0.88rem">
-                                  {employeeName}
-                                </Typography>
+                                  Profile
+                                </Button>
                               )}
-                              {employeeCode && (
-                                <Typography variant="caption" color="text.secondary" display="block">
-                                  {employeeCode}
-                                </Typography>
-                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+
+              {/* Mobile Card List View (< sm screens) */}
+              <Box sx={{ display: { xs: "flex", sm: "none" }, flexDirection: "column", gap: 1.5 }}>
+                {paginatedCases.map((item) => {
+                  const employeeName = item.employeeName || "Employee";
+                  const rawCode = item.employeeId || item.employeeUserId;
+                  const employeeCode = cleanEmployeeId(rawCode) || item.employeeUserId?.slice(0, 8);
+                  const profileUrl = item.employeeUserId ? `/employees/${item.employeeUserId}/about` : undefined;
+
+                  return (
+                    <Card
+                      key={item.caseId}
+                      variant="outlined"
+                      sx={{
+                        p: 1.75,
+                        borderRadius: 2.5,
+                        borderColor: "divider",
+                        bgcolor: "background.paper",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
+                      }}
+                    >
+                      <Stack spacing={1.25}>
+                        {/* Header: Employee Info & Action */}
+                        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1}>
+                          <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0, flex: 1 }}>
+                            <Avatar
+                              src={item.employeeProfileUrl}
+                              sx={{
+                                width: 38,
+                                height: 38,
+                                bgcolor: "primary.main",
+                                fontSize: "0.85rem",
+                                fontWeight: 750,
+                                flexShrink: 0,
+                                border: "1px solid",
+                                borderColor: "divider",
+                              }}
+                            >
+                              {employeeName.charAt(0).toUpperCase()}
+                            </Avatar>
+                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                              <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
+                                {profileUrl ? (
+                                  <Typography
+                                    component="a"
+                                    href={profileUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    sx={{
+                                      fontWeight: 750,
+                                      fontSize: "0.88rem",
+                                      color: "text.primary",
+                                      textDecoration: "none",
+                                      "&:hover": { color: "primary.main", textDecoration: "underline" },
+                                    }}
+                                  >
+                                    {employeeName}
+                                  </Typography>
+                                ) : (
+                                  <Typography fontWeight={750} fontSize="0.88rem">
+                                    {employeeName}
+                                  </Typography>
+                                )}
+                                {employeeCode && (
+                                  <Chip
+                                    size="small"
+                                    label={employeeCode}
+                                    sx={{
+                                      height: 20,
+                                      fontSize: "0.72rem",
+                                      fontWeight: 750,
+                                      color: "text.secondary",
+                                      bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#F1F5F9",
+                                      border: "1px solid",
+                                      borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                                      letterSpacing: "0.02em",
+                                    }}
+                                  />
+                                )}
+                              </Stack>
+                              <Typography variant="caption" color="text.secondary" display="block" noWrap sx={{ mt: 0.25 }}>
+                                {cleanJobRole(item.employeeJobRole)}
+                                {item.employeeDepartmentName || item.employeeDepartment
+                                  ? ` · ${item.employeeDepartmentName || item.employeeDepartment}`
+                                  : ""}
+                              </Typography>
                             </Box>
                           </Stack>
-                        </TableCell>
 
-                        <TableCell sx={{ py: 1.5 }}>
-                          <Chip
-                            size="small"
-                            label={item.lifecycleStatus?.replace(/([a-z])([A-Z])/g, "$1 $2") || "Lifecycle Leave"}
-                            color="primary"
-                            variant="outlined"
-                            sx={{ fontWeight: 700, fontSize: "0.75rem", height: 24 }}
-                          />
-                        </TableCell>
-
-                        <TableCell sx={{ py: 1.5, fontWeight: 750 }}>
-                          {item.leaveTotalDays} {item.leaveTotalDays === 1 ? "day" : "days"}
-                        </TableCell>
-
-                        <TableCell sx={{ py: 1.5 }}>
-                          <Typography variant="body2" sx={{ fontSize: "0.84rem", color: "text.primary" }}>
-                            {formatDate(item.effectiveFromUtc)} → {formatDate(item.expectedReturnDate)}
-                          </Typography>
-                        </TableCell>
-
-                        <TableCell sx={{ py: 1.5 }}>
-                          <Chip
-                            size="small"
-                            label={item.leaveReconciliationStatus || "Not available"}
-                            color={
-                              item.leaveReconciliationStatus === "Reconciled"
-                                ? "success"
-                                : item.leaveReconciliationStatus === "Pending"
-                                  ? "warning"
-                                  : "default"
-                            }
-                            sx={{ fontWeight: 700, height: 24 }}
-                          />
-                        </TableCell>
-
-                        <TableCell align="right" sx={{ py: 1.5 }}>
                           {profileUrl && (
                             <Button
                               component="a"
@@ -415,40 +668,80 @@ export const EmployeeLifecycleReconciliationPanel = ({ showHeader = false }: { s
                               rel="noopener noreferrer"
                               size="small"
                               variant="outlined"
-                              endIcon={<LaunchRounded fontSize="small" />}
+                              endIcon={<LaunchRounded sx={{ fontSize: "14px !important" }} />}
                               sx={{
-                                borderRadius: 1.75,
+                                borderRadius: 1.5,
                                 textTransform: "none",
                                 fontWeight: 700,
-                                fontSize: "0.75rem",
-                                py: 0.4,
-                                px: 1.5,
+                                fontSize: "0.72rem",
+                                py: 0.3,
+                                px: 1,
+                                height: 28,
+                                flexShrink: 0,
                               }}
                             >
                               Profile
                             </Button>
                           )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              component="div"
-              count={filteredCases.length}
-              page={page}
-              onPageChange={(_, newPage) => setPage(newPage)}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={(e) => {
-                setRowsPerPage(parseInt(e.target.value, 10));
-                setPage(0);
-              }}
-              rowsPerPageOptions={[5, 10, 25, 50]}
-              sx={{ borderTop: "1px solid", borderColor: "divider" }}
-            />
-          </>
+                        </Stack>
+
+                        {/* Status Badges Row */}
+                        <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap sx={{ pt: 0.25 }}>
+                          <Chip
+                            size="small"
+                            label={item.lifecycleStatus?.replace(/([a-z])([A-Z])/g, "$1 $2") || "Lifecycle Leave"}
+                            color="primary"
+                            variant="outlined"
+                            sx={{ fontWeight: 700, fontSize: "0.72rem", height: 22 }}
+                          />
+                          <Chip
+                            size="small"
+                            label={`${item.leaveTotalDays} ${item.leaveTotalDays === 1 ? "day" : "days"}`}
+                            sx={{ fontWeight: 700, fontSize: "0.72rem", height: 22, bgcolor: (t) => alpha(t.palette.text.primary, 0.05) }}
+                          />
+                          <Chip
+                            size="small"
+                            label={item.leaveReconciliationStatus || "Not available"}
+                            color={
+                              item.leaveReconciliationStatus === "Reconciled"
+                                ? "success"
+                                : item.leaveReconciliationStatus === "Pending"
+                                  ? "warning"
+                                  : item.leaveReconciliationStatus === "Completed"
+                                    ? "success"
+                                    : "default"
+                            }
+                            sx={{ fontWeight: 750, height: 22, fontSize: "0.72rem" }}
+                          />
+                        </Stack>
+
+                        {/* Date Period Row */}
+                        <Stack direction="row" spacing={0.75} alignItems="center" sx={{ pt: 0.25 }}>
+                          <CalendarTodayOutlined sx={{ fontSize: 14, color: "text.secondary" }} />
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.78rem", fontWeight: 600 }}>
+                            {formatDate(item.effectiveFromUtc)} → {formatDate(item.expectedReturnDate)}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </Card>
+                  );
+                })}
+              </Box>
+
+              <TablePagination
+                component="div"
+                count={filteredCases.length}
+                page={page}
+                onPageChange={(_, newPage) => setPage(newPage)}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={(e) => {
+                  setRowsPerPage(parseInt(e.target.value, 10));
+                  setPage(0);
+                }}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                sx={{ borderTop: "1px solid", borderColor: "divider", mt: 1 }}
+              />
+            </>
           )}
         </>
       )}

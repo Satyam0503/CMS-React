@@ -41,9 +41,17 @@ export const ApplicationModules: FC = () => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [option, setOPtion] = useState<boolean>(false);
   const friendlyModuleLabel = (module: ModulesInfoModel) => {
-    const translated = formatMessage({ id: `COMMON.${module.moduleConstant.toUpperCase()}` });
-    if (translated !== `COMMON.${module.moduleConstant.toUpperCase()}`) return translated;
-    return (module.moduleName || module.moduleConstant).replace(/[._-]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    const key = module.moduleConstant.toUpperCase();
+    const fallback = (module.moduleName || module.moduleConstant).replace(/[._-]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    try {
+      const modMsg = formatMessage({ id: `MODULES.${key}`, defaultMessage: "" });
+      if (modMsg && modMsg !== `MODULES.${key}`) return modMsg;
+      const comMsg = formatMessage({ id: `COMMON.${key}`, defaultMessage: "" });
+      if (comMsg && comMsg !== `COMMON.${key}`) return comMsg;
+    } catch {
+      // fallback
+    }
+    return fallback;
   };
 
   const closeConfirmationModal = () => {
@@ -80,13 +88,36 @@ export const ApplicationModules: FC = () => {
     }
   };
 
-  const updateBulkModules = async (modules: ModulesInfoModel[]) => {
+  const updateBulkModules = async (
+    modules: ModulesInfoModel[],
+    targetEnable: boolean
+  ) => {
     if (isUpdating) return;
 
     try {
       setIsUpdating(true);
 
-      await Promise.all(modules.map((m) => updateModuleAccessApi(m.moduleId)));
+      const modulesToUpdate = modules.filter(
+        (m) => Boolean(m.isAccessible) !== targetEnable
+      );
+
+      let latestPermissions: string[] | null = null;
+      for (const m of modulesToUpdate) {
+        const response = await updateModuleAccessApi(m.moduleId);
+        const { success, methodResult } = response.data;
+        if (success && Array.isArray(methodResult)) {
+          latestPermissions = methodResult;
+        }
+      }
+
+      if (latestPermissions) {
+        dispatch(
+          setCurrentUser({
+            ...user,
+            modulePermission: [...latestPermissions],
+          })
+        );
+      }
 
       setRefresh((prev) => !prev);
     } catch {
@@ -124,11 +155,11 @@ export const ApplicationModules: FC = () => {
           break;
 
         case "PAYROLL":
-          await updateBulkModules(payrollModules);
+          await updateBulkModules(payrollModules, option);
           break;
 
         case "RECRUITMENT":
-          await updateBulkModules(recruitmentModules);
+          await updateBulkModules(recruitmentModules, option);
           break;
       }
     } finally {
@@ -170,7 +201,8 @@ export const ApplicationModules: FC = () => {
         const remaining = methodResults.filter(
           (m: ModulesInfoModel) =>
             !payrollValues.includes(m.moduleConstant) &&
-            !recruitmentValues.includes(m.moduleConstant),
+            !recruitmentValues.includes(m.moduleConstant) &&
+            m.moduleConstant !== "Dashboard",
         );
 
         setPayrollModules(payroll);
@@ -238,7 +270,7 @@ export const ApplicationModules: FC = () => {
             );
 
             return (
-              <Grid size={{ xs: 12, md: 6, lg: 4 }} key={module.moduleId}>
+              <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={module.moduleId}>
                 <ModuleCard
                   moduleId={module.moduleId}
                   moduleCostant={module.moduleConstant}
@@ -262,7 +294,7 @@ export const ApplicationModules: FC = () => {
             );
           })}
 
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
             <ModuleCard
               moduleId="PAYROLL"
               titleMessageId="COMMON.PAYROLL_MANAGEMENT"
@@ -279,7 +311,7 @@ export const ApplicationModules: FC = () => {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
             <ModuleCard
               moduleId="RECRUITMENT"
               titleMessageId="COMMON.RECRUITMENT_MANAGEMENT"

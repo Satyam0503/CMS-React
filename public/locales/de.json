@@ -229,7 +229,9 @@
     "UPCOMING_HOLIDAYS": "Bevorstehende Feiertage",
     "UPCOMING_EVENTS": "Bevorstehende Veranstaltungen",
     "NO_EVENT_HOLIDAY": "Derzeit keine bevorstehenden Feiertage oder Veranstaltungen",
-    "NO_UPCOMING_CELEBRATION": "Derzeit keine bevorstehenden Feierlichkeiten"
+    "NO_UPCOMING_CELEBRATION": "Derzeit keine bevorstehenden Feierlichkeiten",
+    "NO_UPCOMING_BIRTHDAY": "Derzeit keine bevorstehenden Geburtstage",
+    "NO_UPCOMING_WORK_ANNIVERSARY": "Derzeit keine bevorstehenden Dienstjubiläen"
   },
   "FORM": {
     "FIRST_NAME": "Vorname",
@@ -350,7 +352,6 @@
       "INACTIVE": "Inaktiv"
     }
   },
-
   "LEAVE": {
     "TITLE": "Urlaub",
     "EMPLOYEE_NAME": "Name des Mitarbeiters",
@@ -485,7 +486,7 @@
     "STEPPER": {
       "CREATE_ACCOUNT": "Benutzerkonto erstellen",
       "EDIT_DATA": "Benutzerdaten bearbeiten",
-      "UPDATE_SALARY":"Mitarbeitergehalt aktualisieren",
+      "UPDATE_SALARY": "Mitarbeitergehalt aktualisieren",
       "ALLOCATE_LEAVE": "Urlaub für Mitarbeiter zuweisen"
     },
     "INVITE_EMP": {
@@ -499,18 +500,18 @@
       "PERSONAL_INFO": "Persönliche Informationen",
       "OHTER_INFO": "Weitere Informationen"
     },
-      "SALARY": {
-        "BASIC_PAY": "Grundgehalt",
-        "HRA": "Wohnungszulage",
-        "OTHER_ALLOWANCE": "Sonstige Zulage",
-        "LTA": "LTA",
-        "BONUS": "Bonus",
-        "HEALTH_INSURANCE": "Krankenversicherung",
-        "TOTAL_DEDUCTIONS": "Gesamtabzüge",
-        "EFFECTIVE_FROM": "Gültig ab",
-        "EFFECTIVE_TO": "Gültig bis",
-        "PAYMENT_FREQUENCY": "Zahlungshäufigkeit"
-      },
+    "SALARY": {
+      "BASIC_PAY": "Grundgehalt",
+      "HRA": "Wohnungszulage",
+      "OTHER_ALLOWANCE": "Sonstige Zulage",
+      "LTA": "LTA",
+      "BONUS": "Bonus",
+      "HEALTH_INSURANCE": "Krankenversicherung",
+      "TOTAL_DEDUCTIONS": "Gesamtabzüge",
+      "EFFECTIVE_FROM": "Gültig ab",
+      "EFFECTIVE_TO": "Gültig bis",
+      "PAYMENT_FREQUENCY": "Zahlungshäufigkeit"
+    },
     "LEAVE": {
       "ASSIGN_LEAVE": "Urlaubszuweisung für Mitarbeiter einrichten",
       "NOTE": "Wählen Sie die Urlaubsarten aus, die Sie diesem Mitarbeiter zuweisen möchten. Sie können die Urlaubsstände später im Mitarbeiterprofil ändern.",
@@ -554,7 +555,6 @@
   "INACTIVE": "Inaktiv",
   "COMPANY.PRESENT": "Codeji Infotech Private Limited",
   "COMPANY.DESCRIPTION": "Codeji InfoTech Pvt. Ltd. ist ein führendes Softwareentwicklungsunternehmen, spezialisiert auf hochwertige und zuverlässige Softwarelösungen für Unternehmenskunden.",
-
   "FILE.SELECTED": "Datei hochgeladen",
   "INFO.DESCRIPTION": "Beschreibung",
   "IMPORT.EXCEL": "Excel importieren",
@@ -604,7 +604,6 @@
   "PERMISSION.VIEW": "Ansehen",
   "PERMISSION.EDIT": "Bearbeiten",
   "PERMISSION.DELETE": "Löschen",
-
   "VACANCY.TEXT1": "Vielen Dank für Ihren Besuch auf unserer Website!",
   "VACANCY.TEXT2": "Unsere Stellenangebote werden gerade aktualisiert. Bitte besuchen Sie uns bald wieder, um die neuesten Stellenangebote einzusehen. Vielen Dank für Ihr Interesse!",
   "VACANCY.TEXT3": "Bitte beachten Sie, dass wir Bewerbungen nur an Werktagen zwischen 9:00 und 18:00 Uhr IST annehmen.",
@@ -621,7 +620,6 @@
   "TO": "Bis",
   "ONLINE": "Online",
   "OFFLINE": "Offline",
-
   "USER": {
     "BLOOD_GROUP": "Blutgruppe",
     "GROUP": "Gruppe",
@@ -738,13 +736,13 @@
     "ADDRESS_NOTE": "Die Firmenadresse wird in offiziellen Dokumenten und Mitarbeiterunterlagen angezeigt"
   },
   "ERROR": {
+    "404": "Entschuldigung, die angeforderte Seite konnte nicht gefunden werden. Bitte gehen Sie zurück zur Startseite!",
+    "500": "Etwas ist schiefgelaufen! Bitte versuchen Sie es später erneut!",
     "PAGE_NOT_FOUND": "Seite nicht gefunden",
     "UNAUTHORIZED_ACCESS": "Unbefugter Zugriff",
     "SOMETHING_WRONG": "Etwas ist schiefgelaufen",
     "SYSTEM_ERROR": "Systemfehler",
-    "404": "Entschuldigung, die angeforderte Seite konnte nicht gefunden werden. Bitte gehen Sie zurück zur Startseite!",
     "OPPS": "Hoppla!",
-    "500": "Etwas ist schiefgelaufen! Bitte versuchen Sie es später erneut!",
     "DOC_LOAD_FAILED": "Dokument konnte nicht geladen werden"
   },
   "VALIDATION_ERR": {
@@ -819,7 +817,7 @@
   },
   "NOTIFICATION": {
     "TITLE": "Benachrichtigungen",
-    "NEW": "Neu",
+    "NEW": "Ungelesen",
     "READ": "Gelesen",
     "ALL": "Alle",
     "NONE": "Keine Benachrichtigungen",
@@ -832,7 +830,8 @@
       "TODAY_BIRTHDAY": "🎂 Heute hat {employeeName} Geburtstag — nehmen Sie sich einen Moment, um ihm zu gratulieren",
       "TODAY_WORK_ANNIVERSARY": "🎉Heute feiert {employeeName} sein Arbeitsjubiläum — gratulieren Sie ihm zu diesem Meilenstein!",
       "FALLBACK": "Sie haben eine neue Benachrichtigung"
-    }
+    },
+    "UNREAD": "Ungelesen"
   },
   "WORKHISTORY": {
     "TITLE": "Berufserfahrung",
@@ -1053,4 +1052,3 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Verwaltet den gesamten Einstellungsprozess einschließlich Stellenausschreibungen, Bewerbungen, Interviewphasen, Bewertungen und detaillierter Prozessprotokolle. Bietet vollständige Transparenz über den Rekrutierungsfortschritt, durchgeführte Maßnahmen und Einstellungsentscheidungen zur Optimierung der Talentakquise."
   }
 }
-

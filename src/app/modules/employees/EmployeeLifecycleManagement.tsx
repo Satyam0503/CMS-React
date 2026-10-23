@@ -61,18 +61,25 @@ const EmployeeLifecycleManagement = () => {
         aria-label="Employee lifecycle sections"
         className="tab-container d-flex flex-row"
         sx={{
-          mb: 2.5,
+          mb: { xs: 2, md: 2.5 },
           borderRadius: 3,
-          p: 0.75,
-          gap: 0.5,
+          p: { xs: 0.5, sm: 0.75 },
+          gap: { xs: 0.5, sm: 0.75 },
           overflowX: "auto",
+          WebkitOverflowScrolling: "touch",
           scrollbarWidth: "none",
           "&::-webkit-scrollbar": { display: "none" },
           "& .tab-box": {
-            flex: { xs: "0 0 auto", sm: "1 1 0" },
-            minWidth: { xs: 140, sm: 0 },
+            flex: { xs: "0 0 auto", md: "1 1 0" },
+            minWidth: { xs: "auto", sm: 160 },
+            px: { xs: 1.75, sm: 2.25 },
+            py: { xs: 1, sm: 1.25 },
+            whiteSpace: "nowrap",
             justifyContent: "center",
             textAlign: "center",
+            fontSize: { xs: "0.82rem", sm: "0.88rem" },
+            gap: 1,
+            transition: "all 0.15s ease",
           },
         }}
       >

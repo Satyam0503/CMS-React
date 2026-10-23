@@ -1,3 +1,5 @@
+import { parseInterviewCalendarItem } from "../../recruitment/utils/interviewCalendarUtils";
+import { InterviewDossierModal } from "../../recruitment/applications/components/InterviewDossierModal";
 import React, { useState } from "react";
 import {
   Box,
@@ -55,6 +57,8 @@ export const UpcomingHolidayCard = (props: Props) => {
     useState(initialValues);
   const [edit, setEdit] = useState<boolean>(false);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [interviewModalOpen, setInterviewModalOpen] = useState(false);
+  const interviewMeta = parseInterviewCalendarItem(props.occasion);
 
   const hasEditPermission = hasModuleFeaturePermission(
     ModulesName.Calendar,

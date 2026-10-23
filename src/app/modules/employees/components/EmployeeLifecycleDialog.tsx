@@ -37,7 +37,7 @@ const fallbackLifecyclePolicies: EmployeeLifecyclePolicy[] = [
   { eventType: "AbscondingUnderReview", requiresHrApproval: true, requiresReason: true, requiresExpectedReturnDate: false, defaultAvailabilityStatus: "AbscondingUnderReview", attendanceExpected: false, leaveRequestsAllowed: false, workFromHomeRequestsAllowed: false },
 ];
 
-const leaveDrivenLifecycleStatuses = new Set(["MedicalLeave", "MaternityLeave", "PaternityLeave", "LongTermLeave", "Sabbatical", "AdministrativeLeave"]);
+const leaveDrivenLifecycleStatuses = new Set(["MedicalLeave", "MaternityLeave", "PaternityLeave", "LongTermLeave", "Sabbatical"]);
 const directLifecycleOptions: Array<[string, string]> = [
   ["Working", "Working"], ["AdministrativeLeave", "Administrative leave"],
   ["UnauthorizedAbsence", "Unauthorized absence"], ["AbscondingUnderReview", "Absconding under review"],

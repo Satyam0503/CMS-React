@@ -72,7 +72,7 @@ export type JobTitleResponseModel = Pick<
   "isActive" | "titles"
 > & {
   jobTitleId?: string;
-  departmentId?: string;
+  departmentId?: string | null;
 };
 export type JobTitleRequestModel = Pick<
   JobTitleResponseModel,

@@ -30,6 +30,13 @@ export type Applicant = Omit<ApplicantModel, "resume"> & {
   status: number;
   applyDate: string;
   resumeUrl: string | null;
+  isHired?: boolean;
+  employeeUserId?: string;
+  employeeId?: string;
+  finalInterviewScore?: number | null;
+  finalInterviewRating?: number | null;
+  finalInterviewRecommendation?: string | null;
+  evaluatedRoundsCount?: number | null;
 };
 
 export interface ApplicationFilterModel extends DateRangeFilter {
@@ -97,6 +104,11 @@ export interface JobModal {
   publishToMasterPortal?: boolean;
   isFeatured?: boolean;
   isUrgentHiring?: boolean;
+  screeningPassScore?: number | null;
+  screeningCriteria?: string[];
+  workflowMode?: "Inherit" | "Direct" | "Standard" | "Enterprise";
+  requireInterview?: boolean | null;
+  requirePreboarding?: boolean | null;
 }
 
 export interface CommentModel {
@@ -148,12 +160,25 @@ export interface RecruitmentInterviewCommand {
 
 export interface RecruitmentResumeExtractionReviewCommand { reviewId?: string; applicantId: string; vacancyId: string; resumeVersion?: string | null; extractedFields: Record<string, string>; decision: "Pending" | "Approved" | "Rejected"; notes?: string | null; idempotencyKey: string; expectedVersion?: number; }
 export interface RecruitmentCandidateOfferActionCommand { token: string; decision: "Accepted" | "Declined" | "RequestOfferChange"; message?: string | null; idempotencyKey: string; }
+export interface RecruitmentCandidateOfferDetails {
+  offerId: string;
+  candidateName: string;
+  jobTitle: string;
+  currency: string;
+  salary: number;
+  totalCtc: number;
+  startDateUtc?: string | null;
+  expiresAtUtc?: string | null;
+  status: string;
+  actionType: string;
+}
 export interface RecruitmentCandidatePrivacyCommand { applicantId: string; action: "Grant" | "Revoke" | "Anonymize"; retentionDays?: number; idempotencyKey: string; reason?: string | null; }
 
 export interface RecruitmentOfferVersion { offerVersionId: string; offerId: string; applicantId: string; versionNumber: number; salary: number; compensationComponents?: Record<string, number>; totalCtc?: number; status: string; currency: string; }
 export interface RecruitmentOfferVersionCommand { offerId: string; salary: number; currency: string; startDateUtc?: string | null; status: "Draft" | "PendingApproval" | "Approved" | "Sent" | "RevisedSent"; versionReason?: string | null; approvalReference?: string | null; expiresAtUtc?: string | null; idempotencyKey: string; expectedVersionNumber?: number; }
 export interface RecruitmentOfferCounterRequest { counterRequestId: string; offerId: string; applicantId: string; baseVersionNumber: number; requestedSalary: number; requestedCurrency: string; requestedStartDateUtc?: string | null; message?: string | null; status: string; negotiationRound: number; resolutionNote?: string | null; }
 export interface RecruitmentOfferCounterCommand { offerId: string; requestedSalary: number; requestedCurrency: string; requestedStartDateUtc?: string | null; message?: string | null; idempotencyKey: string; expectedBaseVersionNumber?: number; }
+export interface RecruitmentOfferCounterDecisionCommand { counterRequestId: string; decision: "Approved" | "Rejected"; resolutionNote?: string | null; approvedSalary?: number | null; approvedCurrency?: string | null; approvedStartDateUtc?: string | null; idempotencyKey: string; expectedBaseVersionNumber?: number | null; }
 
 export interface RecruitmentHiringDecisionCommand { decisionId?: string; applicantId: string; vacancyId: string; decision: "Approve" | "Hold" | "Reject"; notes?: string | null; idempotencyKey: string; expectedVersion?: number; }
 
@@ -169,7 +194,7 @@ export interface RecruitmentOfferCommand {
   expiresAtUtc?: string | null;
   idempotencyKey: string;
   expectedVersion?: number;
-  status: "Draft" | "PendingApproval" | "Approved" | "Sent" | "Accepted" | "Declined" | "Expired" | "Withdrawn";
+  status: "Draft" | "PendingApproval" | "Approved" | "Sent" | "ChangeRequested" | "Accepted" | "Declined" | "Expired" | "Withdrawn";
 }
 
 export interface RecruitmentOnboardingTask { code: string; title: string; status: "Pending" | "InProgress" | "Completed" | "Skipped"; assigneeUserId?: string | null; }
@@ -212,15 +237,102 @@ export interface RecruitmentRequisitionCommand {
   status: "Draft" | "PendingApproval" | "Approved" | "Rejected" | "Closed";
 }
 export interface RecruitmentScorecardCriterionCommand {
+  code?: string;
   name: string;
   rating: number;
+  qualitativeLabel?: string | null;
+  weight?: number | null;
+  isMandatory?: boolean;
   notes?: string | null;
 }
 
-export interface RecruitmentInterviewPlanStageCommand { order: number; code: string; name: string; type?: string | null; requiredPanelSize: number; scorecardRequired: boolean; feedbackDueHours: number; }
-export interface RecruitmentInterviewPlanStage { order: number; code: string; name: string; type?: string | null; requiredPanelSize: number; scorecardRequired: boolean; feedbackDueHours: number; }
-export interface RecruitmentInterviewPlan { planId?: string; vacancyId?: string | null; name: string; isDefault: boolean; stages: RecruitmentInterviewPlanStage[]; version?: number; }
-export interface RecruitmentInterviewPlanCommand { planId?: string; vacancyId?: string | null; name: string; isDefault: boolean; stages: RecruitmentInterviewPlanStageCommand[]; idempotencyKey: string; expectedVersion?: number; }
+export interface RecruitmentScorecardCriterion {
+  code?: string;
+  name: string;
+  rating: number;
+  normalizedScore?: number | null;
+  qualitativeLabel?: string | null;
+  weight?: number | null;
+  isMandatory?: boolean;
+  notes?: string | null;
+}
+
+export interface RecruitmentQualitativeRatingLevel {
+  label: string;
+  value: number;
+  description?: string | null;
+}
+
+export interface RecruitmentRatingScaleConfig {
+  scaleType: "Numeric1To5" | "Numeric1To10" | "Numeric0To100" | "CustomNumeric" | "Qualitative";
+  minRating: number;
+  maxRating: number;
+  step: number;
+  normalizationMethod: "PercentageOfMax" | "MinMaxPercentage";
+  levels: RecruitmentQualitativeRatingLevel[];
+}
+
+export interface RecruitmentCompetencyConfig {
+  code: string;
+  name: string;
+  description?: string | null;
+  weight: number;
+  isMandatory: boolean;
+  minScore?: number | null;
+}
+
+export interface RecruitmentInterviewPlanStageCommand {
+  order: number;
+  code: string;
+  name: string;
+  type?: string | null;
+  requiredPanelSize: number;
+  scorecardRequired: boolean;
+  feedbackDueHours: number;
+  weight?: number | null;
+  passThreshold?: number | null;
+  isMandatory?: boolean;
+}
+
+export interface RecruitmentInterviewPlanStage {
+  order: number;
+  code: string;
+  name: string;
+  type?: string | null;
+  requiredPanelSize: number;
+  scorecardRequired: boolean;
+  feedbackDueHours: number;
+  weight?: number | null;
+  passThreshold?: number | null;
+  isMandatory?: boolean;
+}
+
+export interface RecruitmentInterviewPlan {
+  planId?: string;
+  vacancyId?: string | null;
+  name: string;
+  isDefault: boolean;
+  stages: RecruitmentInterviewPlanStage[];
+  ratingScale?: RecruitmentRatingScaleConfig;
+  competencies?: RecruitmentCompetencyConfig[];
+  hiringTargetScore?: number;
+  missingScorePolicy?: string;
+  version?: number;
+}
+
+export interface RecruitmentInterviewPlanCommand {
+  planId?: string;
+  vacancyId?: string | null;
+  name: string;
+  isDefault: boolean;
+  stages: RecruitmentInterviewPlanStageCommand[];
+  ratingScale?: RecruitmentRatingScaleConfig;
+  competencies?: RecruitmentCompetencyConfig[];
+  hiringTargetScore?: number;
+  missingScorePolicy?: string;
+  idempotencyKey: string;
+  expectedVersion?: number;
+}
 
 export interface RecruitmentInterviewDebriefCommand { interviewId: string; decision: "Advance" | "Hold" | "Reject"; notes?: string | null; idempotencyKey: string; expectedVersion?: number; }
 
@@ -261,8 +373,8 @@ export interface RecruitmentCandidateShareItem { shareId: string; applicantId: s
 export interface RecruitmentFeedbackSlaReport { totalOpenRounds: number; overdueRounds: number; items: RecruitmentFeedbackSlaItem[]; }
 export interface RecruitmentAnalytics { totalApplicants: number; activeApplicants: number; rejectedApplicants: number; mergedApplicants: number; byStage: Record<string, number>; averageTimeToHireDays?: number | null; timeToHireSampleSize?: number; }
 export interface RecruitmentStageSlaPolicyCommand { stage: string; targetHours: number; enabled: boolean; location?: string | null; idempotencyKey: string; }
-export interface RecruitmentEnterpriseConfig { configId?: string; locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview: boolean; hiringManagerReview: boolean; interviewRounds: boolean; parallelPanels: boolean; scorecards: boolean; offerApproval: boolean; offerNegotiation: boolean; candidateEmailActions: boolean; requisitions: boolean; slaTracking: boolean; automation: boolean; internalMobility: boolean; rehireLinks: boolean; autoAdvanceOnScreening?: boolean; requireInterviewBeforeDecision?: boolean; requirePreboardingBeforeHandoff?: boolean; allowMultiVacancyApplications?: boolean; defaultTimezone?: string | null; configSource?: string; overriddenFields?: string[]; screeningCriteria?: string[]; screeningPassScore?: number; preboardingChecklist?: string[]; compensationSchemeName?: string; compensationCurrency?: string; compensationComponents?: Record<string, number>; defaultCandidateRetentionDays?: number; offerLetterSubjectTemplate?: string; offerLetterBodyTemplate?: string; }
-export interface RecruitmentEnterpriseConfigCommand { locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview?: boolean; hiringManagerReview?: boolean; interviewRounds?: boolean; parallelPanels?: boolean; scorecards?: boolean; offerApproval?: boolean; offerNegotiation?: boolean; candidateEmailActions?: boolean; requisitions?: boolean; slaTracking?: boolean; automation?: boolean; internalMobility?: boolean; rehireLinks?: boolean; autoAdvanceOnScreening?: boolean; requireInterviewBeforeDecision?: boolean; requirePreboardingBeforeHandoff?: boolean; allowMultiVacancyApplications?: boolean; defaultTimezone?: string | null; resetToDefaults?: boolean; idempotencyKey: string; screeningCriteria?: string[]; screeningPassScore?: number; preboardingChecklist?: string[]; compensationSchemeName?: string; compensationCurrency?: string; compensationComponents?: Record<string, number>; defaultCandidateRetentionDays?: number; offerLetterSubjectTemplate?: string; offerLetterBodyTemplate?: string; }
+export interface RecruitmentEnterpriseConfig { configId?: string; locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview: boolean; hiringManagerReview: boolean; interviewRounds: boolean; parallelPanels: boolean; scorecards: boolean; offerApproval: boolean; offerNegotiation: boolean; candidateEmailActions: boolean; requisitions: boolean; slaTracking: boolean; automation: boolean; internalMobility: boolean; rehireLinks: boolean; autoAdvanceOnScreening?: boolean; requireInterviewBeforeDecision?: boolean; requirePreboardingBeforeHandoff?: boolean; allowMultiVacancyApplications?: boolean; allowJobWorkflowCustomization?: boolean; defaultTimezone?: string | null; configSource?: string; overriddenFields?: string[]; screeningCriteria?: string[]; screeningPassScore?: number; preboardingChecklist?: string[]; compensationSchemeName?: string; compensationCurrency?: string; compensationComponents?: Record<string, number>; defaultCandidateRetentionDays?: number; offerLetterSubjectTemplate?: string; offerLetterBodyTemplate?: string; }
+export interface RecruitmentEnterpriseConfigCommand { locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview?: boolean; hiringManagerReview?: boolean; interviewRounds?: boolean; parallelPanels?: boolean; scorecards?: boolean; offerApproval?: boolean; offerNegotiation?: boolean; candidateEmailActions?: boolean; requisitions?: boolean; slaTracking?: boolean; automation?: boolean; internalMobility?: boolean; rehireLinks?: boolean; autoAdvanceOnScreening?: boolean; requireInterviewBeforeDecision?: boolean; requirePreboardingBeforeHandoff?: boolean; allowMultiVacancyApplications?: boolean; allowJobWorkflowCustomization?: boolean; defaultTimezone?: string | null; resetToDefaults?: boolean; idempotencyKey: string; screeningCriteria?: string[]; screeningPassScore?: number; preboardingChecklist?: string[]; compensationSchemeName?: string; compensationCurrency?: string; compensationComponents?: Record<string, number>; defaultCandidateRetentionDays?: number; offerLetterSubjectTemplate?: string; offerLetterBodyTemplate?: string; }
 export interface RecruitmentRelationshipLinkCommand { applicantId: string; relationshipType: "InternalMobility" | "Rehire"; relatedPersonId: string; notes?: string | null; idempotencyKey: string; }
 export interface RecruitmentAutomationEventCommand { eventType: string; applicantId?: string | null; payload: Record<string, string>; idempotencyKey: string; }
 
@@ -343,6 +455,53 @@ export interface RecruitmentOfferPendingQueueItem { offerId: string; applicantId
 export interface RecruitmentPreboardingQueueItem { caseId: string; applicantId: string; offerId: string; status: string; ownerUserId: string; pendingTaskCount: number; readyForHire: boolean; firstBlockerCode?: string | null; }
 
 export interface RecruitmentPreboardingUpdateCommand { caseId: string; status: string; tasks: Array<{ code: string; status: string; assigneeUserId?: string | null }>; expectedVersion?: number; idempotencyKey: string; }
+
+export interface RecruitmentRoundScoreBreakdown {
+  roundNumber: number;
+  stageName: string;
+  stageType?: string | null;
+  normalizedScore: number;
+  rawRating: number;
+  weight?: number | null;
+  passThreshold?: number | null;
+  passedThreshold: boolean;
+  isMandatory: boolean;
+  scorecardsCount: number;
+  requiredPanelSize: number;
+  quorumMet: boolean;
+  consensusRecommendation: string;
+}
+
+export interface RecruitmentCompetencyScoreBreakdown {
+  code: string;
+  name: string;
+  normalizedScore: number;
+  rawRating: number;
+  weight?: number | null;
+  minScore?: number | null;
+  isMandatory: boolean;
+  passed: boolean;
+  ratingCount: number;
+}
+
+export interface RecruitmentFinalScoreResult {
+  finalInterviewScore: number;
+  finalInterviewRating: number;
+  finalInterviewRecommendation: string;
+  evaluatedRoundsCount: number;
+  totalScorecardsCount: number;
+  excludesHrRound: boolean;
+  evaluatedRoundNumbers: number[];
+  passedMandatoryGates?: boolean;
+  mandatoryGateFailures?: string[];
+  targetScore?: number;
+  meetsHiringTarget?: boolean;
+  scaleType?: string;
+  normalizationFormula?: string;
+  roundBreakdowns?: RecruitmentRoundScoreBreakdown[];
+  competencyBreakdowns?: RecruitmentCompetencyScoreBreakdown[];
+}
+
 
 
 

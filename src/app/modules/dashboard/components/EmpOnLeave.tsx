@@ -1,4 +1,4 @@
-import { Stack, Typography, Box, Avatar } from "@mui/material";
+import { alpha, Stack, Typography, Box, Avatar } from "@mui/material";
 import { CheckCircleOutlineRounded } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/C_Card";
@@ -12,8 +12,10 @@ import { CardSkeleton } from "./CardSkeleton";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
+import { useIsDark } from "../../theme/useIsDark";
 
 export default function EmpOnLeave() {
+  const isDark = useIsDark();
   const { formatMessage: i } = useIntl();
   const [leaveRequest, setLeaveRequest] = useState<LeaveRequestModel[]>([]);
   const [isLoading, setLoading] = useState(true);
@@ -65,9 +67,14 @@ export default function EmpOnLeave() {
               sx={{
                 p: 1.5,
                 borderRadius: "12px",
-                backgroundColor: "rgba(255, 255, 255, 0.65)",
-                border: "1px solid rgba(255, 255, 255, 0.85)",
-                boxShadow: "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
+                backgroundColor: isDark
+                  ? "rgba(255, 255, 255, 0.04)"
+                  : "rgba(255, 255, 255, 0.65)",
+                border: "1px solid",
+                borderColor: "divider",
+                boxShadow: isDark
+                  ? "none"
+                  : "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
               }}
@@ -79,19 +86,20 @@ export default function EmpOnLeave() {
                   borderRadius: "8px",
                   display: "grid",
                   placeItems: "center",
-                  backgroundColor: "#ECFDF5",
-                  border: "1px solid #A7F3D0",
-                  color: "#059669",
+                  backgroundColor: (theme) => alpha(theme.palette.success.main, 0.12),
+                  border: "1px solid",
+                  borderColor: (theme) => alpha(theme.palette.success.main, 0.28),
+                  color: "success.main",
                   flexShrink: 0,
                 }}
               >
                 <CheckCircleOutlineRounded sx={{ fontSize: 20 }} />
               </Box>
               <Stack sx={{ minWidth: 0 }}>
-                <Typography sx={{ fontWeight: 600, fontSize: "0.875rem", color: "#0F172A" }}>
+                <Typography sx={{ fontWeight: 600, fontSize: "0.875rem", color: "text.primary" }}>
                   Full Team Available
                 </Typography>
-                <Typography sx={{ fontSize: "0.75rem", fontWeight: 500, color: "#64748B" }}>
+                <Typography sx={{ fontSize: "0.75rem", fontWeight: 500, color: "text.secondary" }}>
                   {i({ id: "MESSAGE.NO_EMPLOYEE_ON_LEAVE" })}
                 </Typography>
               </Stack>

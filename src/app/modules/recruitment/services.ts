@@ -17,12 +17,13 @@ import {
   RecruitmentOfferCommand,
   RecruitmentApplicationStageEvent, RecruitmentSelectedCandidateQueueItem, RecruitmentOfferPendingQueueItem, RecruitmentPreboardingQueueItem, RecruitmentPreboardingUpdateCommand,
   CandidateHandoffRequest,
+  RecruitmentFinalScoreResult,
   RecruitmentRequisitionCommand,
   RecruitmentScorecardCommand,
   RecruitmentTalentPoolCommand,
   RecruitmentDuplicateLookupRequest,
   RecruitmentDuplicateCandidate,
-  RecruitmentApplicantMergeCommand, RecruitmentCandidateShareCommand, RecruitmentCandidateShareItem, RecruitmentAnalytics, RecruitmentEnterpriseConfig, RecruitmentStageSlaPolicyCommand, RecruitmentEnterpriseConfigCommand, RecruitmentRelationshipLinkCommand, RecruitmentAutomationEventCommand, RecruitmentOnboardingCase, RecruitmentOnboardingQueueItem, RecruitmentOnboardingUpdateCommand, RecruitmentScreeningQueueReport, RecruitmentHiringDecisionCommand, RecruitmentCandidatePrivacyCommand, RecruitmentCandidateOfferActionCommand, RecruitmentOfferVersionCommand, RecruitmentOfferVersion, RecruitmentOfferCounterRequest, RecruitmentOfferCounterCommand, RecruitmentResumeExtractionReviewCommand,
+  RecruitmentApplicantMergeCommand, RecruitmentCandidateShareCommand, RecruitmentCandidateShareItem, RecruitmentAnalytics, RecruitmentEnterpriseConfig, RecruitmentStageSlaPolicyCommand, RecruitmentEnterpriseConfigCommand, RecruitmentRelationshipLinkCommand, RecruitmentAutomationEventCommand, RecruitmentOnboardingCase, RecruitmentOnboardingQueueItem, RecruitmentOnboardingUpdateCommand, RecruitmentScreeningQueueReport, RecruitmentHiringDecisionCommand, RecruitmentCandidatePrivacyCommand, RecruitmentCandidateOfferActionCommand, RecruitmentCandidateOfferDetails, RecruitmentOfferVersionCommand, RecruitmentOfferVersion, RecruitmentOfferCounterRequest, RecruitmentOfferCounterCommand, RecruitmentOfferCounterDecisionCommand, RecruitmentResumeExtractionReviewCommand,
 } from "./models";
 
 export const addJobVacancy = async (payload: JobModal) => {
@@ -31,12 +32,14 @@ export const addJobVacancy = async (payload: JobModal) => {
     payload
   );
 };
+
 export const editJobVacancy = async (payload: JobModal, jobId: string) => {
   return postRequest<JobModal, ResponseData<JobModal>>(
     `${ServiceUrl.EDIT_JOB_VACANCY}?jobId=${jobId}`,
     payload
   );
 };
+
 
 export const getAllJobVacancies = async (payload: GetAllVacancyPayload) => {
   return postRequest<GetAllVacancyPayload, ResponseData<JobModal>>(
@@ -45,11 +48,13 @@ export const getAllJobVacancies = async (payload: GetAllVacancyPayload) => {
   );
 };
 
+
 export const deleteJobVacancy = (vacancyId: string) => {
   return deleteRequest<ApiResponse>(ServiceUrl.DELETE_VACANCY, {
     params: { vacancyId: vacancyId },
   });
 };
+
 
 // applicant services
 export const getAllApplicantList = async (
@@ -61,12 +66,14 @@ export const getAllApplicantList = async (
   );
 };
 
+
 export const addApplicant = async (payload: ApplicantModel) => {
   return postRequest<ApplicantModel, ApiResponse>(
     ServiceUrl.ADD_APPLICANT,
     payload
   );
 };
+
 
 export const editApplicant = async (payload: ApplicantModel) => {
   return postRequest<ApplicantModel, ApiResponse>(
@@ -75,6 +82,7 @@ export const editApplicant = async (payload: ApplicantModel) => {
   );
 };
 
+
 export const getRecruitmentWorkflow = async (applicantId: string) => getRequest<ResponseData<RecruitmentWorkflow>>(`${ServiceUrl.GET_APPLICANT_WORKFLOW}/${applicantId}`);
 
 export const getApplicantById = async (applicantId: string) => {
@@ -82,6 +90,7 @@ export const getApplicantById = async (applicantId: string) => {
     `${ServiceUrl.GET_APPLICANT_BY_ID}?id=${applicantId}`
   );
 };
+
 
 export const uploadResumeForApplicant = async (applicantId: string, payload: FormData) => {
   return postRequest<FormData, ApiResponse>(
@@ -92,6 +101,7 @@ export const uploadResumeForApplicant = async (applicantId: string, payload: For
   );
 };
 
+
 export const grantRecruitmentCandidateShare = async (payload: RecruitmentCandidateShareCommand) => postRequest<RecruitmentCandidateShareCommand, ResponseData<string>>(ServiceUrl.GRANT_RECRUITMENT_CANDIDATE_SHARE, payload);
 export const revokeRecruitmentCandidateShare = async (shareId: string) => postRequest<undefined, ResponseData<string>>(`${ServiceUrl.REVOKE_RECRUITMENT_CANDIDATE_SHARE}/${encodeURIComponent(shareId)}`, undefined);
 export const getRecruitmentCandidateShares = async (applicantId: string) => getRequest<ResponseData<RecruitmentCandidateShareItem>>(`${ServiceUrl.GET_RECRUITMENT_CANDIDATE_SHARES}/${encodeURIComponent(applicantId)}`);
@@ -101,12 +111,14 @@ export const exportRecruitmentAudit = async (payload?: { applicantId?: string; e
   return getBlobRequest(`${ServiceUrl.EXPORT_RECRUITMENT_AUDIT}${params.toString() ? `?${params.toString()}` : ""}`);
 };
 
+
 export const getProcessLogData = async (payload: ProcessLogPayoadModel) => {
   return postRequest<ProcessLogPayoadModel, ResponseData<CommentResponseModel>>(
     ServiceUrl.GET_PROCESS_LOG,
     payload
   );
 };
+
 
 export const addComment = async (payload: CommentModel) => {
   return postRequest<CommentModel, ApiResponse>(
@@ -115,11 +127,13 @@ export const addComment = async (payload: CommentModel) => {
   );
 };
 
+
 export const getApplicantComments = async (payload: GetCommentPayloadModel) => {
   return getRequest<ResponseData<CommentResponseModel>>(
     `${ServiceUrl.GET_APPLICANT_COMMENTS}/${payload.applicantId}?pageNo=${payload.pageNo}&pageSize=${payload.pageSize}`
   );
 };
+
 
 export const upsertRecruitmentApplicationStage = async (payload: RecruitmentApplicationStageCommand) =>
   postRequest<RecruitmentApplicationStageCommand, ResponseData<string>>(ServiceUrl.UPSERT_APPLICATION_STAGE, payload);
@@ -166,7 +180,8 @@ export const getRecruitmentOfferCounters = async (offerId: string) => getRequest
 export const requestRecruitmentOfferCounter = async (payload: RecruitmentOfferCounterCommand) => postRequest<RecruitmentOfferCounterCommand, ResponseData<string>>(ServiceUrl.REQUEST_OFFER_COUNTER, payload);
 export const reviewRecruitmentResumeExtraction = async (payload: RecruitmentResumeExtractionReviewCommand) => postRequest<RecruitmentResumeExtractionReviewCommand, ResponseData<string>>(ServiceUrl.REVIEW_RESUME_EXTRACTION, payload);
 export const getRecruitmentResumeExtractionReview = async (applicantId: string, vacancyId: string) => getRequest<ResponseData<any>>(`${ServiceUrl.REVIEW_RESUME_EXTRACTION}/${encodeURIComponent(applicantId)}/${encodeURIComponent(vacancyId)}`);
-export const recordRecruitmentOfferView = async (token: string) => postRequest<{ token: string }, ResponseData<string>>("api/recruitment/candidate-actions/offer/view", { token });
+export const recordRecruitmentOfferView = async (token: string) => postRequest<{ token: string }, ResponseData<RecruitmentCandidateOfferDetails>>("api/recruitment/candidate-actions/offer/view", { token });
+export const decideRecruitmentOfferCounter = async (payload: RecruitmentOfferCounterDecisionCommand) => postRequest<RecruitmentOfferCounterDecisionCommand, ResponseData<string>>("api/RecruitmentOfferNegotiation/DecideCounter", payload);
 export const respondToRecruitmentOffer = async (payload: RecruitmentCandidateOfferActionCommand) => postRequest<RecruitmentCandidateOfferActionCommand, ResponseData<string>>("api/recruitment/candidate-actions/offer/respond", payload);
 export const applyRecruitmentCandidatePrivacy = async (payload: RecruitmentCandidatePrivacyCommand) => postRequest<RecruitmentCandidatePrivacyCommand, ResponseData<string>>(ServiceUrl.APPLY_CANDIDATE_PRIVACY, payload);
 export const upsertRecruitmentHiringDecision = async (payload: RecruitmentHiringDecisionCommand) => postRequest<RecruitmentHiringDecisionCommand, ResponseData<string>>(ServiceUrl.UPSERT_HIRING_DECISION, payload);
@@ -199,6 +214,7 @@ export const upsertRecruitmentScreening = async (payload: RecruitmentScreeningRe
 export const bulkRecruitmentScreening = async (payload: RecruitmentScreeningBulkCommand) => postRequest<RecruitmentScreeningBulkCommand, ResponseData<RecruitmentScreeningBulkResult>>(ServiceUrl.BULK_SCREENING, payload);
 
 export const getRecruitmentScorecards = async (applicantId: string, vacancyId: string) => getRequest<ResponseData<any[]>>("api/RecruitmentPlanning/Scorecards/" + encodeURIComponent(applicantId) + "/" + encodeURIComponent(vacancyId));
+export const getFinalInterviewScore = async (applicantId: string) => getRequest<ResponseData<RecruitmentFinalScoreResult>>("api/RecruitmentPlanning/FinalInterviewScore/" + encodeURIComponent(applicantId));
 export const upsertRecruitmentScorecard = async (payload: RecruitmentScorecardCommand) =>
   postRequest<RecruitmentScorecardCommand, ResponseData<string>>(
     ServiceUrl.UPSERT_SCORECARD,
@@ -262,5 +278,25 @@ export const queueRecruitmentAutomation = async (payload: RecruitmentAutomationE
 
 
 export type RecruitmentReadinessItem = { code: string; label: string; complete: boolean };
+
 export type RecruitmentReadiness = { mode: string; timezone: string; readyToPublishJobs: boolean; completionPercent: number; required: RecruitmentReadinessItem[]; recommended: RecruitmentReadinessItem[] };
+
+
+export const getRecruitmentOfferByApplicant = async (applicantId: string) =>
+  getRequest<ResponseData<any>>(`${ServiceUrl.GET_OFFER_BY_APPLICANT}/${encodeURIComponent(applicantId)}`);
+
+export const issueRecruitmentExternalAction = async (payload: {
+  actionType: string;
+  applicantId: string;
+  vacancyId?: string;
+  offerId?: string;
+  recipientEmail: string;
+  expiresInMinutes?: number;
+  issuanceKey: string;
+}) => postRequest<any, ResponseData<{ actionTokenId: string; rawToken: string; expiresAtUtc: string }>>(ServiceUrl.ISSUE_EXTERNAL_ACTION, payload);
 export const getRecruitmentReadiness = async () => getRequest<ResponseData<RecruitmentReadiness>>("api/RecruitmentEnterprise/Readiness");
+
+
+
+export const getJobVacancyDetails = async (vacancyId: string) =>
+  getRequest<ResponseData<JobModal>>(`api/JobVacancy/GetJobVacancyDetails?vacancyId=${encodeURIComponent(vacancyId)}`);

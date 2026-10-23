@@ -15,6 +15,9 @@ export type AttendanceStatus =
   | "WFH-HD"
   | "WFH+SL"
   | "WFH+CL"
+  | "LHD+ED"
+  | "LC"
+  | "EHD"
   | "L"
   | "MED"
   | "ML"
@@ -74,3 +77,35 @@ export interface AdminAttendanceCreateDto {
   Status: AttendanceStatus;
   Remarks?: string | null;
 }
+
+export interface AttendanceImportIssue {
+  rowNumber: number;
+  columnHeader?: string | null;
+  employeeId?: string | null;
+  employeeName?: string | null;
+  date?: string | null;
+  severity: "Error" | "Warning" | string;
+  message: string;
+}
+
+export interface AttendanceImportValidationResult {
+  isValid: boolean;
+  totalEmployees: number;
+  totalDaysInMonth: number;
+  totalCellsProcessed: number;
+  validEntriesCount: number;
+  preservedLeavesCount: number;
+  warningCount: number;
+  errorCount: number;
+  issues: AttendanceImportIssue[];
+}
+
+export interface AttendanceImportCommitResult {
+  success: boolean;
+  message: string;
+  employeesAffected: number;
+  recordsUpserted: number;
+  preservedLeavesCount: number;
+  issues: AttendanceImportIssue[];
+}
+

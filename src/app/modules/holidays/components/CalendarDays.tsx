@@ -1,3 +1,5 @@
+import { parseInterviewCalendarItem } from "../../recruitment/utils/interviewCalendarUtils";
+import { InterviewDossierModal } from "../../recruitment/applications/components/InterviewDossierModal";
 import {
     Avatar,
     Box,
@@ -38,6 +40,7 @@ export default function CalendarDays(props: Props) {
     const isSmallScreen = useMediaQuery(muiTheme.breakpoints.down("sm"));
     const weekDayShort = dayjs.weekdaysShort();
     const open = Boolean(smlScreenAnchr);
+    const [selectedInterview, setSelectedInterview] = useState<CalendarItem | null>(null);
 
     //Gets number of days in any month
     function getDaysInCurrentMonth() {

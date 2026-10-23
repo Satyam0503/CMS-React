@@ -73,6 +73,26 @@ const readWorkSheetObject = (sheetName: string, workBook: XLSX.WorkBook | null) 
 type HeaderValidationResult = {
     rowIndex: number;
     missingHeaders: string[];
+    isAttendanceMuster?: boolean;
+};
+
+const isLikelyAttendanceMusterSheet = (sheet: XLSX.WorkSheet, sheetName?: string): boolean => {
+    if (sheetName && (sheetName.trim().toLowerCase() === "attendance muster" || sheetName.trim().toLowerCase() === "allowed status codes")) {
+        return true;
+    }
+    const sheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as unknown[][];
+    for (let i = 0; i < Math.min(5, sheetData.length); i++) {
+        const row = sheetData[i];
+        if (!row || row.length === 0) continue;
+        const normalizedCells = row.map(normalizeHeader).filter(Boolean);
+        const hasDoj = normalizedCells.some(c => c === "date of joining" || c === "joining date" || c === "doj");
+        const hasDayDate = normalizedCells.some(c => /^\d{1,2}\s+[a-z]{3}/.test(c) || /^\d{1,2}-\d{1,2}-\d{4}/.test(c) || /^\d{4}-\d{1,2}-\d{1,2}/.test(c));
+        const hasPayrollKey = normalizedCells.some(c => c === "basic pay" || c === "net pay" || c === "gross earnings");
+        if ((hasDoj || hasDayDate) && !hasPayrollKey) {
+            return true;
+        }
+    }
+    return false;
 };
 
 // scans every row for one that contains all required headers (case-insensitive,
@@ -80,7 +100,10 @@ type HeaderValidationResult = {
 // missing headers so the UI can tell the user exactly what to fix before submitting.
 // This is UX only - the backend re-validates independently so a direct API call
 // (e.g. via Postman) can't bypass this check.
-const validateHeaderRow = (sheet: XLSX.WorkSheet): HeaderValidationResult => {
+const validateHeaderRow = (sheet: XLSX.WorkSheet, sheetName?: string): HeaderValidationResult => {
+    if (isLikelyAttendanceMusterSheet(sheet, sheetName)) {
+        return { rowIndex: 0, missingHeaders: requiredHeaders, isAttendanceMuster: true };
+    }
     const sheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as unknown[][];
     let best: HeaderValidationResult = { rowIndex: 0, missingHeaders: requiredHeaders };
 
@@ -161,6 +184,8 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
     const [selectedWorkSheet, setSelectedWorkSheet] = useState<string | null>(null);
     const [paymonth, setPayMonth] = useState<Dayjs | null>(null);
     const [missingHeaders, setMissingHeaders] = useState<string[]>([]);
+    const [isAttendanceMuster, setIsAttendanceMuster] = useState(false);
+    const [lopWarningEmployees, setLopWarningEmployees] = useState<string[]>([]);
     const [serverErrors, setServerErrors] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null)
@@ -177,18 +202,32 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
         setSelectedWorkSheet(null);
         setPayMonth(null);
         setMissingHeaders([]);
+        setIsAttendanceMuster(false);
+        setLopWarningEmployees([]);
         setServerErrors([]);
     }
 
     const validateWorkSheet = (sheetName: string, workBook: XLSX.WorkBook | null) => {
         if (!(sheetName && workBook)) {
             setMissingHeaders([]);
+            setIsAttendanceMuster(false);
+            setLopWarningEmployees([]);
             return;
         }
         const sheet = workBook.Sheets[sheetName];
-        const { rowIndex, missingHeaders } = validateHeaderRow(sheet);
-        if (missingHeaders.length === 0) {
+        const { rowIndex, missingHeaders, isAttendanceMuster: isMuster } = validateHeaderRow(sheet, sheetName);
+        setIsAttendanceMuster(Boolean(isMuster));
+        if (missingHeaders.length === 0 && !isMuster) {
             roundSheetMoneyColumns(sheet, rowIndex);
+            const jsonData = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { range: rowIndex, defval: 0 });
+            const mapped = jsonData.map(row => mapExcelRowtoPayLoad(row));
+            const zeroLopEmps = mapped
+                .filter(r => Number(r.lossOfPayDays ?? 0) > 0 && Number(r.lossOfPay ?? 0) === 0)
+                .map(r => r.employeeId)
+                .filter(Boolean);
+            setLopWarningEmployees(zeroLopEmps);
+        } else {
+            setLopWarningEmployees([]);
         }
         setMissingHeaders(missingHeaders);
     }
@@ -252,8 +291,9 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
             return;
         }
         setServerErrors([]);
-        const { rowIndex, missingHeaders } = validateHeaderRow(workBookData!.Sheets[selectedWorkSheet]);
-        if (missingHeaders.length > 0) {
+        const { rowIndex, missingHeaders, isAttendanceMuster: isMuster } = validateHeaderRow(workBookData!.Sheets[selectedWorkSheet], selectedWorkSheet);
+        if (isMuster || missingHeaders.length > 0) {
+            setIsAttendanceMuster(Boolean(isMuster));
             setMissingHeaders(missingHeaders);
             return;
         }
@@ -296,9 +336,25 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
 
     return (
         <>
-            <Stack direction="row" spacing={1} className="align-items-center" sx={fillToolbarRow ? { flex: { xs: "2 1 0", lg: "0 0 auto" }, minWidth: 0, "& .MuiButton-root": { flex: 1, width: { xs: "100%", lg: 40 } } } : undefined}>
-                <Tooltip title={i({ id: "PAYROLL.IMPORT_EXCEL" })} arrow placement="top">
-                    <AppButton variant="outlined" component="label" role="button" aria-label={i({ id: "PAYROLL.IMPORT_EXCEL" })} sx={payrollActionButtonSx}>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
+                <Tooltip title="Upload Monthly Attendance & Pay Data (.xlsx)" arrow placement="top">
+                    <AppButton
+                        variant="outlined"
+                        component="label"
+                        role="button"
+                        aria-label="Upload Monthly Attendance & Pay Data (.xlsx)"
+                        sx={{
+                            ...payrollActionButtonSx,
+                            borderColor: "divider",
+                            bgcolor: "background.paper",
+                            color: "text.secondary",
+                            "&:hover": {
+                                borderColor: "text.primary",
+                                color: "text.primary",
+                                bgcolor: "action.hover",
+                            },
+                        }}
+                    >
                         <UploadFile fontSize="small" />
                         <input
                             hidden
@@ -311,18 +367,44 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
                         />
                     </AppButton>
                 </Tooltip>
-                <Tooltip title={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} arrow placement="top">
-                    <AppButton component="a" href={SAMPLE_FILE_URL} download variant="outlined" aria-label={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} sx={payrollActionButtonSx}>
+                <Tooltip title="Download Monthly Payroll Sample File (.xlsx)" arrow placement="top">
+                    <AppButton
+                        component="a"
+                        href={SAMPLE_FILE_URL}
+                        download
+                        variant="outlined"
+                        aria-label="Download Monthly Payroll Sample File (.xlsx)"
+                        sx={{
+                            ...payrollActionButtonSx,
+                            borderColor: "divider",
+                            bgcolor: "background.paper",
+                            color: "text.secondary",
+                            "&:hover": {
+                                borderColor: "text.primary",
+                                color: "text.primary",
+                                bgcolor: "action.hover",
+                            },
+                        }}
+                    >
                         <Download fontSize="small" />
                     </AppButton>
                 </Tooltip>
             </Stack>
             {
                 open && <CustomisedModal open={true} handleClose={handleCloseModal}
-                    title={i({ id: "PAYROLL.UPLOAD_EXCEL_DATA" })}
+                    title="Upload Monthly Attendance & Payroll Adjustments"
                     allowMaximize
                 >
                     <Stack spacing={2}>
+                        <AppAlert severity="info">
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>Monthly Register Adjustments</Typography>
+                            <Typography variant="body2">
+                                Use this upload to import monthly attendance, paid days, loss of pay, and adjustments for a specific pay period. To import master employee CTC structures or offer letters, use <strong>PayRoll &rarr; Payroll Settings &rarr; Import &amp; Salary Approvals</strong>.
+                            </Typography>
+                            <Typography variant="caption" sx={{ display: "block", mt: 0.75, color: "text.secondary" }}>
+                                <strong>Note:</strong> Enter each employee's standard monthly Basic Pay rate. Loss of Pay (LOP) amount entered in the sheet is deducted from Gross to calculate Net Pay. Do not enter an already-reduced Basic Pay if entering LOP.
+                            </Typography>
+                        </AppAlert>
                         <Stack>
                             <Typography variant="h6">{i({ id: "PAYROLL.SELECT_SPREADSHEET" })}</Typography>
                             <Stack className="overflow-x-scroll flex-row gap-2 justify-content-start py-2 position-sticky top-0">
@@ -343,18 +425,43 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
                             maxDate={dayjs().subtract(1, "month")}
                         />
                         {
-                            missingHeaders.length > 0 &&
-                            <AppAlert severity="error">
-                                <Typography variant="body2" className="fw-bold">{i({ id: "PAYROLL.MISSING_COLUMNS_TITLE" })}</Typography>
-                                <Typography variant="body2">{missingHeaders.join(", ")}</Typography>
-                                <Typography variant="body2">
-                                    {i({ id: "PAYROLL.MISSING_COLUMNS_HINT" })}{" "}
-                                    <Link href={SAMPLE_FILE_URL} download>{i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })}</Link>
-                                </Typography>
-                            </AppAlert>
+                            isAttendanceMuster ? (
+                                <AppAlert severity="warning">
+                                    <Typography variant="body2" className="fw-bold">Daily Attendance Muster Detected</Typography>
+                                    <Typography variant="body2">
+                                        The worksheet <strong>{selectedWorkSheet}</strong> appears to be a <strong>Daily Attendance Muster</strong>.
+                                        To import daily attendance records, please navigate to <strong>Attendance &rarr; Import Attendance</strong>.
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ display: "block", mt: 0.5 }}>
+                                        This screen is exclusively for uploading the <strong>Monthly Payroll Register</strong> (with Basic Pay, HRA, Gross Earnings, Net Pay, etc.). You can download the sample payroll register template using the download icon above.
+                                    </Typography>
+                                </AppAlert>
+                            ) : missingHeaders.length > 0 ? (
+                                <AppAlert severity="error">
+                                    <Typography variant="body2" className="fw-bold">{i({ id: "PAYROLL.MISSING_COLUMNS_TITLE" })}</Typography>
+                                    <Typography variant="body2">{missingHeaders.join(", ")}</Typography>
+                                    <Typography variant="body2">
+                                        {i({ id: "PAYROLL.MISSING_COLUMNS_HINT" })}{" "}
+                                        <Link href={SAMPLE_FILE_URL} download>{i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })}</Link>
+                                    </Typography>
+                                </AppAlert>
+                            ) : null
                         }
                         {
-                            missingHeaders.length === 0 && serverErrors.length > 0 &&
+                            missingHeaders.length === 0 && !isAttendanceMuster && lopWarningEmployees.length > 0 && (
+                                <AppAlert severity="warning">
+                                    <Typography variant="body2" className="fw-bold">Loss of Pay Deduction Notice</Typography>
+                                    <Typography variant="body2">
+                                        Employee(s) <strong>{lopWarningEmployees.slice(0, 5).join(", ")}{lopWarningEmployees.length > 5 ? ` and ${lopWarningEmployees.length - 5} more` : ""}</strong> have <strong>Loss of Pay Days &gt; 0</strong>, but the <strong>Loss of Pay</strong> deduction amount is ₹0.
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ display: "block", mt: 0.5 }}>
+                                        In this manual payroll register upload, Loss of Pay amounts are not auto-calculated. If absent salary deductions are intended, please enter the calculated deduction rupee amount in the <strong>Loss of Pay</strong> column in Excel.
+                                    </Typography>
+                                </AppAlert>
+                            )
+                        }
+                        {
+                            missingHeaders.length === 0 && !isAttendanceMuster && serverErrors.length > 0 &&
                             <AppAlert severity="error">
                                 <Typography variant="body2" className="fw-bold">{i({ id: "PAYROLL.UPLOAD_ERRORS_TITLE" })}</Typography>
                                 {
@@ -372,7 +479,7 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
                         </Stack>
                         <Stack direction="row" className="justify-content-end gap-2">
                             <CustomisedButton variant="outlined" label={i({ id: "BUTTON.CANCEL" })} handleClick={handleCloseModal} disabled={isUploading} />
-                            <CustomisedButton label={i({ id: "BUTTON.UPDATE" })} handleClick={handleUpdate} disabled={missingHeaders.length > 0} loading={isUploading} />
+                            <CustomisedButton label={i({ id: "BUTTON.UPDATE" })} handleClick={handleUpdate} disabled={missingHeaders.length > 0 || isAttendanceMuster} loading={isUploading} />
                         </Stack>
                     </Stack>
                 </CustomisedModal>

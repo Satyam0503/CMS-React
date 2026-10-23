@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { I18nProvider } from "../_themes/i18n/i18nProvider";
 import { LayoutSplashScreen } from "../_themes/layout/core";
 import { AuthInit, getLocalKey } from "./modules/auth";
-import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
+import { CssBaseline, StyledEngineProvider, ThemeProvider, useColorScheme } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -16,9 +16,44 @@ import React from "react";
 import { getCurrentLocaleForMui } from "./modules/theme/themePalettes";
 import { createApplicationTheme } from "./modules/theme/MuiTheme";
 import { useCompanyTheme } from "./modules/theme/companyTheme";
-import { AppStyle, normalizeAppStyle } from "./modules/theme/useAppStyle";
+import { AppStyle, DEFAULT_THEME, hasStoredAppStyle, normalizeAppStyle, useAppStyle } from "./modules/theme/useAppStyle";
 import ChatHub from "../server/ChatHub";
 import { getRequest } from "../server/axios";
+
+export const DarkModeSynchronizer = () => {
+  const { mode, systemMode } = useColorScheme();
+  const effectiveMode = mode === "system" ? systemMode : mode;
+
+  useLayoutEffect(() => {
+    const isDark = effectiveMode === "dark";
+    const root = document.documentElement;
+    const body = document.body;
+
+    if (isDark) {
+      root.classList.add("dark");
+      root.classList.remove("light");
+      body.classList.add("dark");
+      body.classList.remove("light");
+      root.setAttribute("data-bs-theme", "dark");
+      body.setAttribute("data-bs-theme", "dark");
+      root.setAttribute("data-theme", "dark");
+      body.setAttribute("data-theme", "dark");
+      root.style.colorScheme = "dark";
+    } else {
+      root.classList.remove("dark");
+      root.classList.add("light");
+      body.classList.remove("dark");
+      body.classList.add("light");
+      root.setAttribute("data-bs-theme", "light");
+      body.setAttribute("data-bs-theme", "light");
+      root.setAttribute("data-theme", "light");
+      body.setAttribute("data-theme", "light");
+      root.style.colorScheme = "light";
+    }
+  }, [effectiveMode]);
+
+  return null;
+};
 
 const App = () => {
   const { currentLanguage } = useAppLang();
@@ -29,6 +64,8 @@ const App = () => {
   const instance = Connector.getInstance();
   const chatHubInstance = ChatHub.getInstance();
   const { theme: companyTheme, setTheme: setCompanyTheme } = useCompanyTheme();
+  const { style: personalTheme } = useAppStyle();
+  const hasPersonalTheme = hasStoredAppStyle();
   const [publicCareerTheme, setPublicCareerTheme] = useState<AppStyle | null>(null);
 
   useEffect(() => {
@@ -61,11 +98,22 @@ const App = () => {
     return () => { active = false; };
   }, [location.pathname]);
 
-  // The server-owned company theme is authoritative for authenticated users.
-  // The client keeps no browser-persistent personal override.
-  const effectiveStyle = publicCareerTheme ?? companyTheme;
+  const isFormerEmployeePortal = location.pathname.startsWith("/former-employee");
+  const formerEmployeePortalTheme = isFormerEmployeePortal
+    ? normalizeAppStyle(sessionStorage.getItem("former_employee_portal_theme"))
+    : null;
 
-  // Stamp the chosen style on <html> so SCSS can key off it for surfaces
+  // Theme precedence:
+  // 1. Careers public portal: admin-configured careerTheme
+  // 2. Former employee portal: admin-managed company/session theme
+  // 3. Authenticated employee with chosen personal theme: personalTheme
+  // 4. Default: companyTheme (managed by admin), falling back to DEFAULT_THEME
+  const effectiveStyle: AppStyle =
+    publicCareerTheme ??
+    (isFormerEmployeePortal ? (formerEmployeePortalTheme || companyTheme) : null) ??
+    (hasPersonalTheme ? personalTheme : (companyTheme || DEFAULT_THEME));
+
+  // Stamp the chosen style on <html> and <body> so SCSS can key off it for surfaces
   // outside the MUI theme (body background, header chrome, etc.).
   useLayoutEffect(() => {
     document.documentElement.setAttribute("data-app-style", effectiveStyle);
@@ -108,6 +156,7 @@ const App = () => {
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <DarkModeSynchronizer />
         <Suspense fallback={<LayoutSplashScreen />}>
           <I18nProvider>
             <AuthInit>

@@ -22,7 +22,7 @@ export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
 export const APP_THEME_MODE = "theme-mode";
 export const I18N_CONFIG_KEY =
   import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
-export const DEFAULT_USER_AVATAR = "/media/avatars/default-user-avatar.png";
+export const DEFAULT_USER_AVATAR = "/media/avatars/default-user-avatar.png?v=3";
 export const DEFAULT_COMPANY_LOGO = "/media/logos/default_logo.png";
 
 export const ServiceUrl = {
@@ -123,6 +123,8 @@ export const ServiceUrl = {
   GET_INTERVIEW_PLAN: `api/RecruitmentPlanning/InterviewPlan`,
   UPSERT_INTERVIEW_PLAN: `api/RecruitmentPlanning/UpsertInterviewPlan`,
   UPSERT_OFFER: `api/Applicants/UpsertOffer`,
+  GET_OFFER_BY_APPLICANT: `api/Applicants/Offer`,
+  ISSUE_EXTERNAL_ACTION: `api/RecruitmentExternalAction/Issue`,
   UPSERT_HIRING_DECISION: `api/RecruitmentHiringDecision/Upsert`,
   APPLY_CANDIDATE_PRIVACY: `api/RecruitmentCandidatePrivacy/Apply`,
   CREATE_OFFER_VERSION: `api/RecruitmentOfferNegotiation/CreateVersion`,
@@ -472,6 +474,11 @@ export const JobType = [
 ];
 
 export const ApplicationEvaluationStatus = [
+  {
+    id: 0,
+    label: "APPLICATION.STATUS.NEW",
+    value: ApplicationStatus.New,
+  },
   {
     id: 1,
     label: "APPLICATION.STATUS.INPROGRESS",

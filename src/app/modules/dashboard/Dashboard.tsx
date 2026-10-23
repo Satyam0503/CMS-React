@@ -1,4 +1,4 @@
-import { Box, Grid, Stack } from "@mui/material";
+import { Box, CircularProgress, Grid, Stack } from "@mui/material";
 import { useAppSelector } from "../../Redux/hooks";
 import React, { useEffect, useMemo } from "react";
 import { EmployeeChart } from "./components/EmployeeChart";
@@ -20,7 +20,7 @@ import { usePageData } from "../../Context/PageDataProvider";
 // Main Dashboard Component
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
-  const user = useAppSelector((state) => state.user.userData)!;
+  const user = useAppSelector((state) => state.user.userData);
   const userModulesPermissions = useAppSelector(
     (state) => state.user.userData?.modulePermission ?? [],
   );
@@ -37,15 +37,15 @@ export default function Dashboard() {
 
   const canViewCompanyDashboard = useMemo(
     () =>
-      user.roleType === Roles.Administrator ||
-      user.roleType === Roles.HRManager ||
-      user.roleType === Roles.HRExecutive ||
+      user?.roleType === Roles.Administrator ||
+      user?.roleType === Roles.HRManager ||
+      user?.roleType === Roles.HRExecutive ||
       hasModuleFeaturePermission(
         ModulesName.Dashboard,
         Permission.ViewAll,
         userModulesPermissions,
       ),
-    [user.roleType, userModulesPermissions],
+    [user?.roleType, userModulesPermissions],
   );
 
   const hasAccessToJob = useMemo(
@@ -72,11 +72,21 @@ export default function Dashboard() {
     setPageTitle("");
   }, []);
 
+  if (!user) {
+    return (
+      <Box className="dashboard-modern" sx={{ p: 4, display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
+        <CircularProgress size={36} />
+      </Box>
+    );
+  }
+
   if (!canViewCompanyDashboard) {
     return (
       <Box className="dashboard-modern">
-        <DashboardHeader fullName={user.fullName} />
         <Grid container spacing={{ xs: 2, md: 3 }}>
+          <Grid size={12}>
+            <DashboardHeader fullName={user?.fullName || ""} />
+          </Grid>
           <Grid size={{ xs: 12, lg: 8 }}>
             {hasAccessToNoticeBoard && <NoticeBoard />}
           </Grid>
@@ -93,8 +103,10 @@ export default function Dashboard() {
 
   return (
     <Box className="dashboard-modern">
-      <DashboardHeader fullName={user.fullName} />
       <Grid container spacing={{ xs: 2, md: 3 }} className="d-flex justify-content-between">
+        <Grid size={12}>
+          <DashboardHeader fullName={user?.fullName || ""} />
+        </Grid>
         <Grid
           size={{
             xs: 12,

@@ -15,6 +15,8 @@ interface PropsType {
   employeeId: string;
   employeeName: string;
   existingSalary?: SalaryModel | null;
+  defaultEffectiveFrom?: string;
+  canApprove?: boolean;
   handleClose: () => void;
   handlePageRefresh: () => void;
 }
@@ -25,6 +27,8 @@ export const AddUpdateEmployeeSalary = ({
   employeeId,
   employeeName,
   existingSalary,
+  defaultEffectiveFrom,
+  canApprove,
   handleClose,
   handlePageRefresh,
 }: PropsType) => {
@@ -53,26 +57,29 @@ export const AddUpdateEmployeeSalary = ({
   };
 
   const modalTitle = (
-    <Stack direction="row" alignItems="center" spacing={1.75} flexWrap="wrap">
+    <Stack direction="row" alignItems="center" spacing={2} sx={{ width: "100%" }}>
       <Box
         sx={{
-          width: 42,
-          height: 42,
+          width: 44,
+          height: 44,
           borderRadius: 2.5,
-          bgcolor: (theme: Theme) => alpha(theme.palette.primary.main, 0.12),
+          bgcolor: (theme: Theme) => alpha(theme.palette.primary.main, 0.1),
           color: "primary.main",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           fontWeight: 800,
-          fontSize: "1.1rem",
+          fontSize: "1.15rem",
+          border: "1px solid",
+          borderColor: (theme: Theme) => alpha(theme.palette.primary.main, 0.2),
+          flexShrink: 0,
         }}
       >
         {employeeName ? employeeName.trim().charAt(0).toUpperCase() : "E"}
       </Box>
-      <Box>
-        <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
-          <Typography variant="h6" fontWeight={800} color="text.primary">
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap" sx={{ rowGap: 0.5 }}>
+          <Typography variant="h6" sx={{ fontWeight: 800, color: "text.primary", fontSize: "1.1rem", lineHeight: 1.2 }}>
             {employeeName}
           </Typography>
           <Chip
@@ -80,22 +87,32 @@ export const AddUpdateEmployeeSalary = ({
             label={employeeId}
             sx={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 650,
+              fontWeight: 700,
               bgcolor: "action.hover",
+              color: "text.primary",
+              border: "1px solid",
+              borderColor: "divider",
               borderRadius: 1.5,
               height: 22,
-              fontSize: "0.75rem",
+              fontSize: "0.74rem",
             }}
           />
           <Chip
             size="small"
             label="Payroll Structure"
-            color="primary"
-            variant="outlined"
-            sx={{ height: 22, fontWeight: 650, fontSize: "0.72rem" }}
+            sx={{
+              height: 22,
+              fontWeight: 650,
+              fontSize: "0.72rem",
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+              color: "primary.main",
+              border: "1px solid",
+              borderColor: (theme) => alpha(theme.palette.primary.main, 0.2),
+              borderRadius: 1.5,
+            }}
           />
         </Stack>
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.78rem", mt: 0.35, display: "block" }}>
           Configure monthly salary components, deductions, effective schedule, and attendance penalty policy.
         </Typography>
       </Box>
@@ -120,7 +137,7 @@ export const AddUpdateEmployeeSalary = ({
         pt: 1.5,
         pb: 2.5,
         px: { xs: 2, sm: 3 },
-        bgcolor: (theme: Theme) => (theme.palette.mode === "dark" ? "background.default" : "#F8FAFC"),
+        bgcolor: "background.default",
         maxHeight: "calc(92vh - 140px)",
         overflowY: "auto",
         scrollbarWidth: "thin",
@@ -139,6 +156,8 @@ export const AddUpdateEmployeeSalary = ({
         handleButtonLoading={setLoading}
         onUserUpdate={handleUserUpdate}
         existingSalary={existingSalary}
+        defaultEffectiveFrom={defaultEffectiveFrom}
+        canApprove={canApprove}
       />
       <EmployeePayrollPenaltyPolicy ref={policyRef} employeeUserId={userId} />
       <DialogActions sx={{ mt: 3, pt: 2, borderTop: "1px solid", borderColor: "divider", gap: 1 }}>

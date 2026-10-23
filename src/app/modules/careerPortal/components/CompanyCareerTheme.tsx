@@ -1,9 +1,10 @@
 import { ThemeProvider } from "@mui/material";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useLayoutEffect, useMemo } from "react";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { createApplicationTheme } from "../../theme/MuiTheme";
 import { AppStyle, DEFAULT_THEME, normalizeAppStyle } from "../../theme/useAppStyle";
 import { getCurrentLocaleForMui } from "../../theme/themePalettes";
+import { DarkModeSynchronizer } from "../../../App";
 
 type Props = { theme?: string | null; children: ReactNode };
 
@@ -18,8 +19,14 @@ export const CompanyCareerTheme = ({ theme, children }: Props) => {
     [companyTheme, currentLanguage],
   );
 
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute("data-app-style", companyTheme || DEFAULT_THEME);
+    document.body.setAttribute("data-app-style", companyTheme || DEFAULT_THEME);
+  }, [companyTheme]);
+
   return (
     <ThemeProvider theme={muiTheme}>
+      <DarkModeSynchronizer />
       <div data-app-style={companyTheme || DEFAULT_THEME}>{children}</div>
     </ThemeProvider>
   );

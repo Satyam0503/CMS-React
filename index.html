@@ -8,6 +8,7 @@
       name="description"
       content="All in one platform to manange employees,recruitment"
     />
+    <meta name="color-scheme" content="light dark" />
     <title>Codeji Infotech Pvt Ltd</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,9 +22,12 @@
     <script>
       let themeMode = "system";
 
-      if (localStorage.getItem("mui-mode")) {
-        themeMode = localStorage.getItem("mui-mode");
-      }
+      try {
+        const stored = localStorage.getItem("mui-mode");
+        if (stored) {
+          themeMode = stored;
+        }
+      } catch (e) {}
 
       if (themeMode === "system") {
         themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -31,7 +35,17 @@
           : "light";
       }
 
-      document.documentElement.setAttribute("data-theme", themeMode);
+      const isDark = themeMode === "dark";
+      const root = document.documentElement;
+      root.setAttribute("data-theme", themeMode);
+      root.setAttribute("data-bs-theme", themeMode);
+      if (isDark) {
+        root.classList.add("dark");
+        root.style.colorScheme = "dark";
+      } else {
+        root.classList.remove("dark");
+        root.style.colorScheme = "light";
+      }
     </script>
     <!--end::Theme mode setup on page load-->
 

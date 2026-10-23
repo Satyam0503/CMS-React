@@ -56,6 +56,7 @@ import { StyleStatus } from "../../shared/components/StyledStatus";
 import * as XLSX from "xlsx";
 
 import { AppButton, AppIconButton } from "../../shared/components/ui";
+import { SearchInput } from "../../shared/components/SearchInput";
 const CustomDataGrid = lazy(() =>
   import("../../shared/components/C_DataGrid").then((module) => ({
     default: module.CustomDataGrid,
@@ -242,6 +243,17 @@ const Employees = () => {
   const [isRefresh, setRefresh] = useState(false);
   const [totalRecords, setTotalRecords] = useState(0);
   const [openCheckModal, setOpenCheckModal] = useState<boolean>(false);
+  const [search, setSearch] = useState("");
+  const [pageHeaderTarget, setPageHeaderTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setPageHeaderTarget(document.getElementById("page-header-actions"));
+  }, []);
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPaginationValues((prev) => ({ ...prev, pageNo: 0 }));
+  };
 
   function handleCloseCkeckModal() {
     setOpenCheckModal(false);
@@ -311,7 +323,7 @@ const Employees = () => {
       const response = await getAllEmployees({
         pageNo: 1,
         records: Math.max(totalRecords, 1),
-        name: "",
+        name: search.trim(),
         ...(employeeFilters ?? initialFilterValues),
         employmentStatus,
       });
@@ -359,7 +371,7 @@ const Employees = () => {
         const response = await getAllEmployees({
           pageNo: paginationValues.pageNo + 1,
           records: paginationValues.records,
-          name: "",
+          name: search.trim(),
           ...(employeeFilters ?? initialFilterValues),
           employmentStatus,
         });
@@ -375,13 +387,13 @@ const Employees = () => {
       }
     };
     getAllEmployeesList();
-  }, [paginationValues, employeeFilters, employmentStatus, isRefresh]);
+  }, [paginationValues, employeeFilters, employmentStatus, isRefresh, search]);
 
   useEffect(() => {
     setPageTitle(i({ id: "PAGE.EMPLOYEES" }));
   }, []);
 
-  const pageHeaderActionsTarget = document.getElementById("page-header-actions");
+  const pageHeaderActionsTarget = pageHeaderTarget || document.getElementById("page-header-actions");
   const toolbarIconSx = {
     width: 38,
     height: 38,
@@ -414,31 +426,34 @@ const Employees = () => {
         createPortal(
           <Stack
             direction="row"
-            spacing={1}
+            spacing={1.25}
             useFlexGap
             flexWrap="wrap"
             sx={{
               alignItems: "center",
-              justifyContent: "flex-start",
-              width: "100%",
-              columnGap: 1,
+              justifyContent: { xs: "flex-start", sm: "flex-end" },
+              width: "auto",
               rowGap: 1,
-              flexWrap: { xs: "wrap", sm: "nowrap" },
-              overflowX: "auto",
-              overflowY: "hidden",
-              scrollbarWidth: "thin",
-              pb: 0.25,
+              columnGap: 1.25,
+              overflow: "visible",
+              py: 0.5,
             }}
           >
+            <SearchInput
+              search={search}
+              setSearch={handleSearchChange}
+              placeholder="PLACEHOLDER.SEARCH"
+              sx={{ width: { xs: "100%", sm: 200, md: 240 } }}
+            />
             <Stack
               direction="row"
-              spacing={0.75}
+              spacing={1}
               alignItems="center"
               flexShrink={0}
               sx={{
                 width: "auto",
                 justifyContent: "flex-start",
-                flexShrink: 0,
+                overflow: "visible",
               }}
             >
               <ToggleButtonGroup
@@ -470,7 +485,21 @@ const Employees = () => {
                 <ToggleButton value="table" aria-label="table"><ViewList className="fs-20" /></ToggleButton>
                 <ToggleButton value="grid" aria-label="grid"><GridView className="fs-20" /></ToggleButton>
               </ToggleButtonGroup>
-              <Badge badgeContent={totalAppliedFilter} anchorOrigin={{ horizontal: "left", vertical: "top" }} color="primary">
+              <Badge
+                badgeContent={totalAppliedFilter}
+                anchorOrigin={{ horizontal: "right", vertical: "top" }}
+                color="error"
+                sx={{
+                  "& .MuiBadge-badge": {
+                    fontSize: "0.72rem",
+                    fontWeight: 700,
+                    height: 18,
+                    minWidth: 18,
+                    padding: "0 4px",
+                    boxShadow: "0 2px 5px rgba(0,0,0,0.25)",
+                  },
+                }}
+              >
                 <CustomIconButton
                   icon={<FilterList />}
                   ariaLabel="Filter Employee"

@@ -73,9 +73,15 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading, page, pageSize, 
           >
             <img
               src={
-                emp.fullProfileUrl ?? DEFAULT_USER_AVATAR
+                emp.fullProfileUrl || DEFAULT_USER_AVATAR
               }
-              alt="employee-profile-image"
+              alt={`${emp.fullName} profile photo`}
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                if (target.src !== DEFAULT_USER_AVATAR) {
+                  target.src = DEFAULT_USER_AVATAR;
+                }
+              }}
             />
             <Box className="employee-card-content" sx={{ position: "relative" }}>
               {canManageLifecycle && <Box sx={{ position: "absolute", top: 10, right: 10, zIndex: 4, maxWidth: "calc(100% - 20px)" }}><EmployeeLifecycleDialog employee={emp} onSaved={onLifecycleSaved} /></Box>}

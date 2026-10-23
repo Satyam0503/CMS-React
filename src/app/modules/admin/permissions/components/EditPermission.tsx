@@ -264,17 +264,16 @@ export const EditPermission = () => {
                         sx={{
                           p: 2,
                           borderRadius: 3,
-                          background:
-                            "linear-gradient(135deg, rgba(255, 255, 255, 0.86) 0%, rgba(248, 250, 252, 0.74) 100%)",
+                          background: "var(--mui-palette-background-card, var(--mui-palette-background-paper))",
                           backdropFilter: "blur(14px)",
-                          border: "1px solid rgba(79, 70, 229, 0.14)",
-                          boxShadow:
-                            "0 4px 14px -4px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+                          border: "1px solid",
+                          borderColor: "divider",
+                          boxShadow: "0 4px 14px -4px rgba(0, 0, 0, 0.08)",
                           transition: "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
                           "&:hover": {
                             transform: "translateY(-1px)",
-                            borderColor: "rgba(79, 70, 229, 0.30)",
-                            boxShadow: "0 10px 22px -6px rgba(79, 70, 229, 0.10)",
+                            borderColor: "primary.main",
+                            boxShadow: "0 10px 22px -6px rgba(0, 0, 0, 0.16)",
                           },
                         }}
                       >
@@ -282,10 +281,11 @@ export const EditPermission = () => {
                           variant="subtitle2"
                           sx={{
                             fontWeight: 700,
-                            color: "#1E1B4B",
+                            color: "text.primary",
                             letterSpacing: "-0.01em",
                             pb: 0.5,
-                            borderBottom: "1px solid rgba(79, 70, 229, 0.10)",
+                            borderBottom: "1px solid",
+                            borderColor: "divider",
                           }}
                         >
                           {module.moduleName}

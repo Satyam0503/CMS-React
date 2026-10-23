@@ -59,10 +59,8 @@ const I18nProvider: FC<WithChildren> = ({ children }) => {
       })
   }, [currentLanguage])
 
-  if (messages === null) return null
-
   return (
-    <IntlProvider locale={currentLanguage} messages={messages} defaultLocale='en'>
+    <IntlProvider locale={currentLanguage} messages={messages ?? {}} defaultLocale='en'>
       {children}
     </IntlProvider>
   )

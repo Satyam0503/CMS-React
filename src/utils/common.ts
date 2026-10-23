@@ -489,22 +489,85 @@ export const filterSideBarTabs = (
   userModulePermission: string[],
   userRoleType: number
 ) => {
-  // Administrators should see all sidebar tabs regardless of modulePermission entries
-  if (userRoleType === Roles.Administrator) {
-    return SideBarTabList;
-  }
+  const isAdministrator = userRoleType === Roles.Administrator;
 
   const filteredTabList = SideBarTabList.map((tab) => {
     if (tab.isDefault) return tab;
-    if (tab.adminOnly) return null; // non-admins can't see admin-only
-    else if (tab.hasSubTabs) {
-      const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
-        hasModuleFeaturePermission(
+
+    if (tab.adminOnly) {
+      if (!isAdministrator) return null; // non-admins can't see admin-only
+      if (tab.hasSubTabs) {
+        const subTabsWithPermission = tab.subTabs?.filter((subTab) => {
+          // Core admin tools are always available to administrator
+          if (
+            subTab.constant === ModulesName.Permissions ||
+            subTab.constant === ModulesName.CompanyMaster ||
+            subTab.constant === ModulesName.CompanyDetails
+          ) {
+            return true;
+          }
+          // Feature settings require the corresponding feature module to be active
+          if (subTab.constant === ModulesName.Attendance) {
+            return userModulePermission.some((p) => p.startsWith(`${ModulesName.Attendance}.`));
+          }
+          if (subTab.constant === ModulesName.RecruitmentSettings) {
+            return userModulePermission.some(
+              (p) =>
+                p.startsWith("Jobs.") ||
+                p.startsWith("Applications.") ||
+                p.startsWith("Process_Log.")
+            );
+          }
+          return userModulePermission.some((p) => p.startsWith(`${subTab.constant}.`));
+        });
+
+        if (subTabsWithPermission && subTabsWithPermission.length > 0) {
+          return {
+            ...tab,
+            subTabs: subTabsWithPermission,
+          };
+        }
+        return null;
+      }
+      return tab;
+    }
+
+    // If an administrator disabled the entire payroll suite, do not render the payroll tab
+    if (
+      tab.constant === ModulesName.PayRoll &&
+      isAdministrator &&
+      !userModulePermission.some(
+        (p) =>
+          p.startsWith("PayRoll.") ||
+          p.startsWith("Leave_Management.") ||
+          p.startsWith("Attendance.") ||
+          p.startsWith("Payroll_Settings.")
+      )
+    ) {
+      return null;
+    }
+
+    if (tab.hasSubTabs) {
+      const subTabsWithPermission = tab.subTabs?.filter((subTab) => {
+        // Company-wide payroll console and payroll settings are strictly for HR and Administrators
+        if (
+          subTab.constant === ModulesName.PayRoll ||
+          subTab.constant === ModulesName.PayrollSettings
+        ) {
+          if (!canAccessHrManagement(userRoleType)) {
+            return false;
+          }
+        }
+        if (isAdministrator) {
+          return userModulePermission.some((p) => p.startsWith(`${subTab.constant}.`));
+        }
+        return hasModuleFeaturePermission(
           subTab.constant,
           subTab.permission ?? Permission.View,
           userModulePermission
-        )
-      );
+        );
+      });
+
       if (subTabsWithPermission && subTabsWithPermission.length > 0) {
         return {
           ...tab,
@@ -513,17 +576,29 @@ export const filterSideBarTabs = (
       }
       return null;
     }
-    if (
-      hasModuleFeaturePermission(
-        tab.constant,
-        tab.permission ?? Permission.View,
-        userModulePermission
-      )
-    ) {
+
+    const hasAccess = isAdministrator
+      ? userModulePermission.some((p) => p.startsWith(`${tab.constant}.`))
+      : hasModuleFeaturePermission(
+          tab.constant,
+          tab.permission ?? Permission.View,
+          userModulePermission
+        );
+
+    if (hasAccess) {
+      if (
+        tab.constant === ModulesName.PayRoll ||
+        tab.constant === ModulesName.PayrollSettings
+      ) {
+        if (!canAccessHrManagement(userRoleType)) {
+          return null;
+        }
+      }
       return tab;
     }
     return null;
   }).filter((tab) => tab !== null);
+
   return filteredTabList;
 };
 
@@ -536,29 +611,43 @@ export const getNotificationTitle = (
   intl: IntlShape
 ) => {
   const { formatMessage: i } = intl;
-  // WFH notifications carry a server-generated title but do not have a legacy
-  // translation entry, so use it instead of the generic fallback.
-  if (notification.title?.trim().startsWith("WFH")) return notification.title;
+  // WFH, withdrawn, or cancelled notifications carry a server-generated title
+  if (
+    notification.title?.trim().startsWith("WFH") ||
+    notification.title?.includes("Withdrawn") ||
+    notification.title?.includes("Cancelled")
+  ) {
+    return notification.title.trim();
+  }
   if (notification.targetId?.startsWith("employee-exit-")) {
     return notification.title?.trim() || "Offboarding action requires review";
   }
   switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE:
-      return i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });
+      return notification.title?.trim() || i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });
     case NOTIFICATION_TYPE.LEAVE_REQUEST:
-      return i(
-        { id: "NOTIFICATION.TITLES.LEAVE_REQUEST" },
-        { employeeName: notification.body }
+      return (
+        notification.title?.trim() ||
+        i(
+          { id: "NOTIFICATION.TITLES.LEAVE_REQUEST" },
+          { employeeName: notification.body }
+        )
       );
     case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
-      return i(
-        { id: "NOTIFICATION.TITLES.LEAVE_REQ_APPROVED" },
-        { employeeName: notification.body }
+      return (
+        notification.title?.trim() ||
+        i(
+          { id: "NOTIFICATION.TITLES.LEAVE_REQ_APPROVED" },
+          { employeeName: notification.body }
+        )
       );
     case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED:
-      return i(
-        { id: "NOTIFICATION.TITLES.LEAVE_REQ_REJECT" },
-        { employeeName: notification.body }
+      return (
+        notification.title?.trim() ||
+        i(
+          { id: "NOTIFICATION.TITLES.LEAVE_REQ_REJECT" },
+          { employeeName: notification.body }
+        )
       );
     case NOTIFICATION_TYPE.BIRTHDAY:
       return i(
@@ -570,8 +659,14 @@ export const getNotificationTitle = (
         { id: "NOTIFICATION.TITLES.TODAY_WORK_ANNIVERSARY" },
         { employeeName: notification.body }
       );
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST:
+      return notification.title?.trim() || "Work From Home Request";
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED:
+      return notification.title?.trim() || "Work From Home Approved";
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_REJECTED:
+      return notification.title?.trim() || "Work From Home Decision";
     default:
-      return i({ id: "NOTIFICATION.TITLES.FALLBACK" });
+      return notification.title?.trim() || i({ id: "NOTIFICATION.TITLES.FALLBACK" });
   }
 };
 
@@ -588,8 +683,21 @@ export const redirectUserToTargetUrl = (
     redirectOption.data = notification.targetId.substring("attendance-review-".length);
   } else if (notification.targetId?.startsWith("employee-exit-")) {
     redirectOption.targetPath = `/employees/${notification.targetId.substring("employee-exit-".length)}/about`;
-  } else if (notification.title?.startsWith("WFH")) {
+  } else if (notification.notificationTypes === NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST) {
     redirectOption.targetPath = "/leavemanagement/work-from-home";
+    redirectOption.data = notification.targetId;
+  } else if (
+    notification.notificationTypes === NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED ||
+    notification.notificationTypes === NOTIFICATION_TYPE.WORK_FROM_HOME_REJECTED
+  ) {
+    redirectOption.targetPath = "/profile/leave";
+    redirectOption.data = notification.targetId;
+  } else if (notification.title?.includes("Withdrawn")) {
+    redirectOption.targetPath = "/leavemanagement/leaverequest";
+    redirectOption.data = notification.targetId;
+  } else if (notification.title?.includes("Cancelled")) {
+    redirectOption.targetPath = "/profile/leave";
+    redirectOption.data = notification.targetId;
   } else switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE: {
       redirectOption.targetPath = "/noticeboard/notices";
