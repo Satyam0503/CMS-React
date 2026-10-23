@@ -1,5 +1,5 @@
 import { lazy, Suspense, ReactNode } from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useParams } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
@@ -32,6 +32,11 @@ const EmployeeLifecycleManagement = lazy(
 );
 const AttendanceStatusSettings = lazy(() => import("../modules/attendance/AttendanceStatusSettings.tsx"));
 const RecruitmentSettings = lazy(() => import("../modules/recruitment/RecruitmentSettings.tsx"));
+
+const EmployeeProfileRedirect = () => {
+  const { employeeid } = useParams();
+  return <Navigate to={employeeid ? `/employees/${employeeid}` : "/employees"} replace />;
+};
 
 const PrivateRoutes = () => {
   return (
@@ -98,6 +103,19 @@ const PrivateRoutes = () => {
               </SuspensedView>
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="employees/profile/:employeeid/*"
+          element={<EmployeeProfileRedirect />}
+        />
+        <Route
+          path="employees/profile/:employeeid"
+          element={<EmployeeProfileRedirect />}
+        />
+        <Route
+          path="employees/profile"
+          element={<Navigate to="/employees" replace />}
         />
 
         <Route

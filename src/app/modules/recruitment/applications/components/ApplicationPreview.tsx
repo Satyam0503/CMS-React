@@ -25,7 +25,6 @@ export const ApplicationPreview: FC<PropsType> = ({
   applicantData,
 }) => {
   const { formatMessage: i } = useIntl();
-  const experience = (applicantData.experience / 12).toFixed(1);
 
   return (
     <CustomisedModal open={open} handleClose={handleClose}

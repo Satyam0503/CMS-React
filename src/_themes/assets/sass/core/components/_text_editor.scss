@@ -1,85 +1,240 @@
 .text-editor {
   font-size: 14px;
+  border-radius: 12px;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
 
   & > .ql-toolbar {
-    border: 1px solid var(--mui-palette-grey-500);
-    border-radius: 0.25rem 0.25rem 0 0;
-    background-color: var(--mui-palette-grey-100);
+    border: 1px solid var(--mui-palette-divider, #E2E8F0);
+    border-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    background-color: #F8FAFC;
+    padding: 8px 12px;
+    font-family: inherit;
 
     .ql-picker,
     button {
+      border-radius: 6px;
+      transition: all 0.15s ease;
+
       .ql-fill,
       .ql-stroke {
-        stroke: var(--mui-palette-grey-700);
+        stroke: #475569;
       }
 
       .ql-fill {
-        fill: var(--mui-palette-grey-700);
+        fill: #475569;
       }
 
       &.ql-expanded,
       &.ql-active,
       &:focus,
       &:hover {
+        background-color: rgba(25, 118, 210, 0.08);
+
         .ql-fill,
         .ql-stroke {
-          stroke: var(--mui-palette-primary-main);
+          stroke: var(--mui-palette-primary-main, #1976D2);
         }
 
         .ql-fill {
-          fill: var(--mui-palette-primary-main);
+          fill: var(--mui-palette-primary-main, #1976D2);
+        }
+      }
+    }
+
+    .ql-picker-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .ql-picker-options {
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      border: 1px solid #E2E8F0;
+      background-color: #FFFFFF;
+      padding: 6px 0;
+    }
+  }
+
+  & > .ql-container {
+    border: 1px solid var(--mui-palette-divider, #E2E8F0);
+    border-radius: 0 0 12px 12px;
+    background-color: #FFFFFF;
+    font-family: inherit;
+    font-size: 14px;
+    flex: 1;
+
+    .ql-editor {
+      min-height: 200px;
+      padding: 14px 16px;
+      line-height: 1.65;
+      color: #0F172A;
+      font-family: inherit;
+
+      &.ql-blank::before {
+        font-size: 14px;
+        font-style: normal;
+        color: #94A3B8;
+        font-family: inherit;
+        left: 16px;
+      }
+
+      p {
+        margin-bottom: 0.75rem;
+      }
+
+      h2, h3, h4 {
+        font-weight: 700;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      ul, ol {
+        padding-left: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      blockquote {
+        border-left: 4px solid var(--mui-palette-primary-main, #1976D2);
+        padding-left: 12px;
+        color: #64748B;
+        margin: 0.75rem 0;
+      }
+    }
+  }
+
+  // Dark Mode Overrides
+  &.dark {
+    & > .ql-toolbar {
+      border-color: rgba(255, 255, 255, 0.12);
+      background-color: rgba(30, 41, 59, 0.75);
+
+      .ql-picker,
+      button {
+        .ql-fill,
+        .ql-stroke {
+          stroke: #CBD5E1;
+        }
+
+        .ql-fill {
+          fill: #CBD5E1;
+        }
+
+        &.ql-expanded,
+        &.ql-active,
+        &:focus,
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.08);
+
+          .ql-fill,
+          .ql-stroke {
+            stroke: #90CAF9;
+          }
+
+          .ql-fill {
+            fill: #90CAF9;
+          }
+        }
+      }
+
+      .ql-picker-label {
+        color: #E2E8F0;
+      }
+
+      .ql-picker-options {
+        background-color: #1E293B;
+        border-color: rgba(255, 255, 255, 0.12);
+        color: #E2E8F0;
+
+        .ql-picker-item {
+          color: #E2E8F0;
+
+          &:hover {
+            color: #90CAF9;
+            background-color: rgba(255, 255, 255, 0.06);
+          }
+        }
+      }
+    }
+
+    & > .ql-container {
+      border-color: rgba(255, 255, 255, 0.12);
+      background-color: rgba(15, 23, 42, 0.5);
+
+      .ql-editor {
+        color: #F1F5F9;
+
+        &.ql-blank::before {
+          color: #64748B;
+        }
+
+        blockquote {
+          border-left-color: #90CAF9;
+          color: #94A3B8;
         }
       }
     }
   }
-  & > .ql-container {
-    border: 1px solid var(--mui-palette-grey-500);
-    border-radius: 0 0 0.25rem 0.25rem;
 
-    & > .ql-editor.ql-blank::before {
-      font-size: 14px;
-      font-style: normal;
-      color: var(--mui-palette-grey-500);
+  // Focus and Active state
+  &:focus-within {
+    & > .ql-toolbar {
+      border-color: var(--mui-palette-primary-main, #1976D2);
+    }
+    & > .ql-container {
+      border-color: var(--mui-palette-primary-main, #1976D2);
+      box-shadow: 0 0 0 1px var(--mui-palette-primary-main, #1976D2);
+    }
+  }
+
+  .ql-tooltip {
+    border: 0;
+    padding: 0.5rem 1rem;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    left: 2% !important;
+    background-color: #FFFFFF;
+    color: #1E293B;
+
+    .dark & {
+      background-color: #1E293B;
+      color: #F1F5F9;
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    .ql-tooltip {
-      border: 0;
-      padding: 0.5rem 1rem;
-      box-shadow: 0px 0px 5px 0px var(--mui-palette-grey-400);
-      border-radius: 0.25rem;
-      left: 2% !important;
+    input[type="text"] {
+      border: 1px solid #CBD5E1;
+      color: #1E293B;
+      outline: none !important;
+      border-radius: 6px;
+      padding: 4px 8px;
 
-      input[type="text"] {
-        border: 1px solid var(--mui-palette-grey-400);
-        color: var(--mui-palette-grey-700);
-        outline: none !important;
-        border-radius: 0.25rem;
-
-        &:active,
-        &:focus {
-          border-color: var(--mui-palette-grey-900) !important;
-        }
+      &:active,
+      &:focus {
+        border-color: var(--mui-palette-primary-main, #1976D2) !important;
       }
+    }
 
-      .ql-preview {
-        color: var(--mui-palette-grey-700);
+    .ql-preview {
+      color: var(--mui-palette-primary-main, #1976D2);
+    }
+
+    .ql-action {
+      transition: color 0.2s ease;
+      color: var(--mui-palette-primary-main, #1976D2);
+      font-weight: 600;
+
+      &:hover {
+        opacity: 0.8;
       }
+    }
 
-      .ql-action {
-        transition: color 0.3s ease;
-        color: var(--mui-palette-primary-main);
-
-        &:hover {
-          transition: color 0.3s ease;
-          color: var(--mui-palette-primary-main);
-        }
-      }
-
-      // Tooltip adjustment in modal
-      .modal & {
-        &.ql-editing {
-          left: 20px !important;
-        }
+    .modal & {
+      &.ql-editing {
+        left: 20px !important;
       }
     }
   }

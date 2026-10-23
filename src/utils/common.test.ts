@@ -98,4 +98,57 @@ describe("Notification titles and navigation", () => {
       replace: true,
     });
   });
+  it("redirects WFH request notifications to leave management work from home queue", () => {
+    const navigate = vi.fn();
+    const notification: NotificationModel = {
+      userNotificationId: "unotif-wfh-1",
+      title: "WFH request submitted",
+      body: "Rahul Sharma (EMP001) - 26 Oct",
+      notificationTypes: NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST,
+      sentDateTime: "2026-10-23T06:00:00Z",
+      sentBy: "emp-1",
+      isRead: false,
+      targetId: "wfh-req-123",
+    };
+    redirectUserToTargetUrl(notification, navigate);
+    expect(navigate).toHaveBeenCalledWith("/leavemanagement/work-from-home", {
+      state: "wfh-req-123",
+      replace: true,
+    });
+  });
+
+  it("redirects WFH approved and rejected notifications to employee leave profile", () => {
+    const navigate = vi.fn();
+    const notification: NotificationModel = {
+      userNotificationId: "unotif-wfh-2",
+      title: "Your Work From Home request was approved.",
+      body: "WFH dates: 26 Oct 2026",
+      notificationTypes: NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED,
+      sentDateTime: "2026-10-23T06:00:00Z",
+      sentBy: "mgr-1",
+      isRead: false,
+      targetId: "wfh-req-123",
+    };
+    redirectUserToTargetUrl(notification, navigate);
+    expect(navigate).toHaveBeenCalledWith("/profile/leave", {
+      state: "wfh-req-123",
+      replace: true,
+    });
+  });
+
+  it("generates correct WFH notification titles", () => {
+    const notif: NotificationModel = {
+      userNotificationId: "unotif-wfh-3",
+      title: "",
+      body: "",
+      targetId: "",
+      notificationTypes: NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST,
+      sentDateTime: "2026-10-23T06:00:00Z",
+      sentBy: "mgr-1",
+      isRead: false,
+    };
+    expect(getNotificationTitle(notif, mockIntl)).toBe("Work From Home Request");
+    expect(getNotificationTitle({ ...notif, notificationTypes: NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED }, mockIntl)).toBe("Work From Home Approved");
+    expect(getNotificationTitle({ ...notif, notificationTypes: NOTIFICATION_TYPE.WORK_FROM_HOME_REJECTED }, mockIntl)).toBe("Work From Home Decision");
+  });
 });

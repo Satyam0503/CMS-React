@@ -165,6 +165,9 @@ export type LeavePolicyModel = {
     fullDayRequiredWorkingMinutes?: number | null;
     halfDayRequiredWorkingMinutes?: number | null;
     breakMinutes: number;
+    sameDayCutoffTime?: string | null;
+    sameDayGraceMinutes?: number | null;
+    allowLateApplicationWithApproval?: boolean;
   } | null;
   lifecycle?: {
     enabled: boolean;

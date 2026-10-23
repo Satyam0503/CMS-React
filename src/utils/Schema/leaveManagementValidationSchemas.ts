@@ -61,6 +61,9 @@ export const LeavePolicyValidationSchema = Yup.object().shape({
       fullDayRequiredWorkingMinutes: Yup.number().nullable().min(0),
       halfDayRequiredWorkingMinutes: Yup.number().nullable().min(0),
       breakMinutes: Yup.number().min(0).required(),
+      sameDayCutoffTime: Yup.string().nullable(),
+      sameDayGraceMinutes: Yup.number().nullable().min(0),
+      allowLateApplicationWithApproval: Yup.boolean().nullable(),
     }).required(),
     otherwise: () => Yup.mixed().nullable(),
   })

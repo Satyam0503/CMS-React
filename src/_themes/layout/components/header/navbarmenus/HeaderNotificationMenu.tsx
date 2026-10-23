@@ -11,7 +11,7 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-import { AccessTime, Cake, CalendarMonth, Celebration, NotificationsActive, ThumbDownAlt, ThumbUpAlt } from "@mui/icons-material";
+import { AccessTime, Cake, CalendarMonth, Celebration, HomeWork, NotificationsActive, ThumbDownAlt, ThumbUpAlt } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NotificationModel, NotificationRequestPayload } from "../../../../../app/modules/users/models";
@@ -37,6 +37,9 @@ export const NotificationIconMapper: {
   [NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED]: <ThumbDownAlt className="fs-32" />,
   [NOTIFICATION_TYPE.BIRTHDAY]: <Cake className="fs-36" />,
   [NOTIFICATION_TYPE.WORK_ANNIVERSARY]: <Celebration className="fs-36" />,
+  [NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST]: <HomeWork className="fs-32" />,
+  [NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED]: <HomeWork className="fs-32" />,
+  [NOTIFICATION_TYPE.WORK_FROM_HOME_REJECTED]: <HomeWork className="fs-32" />,
 };
 
 const renderNotificationIcon = (type: number) => {
@@ -51,6 +54,12 @@ const renderNotificationIcon = (type: number) => {
       return <Cake sx={{ fontSize: 19, color: "warning.main" }} />;
     case NOTIFICATION_TYPE.WORK_ANNIVERSARY:
       return <Celebration sx={{ fontSize: 19, color: "secondary.main" }} />;
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST:
+      return <HomeWork sx={{ fontSize: 19, color: "primary.main" }} />;
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED:
+      return <HomeWork sx={{ fontSize: 19, color: "success.main" }} />;
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_REJECTED:
+      return <HomeWork sx={{ fontSize: 19, color: "error.main" }} />;
     default:
       return <NotificationsActive sx={{ fontSize: 19, color: "primary.main" }} />;
   }
@@ -59,10 +68,13 @@ const renderNotificationIcon = (type: number) => {
 const getNotificationIconBg = (type: number) => {
   switch (type) {
     case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED:
       return "rgba(46, 125, 50, 0.12)";
     case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED:
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_REJECTED:
       return "rgba(211, 47, 47, 0.12)";
     case NOTIFICATION_TYPE.LEAVE_REQUEST:
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST:
       return "rgba(41, 142, 137, 0.12)";
     case NOTIFICATION_TYPE.BIRTHDAY:
       return "rgba(237, 108, 2, 0.12)";

@@ -659,6 +659,12 @@ export const getNotificationTitle = (
         { id: "NOTIFICATION.TITLES.TODAY_WORK_ANNIVERSARY" },
         { employeeName: notification.body }
       );
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST:
+      return notification.title?.trim() || "Work From Home Request";
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED:
+      return notification.title?.trim() || "Work From Home Approved";
+    case NOTIFICATION_TYPE.WORK_FROM_HOME_REJECTED:
+      return notification.title?.trim() || "Work From Home Decision";
     default:
       return notification.title?.trim() || i({ id: "NOTIFICATION.TITLES.FALLBACK" });
   }
@@ -677,8 +683,15 @@ export const redirectUserToTargetUrl = (
     redirectOption.data = notification.targetId.substring("attendance-review-".length);
   } else if (notification.targetId?.startsWith("employee-exit-")) {
     redirectOption.targetPath = `/employees/${notification.targetId.substring("employee-exit-".length)}/about`;
-  } else if (notification.title?.startsWith("WFH")) {
+  } else if (notification.notificationTypes === NOTIFICATION_TYPE.WORK_FROM_HOME_REQUEST) {
     redirectOption.targetPath = "/leavemanagement/work-from-home";
+    redirectOption.data = notification.targetId;
+  } else if (
+    notification.notificationTypes === NOTIFICATION_TYPE.WORK_FROM_HOME_APPROVED ||
+    notification.notificationTypes === NOTIFICATION_TYPE.WORK_FROM_HOME_REJECTED
+  ) {
+    redirectOption.targetPath = "/profile/leave";
+    redirectOption.data = notification.targetId;
   } else if (notification.title?.includes("Withdrawn")) {
     redirectOption.targetPath = "/leavemanagement/leaverequest";
     redirectOption.data = notification.targetId;

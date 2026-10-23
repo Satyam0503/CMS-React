@@ -21,6 +21,7 @@ vi.mock("@mui/icons-material", () => ({
   ThumbDownAlt: (props: any) => <span data-testid="icon-thumb-down" {...props} />,
   Cake: (props: any) => <span data-testid="icon-cake" {...props} />,
   Celebration: (props: any) => <span data-testid="icon-celebration" {...props} />,
+  HomeWork: (props: any) => <span data-testid="icon-homework" {...props} />,
   AccessTime: (props: any) => <span data-testid="icon-access-time" {...props} />,
 }));
 

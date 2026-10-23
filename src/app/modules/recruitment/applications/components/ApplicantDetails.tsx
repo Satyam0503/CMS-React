@@ -309,7 +309,20 @@ export const ApplicantDetails = () => {
               tooltip={formatMessage({ id: "TOOLTIP.VIEW_CV" })}
               handleClick={() => setCVPreviewMode(!CvPreviewMode)}
             />
-            {canEditApplicant && <CustomisedButton label="Next step" handleClick={() => setLifecycleOpen(true)} fullWidth={false} sx={{ minHeight: 40, minWidth: { xs: 110, sm: 104 }, px: { xs: 1.5, sm: 2 }, flex: "0 0 auto" }} />}
+            {canEditApplicant && (
+              <CustomisedButton
+                label={
+                  applicant.activityType === ApplicationStatus.Rejected
+                    ? "View Workflow"
+                    : applicant.isHired
+                    ? "View Details"
+                    : "Manage Stage"
+                }
+                handleClick={() => setLifecycleOpen(true)}
+                fullWidth={false}
+                sx={{ minHeight: 40, minWidth: { xs: 110, sm: 104 }, px: { xs: 1.5, sm: 2 }, flex: "0 0 auto" }}
+              />
+            )}
             {
               canEditApplicant &&
               <CustomIconButton
@@ -358,7 +371,14 @@ export const ApplicantDetails = () => {
                     variant="contained"
                     color="success"
                     size="small"
-                    onClick={() => navigate(`/employees/profile/${applicant.employeeUserId}`)}
+                    onClick={() => {
+                      const targetId = applicant.employeeUserId || applicant.employeeId;
+                      if (targetId) {
+                        navigate(`/employees/${targetId}`);
+                      } else {
+                        navigate("/employees");
+                      }
+                    }}
                     sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2, px: 2, py: 0.75 }}
                   >
                     View Employee Profile →
@@ -616,9 +636,16 @@ export const ApplicantDetails = () => {
                       <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
                         <Chip
                           size="small"
-                          variant="outlined"
-                          label="Pending Evaluation"
-                          sx={{ fontWeight: 700, fontSize: "0.75rem", height: 26, borderColor: "divider", color: "text.secondary" }}
+                          variant={applicant.activityType === ApplicationStatus.Rejected ? "filled" : "outlined"}
+                          label={applicant.activityType === ApplicationStatus.Rejected ? "Concluded / Closed" : "Pending Evaluation"}
+                          color={applicant.activityType === ApplicationStatus.Rejected ? "error" : "default"}
+                          sx={{
+                            fontWeight: 750,
+                            fontSize: "0.75rem",
+                            height: 26,
+                            borderColor: applicant.activityType === ApplicationStatus.Rejected ? "transparent" : "divider",
+                            color: applicant.activityType === ApplicationStatus.Rejected ? "#fff" : "text.secondary",
+                          }}
                         />
                         {canEditApplicant && (
                           <Button
@@ -627,12 +654,14 @@ export const ApplicantDetails = () => {
                             onClick={() => setLifecycleOpen(true)}
                             sx={{ textTransform: "none", fontSize: "0.75rem", py: 0.25, px: 1, minHeight: 26, borderRadius: 1.5 }}
                           >
-                            Evaluate →
+                            {applicant.activityType === ApplicationStatus.Rejected ? "View →" : "Evaluate →"}
                           </Button>
                         )}
                       </Stack>
                       <Typography variant="caption" color="text.secondary">
-                        {applicant.activityType === ApplicationStatus.New
+                        {applicant.activityType === ApplicationStatus.Rejected
+                          ? "Application was concluded. Active technical evaluations closed."
+                          : applicant.activityType === ApplicationStatus.New
                           ? "Awaiting interview scheduling & panel scorecards."
                           : applicant.activityType === ApplicationStatus.Shortlisted
                           ? "Interviews in progress • scorecards pending."

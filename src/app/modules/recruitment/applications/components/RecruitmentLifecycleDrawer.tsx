@@ -42,6 +42,9 @@ import {
   Visibility,
   MoreVert,
   CheckCircleOutline,
+  CancelOutlined,
+  InfoOutlined,
+  LightbulbOutlined,
   Add,
   ArrowForward,
   ContentCopy,
@@ -55,6 +58,7 @@ import {
   DocumentScannerOutlined,
   Send,
   PersonAdd,
+  EmailOutlined,
 } from "@mui/icons-material";
 import clsx from "clsx";
 import {
@@ -152,7 +156,47 @@ const getApiMessage = (response: { data?: { message?: string; errorCode?: string
 
 export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }: Props) => {
   const navigate = useNavigate();
-  const reviewerUserId = useAppSelector((state) => state.user.userData?.userId) ?? "";
+  const currentUser = useAppSelector((state) => state.user.userData);
+  const reviewerUserId = currentUser?.userId ?? "";
+  const reviewerDisplayName =
+    currentUser?.fullName ||
+    (currentUser?.firstName ? `${currentUser.firstName} ${currentUser.lastName}`.trim() : "") ||
+    currentUser?.companyName ||
+    "Current User";
+
+  const quickDispositionPresets = [
+    {
+      label: "Candidate No-Show",
+      decision: "Reject" as const,
+      notes: "Candidate did not appear for scheduled interview (No-show) and did not respond to follow-up communications.",
+      color: "error" as const,
+    },
+    {
+      label: "Candidate Withdrew",
+      decision: "Reject" as const,
+      notes: "Candidate informed the hiring team that they have accepted another opportunity / withdrawn their application.",
+      color: "warning" as const,
+    },
+    {
+      label: "Did Not Meet Technical Bar",
+      decision: "Reject" as const,
+      notes: "Candidate did not meet required technical competencies for this role following technical assessment/interview.",
+      color: "error" as const,
+    },
+    {
+      label: "Hold for Comparison",
+      decision: "Hold" as const,
+      notes: "Strong profile, but placing on hold while evaluating remaining candidates in the panel pool.",
+      color: "warning" as const,
+    },
+    {
+      label: "Recommend for Hire",
+      decision: "Approve" as const,
+      notes: "Candidate successfully demonstrated required competencies across all criteria. Recommended for employment offer.",
+      color: "success" as const,
+    },
+  ];
+
   const [mode, setMode] = useState<Mode>("offer");
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<Feedback>();
@@ -242,6 +286,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
     startsAtUtc: "",
     endsAtUtc: "",
     location: "",
+    meetingUrl: "",
     panelistUserIds: "",
   });
 
@@ -261,8 +306,6 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
     status: "Draft" as RecruitmentOfferCommand["status"],
   });
 
-  const [candidateOfferLink, setCandidateOfferLink] = useState("");
-  const [copiedLink, setCopiedLink] = useState(false);
   const [isAllowancesOpen, setIsAllowancesOpen] = useState(false);
   const [isRevisionMode, setIsRevisionMode] = useState(false);
   const [offerVersions, setOfferVersions] = useState<RecruitmentOfferVersion[]>([]);
@@ -285,7 +328,12 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
     recommendation: "Strong Hire",
     debriefDecision: "Advance" as RecruitmentInterviewDebriefCommand["decision"],
     status: "Submitted" as RecruitmentScorecardCommand["status"],
-    criteria: [{ name: "Technical Competence", rating: 4, notes: "" }],
+    criteria: [
+      { name: "Technical Competence", rating: 4, notes: "" },
+      { name: "Problem Solving & Analytical Ability", rating: 4, notes: "" },
+      { name: "Communication & Collaboration", rating: 4, notes: "" },
+      { name: "Culture Add & Values Alignment", rating: 4, notes: "" },
+    ],
   });
 
   const [decision, setDecision] = useState({
@@ -424,41 +472,13 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
     }
   };
 
-  // Helper to retrieve/issue candidate link
-  const issueCandidateOfferLink = async (offerId: string) => {
-    if (!offerId || !applicant.applicantId || !applicant.email) return;
-    try {
-      const res = await issueRecruitmentExternalAction({
-        actionType: "OfferResponse",
-        applicantId: applicant.applicantId,
-        vacancyId: applicant.vacancyId,
-        offerId,
-        recipientEmail: applicant.email,
-        expiresInMinutes: 24 * 60,
-        issuanceKey: `offer-link-${offerId}-${applicant.applicantId}`,
-      });
-      if (res.data?.success && res.data.methodResult?.rawToken) {
-        setCandidateOfferLink(`${window.location.origin}/candidate/offer?token=${encodeURIComponent(res.data.methodResult.rawToken)}`);
-      }
-    } catch {
-      // ignore
-    }
-  };
-
-  const handleCopyOfferLink = () => {
-    if (candidateOfferLink) {
-      void navigator.clipboard.writeText(candidateOfferLink);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2500);
-    }
-  };
-
   useEffect(() => {
     if (!open) return;
     if (applicant.isHired) setMode("handoff");
     else if (stage === ApplicationStatus.New || stage === ApplicationStatus.InProgress) setMode("screening");
     else if (stage === ApplicationStatus.Shortlisted || stage === ApplicationStatus.OnHold) setMode("interview");
     else if (stage === ApplicationStatus.Selected) setMode("offer");
+    else if (stage === ApplicationStatus.Rejected) setMode("interview");
 
     void getAllDepartments(true)
       .then(({ data }) => setDepartments(((data as any).methodResults ?? (data as any).methodResult ?? []) as DepartmentModel[]))
@@ -482,7 +502,8 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
               roundType: latest.roundType ?? current.roundType,
               startsAtUtc: latest.startsAtUtc ? dayjs(latest.startsAtUtc).format("YYYY-MM-DDTHH:mm") : current.startsAtUtc,
               endsAtUtc: latest.endsAtUtc ? dayjs(latest.endsAtUtc).format("YYYY-MM-DDTHH:mm") : current.endsAtUtc,
-              location: latest.meetingUrl || latest.location || current.location,
+              location: latest.location || current.location,
+              meetingUrl: latest.meetingUrl || current.meetingUrl,
               panelistUserIds: (latest.panelistUserIds ?? []).join(", "),
             }));
             setScorecard((current) => ({
@@ -532,9 +553,6 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
           }));
           if (loadedOfferId) {
             void loadOfferVersionsAndCounters(loadedOfferId);
-            if (loadedOffer.status === "Sent" || loadedOffer.status === "Approved") {
-              void issueCandidateOfferLink(loadedOfferId);
-            }
           }
         }
       }).catch(() => undefined);
@@ -697,8 +715,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
       const returnedOfferId = (offerResponse.data as any).methodResult || offer.offerId;
       setOffer((prev) => ({ ...prev, offerId: returnedOfferId, status: targetStatus }));
       if (targetStatus === "Sent") {
-        await issueCandidateOfferLink(returnedOfferId);
-        setFeedback({ severity: "success", text: "Offer sent to candidate! Link generated below." });
+        setFeedback({ severity: "success", text: "Formal offer letter dispatched directly to candidate via email." });
       } else {
         setFeedback({ severity: "success", text: "Offer saved as Draft." });
       }
@@ -883,21 +900,25 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
               startsAtUtc: new Date(interview.startsAtUtc).toISOString(),
               endsAtUtc: new Date(interview.endsAtUtc).toISOString(),
               location: interview.location.trim() || null,
+              meetingUrl: interview.meetingUrl.trim() || null,
               panelistUserIds: interview.panelistUserIds.split(",").map((id) => id.trim()).filter(Boolean),
               idempotencyKey: createIdempotencyKey(),
               status: "Scheduled",
             } as RecruitmentInterviewCommand)
           );
-          successMessage = "Interview round scheduled and calendar invitations dispatched.";
+          successMessage = "Interview round scheduled. Video meeting link & candidate briefing dispatched to panelists.";
           setInterviewSubTab(1);
         } else {
           // Submit decision and scorecard
+          if ((decision.decision === "Reject" || decision.decision === "Hold") && !decision.notes.trim()) {
+            throw new Error(`A reason / note is required when marking an application as ${decision.decision}.`);
+          }
           saveResponse(
             await upsertRecruitmentHiringDecision({
               applicantId: applicant.applicantId,
               vacancyId: applicant.vacancyId,
               decision: decision.decision,
-              notes: decision.notes.trim() || "Approved by hiring team",
+              notes: decision.notes.trim() || (decision.decision === "Approve" ? "Approved by hiring team" : "Decision recorded"),
               idempotencyKey: createIdempotencyKey(),
             })
           );
@@ -1025,11 +1046,25 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
 
   const quorumNeeded = Math.max(1, Math.floor((selectedInterviewerIds.length + 1) / 2));
 
-  // Screening threshold logic: vacancy-specific threshold takes first priority, then company config, default 60
-  const isJobSpecificThreshold = Boolean(vacancyData?.screeningPassScore && vacancyData.screeningPassScore > 0);
+  // Screening threshold logic: active when role specifies or non-Simple company has active auto-pass gate
+  const isJobSpecificThreshold = Boolean(
+    vacancyData?.screeningPassScore &&
+    vacancyData.screeningPassScore > 0 &&
+    vacancyData?.workflowMode !== "Direct"
+  );
+  const isCompanyThresholdActive = Boolean(
+    enterpriseConfig &&
+    enterpriseConfig.recruitmentMode !== "Simple" &&
+    enterpriseConfig.autoAdvanceOnScreening &&
+    (enterpriseConfig.screeningPassScore ?? 0) > 0 &&
+    vacancyData?.workflowMode !== "Direct"
+  );
+  const isScreeningThresholdActive = isJobSpecificThreshold || isCompanyThresholdActive;
   const passThreshold = isJobSpecificThreshold
     ? vacancyData!.screeningPassScore!
-    : (enterpriseConfig?.screeningPassScore ?? 60);
+    : isCompanyThresholdActive
+    ? (enterpriseConfig?.screeningPassScore ?? 60)
+    : 0;
 
   const finalInterviewEvaluation = useMemo(() => {
     if (authoritativeScore && authoritativeScore.totalScorecardsCount > 0) {
@@ -1120,7 +1155,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
       ? calculatedCriteriaScore
       : (Number(screening.score) || 0);
 
-  const meetsScreeningThreshold = currentScreeningScore >= passThreshold;
+  const meetsScreeningThreshold = !isScreeningThresholdActive || currentScreeningScore >= passThreshold;
 
   const fieldSx = { "& .MuiOutlinedInput-root": { borderRadius: 2, bgcolor: "background.paper" } };
   const initials = ((applicant.firstName?.[0] ?? "") + (applicant.lastName?.[0] ?? "")).toUpperCase() || "CA";
@@ -1362,8 +1397,16 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                     <Chip
                       size="small"
                       label={"Current Stage: " + (ApplicationStatus[stage] ?? "New")}
-                      color="primary"
-                      variant="outlined"
+                      color={
+                        stage === ApplicationStatus.Rejected
+                          ? "error"
+                          : stage === ApplicationStatus.Selected
+                          ? "success"
+                          : stage === ApplicationStatus.Shortlisted || stage === ApplicationStatus.OnHold
+                          ? "warning"
+                          : "primary"
+                      }
+                      variant="filled"
                       sx={{ fontWeight: 800 }}
                     />
                     <Chip
@@ -1385,74 +1428,163 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
               {/* Form Content Area */}
               <Box sx={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", overflowX: "hidden", pr: { xs: 0.25, sm: 0.75 } }}>
                 <Stack spacing={2} sx={{ minWidth: 0 }}>
+                  {/* Concluded / Terminal State Banner */}
+                  {stage === ApplicationStatus.Rejected && (
+                    <Box
+                      sx={{
+                        p: 2.25,
+                        borderRadius: 2.5,
+                        border: "1.5px solid",
+                        borderColor: "error.main",
+                        bgcolor: alpha("#ef4444", 0.06),
+                        boxShadow: "0 4px 16px rgba(239, 68, 68, 0.08)",
+                      }}
+                    >
+                      <Stack direction="row" spacing={1.5} alignItems="flex-start">
+                        <CancelOutlined sx={{ color: "error.main", fontSize: 28, mt: 0.25, flexShrink: 0 }} />
+                        <Box sx={{ flex: 1 }}>
+                          <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={1}>
+                            <Typography variant="subtitle2" fontWeight={850} color="error.dark">
+                              Application Concluded — Rejected
+                            </Typography>
+                            <Chip size="small" label="Application Closed" color="error" sx={{ fontWeight: 800 }} />
+                          </Stack>
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, fontSize: "0.82rem" }}>
+                            This candidate was marked as <strong>Rejected</strong>. Active interview scheduling, scorecard submissions, and offer letters are locked. Past scorecards, interview history, and notes remain preserved below for audit and compliance.
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </Box>
+                  )}
                   {/* STEP 1: SCREENING */}
                   {mode === "screening" && (
                     <Stack spacing={2}>
                       {/* Pass Score Threshold & Policy Banner */}
-                      <Box
-                        sx={{
-                          p: 2,
-                          borderRadius: 2.5,
-                          border: "1px solid",
-                          borderColor: meetsScreeningThreshold ? "success.main" : "warning.main",
-                          bgcolor: meetsScreeningThreshold ? "success.lighter" : "warning.lighter",
-                        }}
-                      >
-                        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1}>
-                          <Box>
-                            <Typography variant="subtitle2" fontWeight={800} color={meetsScreeningThreshold ? "success.dark" : "warning.dark"}>
-                              Screening Evaluation Policy
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              Pass Threshold: <strong>≥ {passThreshold}%</strong>{" "}
-                              <Chip
-                                size="small"
-                                variant="outlined"
-                                color={isJobSpecificThreshold ? "primary" : "default"}
-                                label={isJobSpecificThreshold ? `From Job Description (${vacancyData?.title || "Role"})` : "Company Default"}
-                                sx={{ height: 20, fontSize: "0.68rem", ml: 0.5, fontWeight: 700 }}
-                              />
-                              {" "}| Current Score: <strong>{currentScreeningScore}%</strong>
-                            </Typography>
-                          </Box>
-                          <Chip
-                            size="small"
-                            label={meetsScreeningThreshold ? `Meets Threshold (≥ ${passThreshold}%)` : `Below Threshold (< ${passThreshold}%)`}
-                            color={meetsScreeningThreshold ? "success" : "warning"}
-                            sx={{ fontWeight: 800 }}
-                          />
-                        </Stack>
-
-                        <Box sx={{ mt: 1.5 }}>
-                          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
-                            <Typography variant="caption" color="text.secondary">
-                              Evaluation Score Meter
-                            </Typography>
-                            <Typography variant="caption" fontWeight={700} color={meetsScreeningThreshold ? "success.dark" : "warning.dark"}>
-                              {currentScreeningScore} / 100
-                            </Typography>
-                          </Stack>
-                          <LinearProgress
-                            variant="determinate"
-                            value={Math.min(100, Math.max(0, currentScreeningScore))}
-                            color={meetsScreeningThreshold ? "success" : "warning"}
-                            sx={{ height: 8, borderRadius: 4 }}
-                          />
-                        </Box>
-
-                        {screening.criteria.length > 0 && (
-                          <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1 }}>
-                            <Button
+                      {isScreeningThresholdActive ? (
+                        <Box
+                          sx={{
+                            p: 2,
+                            borderRadius: 2.5,
+                            border: "1px solid",
+                            borderColor: meetsScreeningThreshold ? "success.main" : "warning.main",
+                            bgcolor: meetsScreeningThreshold ? "success.lighter" : "warning.lighter",
+                          }}
+                        >
+                          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1}>
+                            <Box>
+                              <Typography variant="subtitle2" fontWeight={800} color={meetsScreeningThreshold ? "success.dark" : "warning.dark"}>
+                                Screening Evaluation Policy
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Pass Threshold: <strong>≥ {passThreshold}%</strong>{" "}
+                                <Chip
+                                  size="small"
+                                  variant="outlined"
+                                  color={isJobSpecificThreshold ? "primary" : "default"}
+                                  label={isJobSpecificThreshold ? `From Job Description (${vacancyData?.title || "Role"})` : "Company Auto-Advance Policy"}
+                                  sx={{ height: 20, fontSize: "0.68rem", ml: 0.5, fontWeight: 700 }}
+                                />
+                                {" "}| Current Score: <strong>{currentScreeningScore}%</strong>
+                              </Typography>
+                            </Box>
+                            <Chip
                               size="small"
-                              variant="text"
-                              onClick={() => setScreening((curr) => ({ ...curr, score: calculatedCriteriaScore }))}
-                              sx={{ textTransform: "none", fontSize: "0.75rem", fontWeight: 700 }}
-                            >
-                              Sync score from criteria ({passedCriteriaCount}/{screening.criteria.length} passed = {calculatedCriteriaScore}%)
-                            </Button>
+                              label={meetsScreeningThreshold ? `Meets Threshold (≥ ${passThreshold}%)` : `Below Threshold (< ${passThreshold}%)`}
+                              color={meetsScreeningThreshold ? "success" : "warning"}
+                              sx={{ fontWeight: 800 }}
+                            />
                           </Stack>
-                        )}
-                      </Box>
+
+                          <Box sx={{ mt: 1.5 }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                              <Typography variant="caption" color="text.secondary">
+                                Evaluation Score Meter
+                              </Typography>
+                              <Typography variant="caption" fontWeight={700} color={meetsScreeningThreshold ? "success.dark" : "warning.dark"}>
+                                {currentScreeningScore} / 100
+                              </Typography>
+                            </Stack>
+                            <LinearProgress
+                              variant="determinate"
+                              value={Math.min(100, Math.max(0, currentScreeningScore))}
+                              color={meetsScreeningThreshold ? "success" : "warning"}
+                              sx={{ height: 8, borderRadius: 4 }}
+                            />
+                          </Box>
+
+                          {screening.criteria.length > 0 && (
+                            <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1 }}>
+                              <Button
+                                size="small"
+                                variant="text"
+                                onClick={() => setScreening((curr) => ({ ...curr, score: calculatedCriteriaScore }))}
+                                sx={{ textTransform: "none", fontSize: "0.75rem", fontWeight: 700 }}
+                              >
+                                Sync score from criteria ({passedCriteriaCount}/{screening.criteria.length} passed = {calculatedCriteriaScore}%)
+                              </Button>
+                            </Stack>
+                          )}
+                        </Box>
+                      ) : (
+                        <Box
+                          sx={{
+                            p: 2,
+                            borderRadius: 2.5,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            bgcolor: "background.paper",
+                          }}
+                        >
+                          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1}>
+                            <Box>
+                              <Typography variant="subtitle2" fontWeight={800} color="text.primary">
+                                Screening Evaluation (Flexible Review)
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {vacancyData?.workflowMode === "Direct"
+                                  ? "Fast-track / direct hire workflow active — no minimum screening score cutoff required."
+                                  : "Flexible review policy — no mandatory threshold cutoff enforced for this position."}
+                              </Typography>
+                            </Box>
+                            <Chip
+                              size="small"
+                              label={vacancyData?.workflowMode === "Direct" ? "Direct Hire" : "Flexible Review"}
+                              color="default"
+                              variant="outlined"
+                              sx={{ fontWeight: 700 }}
+                            />
+                          </Stack>
+
+                          {screening.criteria.length > 0 && (
+                            <Box sx={{ mt: 1.5 }}>
+                              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                                <Typography variant="caption" color="text.secondary">
+                                  Evaluation Score Meter
+                                </Typography>
+                                <Typography variant="caption" fontWeight={700} color="text.primary">
+                                  {currentScreeningScore} / 100
+                                </Typography>
+                              </Stack>
+                              <LinearProgress
+                                variant="determinate"
+                                value={Math.min(100, Math.max(0, currentScreeningScore))}
+                                color="primary"
+                                sx={{ height: 8, borderRadius: 4 }}
+                              />
+                              <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1 }}>
+                                <Button
+                                  size="small"
+                                  variant="text"
+                                  onClick={() => setScreening((curr) => ({ ...curr, score: calculatedCriteriaScore }))}
+                                  sx={{ textTransform: "none", fontSize: "0.75rem", fontWeight: 700 }}
+                                >
+                                  Sync score from criteria ({passedCriteriaCount}/{screening.criteria.length} passed = {calculatedCriteriaScore}%)
+                                </Button>
+                              </Stack>
+                            </Box>
+                          )}
+                        </Box>
+                      )}
 
                       {/* Score Input & Outcome */}
                       <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
@@ -1463,7 +1595,11 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                           value={screening.score > 0 ? screening.score : (currentScreeningScore > 0 ? currentScreeningScore : 0)}
                           onChange={(event) => setScreening({ ...screening, score: Number(event.target.value) })}
                           inputProps={{ min: 0, max: 100, step: 1 }}
-                          helperText={`Pass requires ≥ ${passThreshold}% (${isJobSpecificThreshold ? "Job-specific threshold" : "Company default"})`}
+                          helperText={
+                            isScreeningThresholdActive
+                              ? `Pass requires ≥ ${passThreshold}% (${isJobSpecificThreshold ? "Job-specific threshold" : "Company auto-advance policy"})`
+                              : "Evaluation score (0–100). No mandatory pass threshold enforced."
+                          }
                         />
                         <AppTextField
                           sx={{ ...fieldSx, flex: 1 }}
@@ -1482,7 +1618,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                       </Stack>
 
                       {/* Threshold warning alert if Pass is selected but score is insufficient */}
-                      {screening.decision === "Pass" && !meetsScreeningThreshold && (
+                      {isScreeningThresholdActive && screening.decision === "Pass" && !meetsScreeningThreshold && (
                         <Alert severity="warning" sx={{ borderRadius: 2 }}>
                           <strong>Score below pass threshold:</strong> Evaluation policy requires a score of at least <strong>{passThreshold}%</strong> ({isJobSpecificThreshold ? "configured in the Job Description" : "company enterprise default"}) to mark an applicant as <strong>Pass</strong>. Please increase the score or select <strong>Hold</strong> / <strong>Reject</strong>.
                         </Alert>
@@ -1646,7 +1782,16 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
 
                           <AppTextField
                             sx={fieldSx}
-                            label="Location / Video Meeting URL"
+                            label="Video Meeting URL (Google Meet / Zoom / MS Teams)"
+                            placeholder="e.g. https://meet.google.com/abc-defg-hij"
+                            value={interview.meetingUrl}
+                            onChange={(event) => setInterview({ ...interview, meetingUrl: event.target.value })}
+                          />
+
+                          <AppTextField
+                            sx={fieldSx}
+                            label="Physical Location / Office (Optional for in-person)"
+                            placeholder="e.g. Conference Room 3B, HQ"
                             value={interview.location}
                             onChange={(event) => setInterview({ ...interview, location: event.target.value })}
                           />
@@ -1821,6 +1966,151 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                             </Box>
                           )}
 
+                          {/* Committee Consensus & Stage Disposition Gate (Prominent & Accessible) */}
+                          {stage !== ApplicationStatus.Rejected && (
+                            <Box
+                              sx={{
+                                p: 2.5,
+                                borderRadius: 2.5,
+                                bgcolor:
+                                  decision.decision === "Reject"
+                                    ? alpha("#ef4444", 0.05)
+                                    : decision.decision === "Hold"
+                                    ? alpha("#f59e0b", 0.05)
+                                    : alpha("#3b82f6", 0.05),
+                                border: "1.5px solid",
+                                borderColor:
+                                  decision.decision === "Reject"
+                                    ? "error.main"
+                                    : decision.decision === "Hold"
+                                    ? "warning.main"
+                                    : "primary.main",
+                                boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+                              }}
+                            >
+                              <Stack direction="row" justifyContent="space-between" alignItems="flex-start" flexWrap="wrap" gap={1}>
+                                <Box>
+                                  <Typography
+                                    variant="subtitle2"
+                                    fontWeight={850}
+                                    color={
+                                      decision.decision === "Reject"
+                                        ? "error.dark"
+                                        : decision.decision === "Hold"
+                                        ? "warning.dark"
+                                        : "primary.dark"
+                                    }
+                                  >
+                                    Hiring Committee Consensus & Stage Disposition
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    {decision.decision === "Approve"
+                                      ? "Approving candidate advances application to Selected and unlocks Step 3 (Offer Generation)."
+                                      : decision.decision === "Hold"
+                                      ? "Placing candidate on hold preserves interview history while reviewing remaining candidates."
+                                      : "Rejecting candidate immediately concludes the hiring process and records disposition reason."}
+                                  </Typography>
+                                </Box>
+                                <Chip
+                                  size="small"
+                                  label={`Action: ${decision.decision === "Approve" ? "Advance to Offer" : decision.decision === "Hold" ? "Place on Hold" : "Reject Application"}`}
+                                  color={
+                                    decision.decision === "Reject"
+                                      ? "error"
+                                      : decision.decision === "Hold"
+                                      ? "warning"
+                                      : "primary"
+                                  }
+                                  sx={{ fontWeight: 800 }}
+                                />
+                              </Stack>
+
+                              {/* Quick Preset Reason Chips */}
+                              <Box sx={{ mt: 1.5, p: 1.25, borderRadius: 2, bgcolor: "background.paper", border: 1, borderColor: "divider" }}>
+                                <Typography variant="caption" fontWeight={750} color="text.secondary" sx={{ display: "block", mb: 0.75 }}>
+                                  ⚡ 1-Click Preset Reasons:
+                                </Typography>
+                                <Stack direction="row" spacing={0.75} flexWrap="wrap" gap={0.75}>
+                                  {quickDispositionPresets.map((preset) => (
+                                    <Chip
+                                      key={preset.label}
+                                      size="small"
+                                      label={preset.label}
+                                      color={preset.color}
+                                      variant={decision.decision === preset.decision && decision.notes === preset.notes ? "filled" : "outlined"}
+                                      onClick={() => setDecision({ decision: preset.decision, notes: preset.notes })}
+                                      sx={{
+                                        fontWeight: 700,
+                                        fontSize: "0.72rem",
+                                        cursor: "pointer",
+                                        transition: "all 0.15s ease-in-out",
+                                        "&:hover": { transform: "translateY(-1px)" },
+                                      }}
+                                    />
+                                  ))}
+                                </Stack>
+                              </Box>
+
+                              <AppTextField
+                                sx={{ ...fieldSx, mt: 1.5 }}
+                                select
+                                label="Hiring Committee Decision *"
+                                value={decision.decision}
+                                onChange={(e) => setDecision({ ...decision, decision: e.target.value as any })}
+                              >
+                                <MenuItem value="Approve">Approve (Advance to Offer)</MenuItem>
+                                <MenuItem value="Hold">Hold for Comparison</MenuItem>
+                                <MenuItem value="Reject">Reject Application</MenuItem>
+                              </AppTextField>
+
+                              <AppTextField
+                                sx={{ ...fieldSx, mt: 1.5 }}
+                                multiline
+                                minRows={2}
+                                label={decision.decision === "Approve" ? "Hiring Committee Notes" : "Hiring Committee Notes / Reason *"}
+                                placeholder={
+                                  decision.decision === "Reject"
+                                    ? "Reason for rejection (e.g., candidate no-show, unresponsive, failed technical evaluation)..."
+                                    : decision.decision === "Hold"
+                                    ? "Reason for hold (e.g., evaluating other panel candidates, awaiting debrief)..."
+                                    : "Summary of committee consensus, strengths, and conditions for hire..."
+                                }
+                                value={decision.notes}
+                                onChange={(e) => setDecision({ ...decision, notes: e.target.value })}
+                                helperText={
+                                  decision.decision === "Reject"
+                                    ? "💡 Tip: Click 'Candidate No-Show' above to auto-fill this field if the candidate did not attend."
+                                    : undefined
+                                }
+                              />
+
+                              <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1.5 }}>
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  color={
+                                    decision.decision === "Reject"
+                                      ? "error"
+                                      : decision.decision === "Hold"
+                                      ? "warning"
+                                      : "primary"
+                                  }
+                                  onClick={submit}
+                                  disabled={busy || ((decision.decision === "Reject" || decision.decision === "Hold") && !decision.notes.trim())}
+                                  sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2, px: 2.5 }}
+                                >
+                                  {busy
+                                    ? "Saving..."
+                                    : decision.decision === "Reject"
+                                    ? "Confirm & Reject Application"
+                                    : decision.decision === "Hold"
+                                    ? "Confirm Hold"
+                                    : "Approve & Advance to Offer"}
+                                </Button>
+                              </Stack>
+                            </Box>
+                          )}
+
                           {/* Saved / Submitted Scorecards Section */}
                           <Box sx={{ p: 2, borderRadius: 2.5, border: 1, borderColor: "divider", bgcolor: "background.paper" }}>
                             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
@@ -1923,29 +2213,30 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                           </Box>
 
                           {/* Submit New / Edit Scorecard Form */}
-                          <Box sx={{ p: 2, borderRadius: 2.5, border: 1, borderColor: "divider", bgcolor: "background.paper" }}>
-                            <Typography variant="subtitle2" fontWeight={850} sx={{ mb: 1.5 }}>
-                              Record Panelist Scorecard
-                            </Typography>
-                            <Stack spacing={1.75}>
-                              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                                <AppTextField
-                                  sx={{ ...fieldSx, flex: 2 }}
-                                  select
-                                  label="Evaluator / Reviewer *"
-                                  value={scorecard.reviewerUserId || reviewerUserId}
-                                  onChange={(e) => setScorecard({ ...scorecard, reviewerUserId: e.target.value })}
-                                >
-                                  {selectedInterviewerObjs.length > 0 ? (
-                                    selectedInterviewerObjs.map((emp) => (
-                                      <MenuItem key={emp.userId} value={emp.userId}>
-                                        {getEmployeeName(emp)} {emp.employeeId ? `(${emp.employeeId})` : ""}
-                                      </MenuItem>
-                                    ))
-                                  ) : (
-                                    <MenuItem value={reviewerUserId}>Current User ({reviewerUserId})</MenuItem>
-                                  )}
-                                </AppTextField>
+                          {stage !== ApplicationStatus.Rejected && (
+                            <Box sx={{ p: 2, borderRadius: 2.5, border: 1, borderColor: "divider", bgcolor: "background.paper" }}>
+                              <Typography variant="subtitle2" fontWeight={850} sx={{ mb: 1.5 }}>
+                                Record Panelist Scorecard
+                              </Typography>
+                              <Stack spacing={1.75}>
+                                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                                  <AppTextField
+                                    sx={{ ...fieldSx, flex: 2 }}
+                                    select
+                                    label="Evaluator / Reviewer *"
+                                    value={scorecard.reviewerUserId || reviewerUserId}
+                                    onChange={(e) => setScorecard({ ...scorecard, reviewerUserId: e.target.value })}
+                                  >
+                                    {selectedInterviewerObjs.length > 0 ? (
+                                      selectedInterviewerObjs.map((emp) => (
+                                        <MenuItem key={emp.userId} value={emp.userId}>
+                                          {getEmployeeName(emp)} {emp.employeeId ? `(${emp.employeeId})` : ""}
+                                        </MenuItem>
+                                      ))
+                                    ) : (
+                                      <MenuItem value={reviewerUserId}>{reviewerDisplayName} (You)</MenuItem>
+                                    )}
+                                  </AppTextField>
 
                                 <AppTextField
                                   sx={{ ...fieldSx, flex: 1.5 }}
@@ -2131,39 +2422,10 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                               </Stack>
                             </Stack>
                           </Box>
-
-                          {/* Committee Decision Gate */}
-                          <Box sx={{ p: 2, borderRadius: 2.5, bgcolor: "primary.lighter", border: "1px solid", borderColor: "primary.main" }}>
-                            <Typography variant="subtitle2" fontWeight={850} color="primary.dark">
-                              Hiring Decision Gate
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              Approving candidate advances application to <strong>Selected</strong> and unlocks Step 3 (Offer Generation).
-                            </Typography>
-                            <AppTextField
-                              sx={{ ...fieldSx, mt: 1.5 }}
-                              select
-                              label="Hiring Committee Decision *"
-                              value={decision.decision}
-                              onChange={(e) => setDecision({ ...decision, decision: e.target.value as any })}
-                            >
-                              <MenuItem value="Approve">Approve (Advance to Offer)</MenuItem>
-                              <MenuItem value="Hold">Hold for Comparison</MenuItem>
-                              <MenuItem value="Reject">Reject Application</MenuItem>
-                            </AppTextField>
-                            <AppTextField
-                              sx={{ ...fieldSx, mt: 1.5 }}
-                              multiline
-                              minRows={2}
-                              label="Hiring Committee Notes"
-                              placeholder="Summary of committee consensus, strengths, and conditions for hire..."
-                              value={decision.notes}
-                              onChange={(e) => setDecision({ ...decision, notes: e.target.value })}
-                            />
-                          </Box>
-                        </Stack>
-                      )}
-                    </Stack>
+                        )}
+                      </Stack>
+                    )}
+                  </Stack>
                   )}
 
                   {/* STEP 3: CLEAN, SIMPLE OFFER & ACCEPTANCE */}
@@ -2252,73 +2514,37 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
 
                       {/* 3. If Offer was SENT to candidate (Awaiting response) */}
                       {offer.status === "Sent" && (
-                        <Box sx={{ p: 2, borderRadius: 2.5, bgcolor: "info.lighter", border: "1px solid", borderColor: "info.main" }}>
-                          <Stack spacing={1.5}>
+                        <Box sx={{ p: 2.25, borderRadius: 2.5, bgcolor: (t) => alpha(t.palette.info.main, 0.05), border: "1px solid", borderColor: "info.main" }}>
+                          <Stack spacing={1.75}>
                             <Stack direction="row" justifyContent="space-between" alignItems="center">
-                              <Typography variant="subtitle2" fontWeight={800} color="info.dark">
-                                Offer Sent to Candidate (Awaiting Response)
-                              </Typography>
-                              <Chip size="small" label="Sent" color="info" sx={{ fontWeight: 800 }} />
+                              <Stack direction="row" spacing={1.25} alignItems="center">
+                                <Box sx={{ width: 36, height: 36, borderRadius: "50%", bgcolor: "info.lighter", display: "grid", placeItems: "center", color: "info.main" }}>
+                                  <EmailOutlined sx={{ fontSize: 20 }} />
+                                </Box>
+                                <Box>
+                                  <Typography variant="subtitle2" fontWeight={850} color="info.dark">
+                                    Official Offer Dispatched via Email
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    Delivered to <strong>{applicant.email || "candidate's email"}</strong>
+                                  </Typography>
+                                </Box>
+                              </Stack>
+                              <Chip size="small" label="Sent · Awaiting Response" color="info" sx={{ fontWeight: 800, fontSize: "0.72rem" }} />
                             </Stack>
-                            <Typography variant="body2" color="text.secondary">
-                              Compensation: <strong>{offer.currency} {Number(offer.salary || 0).toLocaleString()}</strong>
-                              {offer.startDateUtc && ` · Joining Date: ${offer.startDateUtc}`}
-                            </Typography>
 
-                            {/* Candidate Portal Link with Instant Copy and Open Button */}
-                            {candidateOfferLink ? (
-                              <Box sx={{ p: 1.5, bgcolor: "background.paper", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
-                                <Typography variant="caption" fontWeight={750} color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
-                                  Candidate Action Portal Link (Shareable & Testable):
-                                </Typography>
-                                <OutlinedInput
-                                  size="small"
-                                  fullWidth
-                                  readOnly
-                                  value={candidateOfferLink}
-                                  endAdornment={
-                                    <InputAdornment position="end">
-                                      <IconButton size="small" onClick={handleCopyOfferLink} color={copiedLink ? "success" : "default"}>
-                                        {copiedLink ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />}
-                                      </IconButton>
-                                    </InputAdornment>
-                                  }
-                                  sx={{ fontSize: "0.8rem", bgcolor: "background.default" }}
-                                />
-                                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                                  <Button
-                                    size="small"
-                                    variant="outlined"
-                                    startIcon={copiedLink ? <Check /> : <ContentCopy />}
-                                    onClick={handleCopyOfferLink}
-                                    sx={{ textTransform: "none", fontWeight: 700 }}
-                                  >
-                                    {copiedLink ? "Link Copied!" : "Copy Link"}
-                                  </Button>
-                                  <Button
-                                    size="small"
-                                    variant="outlined"
-                                    endIcon={<OpenInNew />}
-                                    onClick={() => window.open(candidateOfferLink, "_blank")}
-                                    sx={{ textTransform: "none", fontWeight: 700 }}
-                                  >
-                                    Open Candidate Portal
-                                  </Button>
-                                </Stack>
-                              </Box>
-                            ) : (
-                              <Button
-                                size="small"
-                                variant="outlined"
-                                onClick={() => offer.offerId && issueCandidateOfferLink(offer.offerId)}
-                                sx={{ textTransform: "none", alignSelf: "flex-start" }}
-                              >
-                                Generate Candidate Action Link
-                              </Button>
-                            )}
+                            <Box sx={{ p: 1.75, bgcolor: "background.paper", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+                              <Typography variant="body2" color="text.primary">
+                                Offered Compensation: <strong>{offer.currency} {Number(offer.salary || 0).toLocaleString()}</strong>
+                                {offer.startDateUtc && ` · Expected Joining: ${offer.startDateUtc}`}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.75, lineHeight: 1.5 }}>
+                                The formal offer letter was sent directly to the candidate's email inbox. The candidate reviews the terms and replies with their written confirmation or signed copy.
+                              </Typography>
+                            </Box>
 
-                            {/* Quick Offline Acceptance Button */}
-                            <Stack direction="row" spacing={1} sx={{ pt: 0.5 }}>
+                            {/* HR Candidate Acceptance Action */}
+                            <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" useFlexGap sx={{ pt: 0.5 }}>
                               <Button
                                 variant="contained"
                                 color="success"
@@ -2326,15 +2552,15 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                 startIcon={<CheckCircleOutline />}
                                 onClick={handleMarkOfferAcceptedOffline}
                                 disabled={busy}
-                                sx={{ textTransform: "none", fontWeight: 800 }}
+                                sx={{ textTransform: "none", fontWeight: 800, px: 2, py: 0.75, borderRadius: 1.5 }}
                               >
-                                Candidate Accepted Offline (Mark Accepted)
+                                {busy ? "Recording..." : "Record Candidate Acceptance"}
                               </Button>
                               <Button
                                 variant="outlined"
                                 size="small"
                                 onClick={() => setIsRevisionMode(!isRevisionMode)}
-                                sx={{ textTransform: "none" }}
+                                sx={{ textTransform: "none", fontWeight: 700, borderRadius: 1.5 }}
                               >
                                 {isRevisionMode ? "Cancel Revision" : "Revise Terms"}
                               </Button>
@@ -2389,7 +2615,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                       fullWidth: true,
                                       sx: fieldSx,
                                       size: "small",
-                                      helperText: "Candidate action links expire after this timestamp.",
+                                      helperText: "Formal offer response window expires after this timestamp.",
                                     },
                                   }}
                                 />
@@ -2501,7 +2727,14 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                               <Button
                                 variant="contained"
                                 color="success"
-                                onClick={() => navigate(`/employees/profile/${applicant.employeeUserId}`)}
+                                onClick={() => {
+                                  const targetId = applicant.employeeUserId || applicant.employeeId;
+                                  if (targetId) {
+                                    navigate(`/employees/${targetId}`);
+                                  } else {
+                                    navigate("/employees");
+                                  }
+                                }}
                                 sx={{ textTransform: "none", fontWeight: 800, borderRadius: 2 }}
                               >
                                 View Employee Profile →
@@ -2647,7 +2880,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                   disabled={busy}
                   sx={{ width: { xs: "100%", sm: "auto" } }}
                 />
-                {mode !== "offer" && mode !== "handoff" && (
+                {mode !== "offer" && mode !== "handoff" && stage !== ApplicationStatus.Rejected && (
                   <CustomisedButton
                     variant="contained"
                     label={
@@ -2655,16 +2888,45 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                         ? "Saving…"
                         : mode === "screening" && screening.decision === "Pass" && !effectiveRequireInterview
                         ? "Fast-Track to Offer"
+                        : mode === "screening" && screening.decision === "Reject"
+                        ? "Reject Candidate"
+                        : mode === "interview" && interviewSubTab === 0
+                        ? "Schedule Interview Round"
+                        : mode === "interview" && decision.decision === "Reject"
+                        ? "Reject Application"
+                        : mode === "interview" && decision.decision === "Hold"
+                        ? "Place on Hold"
+                        : mode === "interview" && decision.decision === "Approve"
+                        ? "Approve & Advance to Offer"
                         : "Save & Advance"
                     }
                     loading={busy}
                     handleClick={submit}
                     disabled={
                       busy ||
-                      (mode === "screening" && screening.decision === "Pass" && !meetsScreeningThreshold) ||
-                      (mode === "interview" && interviewSubTab === 0 && Boolean(interviewValidation))
+                      (mode === "screening" && screening.decision === "Pass" && isScreeningThresholdActive && !meetsScreeningThreshold) ||
+                      (mode === "interview" && interviewSubTab === 0 && Boolean(interviewValidation)) ||
+                      (mode === "interview" && interviewSubTab === 1 && (decision.decision === "Reject" || decision.decision === "Hold") && !decision.notes.trim())
                     }
-                    sx={{ width: { xs: "100%", sm: "auto" } }}
+                    sx={{
+                      width: { xs: "100%", sm: "auto" },
+                      bgcolor:
+                        (mode === "screening" && screening.decision === "Reject") ||
+                        (mode === "interview" && interviewSubTab === 1 && decision.decision === "Reject")
+                          ? "error.main"
+                          : (mode === "interview" && interviewSubTab === 1 && decision.decision === "Hold")
+                          ? "warning.main"
+                          : undefined,
+                      "&:hover": {
+                        bgcolor:
+                          (mode === "screening" && screening.decision === "Reject") ||
+                          (mode === "interview" && interviewSubTab === 1 && decision.decision === "Reject")
+                            ? "error.dark"
+                            : (mode === "interview" && interviewSubTab === 1 && decision.decision === "Hold")
+                            ? "warning.dark"
+                            : undefined,
+                      },
+                    }}
                   />
                 )}
                 {mode === "offer" && offer.status === "Accepted" && (

@@ -5,6 +5,7 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  ButtonBase,
   Card,
   Chip,
   CircularProgress,
@@ -426,18 +427,42 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
           </Box>
         </Stack>
 
-        <Stack direction="row" spacing={1} sx={{ width: { xs: "100%", sm: "auto" } }}>
+        <Stack direction="row" spacing={1.25} alignItems="center" flexWrap="wrap" useFlexGap sx={{ width: { xs: "100%", sm: "auto" } }}>
+          {/* Scope Segmented Pill Switcher */}
+          <Stack direction="row" spacing={1}>
+            <Chip
+              label="Company-wide Policy"
+              onClick={() => {
+                setScopeMode("GLOBAL");
+                setSelectedVacancy(null);
+                void loadPolicy("");
+              }}
+              color={scopeMode === "GLOBAL" ? "primary" : "default"}
+              variant={scopeMode === "GLOBAL" ? "filled" : "outlined"}
+              size="small"
+              sx={{ fontWeight: 750, borderRadius: "8px", height: 32, px: 1, cursor: "pointer" }}
+            />
+            <Chip
+              label="Vacancy-Specific Override"
+              onClick={() => setScopeMode("VACANCY")}
+              color={scopeMode === "VACANCY" ? "primary" : "default"}
+              variant={scopeMode === "VACANCY" ? "filled" : "outlined"}
+              size="small"
+              sx={{ fontWeight: 750, borderRadius: "8px", height: 32, px: 1, cursor: "pointer" }}
+            />
+          </Stack>
+
           <AppButton
             variant="outlined"
             size="small"
             onClick={resetToDefaults}
             disabled={loading || saving}
             sx={{
-              height: 34,
-              px: 1.5,
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              borderRadius: "8px",
+              height: 36,
+              px: 2,
+              fontSize: "0.8rem",
+              fontWeight: 650,
+              borderRadius: "9px",
               flex: { xs: 1, sm: "none" },
             }}
           >
@@ -449,11 +474,11 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
             onClick={() => void save()}
             disabled={loading || saving}
             sx={{
-              height: 34,
+              height: 36,
               px: 2.25,
-              fontSize: "0.78rem",
-              fontWeight: 700,
-              borderRadius: "8px",
+              fontSize: "0.8rem",
+              fontWeight: 750,
+              borderRadius: "9px",
               flex: { xs: 1, sm: "none" },
             }}
           >
@@ -462,128 +487,82 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
         </Stack>
       </Stack>
 
-      <Divider sx={{ my: 2 }} />
-
-      {/* Scope Selector & Vacancy Search Bar */}
-      <Box
-        sx={{
-          p: 1.5,
-          mb: 2.5,
-          borderRadius: "10px",
-          border: "1px solid",
-          borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-          bgcolor: isDark ? "rgba(15, 23, 42, 0.35)" : "#F8FAFC",
-        }}
-      >
-        <Stack spacing={1.25}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            justifyContent="space-between"
-            alignItems={{ xs: "flex-start", sm: "center" }}
-            spacing={1.25}
-            flexWrap="wrap"
-            useFlexGap
-          >
-            <Box>
-              <Typography variant="body2" fontWeight={800} sx={{ fontSize: "0.82rem" }}>
-                Policy Application Scope
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.74rem" }}>
-                Choose whether this governance policy applies globally to all positions or overrides a specific job opening.
-              </Typography>
-            </Box>
-
-            {/* Scope Toggle Pills */}
-            <Stack direction="row" spacing={1}>
-              <Chip
-                label="Company-wide Policy"
-                onClick={() => {
-                  setScopeMode("GLOBAL");
-                  setSelectedVacancy(null);
+      {/* Search bar when Vacancy-Specific Override is chosen */}
+      {scopeMode === "VACANCY" && (
+        <Box
+          sx={{
+            mt: 2.5,
+            p: 2,
+            borderRadius: "12px",
+            border: "1px solid",
+            borderColor: isDark ? "rgba(255,255,255,0.08)" : "#E2E8F0",
+            bgcolor: isDark ? "rgba(15,23,42,0.3)" : "#F8FAFC",
+          }}
+        >
+          <Autocomplete
+            size="small"
+            options={vacancies}
+            value={selectedVacancy}
+            onChange={(_, newValue) => {
+              setSelectedVacancy(newValue);
+              if (newValue) {
+                void loadPolicy(newValue.jobId);
+              }
+            }}
+            getOptionLabel={(option) => `${option.title} (${option.jobId})${option.department ? ` · ${option.department}` : ""}`}
+            isOptionEqualToValue={(option, val) => option.jobId === val.jobId}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size="small"
+                label="Search Job Vacancy"
+                placeholder="Search by job title, vacancy code, or department..."
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <>
+                      <InputAdornment position="start">
+                        <SearchRounded sx={{ fontSize: 18, color: "text.secondary" }} />
+                      </InputAdornment>
+                      {params.InputProps.startAdornment}
+                    </>
+                  ),
                 }}
-                color={scopeMode === "GLOBAL" ? "primary" : "default"}
-                variant={scopeMode === "GLOBAL" ? "filled" : "outlined"}
-                size="small"
-                sx={{ fontWeight: 700, borderRadius: "6px" }}
+                fullWidth
               />
-              <Chip
-                label="Vacancy-Specific Override"
-                onClick={() => setScopeMode("VACANCY")}
-                color={scopeMode === "VACANCY" ? "primary" : "default"}
-                variant={scopeMode === "VACANCY" ? "filled" : "outlined"}
-                size="small"
-                sx={{ fontWeight: 700, borderRadius: "6px" }}
-              />
-            </Stack>
-          </Stack>
-
-          {/* Search bar when Vacancy-Specific Override is chosen */}
-          {scopeMode === "VACANCY" && (
-            <Box sx={{ pt: 0.5 }}>
-              <Autocomplete
-                size="small"
-                options={vacancies}
-                value={selectedVacancy}
-                onChange={(_, newValue) => {
-                  setSelectedVacancy(newValue);
-                  if (newValue) {
-                    void loadPolicy(newValue.jobId);
-                  }
-                }}
-                getOptionLabel={(option) => `${option.title} (${option.jobId})${option.department ? ` · ${option.department}` : ""}`}
-                isOptionEqualToValue={(option, val) => option.jobId === val.jobId}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    size="small"
-                    label="Search Job Vacancy"
-                    placeholder="Search by job title, vacancy code, or department..."
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <>
-                          <InputAdornment position="start">
-                            <SearchRounded sx={{ fontSize: 18, color: "text.secondary" }} />
-                          </InputAdornment>
-                          {params.InputProps.startAdornment}
-                        </>
-                      ),
-                    }}
-                    fullWidth
-                  />
-                )}
-                renderOption={(props, option) => (
-                  <Box component="li" {...props} key={option.jobId} sx={{ py: 1 }}>
-                    <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="space-between" width="100%">
-                      <Box minWidth={0}>
-                        <Typography variant="body2" fontWeight={700} noWrap>
-                          {option.title}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {option.jobId} {option.department ? `· ${option.department}` : ""} {option.location ? `· ${option.location}` : ""}
-                        </Typography>
-                      </Box>
-                      <Chip
-                        size="small"
-                        label={option.status ? "Active" : "Closed"}
-                        color={option.status ? "success" : "default"}
-                        variant="outlined"
-                        sx={{ height: 20, fontSize: "0.68rem" }}
-                      />
-                    </Stack>
+            )}
+            renderOption={(props, option) => (
+              <Box component="li" {...props} key={option.jobId} sx={{ py: 1 }}>
+                <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="space-between" width="100%">
+                  <Box minWidth={0}>
+                    <Typography variant="body2" fontWeight={700} noWrap>
+                      {option.title}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {option.jobId} {option.department ? `· ${option.department}` : ""} {option.location ? `· ${option.location}` : ""}
+                    </Typography>
                   </Box>
-                )}
-              />
-            </Box>
-          )}
+                  <Chip
+                    size="small"
+                    label={option.status ? "Active" : "Closed"}
+                    color={option.status ? "success" : "default"}
+                    variant="outlined"
+                    sx={{ height: 20, fontSize: "0.68rem" }}
+                  />
+                </Stack>
+              </Box>
+            )}
+          />
 
-          {scopeMode === "VACANCY" && selectedVacancy && (
-            <Alert severity="info" sx={{ py: 0.5, fontSize: "0.78rem" }}>
+          {selectedVacancy && (
+            <Alert severity="info" sx={{ mt: 1.5, py: 0.5, fontSize: "0.78rem", borderRadius: "8px" }}>
               Currently managing custom offer approval gates for: <strong>{selectedVacancy.title}</strong> (<code>{selectedVacancy.jobId}</code>).
             </Alert>
           )}
-        </Stack>
-      </Box>
+        </Box>
+      )}
+
+      <Divider sx={{ my: 2.5 }} />
 
       <Stack spacing={2.5}>
         {/* SECTION 1: Organizational Scope & Eligibility — Equal Height & Width Columns */}
@@ -597,7 +576,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
 
           <Grid container spacing={2}>
             {/* Legal Entity Autocomplete */}
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Autocomplete
                 freeSolo
                 size="small"
@@ -623,7 +602,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
             </Grid>
 
             {/* Department Searchable Autocomplete */}
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Autocomplete
                 size="small"
                 options={[{ departmentId: "", name: "All Departments" }, ...departments]}
@@ -658,7 +637,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
             </Grid>
 
             {/* Job Grade Searchable Autocomplete */}
-            <Grid size={{ xs: 12, sm: 12, md: 4 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Autocomplete
                 freeSolo
                 size="small"
@@ -1021,9 +1000,13 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
                     />
                   ))}
                 </Stack>
-                <Typography variant="caption" color="primary.main" fontWeight={700} sx={{ fontSize: "0.75rem" }}>
-                  Active Trigger: CTC &gt; {formattedThreshold}
-                </Typography>
+                <Chip
+                  size="small"
+                  label={`Active Trigger: CTC > ${formattedThreshold}`}
+                  color="primary"
+                  variant="outlined"
+                  sx={{ height: 24, fontSize: "0.72rem", fontWeight: 750, borderRadius: "6px" }}
+                />
               </Stack>
             </Grid>
 

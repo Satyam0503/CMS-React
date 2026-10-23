@@ -152,7 +152,7 @@ export default function RecruitmentFeedbackSlaCard() {
           </Typography>
           <Grid container spacing={1.25}>
             {report.items.slice(0, 6).map((item) => (
-              <Grid key={item.interviewId} size={{ xs: 12, sm: 6 }}>
+              <Grid key={item.interviewId} size={{ xs: 12, sm: 6, md: 4 }}>
                 <Box
                   sx={{
                     p: 1.5,

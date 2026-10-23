@@ -6,18 +6,23 @@ import {
   Alert,
   Autocomplete,
   Box,
+  ButtonBase,
   Card,
   Chip,
   Divider,
   Grid,
   IconButton,
   InputAdornment,
+  LinearProgress,
   MenuItem,
   Stack,
+  Tab,
+  Tabs,
   Typography,
   alpha,
   useTheme,
 } from "@mui/material";
+import { keyframes } from "@emotion/react";
 import EventNoteOutlined from "@mui/icons-material/EventNoteOutlined";
 import AddRounded from "@mui/icons-material/AddRounded";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
@@ -60,6 +65,17 @@ const initialCompetencies: RecruitmentCompetencyConfig[] = [
   { code: "COMM_CULTURE", name: "Communication & Collaboration", weight: 20, isMandatory: false, minScore: 50, description: "Clarity of articulation, empathy, team fit" },
 ];
 
+const fadeInSlideUp = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
 interface VacancyOption {
   jobId: string;
   title: string;
@@ -71,6 +87,7 @@ interface VacancyOption {
 export default function RecruitmentInterviewPlanEditor() {
   const theme = useTheme();
   const isDark = useIsDark();
+  const [activeSection, setActiveSection] = useState<"scale" | "competencies" | "stages" | "all">("scale");
   const [stages, setStages] = useState<RecruitmentInterviewPlanStageCommand[]>(initialStages);
   const [ratingScale, setRatingScale] = useState<RecruitmentRatingScaleConfig>(defaultRatingScale);
   const [competencies, setCompetencies] = useState<RecruitmentCompetencyConfig[]>(initialCompetencies);
@@ -319,20 +336,22 @@ export default function RecruitmentInterviewPlanEditor() {
         boxSizing: "border-box",
       }}
     >
+      {/* Header bar with Scope Switcher and Actions */}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
         alignItems={{ xs: "flex-start", sm: "center" }}
-        spacing={1.5}
+        spacing={2}
+        sx={{ mb: 2.5 }}
         flexWrap="wrap"
         useFlexGap
       >
-        <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0, flex: 1 }}>
+        <Stack direction="row" spacing={1.5} alignItems="center">
           <Box
             sx={{
-              width: 38,
-              height: 38,
-              borderRadius: "10px",
+              width: 44,
+              height: 44,
+              borderRadius: "12px",
               display: "grid",
               placeItems: "center",
               bgcolor: alpha(theme.palette.primary.main, 0.1),
@@ -340,25 +359,74 @@ export default function RecruitmentInterviewPlanEditor() {
               flexShrink: 0,
             }}
           >
-            <EventNoteOutlined sx={{ fontSize: 20 }} />
+            <EventNoteOutlined sx={{ fontSize: 24 }} />
           </Box>
           <Box minWidth={0}>
-            <Typography variant="subtitle1" fontWeight={800} sx={{ fontSize: "0.95rem" }}>
-              {vacancyId.trim() ? "Vacancy interview plan" : "Default interview plan"}
+            <Typography variant="subtitle1" fontWeight={850} sx={{ fontSize: "1rem" }}>
+              {vacancyId.trim() ? "Vacancy Interview Plan" : "Default Interview Plan"}
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.78rem" }}>
-              Configure rating scales, competency frameworks, round thresholds, SLAs, and quorum rules.
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.8rem", display: "block", mt: 0.25 }}>
+              Configure rating scales, competency rubrics, passing benchmarks, and interview round gates.
             </Typography>
           </Box>
         </Stack>
 
-        <Stack direction="row" spacing={1} sx={{ width: { xs: "100%", sm: "auto" } }}>
+        <Stack direction="row" spacing={1.25} alignItems="center" flexWrap="wrap" useFlexGap sx={{ width: { xs: "100%", sm: "auto" } }}>
+          {/* Scope Segmented Pill Switcher */}
+          <Box
+            sx={{
+              display: "flex",
+              p: 0.5,
+              borderRadius: "10px",
+              bgcolor: isDark ? "rgba(255,255,255,0.06)" : "#F1F5F9",
+              border: "1px solid",
+              borderColor: isDark ? "rgba(255,255,255,0.1)" : "#E2E8F0",
+            }}
+          >
+            <ButtonBase
+              onClick={() => {
+                setScopeMode("GLOBAL");
+                setVacancyId("");
+                setSelectedVacancy(null);
+              }}
+              sx={{
+                px: 1.5,
+                py: 0.65,
+                borderRadius: "7px",
+                fontSize: "0.76rem",
+                fontWeight: 750,
+                bgcolor: scopeMode === "GLOBAL" ? (isDark ? "primary.main" : "#FFFFFF") : "transparent",
+                color: scopeMode === "GLOBAL" ? (isDark ? "#FFFFFF" : "primary.main") : "text.secondary",
+                boxShadow: scopeMode === "GLOBAL" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
+                transition: "all 0.18s ease",
+              }}
+            >
+              Company Default
+            </ButtonBase>
+            <ButtonBase
+              onClick={() => setScopeMode("VACANCY")}
+              sx={{
+                px: 1.5,
+                py: 0.65,
+                borderRadius: "7px",
+                fontSize: "0.76rem",
+                fontWeight: 750,
+                bgcolor: scopeMode === "VACANCY" ? (isDark ? "primary.main" : "#FFFFFF") : "transparent",
+                color: scopeMode === "VACANCY" ? (isDark ? "#FFFFFF" : "primary.main") : "text.secondary",
+                boxShadow: scopeMode === "VACANCY" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
+                transition: "all 0.18s ease",
+              }}
+            >
+              Vacancy-Specific
+            </ButtonBase>
+          </Box>
+
           <AppButton
             variant="outlined"
             size="small"
             onClick={() => void load()}
             disabled={saving || loading}
-            sx={{ flex: { xs: 1, sm: "none" }, height: 34, fontSize: "0.78rem", fontWeight: 650, borderRadius: "8px" }}
+            sx={{ flex: { xs: 1, sm: "none" }, height: 36, px: 2, fontSize: "0.8rem", fontWeight: 650, borderRadius: "9px" }}
           >
             Load plan
           </AppButton>
@@ -367,129 +435,112 @@ export default function RecruitmentInterviewPlanEditor() {
             size="small"
             onClick={() => void save()}
             disabled={saving || loading || (hasCompWeights && !compWeightValid)}
-            sx={{ flex: { xs: 1, sm: "none" }, height: 34, fontSize: "0.78rem", fontWeight: 700, borderRadius: "8px" }}
+            sx={{ flex: { xs: 1, sm: "none" }, height: 36, px: 2.25, fontSize: "0.8rem", fontWeight: 750, borderRadius: "9px" }}
           >
             {loading ? "Loading…" : saving ? "Saving…" : "Save plan"}
           </AppButton>
         </Stack>
       </Stack>
 
-      <Box
-        sx={{
-          mt: 2,
-          p: 1.5,
-          borderRadius: "10px",
-          border: "1px solid",
-          borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-          bgcolor: isDark ? "rgba(15, 23, 42, 0.3)" : "#F8FAFC",
-        }}
-      >
-        <Stack spacing={1.25}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            justifyContent="space-between"
-            alignItems={{ xs: "flex-start", sm: "center" }}
-            spacing={1}
-            flexWrap="wrap"
-            useFlexGap
-          >
-            <Box>
-              <Typography variant="body2" fontWeight={800} sx={{ fontSize: "0.82rem" }}>
-                Plan Scope & Hierarchy
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.74rem" }}>
-                Default process applies across all company jobs; specific vacancies can override criteria and scales.
-              </Typography>
-            </Box>
-
-            <Stack direction="row" spacing={1}>
-              <Chip
-                label="Company Default"
-                onClick={() => {
-                  setScopeMode("GLOBAL");
-                  setVacancyId("");
-                  setSelectedVacancy(null);
-                }}
-                color={scopeMode === "GLOBAL" ? "primary" : "default"}
-                variant={scopeMode === "GLOBAL" ? "filled" : "outlined"}
-                size="small"
-                sx={{ fontWeight: 700, borderRadius: "6px" }}
-              />
-              <Chip
-                label="Vacancy-Specific"
-                onClick={() => setScopeMode("VACANCY")}
-                color={scopeMode === "VACANCY" ? "primary" : "default"}
-                variant={scopeMode === "VACANCY" ? "filled" : "outlined"}
-                size="small"
-                sx={{ fontWeight: 700, borderRadius: "6px" }}
-              />
-            </Stack>
-          </Stack>
-
-          {scopeMode === "VACANCY" && (
-            <Autocomplete
-              freeSolo
-              size="small"
-              options={vacancies}
-              value={selectedVacancy || (vacancyId ? { jobId: vacancyId, title: vacancyId, status: true } : null)}
-              onChange={(_, newValue) => {
-                if (!newValue) {
-                  setSelectedVacancy(null);
-                  setVacancyId("");
-                } else if (typeof newValue === "string") {
-                  setSelectedVacancy(null);
-                  setVacancyId(newValue);
-                } else {
-                  setSelectedVacancy(newValue);
-                  setVacancyId(newValue.jobId);
-                }
-              }}
-              getOptionLabel={(option) =>
-                typeof option === "string"
-                  ? option
-                  : `${option.title} (${option.jobId})${option.department ? ` · ${option.department}` : ""}`
+      {/* Vacancy Search Bar (Displayed when Vacancy-Specific is chosen) */}
+      {scopeMode === "VACANCY" && (
+        <Box
+          sx={{
+            mb: 2.5,
+            p: 2,
+            borderRadius: "12px",
+            border: "1px solid",
+            borderColor: isDark ? "rgba(255,255,255,0.08)" : "#E2E8F0",
+            bgcolor: isDark ? "rgba(15,23,42,0.3)" : "#F8FAFC",
+          }}
+        >
+          <Autocomplete
+            freeSolo
+            size="small"
+            options={vacancies}
+            value={selectedVacancy || (vacancyId ? { jobId: vacancyId, title: vacancyId, status: true } : null)}
+            onChange={(_, newValue) => {
+              if (!newValue) {
+                setSelectedVacancy(null);
+                setVacancyId("");
+              } else if (typeof newValue === "string") {
+                setSelectedVacancy(null);
+                setVacancyId(newValue);
+              } else {
+                setSelectedVacancy(newValue);
+                setVacancyId(newValue.jobId);
               }
-              renderInput={(params) => (
-                <AppTextField
-                  {...params}
-                  label="Search Job Vacancy"
-                  placeholder="Search by job title, position code, or department..."
-                  helperText="Select a job vacancy to create or edit its dedicated evaluation plan."
-                  fullWidth
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <>
-                        <InputAdornment position="start">
-                          <SearchRounded sx={{ fontSize: 18, color: "text.secondary" }} />
-                        </InputAdornment>
-                        {params.InputProps.startAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
-            />
-          )}
-        </Stack>
+            }}
+            getOptionLabel={(option) =>
+              typeof option === "string"
+                ? option
+                : `${option.title} (${option.jobId})${option.department ? ` · ${option.department}` : ""}`
+            }
+            renderInput={(params) => (
+              <AppTextField
+                {...params}
+                label="Search Job Vacancy"
+                placeholder="Search by job title, position code, or department..."
+                helperText="Select a job vacancy to create or edit its dedicated evaluation plan."
+                fullWidth
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <>
+                      <InputAdornment position="start">
+                        <SearchRounded sx={{ fontSize: 18, color: "text.secondary" }} />
+                      </InputAdornment>
+                      {params.InputProps.startAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+          />
+        </Box>
+      )}
+
+      {/* Clean Secondary Navigation Tabs */}
+      <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+        <Tabs
+          value={activeSection}
+          onChange={(_, val) => setActiveSection(val)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            minHeight: 44,
+            "& .MuiTab-root": {
+              textTransform: "none",
+              fontWeight: 750,
+              fontSize: "0.84rem",
+              minHeight: 44,
+              py: 1,
+              px: { xs: 1.5, sm: 2.25 },
+              gap: 1,
+              color: "text.secondary",
+              "&.Mui-selected": {
+                color: "primary.main",
+              },
+            },
+            "& .MuiTabs-indicator": {
+              height: 3,
+              borderRadius: "3px 3px 0 0",
+            },
+          }}
+        >
+          <Tab value="scale" icon={<TuneRounded sx={{ fontSize: 18 }} />} iconPosition="start" label="1. Rating Scale & Benchmark" />
+          <Tab value="competencies" icon={<PsychologyRounded sx={{ fontSize: 18 }} />} iconPosition="start" label={`2. Competencies (${competencies.length})`} />
+          <Tab value="stages" icon={<LayersRounded sx={{ fontSize: 18 }} />} iconPosition="start" label={`3. Interview Stages (${stages.length})`} />
+          <Tab value="all" label={activeSection === "all" ? "Single View" : "View All Sections"} sx={{ ml: "auto" }} />
+        </Tabs>
       </Box>
 
-      {/* Accordion 1: Rating Scale & Scoring Engine Settings */}
-      <Accordion
-        defaultExpanded
-        sx={{
-          mt: 2,
-          border: "1px solid",
-          borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-          borderRadius: "10px !important",
-          bgcolor: isDark ? "rgba(15, 23, 42, 0.2)" : "#FFFFFF",
-          "&:before": { display: "none" },
-        }}
-      >
-        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <TuneRounded sx={{ fontSize: 18, color: "primary.main" }} />
-            <Typography variant="subtitle2" fontWeight={800}>
+      {/* Section 1: Rating Scale & Scoring Engine Settings */}
+      {(activeSection === "scale" || activeSection === "all") && (
+        <Box sx={{ mb: 4, animation: `${fadeInSlideUp} 0.3s ease` }}>
+          <Stack direction="row" spacing={1.25} alignItems="center" sx={{ mb: 2 }}>
+            <TuneRounded sx={{ fontSize: 20, color: "primary.main" }} />
+            <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.96rem" }}>
               Rating Scale & Benchmark Scoring Engine
             </Typography>
             <Chip
@@ -497,13 +548,16 @@ export default function RecruitmentInterviewPlanEditor() {
               label={`${ratingScale.minRating}–${ratingScale.maxRating} (${ratingScale.scaleType})`}
               color="primary"
               variant="outlined"
-              sx={{ height: 20, fontSize: "0.68rem", fontWeight: 700 }}
+              sx={{ height: 22, fontSize: "0.7rem", fontWeight: 750, borderRadius: "6px" }}
             />
           </Stack>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2.5, fontSize: "0.78rem" }}>
+            Configure standard numerical or qualitative rubrics, normalization formulas, and minimum benchmark passing targets.
+          </Typography>
+
+          <Grid container spacing={2.5}>
+            {/* Row 1: Scale Type & Normalization Formula */}
+            <Grid size={{ xs: 12, md: 6 }}>
               <AppTextField
                 select
                 label="Scale Type / Preset"
@@ -519,68 +573,27 @@ export default function RecruitmentInterviewPlanEditor() {
               </AppTextField>
             </Grid>
 
-            <Grid size={{ xs: 6, sm: 3, md: 2 }}>
-              <AppTextField
-                label="Min Rating"
-                type="number"
-                value={ratingScale.minRating}
-                onChange={(e) => setRatingScale((s) => ({ ...s, minRating: Number(e.target.value) }))}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid size={{ xs: 6, sm: 3, md: 2 }}>
-              <AppTextField
-                label="Max Rating"
-                type="number"
-                value={ratingScale.maxRating}
-                onChange={(e) => setRatingScale((s) => ({ ...s, maxRating: Number(e.target.value) }))}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid size={{ xs: 6, sm: 3, md: 2 }}>
-              <AppTextField
-                label="Increment Step"
-                type="number"
-                value={ratingScale.step}
-                inputProps={{ step: "0.1", min: "0.1" }}
-                onChange={(e) => setRatingScale((s) => ({ ...s, step: Number(e.target.value) }))}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid size={{ xs: 6, sm: 3, md: 3 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <AppTextField
                 select
                 label="Normalization Formula"
                 value={ratingScale.normalizationMethod}
                 onChange={(e) => setRatingScale((s) => ({ ...s, normalizationMethod: e.target.value as any }))}
+                helperText={ratingScale.normalizationMethod === "PercentageOfMax" ? "Formula: (Rating / Max) × 100" : "Formula: ((Rating - Min) / Range) × 100"}
                 fullWidth
               >
-                <MenuItem value="PercentageOfMax">Percentage of Max (Rating / Max * 100)</MenuItem>
-                <MenuItem value="MinMaxPercentage">Min-Max Scale ((Rating - Min) / Range * 100)</MenuItem>
+                <MenuItem value="PercentageOfMax">Percentage of Max</MenuItem>
+                <MenuItem value="MinMaxPercentage">Min-Max Percentage</MenuItem>
               </AppTextField>
             </Grid>
 
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <AppTextField
-                label="Hiring Target Score (%)"
-                type="number"
-                value={hiringTargetScore}
-                inputProps={{ min: 1, max: 100 }}
-                helperText="Minimum overall benchmark score to recommend Hire"
-                onChange={(e) => setHiringTargetScore(Math.max(1, Math.min(100, Number(e.target.value) || 70)))}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            {/* Row 2: Missing Score Policy & Benchmark Target */}
+            <Grid size={{ xs: 12, md: 6 }}>
               <AppTextField
                 select
                 label="Missing Score Policy"
                 value={missingScorePolicy}
-                helperText="How unassessed competencies are treated"
+                helperText="How unassessed competencies are treated in candidate debrief."
                 onChange={(e) => setMissingScorePolicy(e.target.value)}
                 fullWidth
               >
@@ -589,61 +602,141 @@ export default function RecruitmentInterviewPlanEditor() {
                 <MenuItem value="Block">Block debrief until complete</MenuItem>
               </AppTextField>
             </Grid>
-          </Grid>
-        </AccordionDetails>
-      </Accordion>
 
-      {/* Accordion 2: Competency Framework */}
-      <Accordion
-        defaultExpanded
-        sx={{
-          mt: 1.5,
-          border: "1px solid",
-          borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-          borderRadius: "10px !important",
-          bgcolor: isDark ? "rgba(15, 23, 42, 0.2)" : "#FFFFFF",
-          "&:before": { display: "none" },
-        }}
-      >
-        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-          <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between" width="100%" pr={1}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <PsychologyRounded sx={{ fontSize: 18, color: "primary.main" }} />
-              <Typography variant="subtitle2" fontWeight={800}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <AppTextField
+                label="Hiring Target Benchmark (%)"
+                type="number"
+                value={hiringTargetScore}
+                inputProps={{ min: 1, max: 100 }}
+                helperText="Minimum overall benchmark score required to recommend Hire."
+                onChange={(e) => setHiringTargetScore(Math.max(1, Math.min(100, Number(e.target.value) || 70)))}
+                fullWidth
+              >
+              </AppTextField>
+            </Grid>
+
+            {/* Row 3: Numerical Bounds */}
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <AppTextField
+                label="Min Rating"
+                type="number"
+                value={ratingScale.minRating}
+                disabled={ratingScale.scaleType !== "CustomNumeric"}
+                onChange={(e) => setRatingScale((s) => ({ ...s, minRating: Number(e.target.value) }))}
+                helperText={ratingScale.scaleType === "CustomNumeric" ? "Custom minimum score" : "Preset-locked"}
+                fullWidth
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <AppTextField
+                label="Max Rating"
+                type="number"
+                value={ratingScale.maxRating}
+                disabled={ratingScale.scaleType !== "CustomNumeric"}
+                onChange={(e) => setRatingScale((s) => ({ ...s, maxRating: Number(e.target.value) }))}
+                helperText={ratingScale.scaleType === "CustomNumeric" ? "Custom maximum score" : "Preset-locked"}
+                fullWidth
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <AppTextField
+                label="Increment Step"
+                type="number"
+                value={ratingScale.step}
+                disabled={ratingScale.scaleType !== "CustomNumeric"}
+                inputProps={{ step: "0.1", min: "0.1" }}
+                onChange={(e) => setRatingScale((s) => ({ ...s, step: Number(e.target.value) }))}
+                helperText={ratingScale.scaleType === "CustomNumeric" ? "Custom increment step" : "Preset-locked"}
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        </Box>
+      )}
+
+      {/* Section 2: Competency Framework */}
+      {(activeSection === "competencies" || activeSection === "all") && (
+        <Box sx={{ mb: 4, animation: `${fadeInSlideUp} 0.3s ease` }}>
+          <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }} flexWrap="wrap" gap={1}>
+            <Stack direction="row" spacing={1.25} alignItems="center">
+              <PsychologyRounded sx={{ fontSize: 20, color: "primary.main" }} />
+              <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.96rem" }}>
                 Competency Framework ({competencies.length} configured)
               </Typography>
+              {hasCompWeights && (
+                <Chip
+                  size="small"
+                  label={`Weights Total: ${totalCompWeight}%`}
+                  color={compWeightValid ? "success" : "error"}
+                  sx={{ height: 22, fontSize: "0.7rem", fontWeight: 800, borderRadius: "6px" }}
+                />
+              )}
             </Stack>
-            {hasCompWeights && (
-              <Chip
-                size="small"
-                label={`Weights Total: ${totalCompWeight}%`}
-                color={compWeightValid ? "success" : "error"}
-                sx={{ height: 20, fontSize: "0.68rem", fontWeight: 750 }}
-              />
-            )}
+            <AppButton
+              size="small"
+              variant="outlined"
+              startIcon={<AddRounded sx={{ fontSize: 16 }} />}
+              onClick={addCompetency}
+              sx={{ height: 32, fontSize: "0.78rem", fontWeight: 700, borderRadius: "8px" }}
+            >
+              Add Competency
+            </AppButton>
           </Stack>
-        </AccordionSummary>
-        <AccordionDetails>
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, fontSize: "0.78rem" }}>
+            Assign skill evaluation criteria with individual percentage weights and minimum passing cutoffs.
+          </Typography>
+
+          {/* Visual Weight Progress Bar */}
+          {hasCompWeights && (
+            <Box sx={{ mb: 2.5, p: 1.75, borderRadius: "10px", bgcolor: isDark ? "rgba(15, 23, 42, 0.3)" : "#F1F5F9" }}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.75 }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={750} sx={{ fontSize: "0.76rem" }}>
+                  Total Competency Weight Allocation (Must Equal 100%):
+                </Typography>
+                <Typography
+                  variant="caption"
+                  fontWeight={800}
+                  color={compWeightValid ? "success.main" : "error.main"}
+                  sx={{ fontSize: "0.78rem" }}
+                >
+                  {totalCompWeight}% / 100%
+                </Typography>
+              </Stack>
+              <LinearProgress
+                variant="determinate"
+                value={Math.min(100, totalCompWeight)}
+                color={compWeightValid ? "success" : totalCompWeight > 100 ? "error" : "warning"}
+                sx={{ height: 7, borderRadius: 3.5 }}
+              />
+            </Box>
+          )}
+
           {hasCompWeights && !compWeightValid && (
-            <Alert severity="warning" sx={{ mb: 1.5, py: 0.25, fontSize: "0.78rem" }}>
-              Competency weights currently sum to <strong>{totalCompWeight}%</strong>. When weights are configured, they must sum to 100% to save.
+            <Alert severity="warning" sx={{ mb: 2, py: 0.5, fontSize: "0.78rem", borderRadius: "8px" }}>
+              Competency weights currently sum to <strong>{totalCompWeight}%</strong>. Total must equal 100% to save.
             </Alert>
           )}
 
-          <Stack spacing={1.25}>
+          <Stack spacing={2}>
             {competencies.map((comp, idx) => (
               <Box
                 key={comp.code || idx}
                 sx={{
-                  p: 1.5,
-                  borderRadius: "8px",
+                  p: { xs: 1.75, sm: 2.25 },
+                  borderRadius: "12px",
                   border: "1px solid",
-                  borderColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#E2E8F0",
+                  borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
                   bgcolor: isDark ? "rgba(15, 23, 42, 0.2)" : "#F8FAFC",
+                  transition: "all 0.2s ease",
+                  "&:hover": { borderColor: "primary.main" },
                 }}
               >
-                <Grid container spacing={1.25} alignItems="center">
-                  <Grid size={{ xs: 12, sm: 3 }}>
+                <Grid container spacing={2} alignItems="center">
+                  {/* Row 1: Competency Name, Code, and Remove Action */}
+                  <Grid size={{ xs: 12, sm: 7, md: 8 }}>
                     <AppTextField
                       label="Competency Name *"
                       size="small"
@@ -653,7 +746,7 @@ export default function RecruitmentInterviewPlanEditor() {
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 6, sm: 2.5 }}>
+                  <Grid size={{ xs: 9, sm: 4, md: 3 }}>
                     <AppTextField
                       label="Code *"
                       size="small"
@@ -663,7 +756,14 @@ export default function RecruitmentInterviewPlanEditor() {
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 6, sm: 1.75 }}>
+                  <Grid size={{ xs: 3, sm: 1, md: 1 }} textAlign="right">
+                    <IconButton size="small" color="error" onClick={() => removeCompetency(idx)} sx={{ p: 0.75 }}>
+                      <DeleteOutlineRounded sx={{ fontSize: 20 }} />
+                    </IconButton>
+                  </Grid>
+
+                  {/* Row 2: Weight, Min Passing Score, and Mandatory Gate */}
+                  <Grid size={{ xs: 6, sm: 3, md: 3 }}>
                     <AppTextField
                       label="Weight (%)"
                       type="number"
@@ -675,9 +775,9 @@ export default function RecruitmentInterviewPlanEditor() {
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 6, sm: 1.75 }}>
+                  <Grid size={{ xs: 6, sm: 3, md: 3 }}>
                     <AppTextField
-                      label="Min Score (%)"
+                      label="Min Passing Score (%)"
                       type="number"
                       size="small"
                       value={comp.minScore ?? 60}
@@ -687,208 +787,200 @@ export default function RecruitmentInterviewPlanEditor() {
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 5, sm: 2 }}>
-                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                  <Grid size={{ xs: 12, sm: 6, md: 6 }}>
+                    <Stack direction="row" alignItems="center" spacing={1.25} sx={{ height: "100%", pt: { xs: 0.5, sm: 0 } }}>
                       <AppSwitch
                         checked={comp.isMandatory}
                         onChange={(e) => updateCompetency(idx, { isMandatory: e.target.checked })}
                       />
-                      <Typography variant="caption" fontWeight={650} color={comp.isMandatory ? "error.main" : "text.secondary"}>
-                        {comp.isMandatory ? "Mandatory Gate" : "Optional"}
+                      <Typography variant="caption" fontWeight={750} color={comp.isMandatory ? "error.main" : "text.secondary"} sx={{ fontSize: "0.78rem" }}>
+                        {comp.isMandatory ? "Mandatory Gate (failure blocks Hire recommendation)" : "Optional Competency (weighted towards average)"}
                       </Typography>
                     </Stack>
-                  </Grid>
-
-                  <Grid size={{ xs: 1, sm: 1 }} textAlign="right">
-                    <IconButton size="small" color="error" onClick={() => removeCompetency(idx)}>
-                      <DeleteOutlineRounded sx={{ fontSize: 18 }} />
-                    </IconButton>
                   </Grid>
                 </Grid>
               </Box>
             ))}
+          </Stack>
+        </Box>
+      )}
 
+      {/* Section 3: Interview Stages & Round Gates */}
+      {(activeSection === "stages" || activeSection === "all") && (
+        <Box sx={{ animation: `${fadeInSlideUp} 0.3s ease` }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }} flexWrap="wrap" gap={1}>
+            <Stack direction="row" spacing={1.25} alignItems="center">
+              <LayersRounded sx={{ fontSize: 20, color: "primary.main" }} />
+              <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.96rem" }}>
+                Interview Stages & Round Gates ({stages.length} configured)
+              </Typography>
+            </Stack>
             <AppButton
               size="small"
               variant="outlined"
               startIcon={<AddRounded sx={{ fontSize: 16 }} />}
-              onClick={addCompetency}
-              sx={{ alignSelf: "flex-start", height: 28, fontSize: "0.74rem", fontWeight: 700, borderRadius: "6px" }}
+              onClick={addRound}
+              disabled={saving || loading}
+              sx={{ height: 32, fontSize: "0.78rem", fontWeight: 700, borderRadius: "8px" }}
             >
-              Add Competency
+              Add Round
             </AppButton>
           </Stack>
-        </AccordionDetails>
-      </Accordion>
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, fontSize: "0.78rem" }}>
+            Sequential interview rounds, required panel quorum sizes, passing score thresholds, and SLA feedback turnaround deadlines.
+          </Typography>
 
-      <Divider sx={{ my: 2 }} />
+          <Stack spacing={2}>
+            {stages.map((stage, index) => (
+              <Box
+                key={stage.code || index}
+                sx={{
+                  p: { xs: 1.75, sm: 2.25 },
+                  borderRadius: "12px",
+                  border: "1px solid",
+                  borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
+                  bgcolor: isDark ? "rgba(15, 23, 42, 0.2)" : "#F8FAFC",
+                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                  "&:hover": {
+                    borderColor: theme.palette.primary.main,
+                  },
+                }}
+              >
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Chip
+                      size="small"
+                      label={`Round ${stage.order}`}
+                      color="primary"
+                      sx={{ height: 22, fontWeight: 750, fontSize: "0.7rem", borderRadius: "5px" }}
+                    />
+                    <Typography variant="subtitle2" fontWeight={750} sx={{ fontSize: "0.86rem" }}>
+                      {stage.name || `Round ${stage.order}`}
+                    </Typography>
+                    {stage.isMandatory && (
+                      <Chip
+                        size="small"
+                        label="Mandatory Gate"
+                        color="error"
+                        variant="outlined"
+                        sx={{ height: 20, fontSize: "0.65rem", fontWeight: 750 }}
+                      />
+                    )}
+                  </Stack>
+                  {stages.length > 1 && (
+                    <AppButton
+                      size="small"
+                      variant="text"
+                      color="error"
+                      startIcon={<DeleteOutlineRounded sx={{ fontSize: 15 }} />}
+                      onClick={() => removeRound(index)}
+                      sx={{ height: 26, fontSize: "0.74rem", fontWeight: 650, p: 0.5 }}
+                    >
+                      Remove
+                    </AppButton>
+                  )}
+                </Stack>
 
-      {/* Interview Stages with Round Gates */}
-      <Stack spacing={1.5}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Stack direction="row" spacing={1} alignItems="center">
-            <LayersRounded sx={{ fontSize: 18, color: "primary.main" }} />
-            <Typography variant="overline" color="text.secondary" fontWeight={800} letterSpacing={0.5}>
-              Interview Stages & Round Gates ({stages.length} configured)
-            </Typography>
+                <Grid container spacing={2}>
+                  {/* Row 1: Stage Name & Interview Type */}
+                  <Grid size={{ xs: 12, sm: 7 }}>
+                    <AppTextField
+                      label="Stage / Round Name"
+                      value={stage.name}
+                      onChange={(event) => updateStage(index, { name: event.target.value })}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 5 }}>
+                    <AppTextField
+                      label="Interview Type"
+                      value={stage.type ?? ""}
+                      placeholder="e.g., Technical, HR, Cultural"
+                      onChange={(event) => updateStage(index, { type: event.target.value })}
+                      fullWidth
+                    />
+                  </Grid>
+
+                  {/* Row 2: Four Balanced Metric Inputs */}
+                  <Grid size={{ xs: 6, sm: 3 }}>
+                    <AppTextField
+                      label="Panel Size"
+                      type="number"
+                      value={stage.requiredPanelSize}
+                      onChange={(event) =>
+                        updateStage(index, { requiredPanelSize: Math.max(1, Number(event.target.value) || 1) })
+                      }
+                      inputProps={{ min: 1, max: 20 }}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 6, sm: 3 }}>
+                    <AppTextField
+                      label="Pass Score (%)"
+                      type="number"
+                      value={stage.passThreshold ?? 70}
+                      onChange={(event) =>
+                        updateStage(index, { passThreshold: Math.max(0, Math.min(100, Number(event.target.value) || 0)) })
+                      }
+                      inputProps={{ min: 0, max: 100 }}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 6, sm: 3 }}>
+                    <AppTextField
+                      label="Weight (%)"
+                      type="number"
+                      value={stage.weight ?? ""}
+                      placeholder="Optional"
+                      onChange={(event) =>
+                        updateStage(index, { weight: event.target.value ? Number(event.target.value) : null })
+                      }
+                      inputProps={{ min: 0, max: 100 }}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 6, sm: 3 }}>
+                    <AppTextField
+                      label="Feedback SLA (hrs)"
+                      type="number"
+                      value={stage.feedbackDueHours}
+                      onChange={(event) =>
+                        updateStage(index, { feedbackDueHours: Math.max(1, Number(event.target.value) || 1) })
+                      }
+                      inputProps={{ min: 1, max: 720 }}
+                      fullWidth
+                    />
+                  </Grid>
+                </Grid>
+
+                <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "flex-start", sm: "center" }} spacing={{ xs: 1.25, sm: 3 }} sx={{ mt: 1.5 }}>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <AppSwitch
+                      checked={stage.scorecardRequired}
+                      onChange={(event) => updateStage(index, { scorecardRequired: event.target.checked })}
+                      inputProps={{ "aria-label": `Scorecard required for round ${stage.order}` }}
+                    />
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: "0.78rem" }}>
+                      Scorecard required before debrief & progression
+                    </Typography>
+                  </Stack>
+
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <AppSwitch
+                      checked={stage.isMandatory ?? false}
+                      onChange={(event) => updateStage(index, { isMandatory: event.target.checked })}
+                      inputProps={{ "aria-label": `Mandatory round ${stage.order}` }}
+                    />
+                    <Typography variant="caption" color={stage.isMandatory ? "error.main" : "text.secondary"} sx={{ fontWeight: 650, fontSize: "0.78rem" }}>
+                      Mandatory Gate (failure blocks Hire recommendation)
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </Box>
+            ))}
           </Stack>
-          <AppButton
-            size="small"
-            variant="outlined"
-            startIcon={<AddRounded sx={{ fontSize: 16 }} />}
-            onClick={addRound}
-            disabled={saving || loading}
-            sx={{ height: 28, fontSize: "0.74rem", fontWeight: 700, borderRadius: "6px" }}
-          >
-            Add round
-          </AppButton>
-        </Stack>
-
-        {stages.map((stage, index) => (
-          <Box
-            key={stage.code || index}
-            sx={{
-              p: { xs: 1.5, sm: 2 },
-              borderRadius: "12px",
-              border: "1px solid",
-              borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-              bgcolor: isDark ? "rgba(15, 23, 42, 0.3)" : "#F8FAFC",
-              transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-              "&:hover": {
-                borderColor: isDark ? "rgba(255, 255, 255, 0.16)" : "#CBD5E1",
-              },
-            }}
-          >
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.25 }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Chip
-                  size="small"
-                  label={`Round ${stage.order}`}
-                  color="primary"
-                  sx={{ height: 22, fontWeight: 750, fontSize: "0.7rem", borderRadius: "5px" }}
-                />
-                <Typography variant="subtitle2" fontWeight={750} sx={{ fontSize: "0.86rem" }}>
-                  {stage.name || `Round ${stage.order}`}
-                </Typography>
-                {stage.isMandatory && (
-                  <Chip
-                    size="small"
-                    label="Mandatory Round"
-                    color="error"
-                    variant="outlined"
-                    sx={{ height: 20, fontSize: "0.65rem", fontWeight: 750 }}
-                  />
-                )}
-              </Stack>
-              {stages.length > 1 && (
-                <AppButton
-                  size="small"
-                  variant="text"
-                  color="error"
-                  startIcon={<DeleteOutlineRounded sx={{ fontSize: 15 }} />}
-                  onClick={() => removeRound(index)}
-                  sx={{ height: 24, fontSize: "0.72rem", fontWeight: 650, p: 0.5 }}
-                >
-                  Remove
-                </AppButton>
-              )}
-            </Stack>
-
-            <Grid container spacing={1.5}>
-              <Grid size={{ xs: 12, sm: 6, md: 3.5 }}>
-                <AppTextField
-                  label="Stage / Round name"
-                  value={stage.name}
-                  onChange={(event) => updateStage(index, { name: event.target.value })}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6, md: 2.5 }}>
-                <AppTextField
-                  label="Interview type"
-                  value={stage.type ?? ""}
-                  placeholder="e.g., Technical, HR, Cultural"
-                  onChange={(event) => updateStage(index, { type: event.target.value })}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={{ xs: 6, sm: 4, md: 1.5 }}>
-                <AppTextField
-                  label="Panel size"
-                  type="number"
-                  value={stage.requiredPanelSize}
-                  onChange={(event) =>
-                    updateStage(index, { requiredPanelSize: Math.max(1, Number(event.target.value) || 1) })
-                  }
-                  inputProps={{ min: 1, max: 20 }}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={{ xs: 6, sm: 4, md: 1.5 }}>
-                <AppTextField
-                  label="Pass Score (%)"
-                  type="number"
-                  value={stage.passThreshold ?? 70}
-                  onChange={(event) =>
-                    updateStage(index, { passThreshold: Math.max(0, Math.min(100, Number(event.target.value) || 0)) })
-                  }
-                  inputProps={{ min: 0, max: 100 }}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={{ xs: 6, sm: 4, md: 1.5 }}>
-                <AppTextField
-                  label="Weight (%)"
-                  type="number"
-                  value={stage.weight ?? ""}
-                  placeholder="Optional"
-                  onChange={(event) =>
-                    updateStage(index, { weight: event.target.value ? Number(event.target.value) : null })
-                  }
-                  inputProps={{ min: 0, max: 100 }}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={{ xs: 6, sm: 4, md: 1.5 }}>
-                <AppTextField
-                  label="Feedback SLA (hrs)"
-                  type="number"
-                  value={stage.feedbackDueHours}
-                  onChange={(event) =>
-                    updateStage(index, { feedbackDueHours: Math.max(1, Number(event.target.value) || 1) })
-                  }
-                  inputProps={{ min: 1, max: 720 }}
-                  fullWidth
-                />
-              </Grid>
-            </Grid>
-
-            <Stack direction="row" alignItems="center" spacing={3} sx={{ mt: 1.25 }}>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <AppSwitch
-                  checked={stage.scorecardRequired}
-                  onChange={(event) => updateStage(index, { scorecardRequired: event.target.checked })}
-                  inputProps={{ "aria-label": `Scorecard required for round ${stage.order}` }}
-                />
-                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
-                  Scorecard required before debrief & progression
-                </Typography>
-              </Stack>
-
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <AppSwitch
-                  checked={stage.isMandatory ?? false}
-                  onChange={(event) => updateStage(index, { isMandatory: event.target.checked })}
-                  inputProps={{ "aria-label": `Mandatory round ${stage.order}` }}
-                />
-                <Typography variant="caption" color={stage.isMandatory ? "error.main" : "text.secondary"} sx={{ fontWeight: 600 }}>
-                  Mandatory Gate (failure blocks Hire recommendation)
-                </Typography>
-              </Stack>
-            </Stack>
-          </Box>
-        ))}
-      </Stack>
+        </Box>
+      )}
     </Box>
   );
 }

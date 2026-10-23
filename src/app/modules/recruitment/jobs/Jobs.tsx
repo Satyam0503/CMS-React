@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Badge, Card, Chip, Stack, Tooltip, useMediaQuery } from "@mui/material";
+import { Badge, Card, Chip, Stack, Tooltip, Typography, useMediaQuery } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/C_IconButton";
@@ -10,12 +10,13 @@ import {
   deleteJobVacancy,
   editJobVacancy,
   getAllJobVacancies,
+  getRecruitmentEnterpriseConfig,
 } from "../services";
 import { toast } from "react-toastify";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { ViewJobDetails } from "./components/ViewJobDetails";
 import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
-import { GetAllVacancyPayload, JobModal } from "../models";
+import { GetAllVacancyPayload, JobModal, RecruitmentEnterpriseConfig } from "../models";
 import { AddEditJob } from "./components/AddEditJob";
 import {
   countAppliedFilter,
@@ -86,10 +87,31 @@ const initialValues: JobModal = {
   screeningCriteria: [],
 };
 
-const useJobTableColumnList = (): GridColDef<JobModal>[] => {
+const useJobTableColumnList = (
+  enterpriseConfig: RecruitmentEnterpriseConfig | null,
+  jobList: JobModal[]
+): GridColDef<JobModal>[] => {
   const { formatMessage: i } = useIntl();
 
-  return [
+  // Column is visible if:
+  // 1. Company enabled screening review/scorecards/per-job workflow customization, OR
+  // The Screening Threshold column is opt-in and ONLY displayed when:
+  // 1. Company has explicitly configured an active screening threshold (> 0) with auto-advance (non-Simple mode), OR
+  // 2. At least one job in the list explicitly has a screening pass score configured (> 0).
+  const isCompanyScreeningEnabled = Boolean(
+    enterpriseConfig &&
+      enterpriseConfig.recruitmentMode !== "Simple" &&
+      enterpriseConfig.autoAdvanceOnScreening &&
+      (enterpriseConfig.screeningPassScore ?? 0) > 0
+  );
+
+  const hasAnyJobSpecificThreshold = jobList.some(
+    (job) => typeof job.screeningPassScore === "number" && job.screeningPassScore > 0
+  );
+
+  const showScreeningThreshold = isCompanyScreeningEnabled || hasAnyJobSpecificThreshold;
+
+  const columns: GridColDef<JobModal>[] = [
     {
       field: "title",
       headerName: i({ id: "JOB.JOB_TITLE" }),
@@ -124,7 +146,10 @@ const useJobTableColumnList = (): GridColDef<JobModal>[] => {
         return <Box component={"p"}>{i({ id: values })}</Box>;
       },
     },
-    {
+  ];
+
+  if (showScreeningThreshold) {
+    columns.push({
       field: "screeningPassScore",
       headerName: "Screening Threshold",
       description: "Minimum screening score required to advance candidates",
@@ -134,32 +159,85 @@ const useJobTableColumnList = (): GridColDef<JobModal>[] => {
       renderCell: (params: any) => {
         const score = params.row.screeningPassScore;
         const hasScore = typeof score === "number" && score > 0;
+        const isDirectHire = params.row.workflowMode === "Direct";
         const criteria = params.row.screeningCriteria as string[] | undefined;
         const hasCriteria = criteria && criteria.length > 0;
-        const tooltip = hasCriteria
-          ? `Pass Threshold: ≥ ${hasScore ? score : 60}% | Role Criteria: ${criteria.join(", ")}`
-          : hasScore
-          ? `Role-specific Pass Threshold: ≥ ${score}%`
-          : "Using company enterprise default threshold (≥ 60%)";
+
+        if (isDirectHire) {
+          return (
+            <Tooltip title="Direct Hire: fast-track offer without screening threshold gate" arrow>
+              <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.82rem" }}>
+                  — (Direct Hire)
+                </Typography>
+              </Box>
+            </Tooltip>
+          );
+        }
+
+        if (hasScore) {
+          const tooltip = hasCriteria
+            ? `Pass Threshold: ≥ ${score}% | Role Criteria: ${criteria.join(", ")}`
+            : `Role-specific Pass Threshold: ≥ ${score}%`;
+          return (
+            <Tooltip title={tooltip} arrow>
+              <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
+                <Chip
+                  size="small"
+                  variant="filled"
+                  color="primary"
+                  label={`≥ ${score}% (Role)`}
+                  sx={{
+                    fontWeight: 750,
+                    fontSize: "0.72rem",
+                  }}
+                />
+              </Box>
+            </Tooltip>
+          );
+        }
+
+        const companyThreshold =
+          enterpriseConfig &&
+          enterpriseConfig.recruitmentMode !== "Simple" &&
+          enterpriseConfig.autoAdvanceOnScreening &&
+          (enterpriseConfig.screeningPassScore ?? 0) > 0
+            ? enterpriseConfig.screeningPassScore
+            : null;
+
+        if (companyThreshold) {
+          return (
+            <Tooltip title={`Inherits company policy threshold: ≥ ${companyThreshold}%`} arrow>
+              <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color="default"
+                  label={`≥ ${companyThreshold}% (Company)`}
+                  sx={{
+                    fontWeight: 750,
+                    fontSize: "0.72rem",
+                  }}
+                />
+              </Box>
+            </Tooltip>
+          );
+        }
 
         return (
-          <Tooltip title={tooltip} arrow>
+          <Tooltip title="No screening threshold gate configured for this position" arrow>
             <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
-              <Chip
-                size="small"
-                variant={hasScore ? "filled" : "outlined"}
-                color={hasScore ? "primary" : "default"}
-                label={hasScore ? `≥ ${score}% (Role)` : "≥ 60% (Default)"}
-                sx={{
-                  fontWeight: 750,
-                  fontSize: "0.72rem",
-                }}
-              />
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.85rem" }}>
+                —
+              </Typography>
             </Box>
           </Tooltip>
         );
       },
-    },
+    });
+  }
+
+  columns.push(
     {
       field: "status",
       headerName: i({ id: "STATUS" }),
@@ -189,8 +267,10 @@ const useJobTableColumnList = (): GridColDef<JobModal>[] => {
       flex: 1,
       filterable: false,
       renderCell: (param) => <ActionsCell {...param} />,
-    },
-  ];
+    }
+  );
+
+  return columns;
 };
 
 function ActionsCell(props: GridRenderCellParams) {
@@ -266,7 +346,23 @@ export default function Jobs() {
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const jobFilters = useAppSelector((state) => state.filters.jobs);
-  const columnList = useJobTableColumnList();
+  const [enterpriseConfig, setEnterpriseConfig] = useState<RecruitmentEnterpriseConfig | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getRecruitmentEnterpriseConfig()
+      .then((res) => {
+        if (active && res.data?.methodResult) {
+          setEnterpriseConfig(res.data.methodResult);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [isRefresh]);
+
+  const columnList = useJobTableColumnList(enterpriseConfig, jobList);
   const compactView = useMediaQuery("(max-width:599px)");
   const responsiveColumns = React.useMemo(
     () => columnList.map((column) => {
@@ -277,7 +373,7 @@ export default function Jobs() {
       if (column.field === "status") return { ...column, minWidth: 74, flex: 0.6 };
       if (column.field === "action") return { ...column, minWidth: 48, flex: 0.35 };
       return column;
-    }).filter((column) => !compactView || column.field !== "jobType"),
+    }).filter((column) => !compactView || (column.field !== "jobType" && column.field !== "screeningPassScore")),
     [columnList, compactView],
   );
 

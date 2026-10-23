@@ -12,13 +12,22 @@ import {
   FormHelperText,
   Grid,
   IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Stack,
   Tooltip,
   Typography,
+  useTheme,
 } from "@mui/material";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import TuneRounded from "@mui/icons-material/TuneRounded";
+import SpeedRounded from "@mui/icons-material/SpeedRounded";
+import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
+import AssignmentTurnedInOutlined from "@mui/icons-material/AssignmentTurnedInOutlined";
+import BusinessOutlined from "@mui/icons-material/BusinessOutlined";
+import ArrowForwardRounded from "@mui/icons-material/ArrowForwardRounded";
+import RuleOutlined from "@mui/icons-material/RuleOutlined";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../../shared/components/C_Modal";
@@ -82,23 +91,31 @@ const FormSwitch = ({
 }) => (
   <Stack
     direction="row"
-    alignItems="flex-start"
-    spacing={1.25}
+    alignItems="center"
+    justifyContent="space-between"
+    spacing={2}
     sx={{
-      p: 1.5,
+      p: 1.75,
+      height: "100%",
+      minHeight: 84,
+      boxSizing: "border-box",
       border: "1px solid",
       borderColor: checked ? "primary.main" : "divider",
-      borderRadius: "10px",
-      bgcolor: checked ? (t) => alpha(t.palette.primary.main, 0.04) : "transparent",
+      borderRadius: "12px",
+      bgcolor: checked ? (t) => alpha(t.palette.primary.main, 0.05) : "transparent",
       opacity: disabled ? 0.6 : 1,
-      transition: "all 0.2s ease",
+      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+      "&:hover": {
+        borderColor: "primary.main",
+        transform: "translateY(-1px)",
+      },
     }}
   >
-    <AppSwitch disabled={disabled} checked={checked} onChange={(event) => onChange(event.target.checked)} />
-    <Stack spacing={0.25}>
-      <Typography variant="body2" fontWeight={750}>{label}</Typography>
-      <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.3 }}>{description}</Typography>
+    <Stack spacing={0.35} sx={{ minWidth: 0, flex: 1, pr: 1 }}>
+      <Typography variant="body2" fontWeight={750} sx={{ fontSize: "0.86rem" }}>{label}</Typography>
+      <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.76rem", lineHeight: 1.4 }}>{description}</Typography>
     </Stack>
+    <AppSwitch disabled={disabled} checked={checked} onChange={(event) => onChange(event.target.checked)} sx={{ flexShrink: 0 }} />
   </Stack>
 );
 
@@ -111,6 +128,7 @@ export const AddEditJob: FC<PropsTypes> = ({
 }) => {
   const { formatMessage: i } = useIntl();
   const isDark = useIsDark();
+  const theme = useTheme();
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector((state) => state.user.userData?.defaultLanguage) || "en";
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
@@ -631,35 +649,246 @@ export const AddEditJob: FC<PropsTypes> = ({
           </Box>
 
           {showWorkflowCustomization && (
-            <>
-              {/* Section 3: Evaluation & Screening Criteria (Thresholds) */}
-              <Box sx={{ p: 2.25, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "action.hover" }}>
-                <Typography variant="subtitle1" fontWeight={850} sx={{ mb: 0.5, color: "primary.main" }}>
-                  Screening Pass Threshold & Evaluation Criteria
+            <Box
+              sx={{
+                p: { xs: 2.25, sm: 3 },
+                border: "1px solid",
+                borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
+                borderRadius: "14px",
+                bgcolor: isDark ? "rgba(30, 41, 59, 0.25)" : "background.paper",
+                boxShadow: isDark ? "0 2px 10px rgba(0,0,0,0.2)" : "0 1px 3px rgba(0,0,0,0.02)",
+              }}
+            >
+              {/* Header with Title, Description, and Active Badge */}
+              <Stack direction="row" justifyContent="space-between" alignItems="flex-start" flexWrap="wrap" gap={1.5} sx={{ mb: 2.5 }}>
+                <Stack direction="row" spacing={1.5} alignItems="center">
+                  <Box
+                    sx={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: "12px",
+                      display: "grid",
+                      placeItems: "center",
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      color: "primary.main",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <TuneRounded sx={{ fontSize: 24 }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={850} sx={{ fontSize: "1rem", color: "text.primary" }}>
+                      Hiring Workflow & Governance
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.8rem", mt: 0.25 }}>
+                      Tailor the recruitment process for this specific vacancy. Fast-track junior or urgent positions with fewer steps, or enforce multi-round panel interviews, scorecards, and verification for senior/compliance roles.
+                    </Typography>
+                  </Box>
+                </Stack>
+                <Chip
+                  size="small"
+                  label={
+                    values.workflowMode === "Direct"
+                      ? "Fast-Track / Direct Hire"
+                      : values.workflowMode === "Enterprise"
+                      ? "Enterprise Governance"
+                      : values.workflowMode === "Standard"
+                      ? "Standard Workflow"
+                      : "Company Default (Inherit)"
+                  }
+                  color={
+                    values.workflowMode === "Direct"
+                      ? "success"
+                      : values.workflowMode === "Enterprise"
+                      ? "warning"
+                      : values.workflowMode === "Standard"
+                      ? "primary"
+                      : "default"
+                  }
+                  icon={
+                    values.workflowMode === "Direct" ? (
+                      <SpeedRounded sx={{ fontSize: "14px !important" }} />
+                    ) : values.workflowMode === "Enterprise" ? (
+                      <ShieldOutlined sx={{ fontSize: "14px !important" }} />
+                    ) : values.workflowMode === "Standard" ? (
+                      <AssignmentTurnedInOutlined sx={{ fontSize: "14px !important" }} />
+                    ) : (
+                      <BusinessOutlined sx={{ fontSize: "14px !important" }} />
+                    )
+                  }
+                  sx={{ fontWeight: 750, height: 26, fontSize: "0.72rem" }}
+                />
+              </Stack>
+
+              {/* Mode Visual Selector Cards */}
+              <Box sx={{ mb: 1.25 }}>
+                <Typography variant="caption" fontWeight={800} color="text.secondary" sx={{ fontSize: "0.76rem" }}>
+                  Hiring Workflow Mode
                 </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
+              </Box>
+              <Grid container spacing={2} sx={{ mb: 2.5 }}>
+                {[
+                  {
+                    mode: "Inherit",
+                    title: "Company Default",
+                    subtitle: "Inherit standard company settings",
+                    icon: <BusinessOutlined sx={{ fontSize: 18 }} />,
+                  },
+                  {
+                    mode: "Direct",
+                    title: "Fast-Track / Direct Hire",
+                    subtitle: "Screening → Direct Offer / Hire",
+                    icon: <SpeedRounded sx={{ fontSize: 18 }} />,
+                  },
+                  {
+                    mode: "Standard",
+                    title: "Standard",
+                    subtitle: "Screening → Interview & Scorecards → Offer",
+                    icon: <AssignmentTurnedInOutlined sx={{ fontSize: 18 }} />,
+                  },
+                  {
+                    mode: "Enterprise",
+                    title: "Enterprise Governance",
+                    subtitle: "Panel Debrief Quorum & Strict Gates",
+                    icon: <ShieldOutlined sx={{ fontSize: 18 }} />,
+                  },
+                ].map((item) => {
+                  const active = (values.workflowMode ?? "Inherit") === item.mode;
+                  return (
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }} key={item.mode}>
+                      <Box
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => {
+                          formik.setFieldValue("workflowMode", item.mode);
+                          if (item.mode === "Direct") {
+                            formik.setFieldValue("requireInterview", false);
+                            formik.setFieldValue("requirePreboarding", false);
+                          } else if (item.mode === "Enterprise") {
+                            formik.setFieldValue("requireInterview", true);
+                            formik.setFieldValue("requirePreboarding", true);
+                          } else if (item.mode === "Inherit") {
+                            formik.setFieldValue("requireInterview", null);
+                            formik.setFieldValue("requirePreboarding", null);
+                          }
+                        }}
+                        sx={{
+                          p: 2,
+                          borderRadius: "12px",
+                          border: active ? "2px solid" : "1px solid",
+                          borderColor: active
+                            ? theme.palette.primary.main
+                            : isDark
+                            ? "rgba(255, 255, 255, 0.08)"
+                            : "#E2E8F0",
+                          bgcolor: active
+                            ? alpha(theme.palette.primary.main, isDark ? 0.12 : 0.05)
+                            : isDark
+                            ? "rgba(15, 23, 42, 0.3)"
+                            : "#FFFFFF",
+                          cursor: "pointer",
+                          transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                          height: "100%",
+                          minHeight: 88,
+                          boxSizing: "border-box",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          "&:hover": {
+                            borderColor: theme.palette.primary.main,
+                            transform: "translateY(-2px)",
+                            boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
+                          },
+                        }}
+                      >
+                        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.75 }}>
+                          <Box sx={{ color: active ? "primary.main" : "text.secondary" }}>{item.icon}</Box>
+                          <Typography variant="body2" fontWeight={active ? 850 : 700} color={active ? "primary.main" : "text.primary"}>
+                            {item.title}
+                          </Typography>
+                        </Stack>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.74rem", lineHeight: 1.35 }}>
+                          {item.subtitle}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+
+              {/* Active Pipeline Flow Strip */}
+              <Box
+                sx={{
+                  p: 1.75,
+                  mb: 2.5,
+                  borderRadius: "12px",
+                  border: "1px dashed",
+                  borderColor: isDark ? "rgba(255, 255, 255, 0.12)" : "#CBD5E1",
+                  bgcolor: isDark ? "rgba(15, 23, 42, 0.2)" : alpha(theme.palette.primary.main, 0.02),
+                }}
+              >
+                <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap" useFlexGap>
+                  <Typography variant="caption" fontWeight={800} color="text.secondary" sx={{ mr: 0.5, fontSize: "0.76rem" }}>
+                    Candidate Flow:
+                  </Typography>
+                  {(values.workflowMode === "Direct"
+                    ? ["1. Apply", "2. Screening Pass", "3. Fast-Track Offer", "4. Hire"]
+                    : values.workflowMode === "Enterprise"
+                    ? ["1. Requisition", "2. Screening Review", "3. Panel Debrief Quorum", "4. Multi-tier Offer Approval", "5. Preboard & Hire"]
+                    : values.workflowMode === "Standard"
+                    ? ["1. Apply", "2. Screening Review", "3. Interview Rounds + Scorecards", "4. Offer Approval", "5. Preboard & Hire"]
+                    : ["1. Apply", "2. Screening", "3. Company Baseline Flow", "4. Offer", "5. Hire"]
+                  ).map((step, idx, arr) => (
+                    <Stack direction="row" spacing={0.75} alignItems="center" key={step}>
+                      <Chip
+                        label={step}
+                        size="small"
+                        color={idx === arr.length - 1 ? "primary" : "default"}
+                        variant={idx === arr.length - 1 ? "filled" : "outlined"}
+                        sx={{ height: 24, fontSize: "0.72rem", fontWeight: 750, borderRadius: "6px" }}
+                      />
+                      {idx < arr.length - 1 && <ArrowForwardRounded sx={{ fontSize: 13, color: "text.disabled" }} />}
+                    </Stack>
+                  ))}
+                </Stack>
+              </Box>
+
+              <Divider sx={{ my: 2.5 }} />
+
+              {/* Screening Pass Threshold & Evaluation Criteria Section */}
+              <Box sx={{ mb: 2.5 }}>
+                <Stack direction="row" spacing={1.25} alignItems="center" sx={{ mb: 0.5 }}>
+                  <RuleOutlined sx={{ fontSize: 20, color: "primary.main" }} />
+                  <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.94rem" }}>
+                    Screening Pass Threshold & Evaluation Criteria
+                  </Typography>
+                </Stack>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, fontSize: "0.78rem" }}>
                   Define the minimum score needed to pass screening for this specific role, and list customized criteria evaluated during recruiter review.
                 </Typography>
 
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid container spacing={2.5}>
+                  <Grid size={{ xs: 12, sm: 4 }}>
                     <AppTextField
                       fullWidth
                       name="screeningPassScore"
                       label="Minimum Screening Pass Score (%)"
                       type="number"
-                      placeholder="E.g. 70 (leave empty for company default)"
+                      placeholder="E.g. 70"
                       value={values.screeningPassScore ?? ""}
                       onChange={(e) => {
                         const val = e.target.value === "" ? null : Math.max(0, Math.min(100, Number(e.target.value)));
                         formik.setFieldValue("screeningPassScore", val);
                       }}
                       inputProps={{ min: 0, max: 100 }}
-                      helperText="Minimum score (0–100%) required to pass candidate screening and proceed to interview rounds."
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                      }}
+                      helperText="Score required to pass candidate screening."
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, sm: 8 }}>
                     <AppTextField
                       fullWidth
                       label="Role Screening Criteria (comma-separated)"
@@ -672,8 +901,8 @@ export const AddEditJob: FC<PropsTypes> = ({
                 </Grid>
 
                 {values.screeningCriteria && values.screeningCriteria.length > 0 && (
-                  <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1.5, alignItems: "center" }}>
-                    <Typography variant="caption" fontWeight={750} color="text.secondary">
+                  <Stack direction="row" flexWrap="wrap" gap={0.85} sx={{ mt: 1.5, alignItems: "center" }}>
+                    <Typography variant="caption" fontWeight={750} color="text.secondary" sx={{ fontSize: "0.74rem" }}>
                       Active Criteria:
                     </Typography>
                     {values.screeningCriteria.map((crit, idx) => (
@@ -683,83 +912,44 @@ export const AddEditJob: FC<PropsTypes> = ({
                         label={crit}
                         color="primary"
                         variant="outlined"
-                        sx={{ fontWeight: 600, fontSize: "0.75rem" }}
+                        sx={{ fontWeight: 650, fontSize: "0.72rem", height: 24, borderRadius: "6px" }}
                       />
                     ))}
                   </Stack>
                 )}
               </Box>
 
-              {/* Section 4: Hiring Workflow & Governance */}
-              <Box sx={{ p: 2.25, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: (t) => alpha(t.palette.primary.main, 0.03) }}>
-                <Typography variant="subtitle1" fontWeight={850} sx={{ mb: 0.5, color: "text.primary" }}>
-                  Hiring Workflow & Governance
+              <Divider sx={{ my: 2.5 }} />
+
+              {/* Granular Governance Overrides */}
+              <Box>
+                <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.92rem", mb: 0.35 }}>
+                  Granular Stage Gates & Governance Overrides
                 </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
-                  Tailor the recruitment process for this specific vacancy. Fast-track junior or urgent positions with fewer steps, or enforce multi-round panel interviews, scorecards, and verification for senior/compliance roles.
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, fontSize: "0.78rem" }}>
+                  Fine-tune round gates for this opening. When disabled, fast-track transitions are enabled without blocking approvals.
                 </Typography>
 
                 <Grid container spacing={2}>
-                  {/* Workflow Mode Select */}
-                  <Grid size={{ xs: 12, md: 6 }}>
-                    <FormControl fullWidth>
-                      <InputLabel id="workflow-mode-select-label">Hiring Workflow Mode</InputLabel>
-                      <AppSelect
-                        labelId="workflow-mode-select-label"
-                        label="Hiring Workflow Mode"
-                        value={values.workflowMode ?? "Inherit"}
-                        onChange={(e) => {
-                          const mode = e.target.value as string;
-                          formik.setFieldValue("workflowMode", mode);
-                          if (mode === "Direct") {
-                            formik.setFieldValue("requireInterview", false);
-                            formik.setFieldValue("requirePreboarding", false);
-                          } else if (mode === "Enterprise") {
-                            formik.setFieldValue("requireInterview", true);
-                            formik.setFieldValue("requirePreboarding", true);
-                          } else if (mode === "Inherit") {
-                            formik.setFieldValue("requireInterview", null);
-                            formik.setFieldValue("requirePreboarding", null);
-                          }
-                        }}
-                      >
-                        <MenuItem value="Inherit">Company Default (Inherit standard company settings)</MenuItem>
-                        <MenuItem value="Direct">Fast-Track / Direct Hire (Screening → Direct Offer / Hire)</MenuItem>
-                        <MenuItem value="Standard">Standard (Screening → Interview & Scorecards → Offer)</MenuItem>
-                        <MenuItem value="Enterprise">Enterprise Governance (Panel Debrief Quorum & Strict Gates)</MenuItem>
-                      </AppSelect>
-                      <FormHelperText>
-                        {values.workflowMode === "Direct"
-                          ? "Fast-track mode: candidate can be approved directly after screening without mandatory interview rounds or debriefs."
-                          : values.workflowMode === "Enterprise"
-                          ? "Full governance: mandatory interview rounds, panel debriefs, offer approvals, and preboarding checks."
-                          : values.workflowMode === "Standard"
-                          ? "Structured workflow: screening pass and interview round debrief required before decision."
-                          : "Inherits the tenant's global Recruitment Mode and gate policies configured in Recruitment Settings."}
-                      </FormHelperText>
-                    </FormControl>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormSwitch
+                      label="Require interview rounds before hiring decision"
+                      description="When disabled, allows approving candidate for an offer directly from screening."
+                      checked={values.requireInterview ?? (values.workflowMode === "Direct" ? false : values.workflowMode === "Enterprise" ? true : false)}
+                      onChange={(checked) => formik.setFieldValue("requireInterview", checked)}
+                    />
                   </Grid>
-
-                  {/* Granular overrides */}
-                  <Grid size={{ xs: 12, md: 6 }}>
-                    <Stack spacing={1.5}>
-                      <FormSwitch
-                        label="Require interview rounds before hiring decision"
-                        description="When disabled, allows approving candidate for an offer directly from screening."
-                        checked={values.requireInterview ?? (values.workflowMode === "Direct" ? false : values.workflowMode === "Enterprise" ? true : false)}
-                        onChange={(checked) => formik.setFieldValue("requireInterview", checked)}
-                      />
-                      <FormSwitch
-                        label="Require preboarding checklist before employee conversion"
-                        description="When disabled, enables 1-click employee creation and fast-track preboarding."
-                        checked={values.requirePreboarding ?? (values.workflowMode === "Direct" ? false : values.workflowMode === "Enterprise" ? true : false)}
-                        onChange={(checked) => formik.setFieldValue("requirePreboarding", checked)}
-                      />
-                    </Stack>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormSwitch
+                      label="Require preboarding checklist before employee conversion"
+                      description="When disabled, enables 1-click employee creation and fast-track preboarding."
+                      checked={values.requirePreboarding ?? (values.workflowMode === "Direct" ? false : values.workflowMode === "Enterprise" ? true : false)}
+                      onChange={(checked) => formik.setFieldValue("requirePreboarding", checked)}
+                    />
                   </Grid>
                 </Grid>
               </Box>
-            </>
+            </Box>
           )}
         </Stack>
         <Divider sx={{ bgcolor: "grey", my: 1.5 }} />

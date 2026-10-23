@@ -63,7 +63,8 @@ const getWorkFromHomeErrorMessage = (errorMessage?: string) => {
     WFH_OVERLAPPING_REQUEST: "You already have a Work From Home request for one or more of the selected dates.",
     WFH_BACKDATED_NOT_ALLOWED: "Work From Home can only be requested for today or a future working day.",
     WFH_ADVANCE_NOTICE_REQUIRED: "This request does not meet the required advance notice period.",
-    WFH_SAME_DAY_OFFICE_STARTED: details || "Work From Home for today must be requested before your office start time.",
+    WFH_SAME_DAY_OFFICE_STARTED: details || "Work From Home for today must be requested before your office cutoff time.",
+    WFH_LATE_REASON_REQUIRED: details || "A reason is required when applying for Work From Home after the cutoff time.",
     WFH_WEEKLY_OFF_NOT_ALLOWED: "Work From Home cannot be requested on a weekly off day.",
     WFH_HOLIDAY_NOT_ALLOWED: "Work From Home cannot be requested on a holiday.",
     WFH_POLICY_NOT_ASSIGNED: "Work From Home is not available for your current profile. Please contact HR.",
@@ -97,14 +98,18 @@ type WorkFromHomeContext = {
   businessDate?: string;
   isSameDayRequestCutoffPassed?: boolean;
   effectiveOfficeStartTime?: string | null;
+  effectiveCutoffTime?: string | null;
+  secondHalfCutoffTime?: string | null;
+  sameDayGraceMinutes?: number;
+  allowLateApplicationWithApproval?: boolean;
 };
 
-const formatOfficeStartTime = (value?: string | null) => {
-  if (!value) return "your office start time";
+const formatOfficeTime = (value?: string | null) => {
+  if (!value) return null;
   const [rawHour, rawMinute] = value.split(":");
   const hour = Number(rawHour);
   const minute = Number(rawMinute);
-  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return "your office start time";
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return null;
   const suffix = hour >= 12 ? "PM" : "AM";
   const displayHour = hour % 12 || 12;
   return `${displayHour}:${String(minute).padStart(2, "0")} ${suffix}`;
@@ -160,7 +165,7 @@ export const LeaveApplication = (props: Props) => {
     void loadWfhEligibility();
     window.addEventListener("wfh-allocation-changed", loadWfhEligibility);
     return () => window.removeEventListener("wfh-allocation-changed", loadWfhEligibility);
-  }, [props.targetEmployeeId, routeEmployeeId]);
+  }, [props.targetEmployeeId, routeEmployeeId, hasWfhPermission]);
 
   useEffect(() => {
     const fetchedHolidayData = async () => {
@@ -192,8 +197,9 @@ export const LeaveApplication = (props: Props) => {
         const appliesToEmployee = (policy: LeavePolicyModel) =>
           !policy.applicableTo || policy.applicableTo.length === 0 || policy.applicableTo.includes(targetUserId);
         setWorkFromHomeTypes(
-          policies
-            .filter((policy) => !props.targetEmployeeId && policy.policyType === 2 && policy.id && appliesToEmployee(policy))
+          hasWfhPermission
+            ? policies
+                .filter((policy) => !props.targetEmployeeId && policy.policyType === 2 && policy.id && appliesToEmployee(policy))
             .map((policy) => ({
               leaveBalanceId: `wfh-${policy.id}`,
               leavePolicyId: policy.id!,
@@ -211,6 +217,7 @@ export const LeaveApplication = (props: Props) => {
               attendanceStatusCode: policy.attendanceStatusCode,
               policyType: 2,
             }))
+            : []
         );
         setUnpaidLeaveTypes(
           policies
@@ -248,7 +255,7 @@ export const LeaveApplication = (props: Props) => {
   }, [currentUserId, employeeId, props.targetEmployeeId, lifecyclePolicies]);
 
   const selectableLeaveTypes: SelectableLeaveType[] = [
-    ...leaveTypeBalance.map((leave) => ({ ...leave, policyType: 1 as const })),
+    ...leaveTypeBalance.filter((leave) => !workFromHomeTypes.some((w) => w.leavePolicyId === leave.leavePolicyId) && !unpaidLeaveTypes.some((u) => u.leavePolicyId === leave.leavePolicyId)).map((leave) => ({ ...leave, policyType: 1 as const })),
     ...workFromHomeTypes.filter((wfh) => wfhEligibility?.isEligible &&
       !leaveTypeBalance.some((leave) => leave.leavePolicyId === wfh.leavePolicyId)
     ),
@@ -364,11 +371,31 @@ export const LeaveApplication = (props: Props) => {
           const context = contextResponse.methodResult;
           const requestedToday = context?.businessDate && getDatesBetween(dayjs(values.startDate), dayjs(values.endDate))
             .some((date) => date.isSame(dayjs(context.businessDate), "day"));
-          if (requestedToday && context?.isSameDayRequestCutoffPassed) {
-            const startTime = formatOfficeStartTime(context.effectiveOfficeStartTime);
-            setStatus(`Work From Home for today must be requested before your office start time (${startTime}).`);
-            setSubmitting(false);
-            return;
+          if (requestedToday && context?.effectiveCutoffTime) {
+            const isSecondHalf = values.isHalfDay && values.halfDayPeriod === "SECOND_HALF";
+            let isCutoffPassed = context?.isSameDayRequestCutoffPassed;
+            let displayCutoff = formatOfficeTime(context.effectiveCutoffTime);
+
+            if (isSecondHalf && context?.secondHalfCutoffTime) {
+              displayCutoff = formatOfficeTime(context.secondHalfCutoffTime);
+              const [shH, shM] = context.secondHalfCutoffTime.split(":").map(Number);
+              const now = dayjs();
+              isCutoffPassed = now.hour() > shH || (now.hour() === shH && now.minute() >= shM);
+            }
+
+            if (isCutoffPassed) {
+              if (context?.allowLateApplicationWithApproval ?? true) {
+                if (!values.reason?.trim()) {
+                  setStatus(`The same-day cutoff time (${displayCutoff}) has passed. You may submit an emergency/late request for manager approval, but a reason is required.`);
+                  setSubmitting(false);
+                  return;
+                }
+              } else {
+                setStatus(`Work From Home for today must be requested before your cutoff time (${displayCutoff}). Late requests are not enabled.`);
+                setSubmitting(false);
+                return;
+              }
+            }
           }
         } catch {
           // Continue to the authoritative server-side validation if context cannot be refreshed.
@@ -408,7 +435,7 @@ export const LeaveApplication = (props: Props) => {
         (type) => type.leavePolicyId === values.leavePolicyId
       )?.minNoticeDays ?? 0;
     const currentNoticeDays = dayjs(values.startDate).diff(dayjs().startOf("day"), "days");
-    if (currentNoticeDays < minAdvanceNoticeDate) {
+    if (selectedLeaveType?.policyType === 1 && currentNoticeDays < minAdvanceNoticeDate) {
       setStatus(
         i(
           { id: "MESSAGE.ADVANCE_LEAVE_NOTICE_ERROR" },

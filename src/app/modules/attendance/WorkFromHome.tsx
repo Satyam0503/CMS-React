@@ -6,12 +6,15 @@ import { getRequest, postRequest } from "../../../server/axios";
 import { usePageData } from "../../Context/PageDataProvider";
 import { AppButton, AppSwitch, AppTextField } from "../../shared/components/ui";
 import { ApiResponse } from "../../../utils/common_types";
+import CustomisedDatePicker from "../../shared/components/C_DatePicker";
+import dayjs, { Dayjs } from "dayjs";
+import { WfhClockOutModal } from "./component/WfhClockOutModal";
 
 type Policy = { isEnabled:boolean; maxDaysPerWeek:number; minimumAdvanceNoticeHours?:number; managerApprovalRequired?:boolean; applyToAllEmployees:boolean; applicableDepartments:string[]; applicableEmployeeIds:string[]; allowHalfDay:boolean; allowMixedDay:boolean; requireReason:boolean; fullDayAttendanceStatusCode:string; halfDayAttendanceStatusCode:string; mixedAttendanceStatusCode:string };
-type Request = { requestId:string; employeeId?:string; employeeName?:string; department?:string; fromDate:string; toDate:string; durationType:string; reasonCode:string; reasonText?:string; status:string; version:number };
+type Request = { requestId:string; employeeId?:string; employeeName?:string; department?:string; fromDate:string; toDate:string; durationType:string; reasonCode:string; reasonText?:string; status:string; version:number; isLateSubmission?:boolean };
 type RequestPage = { methodResults?: Request[]; totalRecords?: number };
 type RequestFilters = { employeeSearch:string; department:string; status:string; fromDate:string; toDate:string; pageNo:number; pageSize:number };
-type Timing = { isApprovedForToday:boolean; checkInTime?:string; checkOutTime?:string; totalHours?:number; requiredHours:number };
+type Timing = { isApprovedForToday:boolean; checkInTime?:string; checkOutTime?:string; totalHours?:number; requiredHours:number; halfDayRequiredHours?:number; status?:string; isHalfDay?:boolean; isUnderHours?:boolean };
 type Context = { isFeatureEnabled:boolean; isEligible:boolean; weeklyLimit:number; usedThisWeek:number; remainingThisWeek:number; canSchedule:boolean; disabledReasonCode?:string; nextAvailableDate?:string; managerApprovalRequired:boolean; minimumAdvanceNoticeHours:number; businessDate?:string; isSameDayRequestCutoffPassed?:boolean; officeStartTime?:string; officeEndTime?:string; checkInAvailableFrom?:string; checkInAvailableUntil?:string; checkOutAvailableFrom?:string; checkOutAvailableUntil?:string };
 const defaultPolicy: Policy = { isEnabled:true, maxDaysPerWeek:1, applyToAllEmployees:true, applicableDepartments:[], applicableEmployeeIds:[], allowHalfDay:false, allowMixedDay:false, requireReason:true, fullDayAttendanceStatusCode:"WFH", halfDayAttendanceStatusCode:"WFH-HD", mixedAttendanceStatusCode:"WFH+WFO" };
 
@@ -30,6 +33,11 @@ export default function WorkFromHome() {
   const [context, setContext] = useState<Context | null>(null);
   const [timings, setTimings] = useState<Record<string, Timing>>({});
   const [clockingRequestId, setClockingRequestId] = useState<string | null>(null);
+  const [clockOutTarget, setClockOutTarget] = useState<{ requestId: string; checkInTime?: string; requiredHours?: number; halfDayRequiredHours?: number } | null>(null);
+  const [regularizeTarget, setRegularizeTarget] = useState<Request | null>(null);
+  const [regStatus, setRegStatus] = useState("WFH-HD");
+  const [regRemarks, setRegRemarks] = useState("");
+  const [regularizing, setRegularizing] = useState(false);
   const [now, setNow] = useState(Date.now());
   // Employees submit WFH from the normal Apply for Leave form. This page keeps
   // request history and approvals without exposing a duplicate submission flow.
@@ -78,7 +86,67 @@ export default function WorkFromHome() {
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   const submit = async () => { if (!context?.canSchedule) return; try { const { data } = await postRequest<typeof form, ApiResponse>("api/wfh/requests", form); if (!data.success) throw new Error(data.message); toast.success(context.managerApprovalRequired ? "WFH request submitted for approval." : "WFH scheduled. HR has been notified."); setForm({ fromDate:"", toDate:"", durationType:"FullDay", reasonCode:"OTHER", reasonText:"" }); await load(); } catch (e) { toast.error((e as Error).message || "Unable to submit WFH request."); } };
   const timing = async (requestId:string) => { try { const { data } = await getRequest<{methodResult?:Timing}>(`api/wfh/requests/${requestId}/timing`); if (data.methodResult) setTimings(value => ({ ...value, [requestId]: data.methodResult! })); } catch { /* an employee can have no approved request today */ } };
-  const act = async (requestId:string, action:"approve"|"reject"|"return"|"check-in"|"check-out", version?:number) => { const isClockAction = action === "check-in" || action === "check-out"; if (isClockAction) setClockingRequestId(requestId); try { const { data } = await postRequest<Record<string, unknown>, ApiResponse>(`api/wfh/requests/${requestId}/${action}`, action === "approve" || action === "reject" || action === "return" ? { remarksCode: action === "return" ? "RETURNED_FOR_CORRECTION" : action.toUpperCase(), version } : {}); if (!data.success) throw new Error(data.message); toast.success(action === "approve" ? "WFH request approved." : action === "return" ? "WFH request returned for correction." : action.replace("-", " ") + " recorded."); await load(); await timing(requestId); } catch (e) { toast.error((e as Error).message || "Action could not be completed."); } finally { if (isClockAction) setClockingRequestId(null); } };
+  const act = async (requestId:string, action:"approve"|"reject"|"return"|"check-in"|"check-out", version?:number) => {
+    if (action === "check-out") {
+      const time = timings[requestId];
+      setClockOutTarget({ requestId, checkInTime: time?.checkInTime, requiredHours: time?.requiredHours, halfDayRequiredHours: time?.halfDayRequiredHours });
+      return;
+    }
+    const isClockAction = action === "check-in";
+    if (isClockAction) setClockingRequestId(requestId);
+    try {
+      const { data } = await postRequest<Record<string, unknown>, ApiResponse>(`api/wfh/requests/${requestId}/${action}`, action === "approve" || action === "reject" || action === "return" ? { remarksCode: action === "return" ? "RETURNED_FOR_CORRECTION" : action.toUpperCase(), version } : {});
+      if (!data.success) throw new Error(data.message);
+      toast.success(action === "approve" ? "WFH request approved." : action === "return" ? "WFH request returned for correction." : action.replace("-", " ") + " recorded.");
+      await load();
+      await timing(requestId);
+    } catch (e) {
+      toast.error((e as Error).message || "Action could not be completed.");
+    } finally {
+      if (isClockAction) setClockingRequestId(null);
+    }
+  };
+  const handleConfirmClockOut = async (remarks: string) => {
+    if (!clockOutTarget) return;
+    const reqId = clockOutTarget.requestId;
+    setClockingRequestId(reqId);
+    try {
+      const { data } = await postRequest<{ remarks: string }, ApiResponse>(
+        `api/wfh/requests/${reqId}/check-out`,
+        { remarks }
+      );
+      if (!data.success) throw new Error(data.message);
+      toast.success("WFH clock-out recorded successfully.");
+      setClockOutTarget(null);
+      await load();
+      await timing(reqId);
+    } catch (e) {
+      toast.error((e as Error).message || "Clock out could not be completed.");
+    } finally {
+      setClockingRequestId(null);
+    }
+  };
+  const handleRegularize = async () => {
+    if (!regularizeTarget || !regRemarks.trim()) {
+      toast.error("Please provide remarks for regularization.");
+      return;
+    }
+    setRegularizing(true);
+    try {
+      const { data } = await postRequest<{ attendanceStatus: string; remarks: string }, ApiResponse>(
+        `api/wfh/requests/${regularizeTarget.requestId}/regularize`,
+        { attendanceStatus: regStatus, remarks: regRemarks.trim() }
+      );
+      if (!data.success) throw new Error(data.message || "Unable to regularize attendance.");
+      toast.success(data.message || "WFH attendance regularized successfully.");
+      setRegularizeTarget(null);
+      await load();
+    } catch (e) {
+      toast.error((e as Error).message || "Unable to regularize attendance.");
+    } finally {
+      setRegularizing(false);
+    }
+  };
   const cancelRequest = async (request:Request) => { try { const { data } = await postRequest<{ version:number; remarksCode:string }, ApiResponse>(`api/wfh/requests/${request.requestId}/cancel`, { version: request.version, remarksCode:"EMPLOYEE_CANCELLED" }); if (!data.success) throw new Error(data.message); toast.success("WFH request cancelled and its unclocked attendance has been restored."); await load(); } catch (e) { toast.error((e as Error).message || "WFH request could not be cancelled."); } };
   const currentWeekStart = new Date(now);
   currentWeekStart.setHours(0, 0, 0, 0);
@@ -98,27 +166,59 @@ export default function WorkFromHome() {
       <Typography color="text.secondary" sx={{ mt:.5 }}>{context?.canSchedule ? `${context.remainingThisWeek} of ${context.weeklyLimit} WFH day(s) remain this Monday–Sunday week.` : context?.disabledReasonCode === "WFH_WEEKLY_LIMIT_USED" ? `This week's WFH allowance has been used. Next available: ${context.nextAvailableDate ? new Date(context.nextAvailableDate).toLocaleDateString() : "next Monday"}.` : "WFH is not currently available for your employee profile."}</Typography>
       <Divider sx={{ my:2.5 }} />
       <Box sx={{ display:"grid", gridTemplateColumns:{ xs:"1fr", sm:"repeat(2, minmax(0, 1fr))", lg:"repeat(4, minmax(0, 1fr))" }, gap:2 }}>
-        <AppTextField label="From date" type="date" InputLabelProps={{ shrink:true }} value={form.fromDate} onChange={e=>setForm({...form,fromDate:e.target.value})}/>
-        <AppTextField label="To date" type="date" InputLabelProps={{ shrink:true }} value={form.toDate} onChange={e=>setForm({...form,toDate:e.target.value})}/>
+        <CustomisedDatePicker
+          label="From date"
+          clearable
+          value={form.fromDate ? dayjs(form.fromDate) : null}
+          setValue={(date: Dayjs | null) => setForm(f => ({ ...f, fromDate: date ? date.format("YYYY-MM-DD") : "" }))}
+        />
+        <CustomisedDatePicker
+          label="To date"
+          clearable
+          value={form.toDate ? dayjs(form.toDate) : null}
+          minDate={form.fromDate ? dayjs(form.fromDate) : undefined}
+          setValue={(date: Dayjs | null) => setForm(f => ({ ...f, toDate: date ? date.format("YYYY-MM-DD") : "" }))}
+        />
         <AppTextField select label="Duration" SelectProps={{ native:true }} value={form.durationType} onChange={e=>setForm({...form,durationType:e.target.value})} helperText={form.durationType === "FirstHalf" ? "WFH covers the first half; the second half remains available for office attendance." : form.durationType === "SecondHalf" ? "WFH covers the second half; the first half remains available for office attendance." : undefined}><option value="FullDay">Full day</option>{policy.allowHalfDay && <option value="FirstHalf">First half</option>}{policy.allowHalfDay && <option value="SecondHalf">Second half</option>}{policy.allowMixedDay && <option value="Mixed">Mixed WFH/WFO</option>}</AppTextField>
         <AppTextField select label="Reason category" SelectProps={{ native:true }} value={form.reasonCode} onChange={e=>setForm({...form,reasonCode:e.target.value})}><option value="PERSONAL">Personal</option><option value="MEDICAL">Medical</option><option value="FAMILY">Family</option><option value="HOME_MAINTENANCE">Home maintenance</option><option value="TRAVEL_DISRUPTION">Travel disruption</option><option value="OPERATIONAL">Operational</option><option value="MANAGER_INSTRUCTION">Manager instruction</option><option value="OTHER">Other</option></AppTextField>
         <AppTextField label="Additional details" required={policy.requireReason} value={form.reasonText} onChange={e=>setForm({...form,reasonText:e.target.value})}/>
       </Box>
       <AppButton sx={{ mt:2 }} variant="contained" startIcon={<Add/>} disabled={!context?.canSchedule || !form.fromDate || !form.toDate || (policy.requireReason && !form.reasonText.trim())} onClick={()=>void submit()}>{context?.managerApprovalRequired ? "Submit for approval" : "Schedule WFH"}</AppButton>
     </Card>}
-    <Card sx={{ p:{ xs:2, md:3 } }}><Typography variant="h6" fontWeight={800}>My requests</Typography><Stack spacing={1.25} sx={{ mt:2 }}>{requests.length ? requests.map(r=>{ const time = timings[r.requestId]; const todayApproved = time?.isApprovedForToday === true; const canCancel = (r.status === "Draft" || r.status === "Pending" || r.status === "Returned" || r.status === "Approved") && Boolean(companyBusinessDate && (r.fromDate.slice(0,10) > companyBusinessDate || (r.fromDate.slice(0,10) === companyBusinessDate && !context?.isSameDayRequestCutoffPassed))); const verifiedHours = time?.totalHours ?? 0; const hours = `${Math.floor(verifiedHours)}h ${Math.floor((verifiedHours % 1) * 60).toString().padStart(2,"0")}m`; return <Stack key={r.requestId} direction={{xs:"column",sm:"row"}} alignItems={{sm:"center"}} justifyContent="space-between" gap={1.5} sx={{ p:1.75, border:"1px solid", borderColor:"divider", borderRadius:2.5, "&:hover":{ bgcolor:"action.hover" }}}><Box><Typography fontWeight={750}>{new Date(r.fromDate).toLocaleDateString()} – {new Date(r.toDate).toLocaleDateString()}</Typography><Typography variant="body2" color="text.secondary">{r.durationType.replace(/([A-Z])/g, " $1").trim()} · {r.reasonText || r.reasonCode}</Typography>{todayApproved && <Typography variant="caption" color="text.secondary" display="block" sx={{mt:.5}}>Required: {time.requiredHours}h · Verified: {hours}</Typography>}</Box><Stack direction="row" gap={1} alignItems="center"><Chip label={r.status} color={r.status === "Approved" ? "success" : r.status === "Rejected" ? "error" : "warning"}/>{todayApproved && !time?.checkOutTime && <AppButton size="small" variant={time.checkInTime ? "contained" : "outlined"} startIcon={time.checkInTime ? <Logout/> : <Login/>} disabled={clockingRequestId === r.requestId} onClick={()=>void act(r.requestId,time.checkInTime ? "check-out" : "check-in")}>{clockingRequestId === r.requestId ? "Saving..." : time.checkInTime ? "Clock out" : "Clock in"}</AppButton>}{todayApproved && time?.checkOutTime && <Chip size="small" color="success" icon={<CheckCircle/>} label="Clocked out"/>}{canCancel && <AppButton size="small" color="error" variant="outlined" startIcon={<Cancel/>} onClick={()=>void cancelRequest(r)}>Cancel</AppButton>}</Stack></Stack>}) : <Typography color="text.secondary">No WFH requests yet.</Typography>}</Stack></Card>
+    <Card sx={{ p:{ xs:2, md:3 } }}><Typography variant="h6" fontWeight={800}>My requests</Typography><Stack spacing={1.25} sx={{ mt:2 }}>{requests.length ? requests.map(r=>{ const time = timings[r.requestId]; const todayApproved = time?.isApprovedForToday === true; const canCancel = (r.status === "Draft" || r.status === "Pending" || r.status === "Returned" || r.status === "Approved") && Boolean(companyBusinessDate && (r.fromDate.slice(0,10) > companyBusinessDate || (r.fromDate.slice(0,10) === companyBusinessDate && !context?.isSameDayRequestCutoffPassed))); const verifiedHours = time?.totalHours ?? 0; const hours = `${Math.floor(verifiedHours)}h ${Math.floor((verifiedHours % 1) * 60).toString().padStart(2,"0")}m`; return <Stack key={r.requestId} direction={{xs:"column",sm:"row"}} alignItems={{sm:"center"}} justifyContent="space-between" gap={1.5} sx={{ p:1.75, border:"1px solid", borderColor:"divider", borderRadius:2.5, "&:hover":{ bgcolor:"action.hover" }}}><Box><Typography fontWeight={750}>{new Date(r.fromDate).toLocaleDateString()} – {new Date(r.toDate).toLocaleDateString()}</Typography><Typography variant="body2" color="text.secondary">{r.durationType.replace(/([A-Z])/g, " $1").trim()} · {r.reasonText || r.reasonCode}{r.isLateSubmission && <Chip size="small" color="warning" label="Late Submission" sx={{ ml: 1, height: 20, fontSize: "0.75rem" }} />}</Typography>{todayApproved && <Typography variant="caption" color="text.secondary" display="block" sx={{mt:.5}}>Required: {time.requiredHours}h · Verified: {hours}{time.isHalfDay ? " (Half Day)" : ""}</Typography>}</Box><Stack direction="row" gap={1} alignItems="center"><Chip label={r.status} color={r.status === "Approved" ? "success" : r.status === "Rejected" ? "error" : "warning"}/>{todayApproved && !time?.checkOutTime && <AppButton size="small" variant={time.checkInTime ? "contained" : "outlined"} startIcon={time.checkInTime ? <Logout/> : <Login/>} disabled={clockingRequestId === r.requestId} onClick={()=>void act(r.requestId,time.checkInTime ? "check-out" : "check-in")}>{clockingRequestId === r.requestId ? "Saving..." : time.checkInTime ? "Clock out" : "Clock in"}</AppButton>}{todayApproved && time?.checkOutTime && <Chip size="small" color={time.isUnderHours ? "warning" : time.isHalfDay ? "info" : "success"} icon={<CheckCircle/>} label={time.isUnderHours ? "Under-hours (Pending review)" : time.isHalfDay ? "Half day clocked out" : "Clocked out"}/>}{canCancel && <AppButton size="small" color="error" variant="outlined" startIcon={<Cancel/>} onClick={()=>void cancelRequest(r)}>Cancel</AppButton>}</Stack></Stack>}) : <Typography color="text.secondary">No WFH requests yet.</Typography>}</Stack></Card>
     {canReviewWfh && <>
       <Card sx={{ p:{ xs:2, md:3 } }}>
         <Typography variant="h6" fontWeight={800}>WFH request filters</Typography>
         <Box sx={{ display:"grid", gridTemplateColumns:{ xs:"1fr", sm:"repeat(2, minmax(0, 1fr))", lg:"repeat(5, minmax(0, 1fr))" }, gap:1.5, mt:2 }}>
-          <AppTextField label="Employee" value={filters.employeeSearch} onChange={event=>setFilters(value=>({ ...value, employeeSearch:event.target.value, pageNo:1 }))} />
-          <AppTextField label="Department" value={filters.department} onChange={event=>setFilters(value=>({ ...value, department:event.target.value, pageNo:1 }))} />
-          <AppTextField select label="Status" value={filters.status} onChange={event=>setFilters(value=>({ ...value, status:event.target.value, pageNo:1 }))}>{["Pending","Approved","Returned","Rejected","Cancelled"].map(status=><MenuItem key={status} value={status}>{status}</MenuItem>)}</AppTextField>
-          <AppTextField label="From date" type="date" InputLabelProps={{ shrink:true }} value={filters.fromDate} onChange={event=>setFilters(value=>({ ...value, fromDate:event.target.value, pageNo:1 }))} />
-          <AppTextField label="To date" type="date" InputLabelProps={{ shrink:true }} value={filters.toDate} onChange={event=>setFilters(value=>({ ...value, toDate:event.target.value, pageNo:1 }))} />
+          <AppTextField size="small" label="Employee" value={filters.employeeSearch} onChange={event=>setFilters(value=>({ ...value, employeeSearch:event.target.value, pageNo:1 }))} />
+          <AppTextField size="small" label="Department" value={filters.department} onChange={event=>setFilters(value=>({ ...value, department:event.target.value, pageNo:1 }))} />
+          <AppTextField size="small" select label="Status" value={filters.status} onChange={event=>setFilters(value=>({ ...value, status:event.target.value, pageNo:1 }))}>{["Pending","Approved","Returned","Rejected","Cancelled"].map(status=><MenuItem key={status} value={status}>{status}</MenuItem>)}</AppTextField>
+          <CustomisedDatePicker
+            label="From date"
+            clearable
+            value={filters.fromDate ? dayjs(filters.fromDate) : null}
+            setValue={(date: Dayjs | null) => setFilters(value => ({ ...value, fromDate: date ? date.format("YYYY-MM-DD") : "", pageNo: 1 }))}
+          />
+          <CustomisedDatePicker
+            label="To date"
+            clearable
+            value={filters.toDate ? dayjs(filters.toDate) : null}
+            minDate={filters.fromDate ? dayjs(filters.fromDate) : undefined}
+            setValue={(date: Dayjs | null) => setFilters(value => ({ ...value, toDate: date ? date.format("YYYY-MM-DD") : "", pageNo: 1 }))}
+          />
         </Box>
       </Card>
-      <Card sx={{ p:{ xs:2, md:3 } }}><Typography variant="h6" fontWeight={800}>WFH requests</Typography><Typography variant="body2" color="text.secondary" sx={{mb:2}}>HR/Admin can review company requests; managers see requests assigned to them.</Typography><Stack spacing={1}>{team.length ? team.map(r=><Stack key={r.requestId} direction={{xs:"column",sm:"row"}} justifyContent="space-between" alignItems={{sm:"center"}} gap={1.5} sx={{p:1.5,border:"1px solid",borderColor:"divider",borderRadius:2}}><Box><Typography fontWeight={700}>{r.employeeName || r.employeeId} · {r.department || "No department"}</Typography><Typography variant="body2" color="text.secondary">{new Date(r.fromDate).toLocaleDateString()} · {r.durationType.replace(/([A-Z])/g, " $1").trim()} · {r.status}</Typography></Box>{r.status === "Pending" && <Stack direction={{xs:"column",sm:"row"}} gap={1} sx={{ width:{xs:"100%",sm:"auto"} }}><AppButton size="small" variant="outlined" startIcon={<Visibility/>} onClick={()=>setReasonRequest(r)}>View reason</AppButton><AppButton size="small" variant="outlined" onClick={()=>void act(r.requestId,"return",r.version)}>Return</AppButton><AppButton size="small" variant="contained" color="success" startIcon={<CheckCircle/>} onClick={()=>void act(r.requestId,"approve",r.version)}>Approve</AppButton><AppButton size="small" color="error" onClick={()=>void act(r.requestId,"reject",r.version)}>Reject</AppButton></Stack>}</Stack>) : <Typography color="text.secondary">No requests match these filters.</Typography>}</Stack><TablePagination component="div" count={teamTotal} page={filters.pageNo - 1} rowsPerPage={filters.pageSize} rowsPerPageOptions={[10,25,50,100]} onPageChange={(_, page)=>setFilters(value=>({ ...value, pageNo:page + 1 }))} onRowsPerPageChange={event=>setFilters(value=>({ ...value, pageNo:1, pageSize:Number(event.target.value) }))}/></Card>
+      <Card sx={{ p:{ xs:2, md:3 } }}><Typography variant="h6" fontWeight={800}>WFH requests</Typography><Typography variant="body2" color="text.secondary" sx={{mb:2}}>HR/Admin can review company requests; managers see requests assigned to them.</Typography><Stack spacing={1}>{team.length ? team.map(r=><Stack key={r.requestId} direction={{xs:"column",sm:"row"}} justifyContent="space-between" alignItems={{sm:"center"}} gap={1.5} sx={{p:1.5,border:"1px solid",borderColor:"divider",borderRadius:2}}><Box><Typography fontWeight={700}>{r.employeeName || r.employeeId} · {r.department || "No department"}</Typography><Typography variant="body2" color="text.secondary">{new Date(r.fromDate).toLocaleDateString()} · {r.durationType.replace(/([A-Z])/g, " $1").trim()} · {r.status}{r.isLateSubmission && <Chip size="small" color="warning" label="Late Submission" sx={{ ml: 1, height: 20, fontSize: "0.75rem" }} />}</Typography></Box><Stack direction={{xs:"column",sm:"row"}} gap={1} alignItems="center" sx={{ width:{xs:"100%",sm:"auto"} }}>
+              <AppButton size="small" variant="outlined" startIcon={<Visibility/>} onClick={()=>setReasonRequest(r)}>View reason</AppButton>
+              {r.status === "Pending" && <>
+                <AppButton size="small" variant="outlined" onClick={()=>void act(r.requestId,"return",r.version)}>Return</AppButton>
+                <AppButton size="small" variant="contained" color="success" startIcon={<CheckCircle/>} onClick={()=>void act(r.requestId,"approve",r.version)}>Approve</AppButton>
+                <AppButton size="small" color="error" onClick={()=>void act(r.requestId,"reject",r.version)}>Reject</AppButton>
+              </>}
+              {r.status === "Approved" && (
+                <AppButton size="small" variant="outlined" color="primary" onClick={() => { setRegularizeTarget(r); setRegStatus("WFH-HD"); setRegRemarks(""); }}>Regularize / Mark</AppButton>
+              )}
+            </Stack></Stack>) : <Typography color="text.secondary">No requests match these filters.</Typography>}</Stack><TablePagination component="div" count={teamTotal} page={filters.pageNo - 1} rowsPerPage={filters.pageSize} rowsPerPageOptions={[10,25,50,100]} onPageChange={(_, page)=>setFilters(value=>({ ...value, pageNo:page + 1 }))} onRowsPerPageChange={event=>setFilters(value=>({ ...value, pageNo:1, pageSize:Number(event.target.value) }))}/></Card>
     </>}
     <Dialog open={Boolean(reasonRequest)} onClose={()=>setReasonRequest(null)} fullWidth maxWidth="sm" aria-labelledby="wfh-reason-dialog-title">
       <DialogTitle id="wfh-reason-dialog-title">Work From Home reason</DialogTitle>
@@ -142,5 +242,55 @@ export default function WorkFromHome() {
       </Box>
       <TablePagination component="div" count={rosterTotal} page={rosterPage - 1} rowsPerPage={filters.pageSize} rowsPerPageOptions={[10,25,50,100]} onPageChange={(_, page)=>setRosterPage(page + 1)} onRowsPerPageChange={event=>{ setRosterPage(1); setFilters(value=>({ ...value, pageSize:Number(event.target.value) })); }}/>
     </Card>}
+
+    <Dialog open={Boolean(regularizeTarget)} onClose={() => !regularizing && setRegularizeTarget(null)} fullWidth maxWidth="sm">
+      <DialogTitle>Regularize / Mark WFH Attendance</DialogTitle>
+      <DialogContent dividers>
+        <Stack spacing={2} sx={{ pt: 1 }}>
+          <Box sx={{ p: 1.5, bgcolor: "action.hover", borderRadius: 2 }}>
+            <Typography variant="body2" fontWeight={700}>{regularizeTarget?.employeeName || regularizeTarget?.employeeId} · {regularizeTarget?.department || "No department"}</Typography>
+            <Typography variant="caption" color="text.secondary">Date: {regularizeTarget ? new Date(regularizeTarget.fromDate).toLocaleDateString() : ""} · {regularizeTarget?.durationType}</Typography>
+          </Box>
+          <AppTextField
+            select
+            label="Attendance Status to Mark"
+            value={regStatus}
+            onChange={(e) => setRegStatus(e.target.value)}
+            helperText="Select the final attendance status to record for this employee's WFH day."
+          >
+            <MenuItem value="WFH-HD">WFH-HD · Half Day WFH (Concession)</MenuItem>
+            <MenuItem value="WFH">WFH · Full Day WFH (Full Day Credit)</MenuItem>
+            <MenuItem value="A">A · Absent (Loss of Pay / Under-Hours)</MenuItem>
+            <MenuItem value="HD">HD · Half Day Absent</MenuItem>
+            <MenuItem value="P">P · Present (Normal Shift)</MenuItem>
+          </AppTextField>
+          <AppTextField
+            label="HR / Admin Remarks (Required)"
+            placeholder="e.g., Approved half-day concession per manager discretion, medical note reviewed..."
+            multiline
+            minRows={2}
+            value={regRemarks}
+            onChange={(e) => setRegRemarks(e.target.value)}
+            required
+            helperText="Document the justification for attendance audit and compliance."
+          />
+        </Stack>
+      </DialogContent>
+      <DialogActions sx={{ p: 2 }}>
+        <AppButton variant="outlined" disabled={regularizing} onClick={() => setRegularizeTarget(null)}>Cancel</AppButton>
+        <AppButton variant="contained" color="primary" disabled={regularizing || !regRemarks.trim()} onClick={() => void handleRegularize()}>
+          {regularizing ? "Saving..." : "Save Regularization"}
+        </AppButton>
+      </DialogActions>
+    </Dialog>
+    <WfhClockOutModal
+      open={Boolean(clockOutTarget)}
+      onClose={() => setClockOutTarget(null)}
+      onConfirm={handleConfirmClockOut}
+      checkInTime={clockOutTarget?.checkInTime}
+      requiredHours={clockOutTarget?.requiredHours}
+      halfDayRequiredHours={clockOutTarget?.halfDayRequiredHours}
+      loading={clockingRequestId === clockOutTarget?.requestId}
+    />
   </Stack>;
 }

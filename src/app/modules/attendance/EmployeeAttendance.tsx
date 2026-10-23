@@ -73,6 +73,7 @@ const EmployeeAttendance = () => {
   // Other roles must have the granular attendance permissions returned at sign-in.
   const isAdministrator = userData?.roleType === Roles.Administrator;
   const isHrAttendanceRole = userData?.roleType === Roles.HRManager || userData?.roleType === Roles.HRExecutive;
+  const hasWfhAccess = (userData?.modulePermission ?? []).some((item) => item.startsWith(`${ModulesName.WorkFromHome}.`));
   const hasAnyAttendancePermission = (userData?.modulePermission ?? []).some((item) => item.startsWith(`${ModulesName.Attendance}.`));
   const canViewAllAttendance = isAdministrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.ViewAll, userData?.modulePermission ?? []) ||
     (isHrAttendanceRole && hasAnyAttendancePermission);
@@ -515,7 +516,7 @@ const EmployeeAttendance = () => {
                 iconBg: "rgba(220, 38, 38, 0.12)",
                 clickable: false,
               },
-            ].map((stat) => (
+            ].filter((stat) => stat.title !== "WFH" || hasWfhAccess).map((stat) => (
               <Card
                 key={stat.title}
                 className="interactive-card"

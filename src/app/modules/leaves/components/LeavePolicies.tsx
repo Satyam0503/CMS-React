@@ -13,6 +13,7 @@ import {
 } from "../../../../utils/constant/Constant";
 import { CustomisedTable } from "../../../shared/components/C_Table";
 import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../../../Redux/hooks";
 
 const LeavePolicyModelInitials: LeavePolicyModel = {
   id: null,
@@ -49,6 +50,8 @@ function LeavePolicies() {
   const [selectedPolicy,setSelectedPolicy] = useState<LeavePolicyModel | null>(null);
   const [action,setAction]=useState<"delete" | "unlink" | null>(null);
   const [refresh, setRefresh] = useState<boolean>(true);
+  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasWfhAccess = modulePermissions.some((p) => p.startsWith("Work_From_Home."));
   const [leavePoliciesValues, setLeavePoliciesValues] =
     useState<LeavePolicyModel>();
 
@@ -151,7 +154,7 @@ function LeavePolicies() {
         </Stack>
         <CustomisedTable
           key="LeavePoliciesId"
-          rows={leavePolicies}
+          rows={hasWfhAccess ? leavePolicies : leavePolicies.filter((p) => p.policyType !== 2)}
           columns={EmployeeLeavePoliciesColumnList}
           page={0}
           rowsPerPage={10}
