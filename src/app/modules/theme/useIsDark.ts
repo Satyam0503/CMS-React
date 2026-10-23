@@ -12,6 +12,7 @@ import { useColorScheme } from "@mui/material";
  */
 export const useIsDark = (): boolean => {
   try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { mode, systemMode } = useColorScheme();
     const resolvedMode = (mode === "system" ? systemMode : mode) ?? "light";
     if (resolvedMode === "dark") {

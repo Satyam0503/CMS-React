@@ -26,15 +26,15 @@ export function parseInterviewCalendarItem(item: { name?: string; description?: 
   }
 
   // 1. Extract applicantId (matches GUID or alphanumeric ID)
-  const appMatch = desc.match(/applicant(?:id)?[:\s]+([a-f0-9\-]+)/i);
+  const appMatch = desc.match(/applicant(?:id)?[:\s]+([a-f0-9-]+)/i);
   const applicantId = appMatch ? appMatch[1] : undefined;
 
   // 2. Extract vacancyId
-  const vacMatch = desc.match(/vacancyid[:\s]+([a-f0-9\-]+)/i);
+  const vacMatch = desc.match(/vacancyid[:\s]+([a-f0-9-]+)/i);
   const vacancyId = vacMatch ? vacMatch[1] : undefined;
 
   // 3. Extract interviewId
-  const intMatch = desc.match(/interviewid[:\s]+([a-f0-9\-]+)/i);
+  const intMatch = desc.match(/interviewid[:\s]+([a-f0-9-]+)/i);
   const interviewId = intMatch ? intMatch[1] : undefined;
 
   // 4. Extract candidateName
