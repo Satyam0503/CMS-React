@@ -117,8 +117,15 @@ stages:
                   }
                 }
                 if ([string]::IsNullOrWhiteSpace($rawBase) -or $rawBase.StartsWith('$')) {
-                  Write-Warning "AppSettings.APIUrl not found in pipeline variables; defaulting to fallback URL."
-                  $rawBase = "http://localhost:5036"
+                  throw "API URL is required for this deployment. Set AppSettings.APIUrl (or APIUrl/VITE_BASEURL) in the environment variable group."
+                }
+
+                if ($rawBase -notmatch '^https?://[^/\?#]+') {
+                  throw "API URL must be an absolute HTTP(S) URL. Received '$rawBase'."
+                }
+
+                if ($rawBase -match '^https?://(localhost|127\.0\.0\.1)(:\d+)?(/|$)') {
+                  throw "A localhost API URL cannot be embedded in a deployed frontend. Configure the environment API host."
                 }
 
                 $viteBase = $rawBase.TrimEnd('/', '\')

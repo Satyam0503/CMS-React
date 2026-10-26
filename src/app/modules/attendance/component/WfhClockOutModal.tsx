@@ -20,6 +20,7 @@ interface Props {
   onClose: () => void;
   onConfirm: (remarks: string) => Promise<void> | void;
   checkInTime?: string;
+  timeZoneId?: string;
   requiredHours?: number;
   halfDayRequiredHours?: number;
   loading?: boolean;
@@ -30,6 +31,7 @@ export const WfhClockOutModal: FC<Props> = ({
   onClose,
   onConfirm,
   checkInTime,
+  timeZoneId = "UTC",
   requiredHours = 8,
   halfDayRequiredHours = 4,
   loading = false,
@@ -41,6 +43,8 @@ export const WfhClockOutModal: FC<Props> = ({
     if (open) {
       setNowTime(new Date());
       setRemarks("");
+      const timer = window.setInterval(() => setNowTime(new Date()), 30_000);
+      return () => window.clearInterval(timer);
     }
   }, [open]);
 
@@ -51,6 +55,13 @@ export const WfhClockOutModal: FC<Props> = ({
   const workedHoursNum = elapsedMinutes / 60;
   const hoursFormatted = `${Math.floor(elapsedMinutes / 60)}h ${elapsedMinutes % 60}m`;
   const decimalHours = workedHoursNum.toFixed(2);
+  const formatTime = (value: Date) => {
+    try {
+      return new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit", timeZone: timeZoneId }).format(value);
+    } catch {
+      return value.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+  };
 
   const isFullDayEligible = workedHoursNum >= requiredHours;
   const isHalfDayEligible = workedHoursNum >= halfDayRequiredHours;
@@ -74,6 +85,9 @@ export const WfhClockOutModal: FC<Props> = ({
       maxWidth="sm"
     >
       <Stack spacing={2.5} sx={{ pt: 1, minWidth: { sm: 460 } }}>
+        <Typography variant="caption" color="text.secondary" textAlign="right">
+          Times shown in {timeZoneId}
+        </Typography>
         <Paper
           variant="outlined"
           sx={{
@@ -92,7 +106,7 @@ export const WfhClockOutModal: FC<Props> = ({
             </Typography>
             <Typography variant="subtitle1" fontWeight={700}>
               {checkInDate
-                ? checkInDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                ? formatTime(checkInDate)
                 : "—"}
             </Typography>
           </Box>
@@ -101,7 +115,7 @@ export const WfhClockOutModal: FC<Props> = ({
               Clock-Out Time
             </Typography>
             <Typography variant="subtitle1" fontWeight={700}>
-              {nowTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              {formatTime(nowTime)}
             </Typography>
           </Box>
           <Box>
