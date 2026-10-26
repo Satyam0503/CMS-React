@@ -21,7 +21,7 @@ import { getRequest, postRequest } from "../../../../server/axios";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { WfhClockOutModal } from "../../attendance/component/WfhClockOutModal";
 import { useWfhAttendanceTiming } from "../../attendance/hooks/useWfhAttendanceTiming";
-import { buildWfhBusinessDateUrl, buildWfhHistoryUrl, findApprovedWfhRequestForBusinessDate, wfhHistoryLastPage } from "../../attendance/wfhRequestHistory";
+import { buildWfhHistoryUrl, wfhHistoryLastPage } from "../../attendance/wfhRequestHistory";
 import { getEmployeeLifecycleSelfServicePolicies } from "../../employees/employeeServices";
 
 type WorkFromHomeContext = {
@@ -32,6 +32,8 @@ type WorkFromHomeContext = {
   canSchedule: boolean;
   disabledReasonCode?: string;
   businessDate?: string;
+  todayApprovedRequest?: WorkFromHomeRequest | null;
+  todayRequestIssueCode?: string | null;
   isSameDayRequestCutoffPassed?: boolean;
   effectiveOfficeStartTime?: string | null;
 };
@@ -180,12 +182,7 @@ export const LeaveTracker: FC = () => {
         clearTiming();
         return;
       }
-      const todayResponse = await getRequest<{ success: boolean; message?: string; methodResults?: WorkFromHomeRequest[] }>(
-        buildWfhBusinessDateUrl(businessDate)
-      );
-      if (!todayResponse.data.success) throw new Error(todayResponse.data.message || "Unable to load today's WFH request.");
-      if (!mounted) return;
-      const todayRequest = findApprovedWfhRequestForBusinessDate(todayResponse.data.methodResults ?? [], businessDate);
+      const todayRequest = wfhContext?.todayApprovedRequest ?? null;
       setTodayWfhRequest(todayRequest);
       const converted = Boolean(todayRequest?.officeConvertedDates?.some((date) => date.slice(0, 10) === businessDate));
       setTodayWfhConvertedToOffice(converted);
@@ -351,9 +348,15 @@ export const LeaveTracker: FC = () => {
           </Stack>
           {!todayWfhRequest && (
             <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} gap={1} sx={{ mt: 2 }}>
-              <CustomisedButton label="Clock in to WFH" size="small" disabled />
+              <CustomisedButton
+                label={wfhContext.todayRequestIssueCode ? "Clock actions unavailable" : "Clock in to WFH"}
+                size="small"
+                disabled
+              />
               <Typography variant="body2" color="text.secondary">
-                Clock actions become available after an approved WFH request covers today.
+                {wfhContext.todayRequestIssueCode === "WFH_MULTIPLE_APPROVED_REQUESTS_FOR_TODAY"
+                  ? "More than one approved WFH request covers today. Clock actions are paused; contact HR to resolve the duplicate approvals."
+                  : "Clock actions become available after an approved WFH request covers today."}
               </Typography>
             </Stack>
           )}
@@ -380,7 +383,7 @@ export const LeaveTracker: FC = () => {
                Unable to verify current WFH attendance timing. Refresh and try again. {wfhTimingError}
              </Alert>
            )}
-           {todayWfhRequest && !todayWfhConvertedToOffice && wfhTiming?.isApprovedForToday && (
+           {todayWfhRequest && !todayWfhConvertedToOffice && wfhTiming && (wfhTiming.isApprovedForToday || Boolean(wfhTiming.checkOutTime)) && (
              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} gap={1} sx={{ mt: 2 }}>
                {wfhTiming.checkOutTime ? (
                  <Chip
@@ -407,6 +410,18 @@ export const LeaveTracker: FC = () => {
                    : wfhTiming.checkInTime
                    ? `Checked in at ${new Date(wfhTiming.checkInTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. Required: ${wfhTiming.requiredHours} hour(s) (or clock out when done for half-day).`
                    : "Clock in is available only for your approved WFH request and policy time window."}
+               </Typography>
+             </Stack>
+           )}
+           {todayWfhRequest && !todayWfhConvertedToOffice && wfhTiming && !wfhTiming.isApprovedForToday && !wfhTiming.checkOutTime && (
+             <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} gap={1} sx={{ mt: 2 }}>
+               <CustomisedButton
+                 label={wfhTiming.checkInTime ? "Clock out from WFH" : "Clock in to WFH"}
+                 size="small"
+                 disabled
+               />
+               <Typography variant="body2" color="text.secondary">
+                 This request is not eligible for WFH clock actions today. Contact HR if you believe the approval or attendance date is incorrect.
                </Typography>
              </Stack>
            )}
