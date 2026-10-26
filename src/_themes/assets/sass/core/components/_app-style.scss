@@ -89,7 +89,7 @@ body,
   }
 
   & .MuiCard-root:not(.profile-picture-card),
-  & .MuiPaper-root:not(.profile-picture-card),
+  & .MuiPaper-root:not(.MuiDialog-paper):not(.profile-picture-card),
   & .sidebar .sidebar-paper,
   & .tab-container {
     background: linear-gradient(
@@ -125,7 +125,6 @@ body,
     transform: translateY(-2px);
   }
 
-  & .MuiDialog-paper,
   & .MuiMenu-paper,
   & .MuiPopover-paper,
   & .MuiAutocomplete-paper,
@@ -236,7 +235,7 @@ body,
   }
 
   & .MuiCard-root:not(.profile-picture-card),
-  & .MuiPaper-root:not(.profile-picture-card),
+  & .MuiPaper-root:not(.MuiDialog-paper):not(.profile-picture-card),
   & .sidebar .sidebar-paper,
   & .tab-container {
     background:
@@ -258,7 +257,6 @@ body,
     transform: translateY(-2px);
   }
 
-  & .MuiDialog-paper,
   & .MuiMenu-paper,
   & .MuiPopover-paper,
   & .MuiAutocomplete-paper,
@@ -364,7 +362,7 @@ body,
   }
 
   & .MuiCard-root:not(.profile-picture-card),
-  & .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card),
+  & .MuiPaper-root:not(.sidebar-paper):not(.MuiDialog-paper):not(.profile-picture-card),
   & .tab-container {
     background: var(--app-slate-surface) !important;
     -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
@@ -441,7 +439,6 @@ body,
     font-weight: 700;
   }
 
-  & .MuiDialog-paper,
   & .MuiMenu-paper,
   & .MuiPopover-paper,
   & .MuiAutocomplete-paper,
@@ -492,13 +489,12 @@ body,
   }
 
   & .MuiCard-root,
-  & .MuiPaper-root {
+  & .MuiPaper-root:not(.MuiDialog-paper) {
     background: var(--app-slate-surface) !important;
     border-color: var(--app-slate-border) !important;
     box-shadow: var(--app-slate-card-shadow) !important;
   }
 
-  & .MuiDialog-paper,
   & .MuiMenu-paper,
   & .MuiPopover-paper,
   & .MuiAutocomplete-paper,
@@ -575,7 +571,7 @@ body,
   }
 
   & .MuiCard-root:not(.profile-picture-card),
-  & .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card),
+  & .MuiPaper-root:not(.sidebar-paper):not(.MuiDialog-paper):not(.profile-picture-card),
   & .tab-container {
     background: var(--app-dawn-card-background) !important;
     -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
@@ -643,7 +639,6 @@ body,
     font-weight: 700;
   }
 
-  & .MuiDialog-paper,
   & .MuiMenu-paper,
   & .MuiPopover-paper,
   & .MuiAutocomplete-paper,
@@ -688,13 +683,12 @@ body,
   }
 
   & .MuiCard-root:not(.profile-picture-card),
-  & .MuiPaper-root:not(.profile-picture-card) {
+  & .MuiPaper-root:not(.MuiDialog-paper):not(.profile-picture-card) {
     background: var(--app-dawn-surface) !important;
     border-color: var(--app-dawn-border) !important;
     box-shadow: var(--app-dawn-card-shadow) !important;
   }
 
-  & .MuiDialog-paper,
   & .MuiMenu-paper,
   & .MuiPopover-paper,
   & .MuiAutocomplete-paper,
@@ -783,7 +777,7 @@ body,
   }
 
   & .MuiCard-root:not(.profile-picture-card),
-  & .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card),
+  & .MuiPaper-root:not(.sidebar-paper):not(.MuiDialog-paper):not(.profile-picture-card),
   & .tab-container {
     background: var(--app-blush-surface) !important;
     -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
@@ -837,7 +831,7 @@ body,
     linear-gradient(135deg, #141821 0%, #1c202c 52%, #252231 100%);
 
   & .app-header { background: #121720 !important; border-bottom-color: #453b4d; }
-  & .MuiCard-root, & .MuiPaper-root, & .MuiDialog-paper, & .MuiMenu-paper, & .MuiPopover-paper, & .MuiAutocomplete-paper, & .MuiTableContainer-root, & .MuiDataGrid-root, & .MuiPickersPopper-paper, & .tab-container { background: var(--app-blush-surface) !important; border-color: var(--app-blush-border) !important; }
+  & .MuiCard-root, & .MuiPaper-root:not(.MuiDialog-paper), & .MuiMenu-paper, & .MuiPopover-paper, & .MuiAutocomplete-paper, & .MuiTableContainer-root, & .MuiDataGrid-root, & .MuiPickersPopper-paper, & .tab-container { background: var(--app-blush-surface) !important; border-color: var(--app-blush-border) !important; }
   & .MuiOutlinedInput-root { background: #141821 !important; color: #f8f4f7; }
   & .MuiTableHead-root .MuiTableCell-root { background: #252a37; color: #f3e9ef; }
   & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) { background-color: rgba(255, 255, 255, 0.035); }
@@ -931,12 +925,11 @@ body,
   }
 
   // Ensure Paper elements inherit proper dark mode backgrounds
-  .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card) {
+  .MuiPaper-root:not(.sidebar-paper):not(.MuiDialog-paper):not(.profile-picture-card) {
     color: var(--mui-palette-text-primary, #f8fafc);
   }
 
   // Ensure Dialog, Popover, Menu papers in dark mode have dark background
-  .MuiDialog-paper,
   .MuiPopover-paper,
   .MuiMenu-paper,
   .MuiDrawer-paper:not(.sidebar-paper) {
@@ -1219,3 +1212,241 @@ body,
   }
 }
 
+
+
+// ============================================================================
+
+// ============================================================================
+// SOLID OPAQUE DIALOGS & MODALS (MAXIMUM LEGIBILITY & ACCESSIBILITY)
+// Modals must NEVER be transparent or bleed background cards/avatars into inputs.
+// High specificity root selectors ensure no theme or glass style overrides these.
+// ============================================================================
+html,
+body,
+:root,
+:root[data-app-style],
+body[data-theme] {
+  & .MuiDialog-root {
+    & .MuiBackdrop-root {
+      background-color: rgba(15, 23, 42, 0.70) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      backdrop-filter: blur(8px) !important;
+    }
+  }
+
+  & .MuiDialog-paper,
+  & .MuiPaper-root.MuiDialog-paper,
+  & .MuiDialog-root .MuiDialog-paper,
+  & .MuiDialog-root .MuiPaper-root,
+  & .modal-dialog .modal-content {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    background-image: none !important;
+    color: #0F172A !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+    border: 1px solid rgba(203, 213, 225, 0.95) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(15, 23, 42, 0.08) !important;
+
+    & .MuiDialogTitle-root {
+      background: #FFFFFF !important;
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+      border-bottom: 1px solid #E2E8F0 !important;
+      font-weight: 700 !important;
+      padding: 16px 24px !important;
+    }
+
+    & .MuiDialogContent-root {
+      background: #FFFFFF !important;
+      background-color: #FFFFFF !important;
+      color: #0F172A !important;
+    }
+
+    & .MuiDialogActions-root {
+      background: #FFFFFF !important;
+      background-color: #FFFFFF !important;
+      border-top: 1px solid #E2E8F0 !important;
+      padding: 16px 24px !important;
+    }
+
+    // Form inputs inside modals must have solid backgrounds & crisp borders
+    & .MuiOutlinedInput-root {
+      background: #F8FAFC !important;
+      background-color: #F8FAFC !important;
+      background-image: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+      opacity: 1 !important;
+
+      & .MuiOutlinedInput-notchedOutline {
+        border-color: #CBD5E1 !important;
+      }
+
+      &:hover:not(.Mui-focused) {
+        background: #FFFFFF !important;
+        background-color: #FFFFFF !important;
+        & .MuiOutlinedInput-notchedOutline {
+          border-color: #94A3B8 !important;
+        }
+      }
+
+      &.Mui-focused {
+        background: #FFFFFF !important;
+        background-color: #FFFFFF !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        & .MuiOutlinedInput-notchedOutline {
+          border-color: #2563EB !important;
+          border-width: 1.5px !important;
+        }
+      }
+
+      &.Mui-disabled {
+        background: #F1F5F9 !important;
+        background-color: #F1F5F9 !important;
+        & .MuiOutlinedInput-notchedOutline {
+          border-color: #E2E8F0 !important;
+        }
+        & .MuiOutlinedInput-input {
+          color: #64748B !important;
+          -webkit-text-fill-color: #64748B !important;
+        }
+      }
+
+      & .MuiOutlinedInput-input {
+        color: #0F172A !important;
+        font-weight: 500;
+      }
+    }
+
+    & .MuiInputLabel-root {
+      color: #475569 !important;
+      font-weight: 600 !important;
+
+      &.Mui-focused {
+        color: #2563EB !important;
+      }
+
+      &.Mui-disabled {
+        color: #64748B !important;
+      }
+    }
+  }
+}
+
+// In dark mode:
+:root.dark,
+:root.dark[data-app-style],
+[data-theme="dark"],
+.dark {
+  & .MuiDialog-root {
+    & .MuiBackdrop-root {
+      background-color: rgba(5, 10, 20, 0.82) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+  }
+
+  & .MuiDialog-paper,
+  & .MuiPaper-root.MuiDialog-paper,
+  & .MuiDialog-root .MuiDialog-paper,
+  & .MuiDialog-root .MuiPaper-root,
+  & .modal-dialog .modal-content {
+    background: #0F172A !important;
+    background-color: #0F172A !important;
+    background-image: none !important;
+    color: #F8FAFC !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+
+    & .MuiDialogTitle-root {
+      background: #0F172A !important;
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    & .MuiDialogContent-root {
+      background: #0F172A !important;
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+    }
+
+    & .MuiDialogActions-root {
+      background: #0F172A !important;
+      background-color: #0F172A !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    & .MuiOutlinedInput-root {
+      background: #1E293B !important;
+      background-color: #1E293B !important;
+      background-image: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+      opacity: 1 !important;
+
+      & .MuiOutlinedInput-notchedOutline {
+        border-color: rgba(255, 255, 255, 0.15) !important;
+      }
+
+      &:hover:not(.Mui-focused) {
+        background: #1E293B !important;
+        background-color: #1E293B !important;
+        & .MuiOutlinedInput-notchedOutline {
+          border-color: rgba(255, 255, 255, 0.25) !important;
+        }
+      }
+
+      &.Mui-focused {
+        background: #1E293B !important;
+        background-color: #1E293B !important;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2) !important;
+        & .MuiOutlinedInput-notchedOutline {
+          border-color: #60A5FA !important;
+        }
+      }
+
+      &.Mui-disabled {
+        background: rgba(255, 255, 255, 0.04) !important;
+        & .MuiOutlinedInput-notchedOutline {
+          border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        & .MuiOutlinedInput-input {
+          color: #94A3B8 !important;
+          -webkit-text-fill-color: #94A3B8 !important;
+        }
+      }
+
+      & .MuiOutlinedInput-input {
+        color: #F8FAFC !important;
+      }
+    }
+
+    & .MuiInputLabel-root {
+      color: #94A3B8 !important;
+
+      &.Mui-focused {
+        color: #60A5FA !important;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// SOLID STICKY TABLE CELLS & HEADERS
+// Sticky columns must NEVER be transparent when scrolling over other data!
+// ============================================================================
+.MuiTableCell-root[style*="sticky"],
+.MuiTableCell-root[class*="sticky"],
+.MuiTableHead-root .MuiTableCell-root[style*="sticky"],
+.MuiTableHead-root .MuiTableCell-root[class*="sticky"] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+}

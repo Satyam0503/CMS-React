@@ -6,6 +6,7 @@ import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute
 import { ModulesName, Permission } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 import { useTheme } from "@mui/material";
+import { useAppSelector } from "../Redux/hooks";
 
 const Admin = lazy(() => import("../modules/admin/adminRoutes.tsx"));
 const Recruitment = lazy(() => import("./RecruitmentRoutes.tsx"));
@@ -36,6 +37,21 @@ const RecruitmentSettings = lazy(() => import("../modules/recruitment/Recruitmen
 const EmployeeProfileRedirect = () => {
   const { employeeid } = useParams();
   return <Navigate to={employeeid ? `/employees/${employeeid}` : "/employees"} replace />;
+};
+
+const RecruitmentGuard = ({ children }: { children: ReactNode }) => {
+  const permissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasRecruitment = permissions.some(
+    (p: string) =>
+      p.startsWith("Jobs.") ||
+      p.startsWith("Applications.") ||
+      p.startsWith("Process_Log.") ||
+      p.startsWith("Career_Profile.")
+  );
+  if (!hasRecruitment) {
+    return <Navigate to="/unauthorize" replace />;
+  }
+  return <>{children}</>;
 };
 
 const PrivateRoutes = () => {

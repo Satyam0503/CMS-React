@@ -7,7 +7,7 @@ export const isLeaveTabEnabled = (modulePermissions: string[] = []) =>
     ModulesName.LeaveManagement,
     Permission.View,
     modulePermissions,
-  ) || modulePermissions.includes("LeaveManagement.View");
+  ) || modulePermissions.some((p) => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement."));
 
 const createTabs = (modulePermissions: string[], empId?: string, roleType?: number): TabModel[] => {
   const isLeaveEnabled = isLeaveTabEnabled(modulePermissions);
@@ -25,9 +25,9 @@ const createTabs = (modulePermissions: string[], empId?: string, roleType?: numb
       to: "leave",
       title: "PROFILE.TABS.LEAVE_TRACKER",
       icon: null,
-      // Employees retain their own leave tracker; viewing another employee's
-      // leave data remains restricted to Leave Management viewers.
-      isActive: !empId || isLeaveEnabled,
+      // If Leave Management is uninstalled for the company, the leave tracker is disabled entirely.
+      // Otherwise, employees can view their own leave, and HR viewers can view other employees' leave.
+      isActive: isLeaveEnabled,
     },
     {
       tabId: 3,
@@ -54,7 +54,7 @@ const createTabs = (modulePermissions: string[], empId?: string, roleType?: numb
 
   return tabsRoutes.filter((tab) => {
     if (tab.to === "leave") {
-      return !empId || isLeaveEnabled;
+      return isLeaveEnabled;
     }
     if (tab.to === "setting") {
       return !empId;

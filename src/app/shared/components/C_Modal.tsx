@@ -44,32 +44,42 @@ export const CustomisedModal = (props: PropsTypes) => {
 
   return (
     <Dialog role="dialog" aria-modal={true} scroll="paper" open={open} onClose={handleClose}
-      maxWidth={isMaximized ? false : maxWidth} fullScreen={isMaximized} fullWidth={isMaximized || fullWidth} transitionDuration={500}
+      maxWidth={isMaximized ? false : maxWidth} fullScreen={isMaximized} fullWidth={isMaximized || fullWidth} transitionDuration={300}
       slots={{
         transition: Transition
       }}
       slotProps={{
         backdrop: {
           sx: {
-            backgroundColor: "rgba(15, 23, 42, 0.38)",
-            backdropFilter: "blur(6px)",
-            WebkitBackdropFilter: "blur(6px)",
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
           },
         },
-        // the theme's MuiDialog styleOverrides hardcode paper maxWidth: 720px, which otherwise
-        // wins over the maxWidth/fullWidth/fullScreen props above and caps the maximized width
         paper: {
-          sx: isMaximized
-            ? { maxWidth: "100%", width: "100%" }
-            : paperSx,
+          sx: {
+            borderRadius: "16px",
+            ...(isMaximized ? { maxWidth: "100%", width: "100%" } : paperSx),
+          },
         }
       }}
     >
       {
         title &&
-        <DialogTitle className="d-flex justify-content-between align-items-center" variant="h5">
+        <DialogTitle
+          className="d-flex justify-content-between align-items-center"
+          variant="h5"
+          sx={{
+            px: { xs: 2, sm: 3 },
+            py: 2,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            fontWeight: 700,
+            fontSize: "1.2rem",
+          }}
+        >
           {title}
-          <Stack direction="row">
+          <Stack direction="row" spacing={0.5}>
             {
               allowMaximize &&
               <AppIconButton
@@ -90,7 +100,16 @@ export const CustomisedModal = (props: PropsTypes) => {
           </Stack>
         </DialogTitle>
       }
-      <DialogContent className={clsx({ "pt-2": Boolean(title) })} sx={contentSx}>{children}</DialogContent>
+      <DialogContent
+        className={clsx({ "pt-2": Boolean(title) })}
+        sx={{
+          p: { xs: 2, sm: 3 },
+          pt: "20px !important",
+          ...contentSx,
+        }}
+      >
+        {children}
+      </DialogContent>
     </Dialog>
   );
 };

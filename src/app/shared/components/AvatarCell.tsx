@@ -20,7 +20,7 @@ export const AvatarCell = ({
   const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
   return (
 
-    <Stack direction="row" spacing={1}>
+    <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, overflow: "hidden" }}>
       {
         hasBadge ?
           <StyledBadge
@@ -59,14 +59,24 @@ export const AvatarCell = ({
             {title?.at(0)?.toLocaleUpperCase()}
           </Avatar>
       }
-      <Stack direction="column" sx={{ alignSelf: "center" }}>
-        <Typography className="d-block fw-light"
-          variant="body1"        >
+      <Stack direction="column" sx={{ minWidth: 0, overflow: "hidden" }}>
+        <Typography
+          className="d-block"
+          variant="body2"
+          noWrap
+          title={title || "NA"}
+          sx={{ fontWeight: 600, fontSize: "0.85rem", color: "text.primary" }}
+        >
           {title || "NA"}
         </Typography>
         {
           (subTitle !== null && subTitle !== undefined) &&
-          <Typography variant="body2">
+          <Typography
+            variant="caption"
+            noWrap
+            title={typeof subTitle === "string" ? subTitle : subTitle[currentLanguage] || subTitle[defaultLang]}
+            sx={{ fontSize: "0.75rem", color: "text.secondary" }}
+          >
             {typeof subTitle === "string" ? subTitle : subTitle[currentLanguage] || subTitle[defaultLang]}
           </Typography>
         }

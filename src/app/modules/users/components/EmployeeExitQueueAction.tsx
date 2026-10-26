@@ -19,6 +19,8 @@ export const EmployeeExitQueueAction = ({ showButton = true }: { showButton?: bo
   const navigate = useNavigate();
   const roleType = useAppSelector((state) => state.user.userData?.roleType);
   const isHrOrAdmin = canAccessHrManagement(roleType);
+  const permissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
   const statuses = useMemo(() => ["All", ...Array.from(new Set(items.map(item => item.status)))], [items]);
   const pageSize = 25;
   const pageCount = Math.max(1, Math.ceil(totalRecords / pageSize));
