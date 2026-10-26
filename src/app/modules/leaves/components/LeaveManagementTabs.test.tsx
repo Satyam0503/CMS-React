@@ -9,16 +9,10 @@ import { LeaveManagementTabs } from "./LeaveManagementTabs";
 import { Roles } from "../../../../utils/enums";
 
 vi.mock("@mui/icons-material", () => ({
-  default: {},
-  AccountBalanceWallet: () => <span>Icon</span>,
-  EditCalendar: () => <span>Icon</span>,
-  HomeWork: () => <span>Icon</span>,
-}));
-vi.mock("@mui/icons-material/Policy", () => ({
-  default: () => <span>Icon</span>,
-  AccountBalanceWallet: () => <span>Icon</span>,
-  EditCalendar: () => <span>Icon</span>,
-  HomeWork: () => <span>Icon</span>,
+  default: () => null,
+  AccountBalanceWallet: () => null,
+  EditCalendar: () => null,
+  HomeWork: () => null,
 }));
 
 vi.mock("react-intl", () => ({
