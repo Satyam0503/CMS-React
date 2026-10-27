@@ -8,11 +8,15 @@ import { userReducer } from "../../../Redux/Reducers/userSlice";
 import { LeaveManagementTabs } from "./LeaveManagementTabs";
 import { Roles } from "../../../../utils/enums";
 
-vi.mock("@mui/icons-material", () => ({
-  AccountBalanceWallet: () => <span>Icon</span>,
-  EditCalendar: () => <span>Icon</span>,
-  HomeWork: () => <span>Icon</span>,
-}));
+vi.mock("@mui/icons-material", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@mui/icons-material")>();
+  return {
+    ...actual,
+    AccountBalanceWallet: () => <span>Icon</span>,
+    EditCalendar: () => <span>Icon</span>,
+    HomeWork: () => <span>Icon</span>,
+  };
+});
 vi.mock("@mui/icons-material/Policy", () => ({
   default: () => <span>Icon</span>,
   AccountBalanceWallet: () => <span>Icon</span>,
