@@ -16,30 +16,38 @@ export const EmployeeLeaveTypesCharts = ({
   const { formatMessage: i } = useIntl();
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
+  // Unpaid leave policies have no allocated balance and belong in the
+  // request/history views, not in an entitlement chart. The API also returns
+  // active paid policies with no allocation for some employees; omit those
+  // until they have an entitlement or recorded usage.
+  const chartLeaveBalance = useMemo(
+    () => leaveBalance.filter((type) => type.paid && (type.totalAllocated > 0 || type.taken > 0 || type.remaining > 0)),
+    [leaveBalance],
+  );
 
   const leaveTypeLabels = useMemo(
-    () => leaveBalance.map((type) => isCompact ? type.code || type.name : type.name),
-    [isCompact, leaveBalance],
+    () => chartLeaveBalance.map((type) => isCompact ? type.code || type.name : type.name),
+    [isCompact, chartLeaveBalance],
   );
 
   const series = useMemo(() => {
     return [
       {
         label: i({ id: "LEAVE.TAKEN" }),
-        data: leaveBalance.map((type) => type.taken),
+        data: chartLeaveBalance.map((type) => type.taken),
         color: theme.palette.primary.main,
       },
       {
         label: i({ id: "LEAVE.REMAINING" }),
-        data: leaveBalance.map((type) => type.remaining),
+        data: chartLeaveBalance.map((type) => type.remaining),
         color: theme.palette.success.main,
       },
     ];
-  }, [leaveBalance, i, theme.palette.primary.main, theme.palette.success.main]);
+  }, [chartLeaveBalance, i, theme.palette.primary.main, theme.palette.success.main]);
 
   const chartScale = useMemo(() => {
     const largestEntitlement = Math.max(
-      ...leaveBalance.map((type) => Math.max(0, type.taken) + Math.max(0, type.remaining)),
+      ...chartLeaveBalance.map((type) => Math.max(0, type.taken) + Math.max(0, type.remaining)),
       0,
     );
     // Keep every whole-day mark for normal balances. Larger leave policies
@@ -49,12 +57,12 @@ export const EmployeeLeaveTypesCharts = ({
     const ticks = Array.from({ length: Math.floor(max / step) + 1 }, (_, index) => index * step);
     if (ticks[ticks.length - 1] !== max) ticks.push(max);
     return { max, ticks, height: isCompact ? 220 : 250 };
-  }, [isCompact, leaveBalance]);
+  }, [isCompact, chartLeaveBalance]);
 
   const balanceSummary = useMemo(() => ({
-    taken: leaveBalance.reduce((total, type) => total + Math.max(0, type.taken), 0),
-    remaining: leaveBalance.reduce((total, type) => total + Math.max(0, type.remaining), 0),
-  }), [leaveBalance]);
+    taken: chartLeaveBalance.reduce((total, type) => total + Math.max(0, type.taken), 0),
+    remaining: chartLeaveBalance.reduce((total, type) => total + Math.max(0, type.remaining), 0),
+  }), [chartLeaveBalance]);
 
   if (isLoading) {
     return (
@@ -66,7 +74,7 @@ export const EmployeeLeaveTypesCharts = ({
     );
   }
 
-  if (leaveBalance.length === 0) {
+  if (chartLeaveBalance.length === 0) {
     return (
       <Card className="py-6 d-flex flex-column align-items-center">
         <Typography variant="h6" className="fs-24">

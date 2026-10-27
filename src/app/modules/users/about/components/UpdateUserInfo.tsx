@@ -664,6 +664,19 @@ const UserCustomAttribute = (props: PropsType) => {
     ) || null;
   };
 
+  const currentValue = getCurrentValue();
+  const selectedAttribute = userCustomAttribute.find(
+    item => item.customAttributeId === attribute.customAttributeId
+  );
+  const unavailableValue = selectedAttribute && !currentValue
+    ? ({
+        customAttributeValueId: selectedAttribute.customAttributeValueId,
+        isActive: false,
+        titles: { [currentLanguage]: `Unavailable value (${selectedAttribute.customAttributeValueId})` },
+      } as CustomAttributeValueModel)
+    : null;
+  const displayValue = currentValue ?? unavailableValue;
+
 
   return (
     <Grid
@@ -678,12 +691,15 @@ const UserCustomAttribute = (props: PropsType) => {
         onOpen={handleListOpen}
         onClose={handleClose}
         loading={state.loading}
-        value={getCurrentValue()}
+        value={displayValue}
         forcePopupIcon={!state.loading}
         isOptionEqualToValue={(option, value) =>
           option.customAttributeValueId === value.customAttributeValueId
         }
-        options={customAttributeData.customAttributeValues || []}
+        options={[
+          ...(customAttributeData.customAttributeValues || []),
+          ...(unavailableValue ? [unavailableValue] : []),
+        ]}
         onChange={handleValueChange}
         getOptionLabel={option => option.titles[currentLanguage] ?? option.titles[defaultLang] ?? ""}
         getOptionKey={option => option.customAttributeValueId!}
