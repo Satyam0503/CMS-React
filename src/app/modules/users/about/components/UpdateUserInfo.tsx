@@ -78,6 +78,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
     () => ({
       firstName: userData?.firstName,
       lastName: userData?.lastName,
+      employeeId: userData?.employeeId ?? "",
       email: userData?.email,
       phoneNumber: userData?.phoneNumber,
       address: userData?.address,
@@ -220,7 +221,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
           }) => {
             return (
               <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
+                <Grid container spacing={2.5} sx={{ pt: 0.5 }}>
                   <Grid
                     size={{
                       xs: 12,
@@ -243,6 +244,20 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                       type="text"
                       name="lastName"
                       placeholder={i({ id: "FORM.LAST_NAME" })}
+                    />
+                  </Grid>
+
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <TextInput
+                      label={i({ id: "USER.EMP_ID" }) || "Employee ID"}
+                      type="text"
+                      name="employeeId"
+                      placeholder={i({ id: "USER.EMP_ID" }) || "Employee ID"}
+                      disabled={!canEditEmploymentDetails}
                     />
                   </Grid>
 
@@ -649,6 +664,19 @@ const UserCustomAttribute = (props: PropsType) => {
     ) || null;
   };
 
+  const currentValue = getCurrentValue();
+  const selectedAttribute = userCustomAttribute.find(
+    item => item.customAttributeId === attribute.customAttributeId
+  );
+  const unavailableValue = selectedAttribute && !currentValue
+    ? ({
+        customAttributeValueId: selectedAttribute.customAttributeValueId,
+        isActive: false,
+        titles: { [currentLanguage]: `Unavailable value (${selectedAttribute.customAttributeValueId})` },
+      } as CustomAttributeValueModel)
+    : null;
+  const displayValue = currentValue ?? unavailableValue;
+
 
   return (
     <Grid
@@ -663,12 +691,15 @@ const UserCustomAttribute = (props: PropsType) => {
         onOpen={handleListOpen}
         onClose={handleClose}
         loading={state.loading}
-        value={getCurrentValue()}
+        value={displayValue}
         forcePopupIcon={!state.loading}
         isOptionEqualToValue={(option, value) =>
           option.customAttributeValueId === value.customAttributeValueId
         }
-        options={customAttributeData.customAttributeValues || []}
+        options={[
+          ...(customAttributeData.customAttributeValues || []),
+          ...(unavailableValue ? [unavailableValue] : []),
+        ]}
         onChange={handleValueChange}
         getOptionLabel={option => option.titles[currentLanguage] ?? option.titles[defaultLang] ?? ""}
         getOptionKey={option => option.customAttributeValueId!}

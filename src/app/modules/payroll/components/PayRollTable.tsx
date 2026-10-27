@@ -46,26 +46,26 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: "actions", label: "ACTION", minWidth: 88, align: "center" },
+  { id: "actions", label: "ACTION", minWidth: 92, align: "center" },
   { id: "employeeId", label: "PAYROLL.TABLE.EMP_ID", minWidth: 140 },
-  { id: "employeeName", label: "PAYROLL.TABLE.EMP_NAME", minWidth: 230 },
-  { id: "paidDate", label: "PAYROLL.TABLE.PAID_DATE", minWidth: 125, align: "center" },
-  { id: "paymentStatus", label: "PAYROLL.TABLE.PAYMENT_STATUS", minWidth: 130, align: "center" },
-  { id: "basicPay", label: "PAYROLL.TABLE.BASIC_PAY", minWidth: 120, align: "right" },
-  { id: "bonus", label: "PAYROLL.TABLE.BONUS", minWidth: 105, align: "right" },
-  { id: "paidDays", label: "PAYROLL.TABLE.PAID_DAYS", minWidth: 95, align: "right" },
-  { id: "hra", label: "PAYROLL.TABLE.HRA", minWidth: 110, align: "right" },
-  { id: "lta", label: "PAYROLL.TABLE.LTA", minWidth: 110, align: "right" },
-  { id: "otherAllowance", label: "PAYROLL.TABLE.OTHER_ALLOWANCE", minWidth: 135, align: "right" },
-  { id: "lossOfPayDays", label: "PAYROLL.TABLE.LOSS_OF_PAID_DAYS", minWidth: 100, align: "right" },
-  { id: "lossOfPay", label: "PAYROLL.TABLE.LOSS_OF_PAY", minWidth: 115, align: "right" },
-  { id: "incomeTax", label: "PAYROLL.TABLE.INCOME_TAX", minWidth: 115, align: "right" },
-  { id: "healthInsurance", label: "PAYROLL.TABLE.HEALTH_INS", minWidth: 130, align: "right" },
-  { id: "epf", label: "PAYROLL.TABLE.EPF", minWidth: 110, align: "right" },
-  { id: "esic", label: "PAYROLL.TABLE.ESIC", minWidth: 110, align: "right" },
-  { id: "grossPay", label: "PAYROLL.TABLE.GROSS_PAY", minWidth: 130, align: "right" },
-  { id: "totalDeductions", label: "PAYROLL.TABLE.TOTAL_DEDUCTION", minWidth: 135, align: "right" },
-  { id: "netPay", label: "PAYROLL.TABLE.NET_PAY", minWidth: 130, align: "right" },
+  { id: "employeeName", label: "PAYROLL.TABLE.EMP_NAME", minWidth: 240 },
+  { id: "paidDate", label: "PAYROLL.TABLE.PAID_DATE", minWidth: 135, align: "center" },
+  { id: "paymentStatus", label: "PAYROLL.TABLE.PAYMENT_STATUS", minWidth: 140, align: "center" },
+  { id: "basicPay", label: "PAYROLL.TABLE.BASIC_PAY", minWidth: 130, align: "right" },
+  { id: "bonus", label: "PAYROLL.TABLE.BONUS", minWidth: 120, align: "right" },
+  { id: "paidDays", label: "PAYROLL.TABLE.PAID_DAYS", minWidth: 110, align: "right" },
+  { id: "hra", label: "PAYROLL.TABLE.HRA", minWidth: 120, align: "right" },
+  { id: "lta", label: "PAYROLL.TABLE.LTA", minWidth: 120, align: "right" },
+  { id: "otherAllowance", label: "PAYROLL.TABLE.OTHER_ALLOWANCE", minWidth: 175, align: "right" },
+  { id: "lossOfPayDays", label: "PAYROLL.TABLE.LOSS_OF_PAID_DAYS", minWidth: 170, align: "right" },
+  { id: "lossOfPay", label: "PAYROLL.TABLE.LOSS_OF_PAY", minWidth: 135, align: "right" },
+  { id: "incomeTax", label: "PAYROLL.TABLE.INCOME_TAX", minWidth: 135, align: "right" },
+  { id: "healthInsurance", label: "PAYROLL.TABLE.HEALTH_INS", minWidth: 165, align: "right" },
+  { id: "epf", label: "PAYROLL.TABLE.EPF", minWidth: 120, align: "right" },
+  { id: "esic", label: "PAYROLL.TABLE.ESIC", minWidth: 120, align: "right" },
+  { id: "grossPay", label: "PAYROLL.TABLE.GROSS_PAY", minWidth: 140, align: "right" },
+  { id: "totalDeductions", label: "PAYROLL.TABLE.TOTAL_DEDUCTION", minWidth: 170, align: "right" },
+  { id: "netPay", label: "PAYROLL.TABLE.NET_PAY", minWidth: 140, align: "right" },
 ];
 
 const amountColumns = new Set<Column["id"]>([
@@ -215,7 +215,7 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
             size="small"
             stickyHeader
             sx={{
-              minWidth: 2463,
+              minWidth: 2827,
               tableLayout: "fixed",
               "& .MuiTableCell-root": {
                 py: 1.4,
@@ -247,47 +247,58 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                 const isStickyAction = col.id === "actions";
                 const isStickyId = col.id === "employeeId";
                 const isStickyName = col.id === "employeeName";
+                const headerText = col.id === "actions"
+                  ? "ACTION"
+                  : col.label === "PAYROLL.TABLE.PAYMENT_STATUS"
+                  ? i({ id: col.label, defaultMessage: "Payment Status" })
+                  : i({ id: col.label, defaultMessage: col.label.split(".").pop()?.replace(/_/g, " ") });
                 return (
                   <TableCell
                     id={col.id}
                     align={col.align ?? "left"}
+                    title={headerText}
                     sx={{
                       minWidth: col.minWidth,
                       width: col.minWidth,
                       maxWidth: col.minWidth,
                       py: 1.4,
                       px: 2,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                       ...(isStickyAction && {
                         position: "sticky",
                         left: 0,
-                        zIndex: 5,
-                        bgcolor: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        zIndex: 10,
+                        background: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        backgroundColor: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        opacity: 1,
                       }),
                       ...(isStickyId && {
                         position: { xs: "static", sm: "sticky" },
-                        left: { sm: 88 },
-                        zIndex: 5,
-                        bgcolor: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        left: { sm: 92 },
+                        zIndex: 10,
+                        background: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        backgroundColor: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        opacity: 1,
                       }),
                       ...(isStickyName && {
                         position: { xs: "static", sm: "sticky" },
-                        left: { sm: 228 },
-                        zIndex: 5,
-                        bgcolor: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        left: { sm: 232 },
+                        zIndex: 10,
+                        background: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        backgroundColor: isDark ? "#0f172a !important" : "#f8fafc !important",
+                        opacity: 1,
                         boxShadow: {
                           sm: isDark
-                            ? "4px 0 8px -2px rgba(0, 0, 0, 0.35)"
-                            : "4px 0 8px -2px rgba(15, 23, 42, 0.04)",
+                            ? "4px 0 8px -2px rgba(0, 0, 0, 0.45)"
+                            : "4px 0 8px -2px rgba(15, 23, 42, 0.12)",
                         },
                       }),
                     }}
                     key={col.id}
                   >
-                    {col.id === "actions"
-                      ? "ACTION"
-                      : col.label === "PAYROLL.TABLE.PAYMENT_STATUS"
-                      ? i({ id: col.label, defaultMessage: "Payment Status" })
-                      : i({ id: col.label, defaultMessage: col.label.split(".").pop()?.replace(/_/g, " ") })}
+                    {headerText}
                   </TableCell>
                 );
               })}
@@ -304,7 +315,9 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
               visibleRows.map((row, index) => {
                 const rowBg = isDark ? "#0f172a" : "#FFFFFF";
                 const stickyCellCommon = {
-                  bgcolor: rowBg,
+                  background: `${rowBg} !important`,
+                  backgroundColor: `${rowBg} !important`,
+                  opacity: 1,
                   transition: "background-color 0.18s ease",
                 };
                 return (
@@ -315,17 +328,19 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                     className={clsx("pointer-cursor", {
                       "pe-none": !hasEditPermission || row.payData.isProcessed,
                     })}
-                    sx={(theme) => ({
+                    sx={{
                       borderBottom: "1px solid",
                       borderColor: "divider",
                       transition: "background-color 0.18s ease",
                       "&:hover": {
                         bgcolor: isDark ? "#1e293b !important" : "#f1f5f9 !important",
+                        background: isDark ? "#1e293b !important" : "#f1f5f9 !important",
                         "& > td": {
                           bgcolor: isDark ? "#1e293b !important" : "#f1f5f9 !important",
+                          background: isDark ? "#1e293b !important" : "#f1f5f9 !important",
                         },
                       },
-                    })}
+                    }}
                     onClick={() => handleRowClick(row)}
                   >
                     {columns.map((column) => {
@@ -342,9 +357,9 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                               left: 0,
                               zIndex: 2,
                               ...stickyCellCommon,
-                              width: 88,
-                              minWidth: 88,
-                              maxWidth: 88,
+                              width: 92,
+                              minWidth: 92,
+                              maxWidth: 92,
                               px: 1,
                             }}
                           >
@@ -384,7 +399,7 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                             key={column.id}
                             sx={{
                               position: { xs: "static", sm: "sticky" },
-                              left: { sm: 88 },
+                              left: { sm: 92 },
                               zIndex: 2,
                               ...stickyCellCommon,
                               width: 140,
@@ -422,12 +437,12 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                             key={column.id}
                             sx={{
                               position: { xs: "static", sm: "sticky" },
-                              left: { sm: 228 },
+                              left: { sm: 232 },
                               zIndex: 2,
                               ...stickyCellCommon,
-                              width: 230,
-                              minWidth: 230,
-                              maxWidth: 230,
+                              width: 240,
+                              minWidth: 240,
+                              maxWidth: 240,
                               boxShadow: {
                                 sm: isDark
                                   ? "4px 0 8px -2px rgba(0, 0, 0, 0.35)"

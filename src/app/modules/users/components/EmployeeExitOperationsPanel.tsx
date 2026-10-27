@@ -11,9 +11,11 @@ import {
   DialogTitle,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { InsertDriveFileOutlined, VisibilityOutlined, FileDownloadOutlined } from "@mui/icons-material";
 import { useState } from "react";
 import dayjs from "dayjs";
 import {
@@ -917,52 +919,86 @@ export const EmployeeExitOperationsPanel = ({ exitCase, onRefresh, managerOnly =
 
       <Section title="Evidence" count={exitCase.evidence.length}>
         <Stack spacing={1}>
-          {exitCase.evidence.map((item) => (
-            <Stack
-              key={item.evidenceId}
-              direction={{ xs: "column", sm: "row" }}
-              justifyContent="space-between"
-              alignItems={{ sm: "center" }}
-              gap={1}
-              sx={itemRowSx}
-            >
-              <Typography variant="body2" sx={{ minWidth: 0, overflowWrap: "anywhere" }}>
-                {item.category} · {item.fileName || item.type}
-              </Typography>
-              <Stack direction="row" gap={1} sx={actionRowSx}>
-                <Chip size="small" label={item.status} />
-                <AppButton size="small" variant="outlined" onClick={() => void openEvidence(item.evidenceId, "open", item.fileName)}>
-                  Open
-                </AppButton>
-                <AppButton
-                  size="small"
-                  variant="outlined"
-                  onClick={() => void openEvidence(item.evidenceId, "download", item.fileName)}
-                >
-                  Download
-                </AppButton>
-                <AppButton
-                  size="small"
-                  variant="outlined"
-                  disabled={saving || item.status === "Verified"}
-                  onClick={() =>
-                    void run(
-                      () =>
-                        verifyEmployeeExitEvidence({
-                          employeeExitId: exitCase.employeeExitId,
-                          evidenceId: item.evidenceId,
-                          version: exitCase.version,
-                          verified: true,
-                        }),
-                      "Evidence verified.",
-                    )
-                  }
-                >
-                  Verify
-                </AppButton>
+          {exitCase.evidence.length === 0 ? (
+            <Alert severity="info">No exit evidence uploaded for this case yet.</Alert>
+          ) : (
+            exitCase.evidence.map((item) => (
+              <Stack
+                key={item.evidenceId}
+                direction={{ xs: "column", sm: "row" }}
+                justifyContent="space-between"
+                alignItems={{ sm: "center" }}
+                gap={1.25}
+                sx={itemRowSx}
+              >
+                <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0, flex: 1, width: "100%" }}>
+                  <InsertDriveFileOutlined color="primary" sx={{ fontSize: 24, flexShrink: 0 }} />
+                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                    <Tooltip title={item.fileName || item.type} arrow placement="top">
+                      <Typography
+                        variant="body2"
+                        fontWeight={650}
+                        sx={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          display: "block",
+                        }}
+                      >
+                        {item.fileName || item.type}
+                      </Typography>
+                    </Tooltip>
+                    <Typography variant="caption" color="text.secondary">
+                      {item.category} · {item.type}
+                    </Typography>
+                  </Box>
+                </Stack>
+                <Stack direction="row" gap={1} alignItems="center" sx={{ ...actionRowSx, flexShrink: 0 }}>
+                  <Chip
+                    size="small"
+                    color={item.status === "Verified" ? "success" : "default"}
+                    label={item.status}
+                  />
+                  <AppButton
+                    size="small"
+                    variant="outlined"
+                    startIcon={<VisibilityOutlined />}
+                    onClick={() => void openEvidence(item.evidenceId, "open", item.fileName)}
+                  >
+                    Open
+                  </AppButton>
+                  <AppButton
+                    size="small"
+                    variant="outlined"
+                    startIcon={<FileDownloadOutlined />}
+                    onClick={() => void openEvidence(item.evidenceId, "download", item.fileName)}
+                  >
+                    Download
+                  </AppButton>
+                  <AppButton
+                    size="small"
+                    variant={item.status === "Verified" ? "text" : "outlined"}
+                    color={item.status === "Verified" ? "inherit" : "primary"}
+                    disabled={saving || item.status === "Verified"}
+                    onClick={() =>
+                      void run(
+                        () =>
+                          verifyEmployeeExitEvidence({
+                            employeeExitId: exitCase.employeeExitId,
+                            evidenceId: item.evidenceId,
+                            version: exitCase.version,
+                            verified: true,
+                          }),
+                        "Evidence verified.",
+                      )
+                    }
+                  >
+                    {item.status === "Verified" ? "Verified" : "Verify"}
+                  </AppButton>
+                </Stack>
               </Stack>
-            </Stack>
-          ))}
+            ))
+          )}
         </Stack>
       </Section>
 

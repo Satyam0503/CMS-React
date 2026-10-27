@@ -10,6 +10,11 @@ import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import { EmployeeLeaveBalance } from "../employees/models";
 import {
+  clearWfhRequestIdempotencyKey,
+  getWfhRequestIdempotencyKey,
+  WfhRequestPayload,
+} from "../attendance/hooks/wfhRequestIdempotency";
+import {
   LeaveBalanceFilter,
   GetLeaveBalanceResponse,
   GetLeaveTypeResponse,
@@ -126,19 +131,20 @@ export const createMyProfileLeaveRequestWithEvidence = (payload: RequestLeaveMod
   return postRequest<FormData, ApiResponse>("api/LeaveManagement/me/requests/with-evidence", form, undefined, true);
 };
 
-export type WorkFromHomeRequestPayload = {
-  fromDate: string;
-  toDate: string;
+export type WorkFromHomeRequestPayload = WfhRequestPayload & {
   durationType: "FullDay" | "FirstHalf" | "SecondHalf" | "Mixed";
-  reasonCode: string;
   reasonText: string;
 };
 
-export const createWorkFromHomeRequest = (payload: WorkFromHomeRequestPayload) => {
-  return postRequest<WorkFromHomeRequestPayload, ApiResponse>(
+export const createWorkFromHomeRequest = async (payload: WorkFromHomeRequestPayload) => {
+  const idempotencyKey = await getWfhRequestIdempotencyKey(payload);
+  const response = await postRequest<WorkFromHomeRequestPayload, ApiResponse>(
     "api/wfh/requests",
-    payload
+    payload,
+    { headers: { "Idempotency-Key": idempotencyKey } }
   );
+  if (response.data?.success) await clearWfhRequestIdempotencyKey(payload);
+  return response;
 };
 
 export type WorkFromHomeEmployeeAllocation = {

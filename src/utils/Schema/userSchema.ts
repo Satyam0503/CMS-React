@@ -8,6 +8,10 @@ export const userSchema = Yup.object().shape({
   lastName: Yup.string()
     .required("VALIDATION_ERR.LAST_NAME_REQUIRED")
     .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
+  employeeId: Yup.string()
+    .trim()
+    .notRequired()
+    .nullable(),
   email: Yup.string()
     .required("VALIDATION_ERR.EMAIL_REQ")
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),

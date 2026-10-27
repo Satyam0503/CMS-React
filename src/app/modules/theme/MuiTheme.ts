@@ -512,15 +512,22 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
           slotProps: {
             backdrop: {
               sx: {
-                backgroundColor: "rgba(15, 23, 42, 0.48)",
-                backdropFilter: "blur(6px)",
-                WebkitBackdropFilter: "blur(6px)",
+                backgroundColor: "rgba(15, 23, 42, 0.70)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
               },
             },
           },
         },
         styleOverrides: {
           paper: {
+            backgroundColor: "var(--mui-palette-background-paper, #FFFFFF) !important",
+            backgroundImage: "none !important",
+            backdropFilter: "none !important",
+            WebkitBackdropFilter: "none !important",
+            opacity: "1 !important",
+            borderRadius: 16,
+            boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(15, 23, 42, 0.08)",
             margin: "16px",
             width: "calc(100% - 32px)",
             "@media (max-width:599px)": {

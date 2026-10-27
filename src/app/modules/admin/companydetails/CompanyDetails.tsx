@@ -2,7 +2,7 @@ import { useIntl } from "react-intl";
 import { Link as RouterLink, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { alpha, Box, Card, Tab, Tabs } from "@mui/material";
 import { AccessTimeRounded, CorporateFare, Work, SettingsApplicationsRounded, NotificationsActiveRounded, TuneRounded } from "@mui/icons-material";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { TabModel } from "../../../../utils/common_types";
 import clsx from "clsx";
 import { checkIsActive } from "../../../../_themes/helpers";
@@ -18,41 +18,12 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission, Roles } from "../../../../utils/enums";
 
-const tabsRoutes: TabModel[] = [
-  {
-    tabId: 1,
-    to: "/admin/companydetails/companyinfo",
-    title: "COMPANY_DETAILS.TABS.COMPANY_DETAIL",
-    icon: <Work />,
-  },
-  {
-    tabId: 2,
-    to: "/admin/companydetails/modules",
-    title: "COMPANY_DETAILS.TABS.APPLICATIONS_MODULE",
-    icon: <CorporateFare />,
-  },
-  {
-    tabId: 3,
-    to: "/admin/companydetails/office-schedule",
-    title: "Office Schedule",
-    icon: <AccessTimeRounded />,
-  },
-  {
-    tabId: 4,
-    to: "/admin/companydetails/offboarding",
-    title: "Offboarding",
-    icon: <SettingsApplicationsRounded />,
-  },
-  {
-    tabId: 5,
-    to: "/admin/companydetails/notifications",
-    title: "Notification defaults",
-    icon: <NotificationsActiveRounded />,
-  },
-  { tabId: 6, to: "/admin/companydetails/payroll-configuration", title: "Payroll configuration", icon: <TuneRounded /> },
-];
-
 export const CompanyDetailsTab = () => {
+  const userData = useAppSelector((state) => state.user.userData);
+  const permissions = userData?.modulePermission ?? [];
+  const hasPayroll = permissions.some((p) => p.startsWith("PayRoll.") || p.startsWith("Payroll_Settings."));
+  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
+
   return (
     <Routes>
       <Route element={<CompanyDetails />}>
@@ -60,17 +31,34 @@ export const CompanyDetailsTab = () => {
         <Route path="modules" element={<ApplicationModules />} />
         <Route path="companyinfo" element={<CompanyInfo />} />
         <Route path="office-schedule" element={<OfficeSchedule />} />
-        <Route path="offboarding" element={<EmployeeExitPolicySettings />} />
+        <Route
+          path="offboarding"
+          element={
+            hasOffboarding ? (
+              <EmployeeExitPolicySettings />
+            ) : (
+              <Navigate to="/admin/companydetails/companyinfo" replace />
+            )
+          }
+        />
         <Route path="notifications" element={<CompanyNotificationSettings />} />
         {/* Recruitment readiness is managed separately under Recruitment Settings */}
         <Route path="recruitment-readiness" element={<Navigate to="/recruitment-settings" replace />} />
-        <Route path="payroll-configuration" element={<CompanyPayrollConfiguration />} />
+        <Route
+          path="payroll-configuration"
+          element={
+            hasPayroll ? (
+              <CompanyPayrollConfiguration />
+            ) : (
+              <Navigate to="/admin/companydetails/companyinfo" replace />
+            )
+          }
+        />
       </Route>
       <Route path="*" element={<Navigate to={"/error"} />} />
     </Routes>
   );
 };
-
 
 const CompanyPayrollConfiguration = () => {
   const userData = useAppSelector((state) => state.user.userData);
@@ -87,11 +75,65 @@ const CompanyDetails = () => {
   const { formatMessage } = useIntl();
   const location = useLocation();
   const { currentLanguage } = useAppLang();
+  const userData = useAppSelector((state) => state.user.userData);
+  const permissions = userData?.modulePermission ?? [];
+  const hasPayroll = permissions.some((p) => p.startsWith("PayRoll.") || p.startsWith("Payroll_Settings."));
+  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
+
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.COMPANY_DETAILS" }));
   }, [currentLanguage, formatMessage, setPageTitle]);
 
-  const activeTabIndex = tabsRoutes.findIndex((tab) => checkIsActive(location.pathname, tab.to));
+  const visibleTabs = useMemo<TabModel[]>(() => {
+    return [
+      {
+        tabId: 1,
+        to: "/admin/companydetails/companyinfo",
+        title: "COMPANY_DETAILS.TABS.COMPANY_DETAIL",
+        icon: <Work />,
+      },
+      {
+        tabId: 2,
+        to: "/admin/companydetails/modules",
+        title: "COMPANY_DETAILS.TABS.APPLICATIONS_MODULE",
+        icon: <CorporateFare />,
+      },
+      {
+        tabId: 3,
+        to: "/admin/companydetails/office-schedule",
+        title: "Office Schedule",
+        icon: <AccessTimeRounded />,
+      },
+      ...(hasOffboarding
+        ? [
+            {
+              tabId: 4,
+              to: "/admin/companydetails/offboarding",
+              title: "Offboarding",
+              icon: <SettingsApplicationsRounded />,
+            },
+          ]
+        : []),
+      {
+        tabId: 5,
+        to: "/admin/companydetails/notifications",
+        title: "Notification defaults",
+        icon: <NotificationsActiveRounded />,
+      },
+      ...(hasPayroll
+        ? [
+            {
+              tabId: 6,
+              to: "/admin/companydetails/payroll-configuration",
+              title: "Payroll configuration",
+              icon: <TuneRounded />,
+            },
+          ]
+        : []),
+    ];
+  }, [hasPayroll, hasOffboarding]);
+
+  const activeTabIndex = visibleTabs.findIndex((tab) => checkIsActive(location.pathname, tab.to));
   const currentTabValue = activeTabIndex !== -1 ? activeTabIndex : 0;
 
   return (
@@ -136,7 +178,7 @@ const CompanyDetails = () => {
             },
           }}
         >
-          {tabsRoutes.map((tab, idx) => {
+          {visibleTabs.map((tab, idx) => {
             const active = checkIsActive(location.pathname, tab.to);
             const labelText = tab.title.startsWith("COMPANY_DETAILS.")
               ? formatMessage({ id: tab.title })
@@ -214,6 +256,3 @@ const CompanyDetails = () => {
 };
 
 export { CompanyDetails };
-
-
-

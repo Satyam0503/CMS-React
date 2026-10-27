@@ -40,6 +40,7 @@ export type EditEmployeePayloadModel = Pick<
   | "jobRole"
   | "employmentType"
 > & {
+  employeeId?: string;
   roleId?: string;
   gender?: string;
   panNumber: string | null;
