@@ -247,19 +247,16 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     />
                   </Grid>
 
-                  <Grid
-                    size={{
-                      xs: 12,
-                      sm: 6
-                    }}>
-                    <TextInput
-                      label={i({ id: "USER.EMP_ID" }) || "Employee ID"}
-                      type="text"
-                      name="employeeId"
-                      placeholder={i({ id: "USER.EMP_ID" }) || "Employee ID"}
-                      disabled={!canEditEmploymentDetails}
-                    />
-                  </Grid>
+                  {canEditEmploymentDetails && (
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <TextInput
+                        label={i({ id: "USER.EMP_ID" }) || "Employee ID"}
+                        type="text"
+                        name="employeeId"
+                        placeholder={i({ id: "USER.EMP_ID" }) || "Employee ID"}
+                      />
+                    </Grid>
+                  )}
 
                   <Grid size={{ xs: 12, sm: 6 }}>
                     <SelectInput

@@ -94,6 +94,7 @@ export type EmployeeLeaveTypeBalance = {
   code: string;
   description: string;
   paid: boolean;
+  maxBalance?: number | null;
   minNoticeDays: number;
   halfDayAllowed: boolean;
   weekendInclusive: boolean;

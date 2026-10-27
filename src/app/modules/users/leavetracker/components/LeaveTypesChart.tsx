@@ -16,12 +16,10 @@ export const EmployeeLeaveTypesCharts = ({
   const { formatMessage: i } = useIntl();
   const theme = useTheme();
   const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
-  // Unpaid leave policies have no allocated balance and belong in the
-  // request/history views, not in an entitlement chart. The API also returns
-  // active paid policies with no allocation for some employees; omit those
-  // until they have an entitlement or recorded usage.
+  // Unlimited policies have no finite entitlement to chart. Unpaid policies
+  // and paid policies with no allocation also belong in request/history only.
   const chartLeaveBalance = useMemo(
-    () => leaveBalance.filter((type) => type.paid && (type.totalAllocated > 0 || type.taken > 0 || type.remaining > 0)),
+    () => leaveBalance.filter((type) => type.paid && type.maxBalance !== null && (type.totalAllocated > 0 || type.taken > 0 || type.remaining > 0)),
     [leaveBalance],
   );
 
