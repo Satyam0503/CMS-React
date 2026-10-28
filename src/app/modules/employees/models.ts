@@ -26,6 +26,7 @@ export interface GetAllEmployeeResponseModel {
   offboardingStatus?: string;
   formerPortalStatus?: string;
   alumniStatus?: string;
+  availabilityExpectedReturnDate?: string | null;
   lifecycleVersion?: number;
 }
 

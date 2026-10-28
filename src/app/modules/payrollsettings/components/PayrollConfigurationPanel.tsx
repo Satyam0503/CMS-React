@@ -79,6 +79,7 @@ import { PayrollSalaryTemplatesPanel } from "./PayrollSalaryTemplatesPanel";
 import type { SalaryTemplate } from "./payrollTemplateCalculation";
 
 import { PayrollDateField } from "./PayrollDateField";
+import { PayrollWorkflowBlueprint } from "./PayrollWorkflowBlueprint";
 export type PayrollDivisorPolicyConfig = {
   id?: string;
   payrollMode: "Startup" | "Standard" | "Enterprise";
@@ -224,6 +225,8 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
   const [componentTaxable, setComponentTaxable] = useState(true);
   const [componentEffectiveFrom, setComponentEffectiveFrom] = useState(() => dayjs().format("YYYY-MM-DD"));
   const [componentEffectiveTo, setComponentEffectiveTo] = useState("");
+  const [componentFilterText, setComponentFilterText] = useState("");
+  const [componentTypeFilter, setComponentTypeFilter] = useState<"ALL" | "EARNING" | "DEDUCTION">("ALL");
 
   // Salary Template State
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -1089,6 +1092,18 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
         </AppButton>
       </Stack>
 
+      {/* Visual Payroll Architecture & Connection Blueprint */}
+      <PayrollWorkflowBlueprint
+        activeTab={activeTab}
+        onTabChange={(tab) => setActiveTab(tab)}
+        activeApprovedProfile={activeApprovedProfile}
+        componentsCount={components.length}
+        activeComponentsCount={components.filter((c) => c.isActive).length}
+        groupsCount={groups.length}
+        templatesCount={templates.length}
+        assignmentsCount={assignments.length}
+      />
+
       {/* Full-Width Responsive Navigation Tabs */}
       <Box
         sx={{
@@ -1399,30 +1414,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
             </AppAlert>
           )}
 
-          {/* 2. Effective-dated Statutory Profiles & Version History */}
-          <Stack spacing={1.5}>
-            <Box>
-              <Typography variant="subtitle1" fontWeight={750} sx={{ letterSpacing: "-0.01em", fontSize: "1.05rem" }}>
-                Effective-dated statutory profiles
-              </Typography>
-            </Box>
-
-            <PayrollPolicyProfileList
-              profiles={statutoryProfiles}
-              canEdit={canEdit}
-              canDelete={canDeletePolicy}
-              canApprove={canApprovePolicy}
-              busy={busy || isSavingProfile}
-              onEdit={editOrRevisePolicy}
-              onDelete={setPolicyToDelete}
-              onSubmit={(profile) => void updatePolicyApproval(profile, "submit")}
-              onApprove={(profile) => void updatePolicyApproval(profile, "approve")}
-              onCancelSubmission={(profile) => void cancelPolicySubmission(profile)}
-              onRetire={setPolicyToRetire}
-            />
-
-            {/* Profile Draft / Editor Accordion */}
-            {canEdit && (
+          {canEdit && (
               <Accordion
                 id="payroll-policy-draft"
                 expanded={policyDraftExpanded}
@@ -1507,7 +1499,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                     </Grid>
 
                     {/* Row 2: Statutory Jurisdiction (4) + Financial Year (4) + Rule Version (4) */}
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <AppTextField
                         fullWidth
                         size="small"
@@ -1519,7 +1511,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                         helperText="Enter the company’s applicable jurisdiction."
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <AppTextField
                         fullWidth
                         size="small"
@@ -1542,8 +1534,8 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       />
                     </Grid>
 
-                    {/* Row 3: First payroll month (4) + Last payroll month (4) + Save Button (4) */}
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    {/* Row 3: First payroll month (6) + Last payroll month (6) */}
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <CustomisedDatePicker
                         label="First payroll month"
                         value={policyEffectiveFrom ? dayjs(policyEffectiveFrom) : null}
@@ -1554,7 +1546,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                         helperText="Begins on this month's first day."
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <CustomisedDatePicker
                         label="Last payroll month (optional)"
                         value={policyEffectiveTo ? dayjs(policyEffectiveTo) : null}
@@ -1566,29 +1558,76 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                         helperText={invalidProfileDateRange ? "Must be after start month" : "Ends on this month's last day; blank means open-ended."}
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, md: 4 }}>
-                      <AppButton
-                        fullWidth
-                        startIcon={<SaveRounded />}
-                        variant="contained"
-                        disabled={isSavingProfile || !policyName.trim() || !policyEffectiveFrom || invalidProfileDateRange || (requiresStatutoryMetadata && (!statutoryJurisdiction.trim() || !financialYear.trim() || !statutoryRuleVersion.trim()))}
-                        onClick={() => void saveStatutoryProfile()}
-                        sx={{ height: 40, fontWeight: 700, borderRadius: "10px", textTransform: "none" }}
-                      >
-                        {isSavingProfile ? "Saving…" : editingPolicy ? "Update payroll policy draft" : "Save payroll policy draft"}
-                      </AppButton>
-                    </Grid>
 
                     <Grid size={{ xs: 12 }}>
                       <AppAlert severity={invalidProfileDateRange ? "error" : "info"} sx={{ borderRadius: "10px" }}>
                         {invalidProfileDateRange ? "The last payroll month must be the same as or after the first payroll month." : `${policyCoveragePreview} This profile is only a draft until an authorized approver approves it. Confirm jurisdiction, rates, limits, tax settings, and rule version with your payroll/legal adviser.`}
                       </AppAlert>
                     </Grid>
+
+                    <Grid size={{ xs: 12 }}>
+                      <Box
+                        sx={{
+                          pt: 1.5,
+                          borderTop: "1px dashed",
+                          borderColor: "divider",
+                          display: "flex",
+                          flexDirection: { xs: "column", sm: "row" },
+                          justifyContent: "space-between",
+                          alignItems: { xs: "flex-start", sm: "center" },
+                          gap: 2,
+                        }}
+                      >
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.76rem", lineHeight: 1.45 }}>
+                            💡 <strong>Synchronized Rules:</strong> The calculation features (EPF, ESIC, TDS, Attendance lock, and Daily rate divisor) selected in Steps 1 &amp; 2 below will be packaged into this draft.
+                          </Typography>
+                        </Box>
+                        <Stack direction="row" spacing={1.5} sx={{ width: { xs: "100%", sm: "auto" }, justifyContent: "flex-end" }}>
+                          {(editingPolicy || policyDraftSource) && (
+                            <AppButton
+                              size="small"
+                              variant="outlined"
+                              onClick={() => {
+                                setEditingPolicy(null);
+                                setPolicyDraftSource(null);
+                                setPolicyDraftExpanded(false);
+                              }}
+                              sx={{ height: 40, px: 2, fontWeight: 700, borderRadius: "10px", textTransform: "none" }}
+                            >
+                              Cancel
+                            </AppButton>
+                          )}
+                          <AppButton
+                            startIcon={<SaveRounded />}
+                            variant="contained"
+                            disabled={isSavingProfile || !policyName.trim() || !policyEffectiveFrom || invalidProfileDateRange || (requiresStatutoryMetadata && (!statutoryJurisdiction.trim() || !financialYear.trim() || !statutoryRuleVersion.trim()))}
+                            onClick={() => void saveStatutoryProfile()}
+                            sx={{
+                              height: 40,
+                              px: 3,
+                              fontWeight: 700,
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              bgcolor: "#0B5CAB",
+                              boxShadow: "0 4px 12px rgba(11, 92, 171, 0.25)",
+                              "&:hover": {
+                                bgcolor: "#094a8a",
+                                transform: "translateY(-1px)",
+                                boxShadow: "0 6px 16px rgba(11, 92, 171, 0.35)",
+                              },
+                              transition: "all 0.15s ease",
+                            }}
+                          >
+                            {isSavingProfile ? "Saving…" : editingPolicy ? "Update payroll policy draft" : "Save payroll policy draft"}
+                          </AppButton>
+                        </Stack>
+                      </Box>
+                    </Grid>
                   </Grid>
                 </AccordionDetails>
               </Accordion>
             )}
-          </Stack>
 
           <Divider sx={{ my: 1 }} />
 
@@ -1663,6 +1702,49 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
             </Grid>
           </Box>
 
+          <Divider sx={{ my: 1.5 }} />
+
+          {/* 5. Effective-dated Statutory Profiles & Version History Archive */}
+          <Stack spacing={2} sx={{ pt: 1 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+              <Box>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography variant="subtitle1" fontWeight={750} sx={{ letterSpacing: "-0.01em", fontSize: "1.05rem" }}>
+                    Effective-dated statutory profiles
+                  </Typography>
+                  <Chip
+                    size="small"
+                    label={`${statutoryProfiles.length} version${statutoryProfiles.length === 1 ? "" : "s"}`}
+                    sx={{
+                      height: 20,
+                      fontWeight: 700,
+                      fontSize: "0.68rem",
+                      borderRadius: "5px",
+                      bgcolor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
+                    }}
+                  />
+                </Stack>
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.25 }}>
+                  Historical versions, approved baselines, and pending drafts. Click any card to create a revision or inspect audit history.
+                </Typography>
+              </Box>
+            </Box>
+
+            <PayrollPolicyProfileList
+              profiles={statutoryProfiles}
+              canEdit={canEdit}
+              canDelete={canDeletePolicy}
+              canApprove={canApprovePolicy}
+              busy={busy || isSavingProfile}
+              onEdit={editOrRevisePolicy}
+              onDelete={setPolicyToDelete}
+              onSubmit={(profile) => void updatePolicyApproval(profile, "submit")}
+              onApprove={(profile) => void updatePolicyApproval(profile, "approve")}
+              onCancelSubmission={(profile) => void cancelPolicySubmission(profile)}
+              onRetire={setPolicyToRetire}
+            />
+          </Stack>
+
           {/* Action Footer Bar */}
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -1713,6 +1795,63 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
       {/* TAB 2: SALARY COMPONENTS                                                */}
       {activeTab === "components" && (
         <Box>
+          {/* Informative Guidance Banner */}
+          <Box
+            sx={{
+              mb: 2.5,
+              p: 2,
+              borderRadius: "14px",
+              border: "1px solid",
+              borderColor: isDark ? "rgba(11, 92, 171, 0.25)" : "rgba(11, 92, 171, 0.15)",
+              bgcolor: isDark ? "rgba(11, 92, 171, 0.08)" : "rgba(11, 92, 171, 0.03)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 1.5,
+            }}
+          >
+            <Stack direction="row" spacing={1.25} alignItems="center">
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: "8px",
+                  display: "grid",
+                  placeItems: "center",
+                  bgcolor: alpha(theme.palette.primary.main, 0.12),
+                  color: "primary.main",
+                }}
+              >
+                <PaymentsOutlined sx={{ fontSize: 18 }} />
+              </Box>
+              <Box>
+                <Typography variant="subtitle2" fontWeight={750} sx={{ fontSize: "0.88rem" }}>
+                  Salary Components Guide
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.76rem" }}>
+                  <strong>Earnings</strong> add to monthly gross salary. <strong>Deductions</strong> reduce salary. Once configured, heads can be packaged into <em>Salary Templates</em> or assigned directly to employees.
+                </Typography>
+              </Box>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Chip
+                size="small"
+                color="primary"
+                variant="outlined"
+                label={`${components.filter(c => c.kind === "EARNING" && c.isActive).length} Earnings`}
+                sx={{ height: 22, fontWeight: 700, fontSize: "0.7rem", borderRadius: "5px" }}
+              />
+              <Chip
+                size="small"
+                color="secondary"
+                variant="outlined"
+                label={`${components.filter(c => c.kind === "DEDUCTION" && c.isActive).length} Deductions`}
+                sx={{ height: 22, fontWeight: 700, fontSize: "0.7rem", borderRadius: "5px" }}
+              />
+            </Stack>
+          </Box>
+
           {canEdit && (
             <Box sx={{ ...sectionPanelSx, mb: 3 }}>
               <Stack spacing={2.5}>
@@ -1816,7 +1955,8 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       placeholder="MEAL_ALLOWANCE"
                       value={componentCode}
                       disabled={Boolean(componentId)}
-                      onChange={(e) => setComponentCode(e.target.value)}
+                      onChange={(e) => setComponentCode(e.target.value.toUpperCase().replace(/\s+/g, "_"))}
+                      helperText="Unique uppercase identifier, e.g. HRA, BONUS"
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -1827,6 +1967,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       placeholder="Meal allowance"
                       value={componentName}
                       onChange={(e) => setComponentName(e.target.value)}
+                      helperText="Display name for payslips & structures"
                     />
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -1837,9 +1978,10 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       label="Kind"
                       value={componentKind}
                       onChange={(e) => setComponentKind(e.target.value as SalaryComponent["kind"])}
+                      helperText={componentKind === "EARNING" ? "Adds to monthly Gross Pay" : "Subtracts from salary"}
                     >
-                      <MenuItem value="EARNING">Earning</MenuItem>
-                      <MenuItem value="DEDUCTION">Deduction</MenuItem>
+                      <MenuItem value="EARNING">Earning (+)</MenuItem>
+                      <MenuItem value="DEDUCTION">Deduction (-)</MenuItem>
                     </AppTextField>
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -1886,6 +2028,13 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       label="Calculation"
                       value={componentCalculationType}
                       onChange={(e) => setComponentCalculationType(e.target.value as SalaryComponent["calculationType"])}
+                      helperText={
+                        componentCalculationType === "FIXED"
+                          ? "Flat monthly rupee amount"
+                          : componentCalculationType === "PERCENT_OF_GROSS"
+                          ? "Percentage of total gross pay"
+                          : "Percentage of another component"
+                      }
                     >
                       <MenuItem value="FIXED">Fixed amount</MenuItem>
                       <MenuItem value="PERCENT_OF_GROSS">% of gross</MenuItem>
@@ -1899,9 +2048,27 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       label="Base component code (optional)"
                       placeholder="e.g. BASIC"
                       value={componentBaseCode}
-                      onChange={(e) => setComponentBaseCode(e.target.value)}
+                      onChange={(e) => setComponentBaseCode(e.target.value.toUpperCase())}
                       helperText="Used for percentage-of-component rules."
                     />
+                    {componentCalculationType === "PERCENT_OF_COMPONENT" && (
+                      <Stack direction="row" spacing={0.6} alignItems="center" flexWrap="wrap" sx={{ mt: 0.75 }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.68rem", fontWeight: 700 }}>
+                          Base:
+                        </Typography>
+                        {["BASIC", "GROSS", ...components.filter(c => c.kind === "EARNING" && c.code.toUpperCase() !== componentCode.toUpperCase() && c.isActive).map(c => c.code.toUpperCase())].slice(0, 4).map((code) => (
+                          <Chip
+                            key={code}
+                            size="small"
+                            label={code}
+                            variant={componentBaseCode.toUpperCase() === code ? "filled" : "outlined"}
+                            color={componentBaseCode.toUpperCase() === code ? "primary" : "default"}
+                            onClick={() => setComponentBaseCode(code)}
+                            sx={{ height: 20, fontSize: "0.66rem", fontWeight: 700, cursor: "pointer" }}
+                          />
+                        ))}
+                      </Stack>
+                    )}
                   </Grid>
                   <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <CustomisedDatePicker
@@ -1922,6 +2089,62 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       format="DD-MM-YYYY"
                       clearable
                     />
+                  </Grid>
+
+                  {/* Live Formula Preview Box */}
+                  <Grid size={{ xs: 12 }}>
+                    <Box
+                      sx={{
+                        p: 1.5,
+                        borderRadius: "10px",
+                        bgcolor: isDark ? "rgba(11, 92, 171, 0.1)" : "rgba(11, 92, 171, 0.04)",
+                        border: "1px solid",
+                        borderColor: alpha(theme.palette.primary.main, 0.2),
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        gap: 1.5,
+                      }}
+                    >
+                      <Stack direction="row" spacing={1.25} alignItems="center">
+                        <Box
+                          sx={{
+                            width: 28,
+                            height: 28,
+                            borderRadius: "7px",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: "primary.main",
+                            color: "#FFFFFF",
+                          }}
+                        >
+                          <ReceiptLongOutlined sx={{ fontSize: 16 }} />
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" fontWeight={750} color="text.secondary" sx={{ textTransform: "uppercase", fontSize: "0.68rem", letterSpacing: "0.04em" }}>
+                            Live Calculation Rule Preview
+                          </Typography>
+                          <Typography variant="body2" fontWeight={700} sx={{ fontSize: "0.825rem", color: "text.primary" }}>
+                            {componentCalculationType === "FIXED"
+                              ? `${componentName || "Component"}: Fixed rupee amount configured per employee or template`
+                              : componentCalculationType === "PERCENT_OF_GROSS"
+                              ? `${componentName || "Component"}: Rate% × Total Monthly Gross Salary`
+                              : `${componentName || "Component"}: Rate% × (${componentBaseCode ? componentBaseCode.toUpperCase() : "BASIC"}) pay each month`}
+                            {" · "}
+                            <span style={{ color: componentTaxable ? "#D97706" : "#059669" }}>
+                              {componentTaxable ? "Subject to Income Tax (TDS)" : "Tax-Exempt Allowance"}
+                            </span>
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      <Chip
+                        size="small"
+                        color={componentKind === "EARNING" ? "primary" : "secondary"}
+                        label={componentKind === "EARNING" ? "+ Adds to Gross Pay" : "- Deducts from Salary"}
+                        sx={{ height: 22, fontWeight: 750, fontSize: "0.7rem", borderRadius: "5px" }}
+                      />
+                    </Box>
                   </Grid>
                 </Grid>
 
@@ -1987,7 +2210,69 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
             </Box>
           )}
 
-          {components.length > 0 && <FormControlLabel control={<AppCheckbox checked={showComponentHistory} onChange={event => setShowComponentHistory(event.target.checked)} />} label="Show component version history" />}
+          {/* Search, Filter Toolbar & Version History Toggle */}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            spacing={1.5}
+            sx={{ mb: 2 }}
+          >
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ width: { xs: "100%", sm: "auto" } }}>
+              <TextField
+                size="small"
+                placeholder="Search components by code or name..."
+                value={componentFilterText}
+                onChange={(e) => setComponentFilterText(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchRounded sx={{ fontSize: 18, color: "text.secondary" }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ width: { xs: "100%", sm: 260 }, bgcolor: isDark ? "rgba(15, 23, 42, 0.6)" : "#FFFFFF", borderRadius: "8px" }}
+              />
+              <Stack direction="row" spacing={0.75} alignItems="center">
+                <Chip
+                  size="small"
+                  clickable
+                  variant={componentTypeFilter === "ALL" ? "filled" : "outlined"}
+                  color="primary"
+                  label={`All (${components.length})`}
+                  onClick={() => setComponentTypeFilter("ALL")}
+                  sx={{ height: 28, fontWeight: 700, fontSize: "0.72rem", borderRadius: "6px" }}
+                />
+                <Chip
+                  size="small"
+                  clickable
+                  variant={componentTypeFilter === "EARNING" ? "filled" : "outlined"}
+                  color="primary"
+                  label={`Earnings (${components.filter(c => c.kind === "EARNING").length})`}
+                  onClick={() => setComponentTypeFilter("EARNING")}
+                  sx={{ height: 28, fontWeight: 700, fontSize: "0.72rem", borderRadius: "6px" }}
+                />
+                <Chip
+                  size="small"
+                  clickable
+                  variant={componentTypeFilter === "DEDUCTION" ? "filled" : "outlined"}
+                  color="secondary"
+                  label={`Deductions (${components.filter(c => c.kind === "DEDUCTION").length})`}
+                  onClick={() => setComponentTypeFilter("DEDUCTION")}
+                  sx={{ height: 28, fontWeight: 700, fontSize: "0.72rem", borderRadius: "6px" }}
+                />
+              </Stack>
+            </Stack>
+
+            {components.length > 0 && (
+              <FormControlLabel
+                control={<AppCheckbox checked={showComponentHistory} onChange={(event) => setShowComponentHistory(event.target.checked)} />}
+                label={<Typography variant="body2" sx={{ fontSize: "0.8rem", fontWeight: 650 }}>Show component version history</Typography>}
+                sx={{ m: 0 }}
+              />
+            )}
+          </Stack>
+
           {components.length === 0 ? renderEmptyState("No Salary Components Configured", "Define reusable earning and deduction components before assembling salary templates.") : (
             <TableContainer sx={tableContainerSx}>
               <Table size="small">
@@ -2005,7 +2290,15 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {(showComponentHistory ? components : currentComponentFeatures).map((component) => (
+                  {(showComponentHistory ? components : currentComponentFeatures)
+                    .filter((component) => {
+                      const matchesQuery = !componentFilterText.trim() ||
+                        component.code.toLowerCase().includes(componentFilterText.trim().toLowerCase()) ||
+                        component.name.toLowerCase().includes(componentFilterText.trim().toLowerCase());
+                      const matchesType = componentTypeFilter === "ALL" || component.kind === componentTypeFilter;
+                      return matchesQuery && matchesType;
+                    })
+                    .map((component) => (
                     <TableRow key={component.id || `${component.code}-${component.version}`} hover sx={{ "&:hover": { bgcolor: alpha("#0B5CAB", 0.03) } }}>
                       <TableCell sx={{ fontWeight: 700 }}>{component.code}</TableCell>
                       <TableCell sx={{ fontWeight: 600 }}>{component.name}</TableCell>
@@ -2060,7 +2353,6 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
           )}
         </Box>
       )}
-
       {/* TAB 3: PAY GROUPS                                                        */}
       {/* ========================================================================= */}
       {activeTab === "groups" && (

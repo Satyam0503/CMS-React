@@ -10,6 +10,7 @@ import { useIntl } from "react-intl";
 import { EmployeeLeaveBalanceData, LeavePolicyModel } from "../model";
 import CustomisedButton from "../../../shared/components/C_Button";
 import { getLeavePolicies, getWorkFromHomeEmployeeAllocations, saveWorkFromHomeEmployeeAllocation, updateEmployeeLeaveBalance } from "../leaveServices";
+import { getRequest } from "../../../../server/axios";
 import {
   AccrualPeriodMapper,
   blockInvalidCharOnNumberField,
@@ -43,10 +44,29 @@ export default function EditEmployeePoliciesForm(props: Props) {
   const [leavePolicies, setLeavePolicies] = useState<Array<LeavePolicyModel>>(
     []
   );
+  const [weeklyOffDays, setWeeklyOffDays] = useState<number[]>([0, 6]);
   const [wfhWeeklyLimit, setWfhWeeklyLimit] = useState<number | null>(null);
   const [initialWfhWeeklyLimit, setInitialWfhWeeklyLimit] = useState<number | null>(null);
   const [wfhEligible, setWfhEligible] = useState(false);
   const [initialWfhEligible, setInitialWfhEligible] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getRequest<{ offDays: number[] }>("api/attendance/weekly-offs");
+        if (data && Array.isArray(data.offDays)) {
+          setWeeklyOffDays(data.offDays);
+        }
+      } catch (error) {
+        console.error("Unable to load weekly off schedule.", error);
+      }
+    })();
+  }, []);
+
+  const wfhPolicy = leavePolicies.find((policy) => policy.policyType === 2);
+  const allowOnWeeklyOff = Boolean(wfhPolicy?.workFromHome?.allowOnWeeklyOff);
+  const offDaysCount = new Set(weeklyOffDays.filter((d) => d >= 0 && d <= 6)).size;
+  const maxWorkingDays = allowOnWeeklyOff ? 7 : Math.max(1, Math.min(7, 7 - offDaysCount));
 
   useEffect(() => {
     (async () => {
@@ -70,7 +90,8 @@ export default function EditEmployeePoliciesForm(props: Props) {
         );
         const policyLimit = leavePolicies.find((policy) => policy.policyType === 2)
           ?.workFromHome?.maxDaysPerWeek ?? 1;
-        const limit = allocation?.weeklyLimit ?? policyLimit;
+        const rawLimit = allocation?.weeklyLimit ?? policyLimit;
+        const limit = Math.max(0, Math.min(maxWorkingDays, rawLimit));
         setWfhWeeklyLimit(limit);
         setInitialWfhWeeklyLimit(limit);
         // Do not infer assignment from the company default. The API evaluates
@@ -82,7 +103,13 @@ export default function EditEmployeePoliciesForm(props: Props) {
         console.error("Unable to load the employee WFH allocation.", error);
       }
     })();
-  }, [leavePolicies, selectedEmployee.employeeCode]);
+  }, [leavePolicies, selectedEmployee.employeeCode, maxWorkingDays]);
+
+  useEffect(() => {
+    if (wfhWeeklyLimit !== null && wfhWeeklyLimit > maxWorkingDays) {
+      setWfhWeeklyLimit(maxWorkingDays);
+    }
+  }, [maxWorkingDays, wfhWeeklyLimit]);
 
   const getInitialValues: GetLeaveBalanceValue = () => {
     if (selectedEmployee.leaveBalances.length) {
@@ -113,6 +140,9 @@ export default function EditEmployeePoliciesForm(props: Props) {
       if (wfhWeeklyLimit !== null && (wfhWeeklyLimit !== initialWfhWeeklyLimit || wfhEligible !== initialWfhEligible)) {
         if (!selectedEmployee.employeeCode) {
           throw new Error("WFH allocation is unavailable because this employee has no employee code.");
+        }
+        if (wfhEligible && (wfhWeeklyLimit < 0 || wfhWeeklyLimit > maxWorkingDays)) {
+          throw new Error(`Weekly WFH allowance must be between 0 and ${maxWorkingDays} working day(s) per week.`);
         }
         const { data: allocationData } = await saveWorkFromHomeEmployeeAllocation({
           employeeId: selectedEmployee.employeeCode,
@@ -306,7 +336,7 @@ export default function EditEmployeePoliciesForm(props: Props) {
                       {leave.name}
                     </Typography>
                     <Typography variant="body2">
-                      Weekly WFH allowance (HR/Admin can set 0 to disable it for this employee)
+                      Weekly WFH allowance (HR/Admin can set 0 to disable it for this employee, max {maxWorkingDays} days)
                     </Typography>
                   </Box>
                   <AppTextField
@@ -315,9 +345,13 @@ export default function EditEmployeePoliciesForm(props: Props) {
                     type="number"
                     value={wfhWeeklyLimit ?? ""}
                     disabled={!wfhEligible}
-                    onChange={(e) => setWfhWeeklyLimit(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value === "" ? 0 : Number(e.target.value);
+                      setWfhWeeklyLimit(Math.max(0, Math.min(maxWorkingDays, val)));
+                    }}
                     onKeyDown={blockInvalidCharOnNumberField}
-                    slotProps={{ htmlInput: { min: 0, max: 31, step: 1 } }}
+                    slotProps={{ htmlInput: { min: 0, max: maxWorkingDays, step: 1 } }}
+                    helperText={wfhEligible ? `Allowed: 0 to ${maxWorkingDays} working day(s) per week (Company work week: ${maxWorkingDays} days)` : undefined}
                   />
                 </Stack>
               ))}

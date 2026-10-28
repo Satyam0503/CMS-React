@@ -100,6 +100,31 @@ describe("PayrollRunsPanel workflow", () => {
     await vi.waitFor(() => expect(payrollServices.processPayrollRun).toHaveBeenCalledWith("run-1"));
   });
 
+  it("reloads a processed run after projection failure and exposes a safe retry", async () => {
+    let currentRun: typeof run & { legacyPayrollRowsSynchronizedAtUtc?: string | null } = { ...run, status: "APPROVED", legacyPayrollRowsSynchronizedAtUtc: null };
+    let processAttempts = 0;
+    vi.mocked(payrollServices.getPayrollRuns).mockImplementation(async () => ({ data: [currentRun] }) as never);
+    vi.mocked(payrollServices.processPayrollRun).mockImplementation(async () => {
+      processAttempts += 1;
+      if (processAttempts === 1) {
+        currentRun = { ...currentRun, status: "PROCESSED" };
+        return { data: { success: false, message: "Payroll-row synchronization is incomplete. Retry Process." } } as never;
+      }
+      currentRun = { ...currentRun, legacyPayrollRowsSynchronizedAtUtc: "2026-10-05T00:00:00Z" };
+      return { data: { success: true } } as never;
+    });
+
+    const container = await mount();
+    await vi.waitFor(() => expect(container.textContent).toContain("Process"));
+    await act(async () => { Array.from(container.querySelectorAll("button")).find(button => button.textContent?.trim() === "Process")?.click(); });
+    await vi.waitFor(() => expect(container.textContent).toContain("Retry payroll sync"));
+    expect(container.textContent).toContain("Payroll-row synchronization is incomplete");
+
+    await act(async () => { Array.from(container.querySelectorAll("button")).find(button => button.textContent?.trim() === "Retry payroll sync")?.click(); });
+    await vi.waitFor(() => expect(processAttempts).toBe(2));
+    expect(container.textContent).not.toContain("Retry payroll sync");
+  });
+
   it("requires explicit confirmation and an audit note before payment reconciliation", async () => {
     const processedRun = { ...run, status: "PROCESSED" };
     vi.mocked(payrollServices.getPayrollRuns).mockResolvedValue({ data: [processedRun] } as never);

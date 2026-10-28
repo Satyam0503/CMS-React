@@ -274,6 +274,17 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         setSourceConflict({ item, sourceType: data.sourceType, sourceId: data.sourceId });
         return;
       }
+      if (item.exceptionType === "PUNCH_ON_APPROVED_LEAVE" || item.exceptionType === "LEAVE_ATTENDANCE_CONFLICT") {
+        setAttendanceResolution({
+          item,
+          date,
+          status: "P",
+          checkInTime: timeFromAttendance(data.checkInTime) || "09:00",
+          checkOutTime: timeFromAttendance(data.checkOutTime) || "18:00",
+          reason: "Present in office during approved leave; converted to Present and refunded leave balance.",
+        });
+        return;
+      }
       if (data.sourceType === "LEAVE" && data.sourceId) {
         setLeaveException({ item, sourceId: data.sourceId });
         return;

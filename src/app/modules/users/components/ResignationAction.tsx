@@ -12,6 +12,8 @@ import { useAppSelector } from "../../../Redux/hooks";
 export const ResignationAction = () => {
   const { userDetails, setRefresh } = useUserDetails();
   const currentUserId = useAppSelector(state => state.user.userData?.userId);
+  const permissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
+  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
   const [date, setDate] = useState<Dayjs | null>(null);
   const [reason, setReason] = useState("");
   const [saving, setSaving] = useState(false);
@@ -19,7 +21,10 @@ export const ResignationAction = () => {
   const [hasActiveExitCase, setHasActiveExitCase] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
-    if (!currentUserId || userDetails.userId !== currentUserId) return;
+    if (!hasOffboarding || !currentUserId || userDetails.userId !== currentUserId) {
+      setHasActiveExitCase(undefined);
+      return;
+    }
     let isCurrent = true;
     getOwnEmployeeExitCase(currentUserId)
       .then((response) => {
@@ -31,9 +36,9 @@ export const ResignationAction = () => {
         if (isCurrent) setHasActiveExitCase(false);
       });
     return () => { isCurrent = false; };
-  }, [currentUserId, userDetails.userId, userDetails.employmentStatus]);
+  }, [hasOffboarding, currentUserId, userDetails.userId, userDetails.employmentStatus]);
 
-  if (!currentUserId || userDetails.userId !== currentUserId || userDetails.employmentStatus && userDetails.employmentStatus !== "Active" || hasActiveExitCase !== false) return null;
+  if (!hasOffboarding || !currentUserId || userDetails.userId !== currentUserId || userDetails.employmentStatus && userDetails.employmentStatus !== "Active" || hasActiveExitCase !== false) return null;
   const submit = async () => {
     if (!date) return toast.error("Select your last working date.");
     setSaving(true);

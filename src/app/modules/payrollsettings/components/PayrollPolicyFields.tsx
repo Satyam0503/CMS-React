@@ -161,7 +161,7 @@ export function PayrollPolicyFields({
         borderColor: "primary.main",
       },
       "&.Mui-focused": {
-        boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.15)}`,
+        boxShadow: "none",
       },
     },
   };
@@ -846,7 +846,7 @@ export function PayrollPolicyFields({
                             epfWageCeiling: Math.max(0, Number(event.target.value)),
                           }))
                         }
-                        inputProps={{ min: 0 }}
+                        inputProps={{ min: 0, "aria-label": "EPF wage ceiling (₹)" }}
                         sx={inputSx}
                       />
                     )}

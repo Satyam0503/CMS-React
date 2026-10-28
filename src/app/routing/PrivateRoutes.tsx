@@ -45,8 +45,7 @@ const RecruitmentGuard = ({ children }: { children: ReactNode }) => {
     (p: string) =>
       p.startsWith("Jobs.") ||
       p.startsWith("Applications.") ||
-      p.startsWith("Process_Log.") ||
-      p.startsWith("Career_Profile.")
+      p.startsWith("Process_Log.")
   );
   if (!hasRecruitment) {
     return <Navigate to="/unauthorize" replace />;
@@ -199,9 +198,11 @@ const PrivateRoutes = () => {
         <Route
           path="recruitment/*"
           element={
-            <SuspensedView>
-              <Recruitment />
-            </SuspensedView>
+            <RecruitmentGuard>
+              <SuspensedView>
+                <Recruitment />
+              </SuspensedView>
+            </RecruitmentGuard>
           }
         />
         <Route

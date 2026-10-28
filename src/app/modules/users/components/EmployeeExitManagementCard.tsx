@@ -31,6 +31,7 @@ import {
   WorkOutlineOutlined,
 } from "@mui/icons-material";
 import { useCallback, useEffect, useState } from "react";
+import { useAppSelector } from "../../../Redux/hooks";
 import {
   calculateEmployeeFinalSettlement,
   createFormerEmployeePortalInvite,
@@ -76,6 +77,8 @@ const offboardingErrorMessage = (message?: string) => {
 };
 
 export const EmployeeExitManagementCard = ({ employeeUserId }: Props) => {
+  const permissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
   const [exitCase, setExitCase] = useState<EmployeeExitCase | null>(null);
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -101,12 +104,16 @@ export const EmployeeExitManagementCard = ({ employeeUserId }: Props) => {
   const [rejoinReason, setRejoinReason] = useState("");
 
   const refresh = useCallback(async () => {
+    if (!hasOffboarding) {
+      setExitCase(null);
+      return;
+    }
     const response = await getEmployeeExitCaseForManagement(employeeUserId);
     const nextCase = response.data.success ? response.data.methodResult : null;
     setExitCase(nextCase);
     setRehireEligible(nextCase?.exitInterview?.isRehireEligible === true);
     setRehireEligibilityChanged(false);
-  }, [employeeUserId]);
+  }, [hasOffboarding, employeeUserId]);
 
   useEffect(() => {
     void refresh();
@@ -138,9 +145,9 @@ export const EmployeeExitManagementCard = ({ employeeUserId }: Props) => {
           );
       })
       .catch(() => setDiscussionCandidates([]));
-  }, [employeeUserId]);
+  }, [hasOffboarding, employeeUserId]);
 
-  if (!exitCase) return null;
+  if (!hasOffboarding || !exitCase) return null;
 
   const run = async (
     work: () => Promise<{ data: { success: boolean; message?: string } }>,

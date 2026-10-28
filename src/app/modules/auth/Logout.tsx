@@ -11,6 +11,7 @@ import { resetUserSlice } from "../../Redux/Reducers/userSlice";
 import ChatHub from "../../../server/ChatHub";
 import { resetOnlineUsers } from "../../Redux/Reducers/onlineUsersSlice";
 import { queryClient } from "../../query/queryClient";
+import { I18N_CONFIG_KEY } from "../../../utils/constant/data";
 
 export const Logout = () => {
   const dispatch = useAppDispatch();
@@ -35,7 +36,11 @@ export const Logout = () => {
         dispatch(logout());
         dispatch(resetUserSlice());
         dispatch(resetOnlineUsers());
+        const savedLangConfig = localStorage.getItem(I18N_CONFIG_KEY);
         localStorage.clear();
+        if (savedLangConfig) {
+          localStorage.setItem(I18N_CONFIG_KEY, savedLangConfig);
+        }
         queryClient.clear();
         signalRInstance.stopConnection();
         chatHubInstance.stopConnection();

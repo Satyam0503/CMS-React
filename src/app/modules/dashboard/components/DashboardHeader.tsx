@@ -54,7 +54,7 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
               textTransform: "uppercase",
             }}
           >
-            Workspace Overview
+            {intl.formatMessage({ id: "AUTH.WORKSPACE_OVERVIEW", defaultMessage: "Workspace Overview" })}
           </Typography>
         </Stack>
         <Typography component="h1" variant="h2" className="dashboard-welcome-title">
@@ -64,7 +64,10 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
           <span className="dashboard-welcome-name">{props.fullName || ""}</span>
         </Typography>
         <Typography className="dashboard-welcome-copy">
-          Real-time attendance, workforce activity, and upcoming company schedules.
+          {intl.formatMessage({
+            id: "AUTH.WORKSPACE_OVERVIEW_COPY",
+            defaultMessage: "Real-time attendance, workforce activity, and upcoming company schedules.",
+          })}
         </Typography>
       </Stack>
 

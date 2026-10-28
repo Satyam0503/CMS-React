@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
-import { languages } from "../../../../../utils/constant/Constant";
+import { allLanguages, languages } from "../../../../../utils/constant/Constant";
 import { useIntl } from "react-intl";
 import { LanguageNameMapper, } from "../../../../../utils/common";
 import { useAppLang } from "../../../../i18n/Metronici18n";
@@ -37,7 +37,7 @@ const Languages = () => {
 
   const open = Boolean(languageAnchorEl);
   const id = open ? "language-popover" : undefined;
-  const currentLanguageIcon = languages.find(lang => lang.lang === currentLanguage) ?? languages[0];
+  const currentLanguageIcon = (allLanguages || languages).find(lang => lang.lang === currentLanguage) ?? languages[0];
 
   return (
     <>

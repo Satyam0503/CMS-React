@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { PayrollDateField } from "./PayrollDateField";
 import { coversConfigurationWindow } from "./payrollConfigurationSelection";
 import type { PayrollPayGroup } from "./PayrollPayGroupsPanel";
+import { useIsDark } from "../../theme/useIsDark";
 
 type Profile = { id?: string; name: string; version?: number; approvalStatus: string; isActive: boolean; scope?: string; effectiveFrom: string; effectiveTo?: string | null };
 type Template = { id?: string; name: string; payGroupId?: string; isActive: boolean; effectiveFrom: string; effectiveTo?: string | null };
@@ -16,6 +17,7 @@ type Props = { groups: PayrollPayGroup[]; templates: Template[]; profiles: Profi
 const employmentTypes = [{ value: 1, label: "Full-time" }, { value: 2, label: "Part-time" }, { value: 3, label: "Contract" }, { value: 4, label: "Internship" }, { value: 5, label: "Apprenticeship" }];
 
 export function PayrollBulkAssignmentPanel({ groups, templates, profiles, canEdit, onSubmitted }: Props) {
+  const isDark = useIsDark();
   const [employeeIds, setEmployeeIds] = useState("");
   const [department, setDepartment] = useState("");
   const [jobRole, setJobRole] = useState("");
@@ -80,7 +82,14 @@ export function PayrollBulkAssignmentPanel({ groups, templates, profiles, canEdi
   };
 
   if (!canEdit) return null;
-  return <Stack spacing={2} sx={{ p: { xs: 2, md: 2.5 }, border: 1, borderColor: "divider", borderRadius: 2 }}>
+  return <Stack spacing={2} sx={{
+    p: { xs: 2.5, md: 3 },
+    borderRadius: "14px",
+    border: "1px solid",
+    borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(226, 232, 240, 0.9)",
+    bgcolor: isDark ? "rgba(15, 23, 42, 0.45)" : "rgba(248, 250, 252, 0.75)",
+    boxShadow: isDark ? "0 4px 16px rgba(0, 0, 0, 0.25)" : "0 2px 8px rgba(0, 0, 0, 0.03)",
+  }}>
     <Typography variant="subtitle1" fontWeight={750}>Assign a cohort</Typography>
     <Typography variant="body2" color="text.secondary">Use department, job role, or employment type filters, or provide employee IDs. Filters combine; when IDs are supplied, the other filters narrow that list. Preview conflicts before submitting. Every new assignment remains pending Admin approval.</Typography>
     <Grid container spacing={1.5}>

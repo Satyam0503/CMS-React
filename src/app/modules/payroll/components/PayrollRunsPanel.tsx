@@ -182,6 +182,9 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
     }
     catch (err: any) {
       const serverMessage = err?.response?.data?.message || err?.message;
+      // Some workflow operations can persist a state transition before a later
+      // projection/reconciliation step fails. Reload so the UI exposes its retry action.
+      await load();
       setError(serverMessage || message);
       return false;
     }
@@ -239,7 +242,7 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
   }, "Payroll calculation failed. Resolve missing payroll rows or invalid component formulas.");
   const review = (id: string) => act(id, () => recordPayrollRunReview(id, "Reviewed from payroll management"), "Payroll run review failed. Resolve blocked rows first.");
   const approve = (id: string) => act(id, () => approvePayrollRun(id), "Payroll run approval failed. Review the run before approving.");
-  const process = (id: string) => act(id, () => processPayrollRun(id), "Payroll run could not be processed. Approve the reviewed run first.");
+  const process = (id: string) => act(id, () => processPayrollRun(id), "Payroll-row synchronization is incomplete. Resolve the reported row issue and retry.");
   const payment = (id: string) => act(id, () => createPaymentBatch(id), "Payment batch could not be created. The run must be processed first.");
   const approveAdjustment = (adjustment: PayrollAdjustmentModel) => act(adjustment.id, () => approvePayrollAdjustment(adjustment.id), "Adjustment approval failed. Reload the queue and verify the adjustment is still a draft.");
   const rejectAdjustmentForm = async (event: FormEvent) => {
@@ -318,6 +321,7 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
       {canApprove && run.status === "CALCULATED" && reviews[run.id]?.canApprove && reviews[run.id]?.isReviewed && <Button size="small" disabled={busy === run.id} onClick={() => void approve(run.id)}>Approve</Button>}
       {(run.status === "CALCULATED" || run.status === "BLOCKED") && reviews[run.id] && !reviews[run.id]?.canApprove && <Chip size="small" color="warning" label={`Resolve ${reviews[run.id]?.blockedCount ?? 0} blocked / incomplete rows`} />}
       {canEdit && run.status === "APPROVED" && <Button size="small" disabled={busy === run.id} onClick={() => void process(run.id)}>Process</Button>}
+      {canEdit && run.status === "PROCESSED" && !run.legacyPayrollRowsSynchronizedAtUtc && <Button size="small" color="warning" disabled={busy === run.id} onClick={() => void process(run.id)}>Retry payroll sync</Button>}
       {canEdit && batch?.status === "DRAFT" && <Button size="small" disabled={busy === batch.id} onClick={() => { setProviderReference(""); setBatchToSubmit(batch); }}>Submit payment</Button>}
       {canEdit && (batch?.status === "SUBMITTED" || batch?.status === "RECONCILING") && <Button size="small" disabled={busy === batch.id} onClick={() => { setReconciliationNote(batch.reconciliationNote ?? ""); setReconciliationConfirmed(false); setBatchToReconcile(batch); }}>{batch.status === "RECONCILING" ? "Resume reconciliation" : "Reconcile payment"}</Button>}
       {canEdit && (run.status === "PAID" || run.status === "CLOSED") && <Button size="small" disabled={busy === run.id || adjustmentEmployeesLoading} onClick={() => void openAdjustment(run)}>Adjustment</Button>}

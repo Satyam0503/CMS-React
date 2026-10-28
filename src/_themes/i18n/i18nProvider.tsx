@@ -2,6 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/locale-data/en'
+import '@formatjs/intl-relativetimeformat/locale-data/hi'
 import '@formatjs/intl-relativetimeformat/locale-data/de'
 import '@formatjs/intl-relativetimeformat/locale-data/es'
 import '@formatjs/intl-relativetimeformat/locale-data/fr'
@@ -12,13 +13,18 @@ import { WithChildren } from '../../utils/common_types'
 import { flattenMessages } from '../../utils/common'
 import { useAppLang } from './Metronici18n'
 import { LANGUAGE } from '../../utils/enums'
+import enLocale from '../../../public/locales/en.json'
+import hiLocale from '../../../public/locales/hi.json'
 
 type FlatMessages = Record<string, string>
 
-// In-memory cache so switching languages doesn't refetch within the same session.
-// HTTP `cache: "no-cache"` still validates with the server on the first fetch of
-// each language per session, picking up edits made directly on the deployed JSON files.
-const messagesCache = new Map<LANGUAGE, FlatMessages>()
+// Synchronously initialize the active frontend languages (English and Hindi) so
+// IntlProvider never renders an initial empty messages object, preventing any
+// English fallback flash or missing translations on cold load.
+const messagesCache = new Map<LANGUAGE, FlatMessages>([
+  [LANGUAGE.ENGLISH, flattenMessages(enLocale)],
+  [LANGUAGE.HINDI, flattenMessages(hiLocale)],
+])
 
 const fetchMessages = async (lang: LANGUAGE): Promise<FlatMessages> => {
   const cached = messagesCache.get(lang)
@@ -34,8 +40,8 @@ const fetchMessages = async (lang: LANGUAGE): Promise<FlatMessages> => {
 
 const I18nProvider: FC<WithChildren> = ({ children }) => {
   const { currentLanguage } = useAppLang()
-  const [messages, setMessages] = useState<FlatMessages | null>(
-    () => messagesCache.get(currentLanguage) ?? null
+  const [messages, setMessages] = useState<FlatMessages>(
+    () => messagesCache.get(currentLanguage) ?? messagesCache.get(LANGUAGE.ENGLISH) ?? {}
   )
   // Tracks the latest requested language so a slow earlier request can't
   // overwrite messages set by a later (faster) language switch.
@@ -54,13 +60,15 @@ const I18nProvider: FC<WithChildren> = ({ children }) => {
       })
       .catch((err) => {
         console.error(err)
-        // Fall back to empty so IntlProvider can still render with defaultMessage values.
-        if (latestRequestRef.current === currentLanguage) setMessages({})
+        // Fall back to English bundled messages rather than empty object
+        if (latestRequestRef.current === currentLanguage) {
+          setMessages(messagesCache.get(LANGUAGE.ENGLISH) ?? {})
+        }
       })
   }, [currentLanguage])
 
   return (
-    <IntlProvider locale={currentLanguage} messages={messages ?? {}} defaultLocale='en'>
+    <IntlProvider locale={currentLanguage} messages={messages} defaultLocale='en'>
       {children}
     </IntlProvider>
   )

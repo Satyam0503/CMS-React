@@ -1,6 +1,7 @@
 {
   "LANGUAGES": {
     "ENGLISH": "English",
+    "HINDI": "Hindi",
     "MANDARIN": "Mandarin",
     "SPANISH": "Spanish",
     "JAPANESE": "Japanese",
@@ -285,7 +286,36 @@
     "RESET_PROFILE_PASSWORD": "Reset profile password",
     "OLD_PASSWORD": "Old Password",
     "NEW_PASSWORD": "New Password",
-    "CONFIRM_PASSWORD": "Confirm Password"
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "SIGNIN_TITLE": "Sign in to your workspace",
+    "SIGNIN_SUBTITLE": "Enter your credentials to continue to CodeJi CMS.",
+    "REMEMBER_ME": "Remember me",
+    "DONT_HAVE_WORKSPACE": "Don't have a workspace?",
+    "CREATE_ACCOUNT": "Create an account",
+    "ENCRYPTED_SECURITY": "256-bit encrypted authentication & tenant security",
+    "HERO_TAG": "Enterprise Workforce & Payroll",
+    "HERO_TITLE": "Workforce operations, perfected.",
+    "HERO_SUBTITLE": "A unified platform for team lifecycle, attendance automation, and statutory payroll compliance.",
+    "TESTIMONIAL_QUOTE": "CodeJi delivers the accuracy and speed required for multi-branch attendance and instant payroll reconciliation.",
+    "TESTIMONIAL_AUTHOR": "Operations & People Team",
+    "TESTIMONIAL_ROLE": "CodeJi Enterprise Infrastructure",
+    "TLS_ENCRYPTION": "256-Bit TLS Encryption",
+    "TENANT_ISOLATION": "Tenant Data Isolation",
+    "BACK_TO_SIGNIN": "Back to sign in",
+    "REGISTRATION_SUBTITLE": "Set up your organization's HR, attendance, and payroll portal.",
+    "PASSWORD_STRENGTH": "Password strength:",
+    "STRENGTH_WEAK": "Weak",
+    "STRENGTH_FAIR": "Fair",
+    "STRENGTH_GOOD": "Good",
+    "STRENGTH_STRONG": "Strong",
+    "PASSWORD_CRITERIA": "8+ chars, mixed case, number & symbol",
+    "AGREE_TERMS_PREFIX": "I agree to the",
+    "TERMS_OF_SERVICE": "Terms of Service",
+    "AND": "and",
+    "PRIVACY_POLICY": "Privacy Policy",
+    "ENTERPRISE_PROTECTION": "Protected by enterprise role-based security & tenant data isolation",
+    "WORKSPACE_OVERVIEW": "Workspace Overview",
+    "WORKSPACE_OVERVIEW_COPY": "Real-time attendance, workforce activity, and upcoming company schedules."
   },
   "JOB": {
     "DESCRIPTION": "Job Description",
@@ -1089,5 +1119,29 @@
     "CAREER_PROFILE": "Career Profile",
     "WORK_FROM_HOME": "Work From Home",
     "OFFBOARDING": "Offboarding"
+  },
+  "OFFBOARDING": {
+    "ACTION_BUTTON": "Offboard employee",
+    "ACTION_BUTTON_SHORT": "Offboard",
+    "MODAL_TITLE": "Offboard employee",
+    "MODAL_SUBTITLE": "Manage a resignation or termination",
+    "ALERT_AUDITABLE": "This creates an auditable offboarding record. Payroll, leave, attendance and the employee profile are kept.",
+    "BANNER_ACTIVE_UNTIL": "Employee remains active until the selected date",
+    "BANNER_DATA_KEPT": "No employee or historical data is deleted.",
+    "EXIT_TYPE": "Exit type",
+    "LAST_WORKING_DATE": "Last working date",
+    "REASON_FOR_EXIT": "Reason for exit",
+    "REASON_PLACEHOLDER": "Add a short reason for the employee record",
+    "START_OFFBOARDING": "Start offboarding",
+    "TOAST_SELECT_DATE": "Select the last working date.",
+    "TOAST_STARTED": "Offboarding started. The employee is now in notice period.",
+    "TOAST_UNABLE": "Unable to start offboarding.",
+    "TYPES": {
+      "RESIGNED": "Resignation",
+      "TERMINATED": "Termination",
+      "RETIRED": "Retirement",
+      "CONTRACT_ENDED": "Contract end",
+      "DECEASED": "Deceased"
+    }
   }
 }

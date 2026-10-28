@@ -170,7 +170,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
             },
             "&.Mui-focused": {
               backgroundColor: "var(--mui-palette-background-paper, #FFFFFF)",
-              boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent)",
+              boxShadow: "none",
               "& .MuiOutlinedInput-notchedOutline": {
                 borderWidth: "1.5px",
                 borderColor: theme.vars?.palette.primary.main,

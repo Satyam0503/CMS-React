@@ -68,6 +68,7 @@ const PayRollManagement = () => {
     const [payMonth, setPayMonth] = useState<Dayjs | null>(dayjs().subtract(1, "month").startOf("day"));
     const [payRollData, setPayRollData] = useState<PayRollResponseModel[]>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [selectedEmployeeName, setSelectedEmployeeName] = useState<string>('');
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [initialValues, setInitialValues] = useState<typeof initialPayRollValues>(initialPayRollValues);
     const [refresh, setRefresh] = useState<boolean>(false);
@@ -206,6 +207,7 @@ const PayRollManagement = () => {
             toast.info("Processed payroll is locked and cannot be edited.");
             return;
         }
+        setSelectedEmployeeName(row.employeeName || '');
         setInitialValues({
             ...row.payData,
             paidDate: row.payData.paidDate ? dayjs(row.payData.paidDate as unknown as string) : null,
@@ -338,6 +340,7 @@ const PayRollManagement = () => {
     const handleModalClose = () => {
         setIsModalOpen(false);
         setIsEdit(false);
+        setSelectedEmployeeName('');
         setInitialValues(initialPayRollValues);
     };
 
@@ -1348,6 +1351,7 @@ const PayRollManagement = () => {
                     edit={isEdit}
                     open={isModalOpen}
                     initialValues={initialValues}
+                    employeeName={selectedEmployeeName}
                     handleClose={handleModalClose}
                     handlePageRefresh={handlePageRefresh}
                 />

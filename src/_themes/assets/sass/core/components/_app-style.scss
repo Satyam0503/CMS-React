@@ -771,7 +771,7 @@ body,
     }
     &.Mui-focused {
       background: #FFFFFF !important;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12) !important;
+      box-shadow: none !important;
       & .MuiOutlinedInput-notchedOutline { border: 1.5px solid var(--mui-palette-primary-main) !important; }
     }
   }
@@ -1296,7 +1296,7 @@ body[data-theme] {
       &.Mui-focused {
         background: #FFFFFF !important;
         background-color: #FFFFFF !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+        box-shadow: none !important;
         & .MuiOutlinedInput-notchedOutline {
           border-color: #2563EB !important;
           border-width: 1.5px !important;
@@ -1406,7 +1406,7 @@ body[data-theme] {
       &.Mui-focused {
         background: #1E293B !important;
         background-color: #1E293B !important;
-        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2) !important;
+        box-shadow: none !important;
         & .MuiOutlinedInput-notchedOutline {
           border-color: #60A5FA !important;
         }

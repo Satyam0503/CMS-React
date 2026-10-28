@@ -19,10 +19,15 @@ import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission, Roles } from "../../../../utils/enums";
 
 export const CompanyDetailsTab = () => {
+  const token = useAppSelector((state) => state.auth.token);
   const userData = useAppSelector((state) => state.user.userData);
   const permissions = userData?.modulePermission ?? [];
-  const hasPayroll = permissions.some((p) => p.startsWith("PayRoll.") || p.startsWith("Payroll_Settings."));
+  const hasPayroll = permissions.some((p) => p.startsWith("PayRoll.")) && permissions.some((p) => p.startsWith("Payroll_Settings."));
   const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
+
+  if (token && !userData) {
+    return null;
+  }
 
   return (
     <Routes>
@@ -77,7 +82,7 @@ const CompanyDetails = () => {
   const { currentLanguage } = useAppLang();
   const userData = useAppSelector((state) => state.user.userData);
   const permissions = userData?.modulePermission ?? [];
-  const hasPayroll = permissions.some((p) => p.startsWith("PayRoll.") || p.startsWith("Payroll_Settings."));
+  const hasPayroll = permissions.some((p) => p.startsWith("PayRoll.")) && permissions.some((p) => p.startsWith("Payroll_Settings."));
   const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
 
   useEffect(() => {

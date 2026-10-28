@@ -169,6 +169,8 @@ export type LeavePolicyModel = {
     sameDayCutoffTime?: string | null;
     sameDayGraceMinutes?: number | null;
     allowLateApplicationWithApproval?: boolean;
+    allowedDaysOfWeek?: string[];
+    blockedDaysOfWeek?: string[];
   } | null;
   lifecycle?: {
     enabled: boolean;

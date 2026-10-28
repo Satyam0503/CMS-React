@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAppSelector } from "../../../Redux/hooks";
 import dayjs from "dayjs";
 import { ManageAccountsOutlined } from "@mui/icons-material";
 import {
@@ -37,13 +38,17 @@ const fallbackLifecyclePolicies: EmployeeLifecyclePolicy[] = [
   { eventType: "AbscondingUnderReview", requiresHrApproval: true, requiresReason: true, requiresExpectedReturnDate: false, defaultAvailabilityStatus: "AbscondingUnderReview", attendanceExpected: false, leaveRequestsAllowed: false, workFromHomeRequestsAllowed: false },
 ];
 
-const leaveDrivenLifecycleStatuses = new Set(["MedicalLeave", "MaternityLeave", "PaternityLeave", "LongTermLeave", "Sabbatical"]);
+const leaveDrivenLifecycleStatuses = new Set(["MedicalLeave", "MaternityLeave", "PaternityLeave", "LongTermLeave"]);
 const directLifecycleOptions: Array<[string, string]> = [
+  ["Sabbatical", "Sabbatical"],
   ["Working", "Working"], ["AdministrativeLeave", "Administrative leave"],
   ["UnauthorizedAbsence", "Unauthorized absence"], ["AbscondingUnderReview", "Absconding under review"],
+  ["Suspended", "Suspended"],
 ];
 
 const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
+  const permissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
   const isLifecycleAffected = employee.employmentStatus !== "Active"
     || employee.availabilityStatus !== "Working"
     || employee.accountStatus !== "Active"
@@ -53,12 +58,13 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
   const [accountStatus, setAccountStatus] = useState(employee.accountStatus ?? "Active");
   const [payrollStatus, setPayrollStatus] = useState(employee.payrollStatus ?? "Active");
   const [alumniStatus, setAlumniStatus] = useState(employee.alumniStatus ?? "NotApplicable");
-  const [returnDate, setReturnDate] = useState("");
+  const [returnDate, setReturnDate] = useState(employee.availabilityExpectedReturnDate ? dayjs(employee.availabilityExpectedReturnDate).format("YYYY-MM-DD") : "");
   const [reason, setReason] = useState("");
   const [saving, setSaving] = useState(false);
   const [history, setHistory] = useState<Array<{ previousValue: string; newValue: string; reason?: string; reasonCode?: string; changedAtUtc: string }>>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [policies, setPolicies] = useState<EmployeeLifecyclePolicy[]>([]);
+  const [policiesLoading, setPoliciesLoading] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -66,8 +72,9 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
       setAccountStatus(employee.accountStatus ?? "Active");
       setPayrollStatus(employee.payrollStatus ?? "Active");
       setAlumniStatus(employee.alumniStatus ?? "NotApplicable");
+      setReturnDate(employee.availabilityExpectedReturnDate ? dayjs(employee.availabilityExpectedReturnDate).format("YYYY-MM-DD") : "");
     }
-  }, [employee.availabilityStatus, employee.accountStatus, employee.payrollStatus, employee.alumniStatus, open]);
+  }, [employee.availabilityStatus, employee.accountStatus, employee.payrollStatus, employee.alumniStatus, employee.availabilityExpectedReturnDate, open]);
 
   useEffect(() => {
     if (!open) return;
@@ -80,13 +87,31 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
 
   useEffect(() => {
     if (!open) return;
-    getEmployeeLifecyclePolicies().then(({ data }) => setPolicies(Array.isArray(data) ? data : [])).catch(() => setPolicies([]));
+    setPoliciesLoading(true);
+    getEmployeeLifecyclePolicies().then(({ data }) => setPolicies(Array.isArray(data) ? data : [])).catch(() => setPolicies([])).finally(() => setPoliciesLoading(false));
   }, [open]);
 
   const selectedPolicy = policies.find((policy) => policy.eventType === status) ?? fallbackLifecyclePolicies.find((policy) => policy.eventType === status);
   const isFallbackPolicy = selectedPolicy && !policies.some((policy) => policy.eventType === status);
   const currentLeaveDrivenStatus = leaveDrivenLifecycleStatuses.has(status);
   const lifecycleIsLeaveOwned = leaveDrivenLifecycleStatuses.has(employee.availabilityStatus ?? "");
+
+  const handleAvailabilityChange = (newStatus: string) => {
+    setStatus(newStatus);
+    if (newStatus === "UnauthorizedAbsence" || newStatus === "AbscondingUnderReview") {
+      if (payrollStatus === "Active") setPayrollStatus("Hold");
+      if (accountStatus === "Active") setAccountStatus("TemporarilyDisabled");
+    } else if (newStatus === "Working") {
+      if (payrollStatus === "Hold" || payrollStatus === "Paused") setPayrollStatus("Active");
+      if (accountStatus === "TemporarilyDisabled" || accountStatus === "Suspended") setAccountStatus("Active");
+      setReturnDate("");
+    } else if (newStatus === "Sabbatical") {
+      if (payrollStatus === "Active") setPayrollStatus("Paused");
+    } else if (newStatus === "Suspended") {
+      if (accountStatus === "Active") setAccountStatus("Suspended");
+      if (payrollStatus === "Active") setPayrollStatus("Hold");
+    }
+  };
 
   const save = async () => {
     setSaving(true);
@@ -169,7 +194,7 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
             </Alert>
             <FormControl fullWidth>
               <InputLabel id={`lifecycle-status-${employee.userId}`}>Availability</InputLabel>
-              <Select labelId={`lifecycle-status-${employee.userId}`} value={status} label="Availability" onChange={(event) => setStatus(event.target.value)}>
+              <Select labelId={`lifecycle-status-${employee.userId}`} value={status} label="Availability" onChange={(event) => handleAvailabilityChange(event.target.value)}>
                 {currentLeaveDrivenStatus && <MenuItem value={status} disabled>{status.replace(/([a-z])([A-Z])/g, "$1 $2")} (managed by Leave Management)</MenuItem>}
                 {directLifecycleOptions.map(([value, label]) => <MenuItem key={value} value={value}>{label}</MenuItem>)}
               </Select>
@@ -181,7 +206,7 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
                   Policy guidance for {status.replace(/([a-z])([A-Z])/g, "$1 $2")}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {isFallbackPolicy ? "Using standard guidance while company policy is loading. " : ""}
+                  {policiesLoading ? "Loading company policy... " : isFallbackPolicy ? "Standard guidance applied. " : ""}
                   {selectedPolicy.requiresHrApproval ? "HR approval required. " : "No HR approval required. "}
                   {selectedPolicy.requiresExpectedReturnDate ? "A return date is required. " : "Return date is optional. "}
                   {selectedPolicy.leaveRequestsAllowed ? "Leave requests allowed. " : "Leave requests disabled. "}
@@ -206,7 +231,7 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
             {lifecycleIsLeaveOwned && <Alert severity="info" sx={{ borderRadius: 2 }}>Account and payroll controls are temporarily locked because Leave Management owns this active leave case. Change them from the linked lifecycle case or leave decision.</Alert>}
             <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" aria-label="Workflow statuses" sx={{ p: { xs: 1, sm: 1.25 }, borderRadius: 2, bgcolor: "action.hover" }}>
               <Chip size="small" variant="outlined" label={`Employment: ${employee.employmentStatus ?? "Active"}`} />
-              <Chip size="small" variant="outlined" label={`Offboarding: ${employee.offboardingStatus ?? "None"}`} />
+              {hasOffboarding && <Chip size="small" variant="outlined" label={`Offboarding: ${employee.offboardingStatus ?? "None"}`} />}
               <Chip size="small" variant="outlined" label={`Former portal: ${employee.formerPortalStatus ?? "NotEligible"}`} />
               <Chip size="small" variant="outlined" label={`Alumni: ${alumniStatus}`} />
             </Stack>
@@ -221,7 +246,7 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
             {employee.availabilityStatus && employee.availabilityStatus !== "Working" && !currentLeaveDrivenStatus && (
               <Alert
                 severity="success"
-                action={<Button color="inherit" size="small" onClick={() => { setStatus("Working"); setReturnDate(""); }} sx={{ fontWeight: 650, letterSpacing: "0.01em", whiteSpace: "nowrap", px: { xs: 0.75, sm: 1 } }}>Resume Work</Button>}
+                action={<Button color="inherit" size="small" onClick={() => { handleAvailabilityChange("Working"); }} sx={{ fontWeight: 650, letterSpacing: "0.01em", whiteSpace: "nowrap", px: { xs: 0.75, sm: 1 } }}>Resume Work</Button>}
               >
                 Currently marked as {employee.availabilityStatus.replace(/([a-z])([A-Z])/g, "$1 $2")}.
                 Resume Work records the employee as working and clears the planned return date.

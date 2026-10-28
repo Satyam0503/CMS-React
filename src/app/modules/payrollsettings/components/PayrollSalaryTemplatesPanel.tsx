@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Alert, Box, Chip, FormControlLabel, Grid, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, alpha, useTheme } from '@mui/material';
 import { AppButton, AppCheckbox, AppTextField } from '../../../shared/components/ui';
@@ -156,11 +156,12 @@ export function PayrollSalaryTemplatesPanel({ templates, groups, components, can
         >
           <Typography variant="body2" fontWeight={650}>
             {calculation.success
-              ? `Gross ${currencyFormatter(calculation.gross)} · Deductions ${currencyFormatter(calculation.deductions)} · Net before statutory deductions ${currencyFormatter(calculation.net)}`
+              ? `Monthly CTC ${currencyFormatter(calculation.ctc)} (Annual ${currencyFormatter(calculation.annualCtc)}) · Gross ${currencyFormatter(calculation.gross)} · Deductions ${currencyFormatter(calculation.deductions)} · Indicative Net ${currencyFormatter(calculation.net)}`
               : 'Resolve the calculation errors before saving.'}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            Excludes attendance adjustments and statutory deductions. This is not take-home pay.
+            {calculation.success && calculation.employerContributions > 0 ? `Includes ${currencyFormatter(calculation.employerContributions)} employer contributions. ` : ''}
+            Excludes attendance LOP and dynamic statutory tax deductions. This is an indicative preview, not final take-home pay.
           </Typography>
         </Box>
         <Box

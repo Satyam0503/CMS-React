@@ -25,6 +25,22 @@ export const ProtectedRoute: FC<PropsTypes> = ({ children, module, permission = 
   // If a module is specified, check if the module is active for the company.
   // When a module is removed/disabled for the company, NO ONE (not even Administrator) may access it.
   if (module) {
+    if (module === ModulesName.CareerProfile) {
+      const hasRecruitment = modulePermissions.some(
+        (p) => p.startsWith("Jobs.") || p.startsWith("Applications.") || p.startsWith("Process_Log.")
+      );
+      if (!hasRecruitment) {
+        return <Navigate to={"/unauthorize"} replace />;
+      }
+    }
+
+    if (module === ModulesName.PayrollSettings) {
+      const hasPayroll = modulePermissions.some((p) => p.startsWith("PayRoll."));
+      if (!hasPayroll) {
+        return <Navigate to={"/unauthorize"} replace />;
+      }
+    }
+
     const isModuleActive = modulePermissions.some((p) => p.startsWith(`${module}.`));
     if (!isModuleActive) {
       return <Navigate to={"/unauthorize"} replace />;

@@ -27,7 +27,7 @@ import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import dayjs, { Dayjs } from "dayjs";
-import { createEmployeeLeaveRequest, createMyProfileLeaveRequest, createMyProfileLeaveRequestWithEvidence, createWorkFromHomeRequest, getLeavePolicies, getMySelfServiceLeavePolicies, updateLeaveRequest, updateMyProfileLeaveRequest, } from "../../../leaves/leaveServices";
+import { canApplyForWorkFromHome, createEmployeeLeaveRequest, createMyProfileLeaveRequest, createMyProfileLeaveRequestWithEvidence, createWorkFromHomeRequest, getLeavePolicies, getMySelfServiceLeavePolicies, shouldOfferWfhSelfServiceFallback, updateLeaveRequest, updateMyProfileLeaveRequest, } from "../../../leaves/leaveServices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -64,6 +64,10 @@ const getWorkFromHomeErrorMessage = (errorMessage?: string) => {
     WFH_BACKDATED_NOT_ALLOWED: "Work From Home can only be requested for today or a future working day.",
     WFH_ADVANCE_NOTICE_REQUIRED: "This request does not meet the required advance notice period.",
     WFH_SAME_DAY_OFFICE_STARTED: details || "Work From Home for today must be requested before your office cutoff time.",
+    WFH_SHIFT_ALREADY_STARTED: details || "Work From Home for full day must be requested before your shift starts.",
+    WFH_FIRST_HALF_PASSED: details || "First-half Work From Home must be requested before your shift start time.",
+    WFH_SECOND_HALF_PASSED: details || "Second-half Work From Home applications are closed for today.",
+    WFH_SHIFT_ENDED: details || "Work From Home cannot be requested after working hours have ended.",
     WFH_LATE_REASON_REQUIRED: details || "A reason is required when applying for Work From Home after the cutoff time.",
     WFH_WEEKLY_OFF_NOT_ALLOWED: "Work From Home cannot be requested on a weekly off day.",
     WFH_HOLIDAY_NOT_ALLOWED: "Work From Home cannot be requested on a holiday.",
@@ -97,6 +101,12 @@ type WorkFromHomeContext = {
   remainingThisWeek?: number;
   businessDate?: string;
   isSameDayRequestCutoffPassed?: boolean;
+  isShiftStartedToday?: boolean;
+  isFirstHalfPassedToday?: boolean;
+  isSecondHalfPassedToday?: boolean;
+  allowedTodayDurations?: string[];
+  allowedDaysOfWeek?: string[];
+  blockedDaysOfWeek?: string[];
   effectiveOfficeStartTime?: string | null;
   effectiveCutoffTime?: string | null;
   secondHalfCutoffTime?: string | null;
@@ -130,6 +140,7 @@ export const LeaveApplication = (props: Props) => {
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
   const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const hasWfhPermission = modulePermissions.some((p) => p.startsWith("Work_From_Home."));
+  const canCreateWfhRequest = canApplyForWorkFromHome(modulePermissions);
   const [holidayList, setHolidayList] = useState<HolidayModel[]>([]);
   const [workFromHomeTypes, setWorkFromHomeTypes] = useState<SelectableLeaveType[]>([]);
   const [wfhEligibility, setWfhEligibility] = useState<WorkFromHomeContext | null>(null);
@@ -197,7 +208,7 @@ export const LeaveApplication = (props: Props) => {
         const appliesToEmployee = (policy: LeavePolicyModel) =>
           !policy.applicableTo || policy.applicableTo.length === 0 || policy.applicableTo.includes(targetUserId);
         setWorkFromHomeTypes(
-          hasWfhPermission
+          canCreateWfhRequest
             ? policies
                 .filter((policy) => !props.targetEmployeeId && policy.policyType === 2 && policy.id && appliesToEmployee(policy))
             .map((policy) => ({
@@ -252,13 +263,37 @@ export const LeaveApplication = (props: Props) => {
     };
 
     loadNonBalancePolicies();
-  }, [currentUserId, employeeId, props.targetEmployeeId, lifecyclePolicies]);
+  }, [currentUserId, employeeId, props.targetEmployeeId, lifecyclePolicies, canCreateWfhRequest]);
+
+  const eligibleWfhTypes = workFromHomeTypes.filter((wfh) => wfhEligibility?.isEligible &&
+    !leaveTypeBalance.some((leave) => leave.leavePolicyId === wfh.leavePolicyId)
+  );
+  const wfhFallback: SelectableLeaveType[] = shouldOfferWfhSelfServiceFallback(
+    modulePermissions,
+    Boolean(wfhEligibility?.isEligible),
+    workFromHomeTypes.length > 0
+  ) ? [{
+    leaveBalanceId: "wfh-self-service",
+    leavePolicyId: "wfh-self-service",
+    totalAllocated: 0,
+    taken: 0,
+    remaining: 0,
+    name: "Work from home",
+    code: "WFH",
+    description: "",
+    paid: true,
+    minNoticeDays: 0,
+    halfDayAllowed: false,
+    weekendInclusive: false,
+    holidayInclusive: false,
+    attendanceStatusCode: "",
+    policyType: 2,
+  }] : [];
 
   const selectableLeaveTypes: SelectableLeaveType[] = [
     ...leaveTypeBalance.filter((leave) => !workFromHomeTypes.some((w) => w.leavePolicyId === leave.leavePolicyId) && !unpaidLeaveTypes.some((u) => u.leavePolicyId === leave.leavePolicyId)).map((leave) => ({ ...leave, policyType: 1 as const })),
-    ...workFromHomeTypes.filter((wfh) => wfhEligibility?.isEligible &&
-      !leaveTypeBalance.some((leave) => leave.leavePolicyId === wfh.leavePolicyId)
-    ),
+    ...eligibleWfhTypes,
+    ...wfhFallback,
     ...unpaidLeaveTypes.filter((unpaid) =>
       !leaveTypeBalance.some((leave) => leave.leavePolicyId === unpaid.leavePolicyId)
     ),
@@ -371,27 +406,41 @@ export const LeaveApplication = (props: Props) => {
           const context = contextResponse.methodResult;
           const requestedToday = context?.businessDate && getDatesBetween(dayjs(values.startDate), dayjs(values.endDate))
             .some((date) => date.isSame(dayjs(context.businessDate), "day"));
-          if (requestedToday && context?.effectiveCutoffTime) {
+          if (requestedToday) {
             const isSecondHalf = values.isHalfDay && values.halfDayPeriod === "SECOND_HALF";
-            let isCutoffPassed = context?.isSameDayRequestCutoffPassed;
-            let displayCutoff = formatOfficeTime(context.effectiveCutoffTime);
+            const isFirstHalf = values.isHalfDay && values.halfDayPeriod === "FIRST_HALF";
+            const isFullDay = !values.isHalfDay;
 
-            if (isSecondHalf && context?.secondHalfCutoffTime) {
-              displayCutoff = formatOfficeTime(context.secondHalfCutoffTime);
-              const [shH, shM] = context.secondHalfCutoffTime.split(":").map(Number);
-              const now = dayjs();
-              isCutoffPassed = now.hour() > shH || (now.hour() === shH && now.minute() >= shM);
+            if (context?.allowedTodayDurations && context.allowedTodayDurations.length === 0) {
+              setStatus("Same-day Work From Home applications are closed for today.");
+              setSubmitting(false);
+              return;
             }
 
-            if (isCutoffPassed) {
+            if (isFullDay && (context?.isFirstHalfPassedToday || (context?.allowedTodayDurations && !context.allowedTodayDurations.includes("FullDay")))) {
+              const displayCutoff = formatOfficeTime(context?.effectiveCutoffTime) || formatOfficeTime(context?.effectiveOfficeStartTime) || "shift start";
+              setStatus(`Work From Home for a full day must be requested before your shift start time (${displayCutoff}). For today, you may only request Second Half.`);
+              setSubmitting(false);
+              return;
+            }
+
+            if (isFirstHalf && (context?.isFirstHalfPassedToday || (context?.allowedTodayDurations && !context.allowedTodayDurations.includes("FirstHalf")))) {
+              const displayCutoff = formatOfficeTime(context?.effectiveCutoffTime) || formatOfficeTime(context?.effectiveOfficeStartTime) || "shift start";
+              setStatus(`First-half Work From Home must be requested before your shift start time (${displayCutoff}). For today, you may only request Second Half.`);
+              setSubmitting(false);
+              return;
+            }
+
+            if (isSecondHalf && (context?.isSecondHalfPassedToday || (context?.allowedTodayDurations && !context.allowedTodayDurations.includes("SecondHalf")))) {
+              const displayCutoff = formatOfficeTime(context?.secondHalfCutoffTime) || "the cutoff time";
               if (context?.allowLateApplicationWithApproval ?? true) {
                 if (!values.reason?.trim()) {
-                  setStatus(`The same-day cutoff time (${displayCutoff}) has passed. You may submit an emergency/late request for manager approval, but a reason is required.`);
+                  setStatus(`The second-half cutoff time (${displayCutoff}) has passed. You may submit an emergency/late request for manager approval, but a reason is required.`);
                   setSubmitting(false);
                   return;
                 }
               } else {
-                setStatus(`Work From Home for today must be requested before your cutoff time (${displayCutoff}). Late requests are not enabled.`);
+                setStatus(`Second-half Work From Home applications are closed for today (cutoff was ${displayCutoff}).`);
                 setSubmitting(false);
                 return;
               }
@@ -554,11 +603,54 @@ export const LeaveApplication = (props: Props) => {
             }
           };
 
+          const selectedPolicy = selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId);
+          const isWfhSelected = selectedPolicy?.policyType === 2;
+          const isTodaySelected = Boolean(values.startDate && dayjs(values.startDate).isSame(dayjs(wfhEligibility?.businessDate ?? dayjs()), "day"));
+          const isWfhToday = Boolean(isWfhSelected && isTodaySelected);
+          const mustBeSecondHalfToday = Boolean(isWfhToday && wfhEligibility?.isFirstHalfPassedToday && !wfhEligibility?.isSecondHalfPassedToday);
+          const isWfhTodayClosed = Boolean(isWfhToday && (wfhEligibility?.isSecondHalfPassedToday || (wfhEligibility?.allowedTodayDurations && wfhEligibility.allowedTodayDurations.length === 0)));
+
+          const isDateWfhDisabled = (date: Dayjs) => {
+            if (!isWfhSelected) return false;
+            const dayName = date.format("dddd");
+            if (wfhEligibility?.blockedDaysOfWeek && wfhEligibility.blockedDaysOfWeek.length > 0) {
+              if (wfhEligibility.blockedDaysOfWeek.some((d) => d.toLowerCase() === dayName.toLowerCase())) {
+                return true;
+              }
+            }
+            if (wfhEligibility?.allowedDaysOfWeek && wfhEligibility.allowedDaysOfWeek.length > 0) {
+              if (!wfhEligibility.allowedDaysOfWeek.some((d) => d.toLowerCase() === dayName.toLowerCase())) {
+                return true;
+              }
+            }
+            return false;
+          };
+
           return (
             <form onSubmit={handleSubmit}>
               {status && (
                 <AppAlert severity="error" sx={{ mb: 2 }}>
                   {status}
+                </AppAlert>
+              )}
+              {isWfhTodayClosed && (
+                <AppAlert severity="warning" sx={{ mb: 2 }}>
+                  Same-day Work From Home applications are closed for today.
+                </AppAlert>
+              )}
+              {mustBeSecondHalfToday && (
+                <AppAlert severity="info" sx={{ mb: 2 }}>
+                  Your shift has already started today. For today, only Second Half Work From Home can be requested.
+                </AppAlert>
+              )}
+              {isWfhSelected && wfhEligibility?.blockedDaysOfWeek && wfhEligibility.blockedDaysOfWeek.length > 0 && (
+                <AppAlert severity="info" sx={{ mb: 2 }}>
+                  Mandatory in-office collaboration days: <strong>{wfhEligibility.blockedDaysOfWeek.join(", ")}</strong>. Work from home cannot be scheduled on these days.
+                </AppAlert>
+              )}
+              {isWfhSelected && wfhEligibility?.allowedDaysOfWeek && wfhEligibility.allowedDaysOfWeek.length > 0 && (
+                <AppAlert severity="info" sx={{ mb: 2 }}>
+                  Allowed WFH days: <strong>{wfhEligibility.allowedDaysOfWeek.join(", ")}</strong>.
                 </AppAlert>
               )}
               <Stack sx={{ maxHeight: "min(62vh, 560px)", overflowY: "auto", overflowX: "hidden", pt: 1.5, pb: 0.5, px: 0.5, pr: 1.5 }}>
@@ -574,9 +666,18 @@ export const LeaveApplication = (props: Props) => {
                       label={i({ id: "LEAVE.TITLES.LEAVE_POLICIES" })}
                       value={values.leavePolicyId}
                       onChange={(e) => {
+                        const nextId = e.target.value as string;
                         formik.resetForm();
                         setEvidenceFile(null);
-                        setFieldValue("leavePolicyId", e.target.value);
+                        setFieldValue("leavePolicyId", nextId);
+                        const nextPolicy = selectableLeaveTypes.find((type) => type.leavePolicyId === nextId);
+                        const isNextWfh = nextPolicy?.policyType === 2;
+                        const isToday = Boolean(values.startDate && dayjs(values.startDate).isSame(dayjs(wfhEligibility?.businessDate ?? dayjs()), "day"));
+                        if (isNextWfh && isToday && wfhEligibility?.isFirstHalfPassedToday) {
+                          setFieldValue("isHalfDay", true);
+                          setFieldValue("halfDayPeriod", "SECOND_HALF");
+                          setFieldValue("endDate", values.startDate);
+                        }
                       }}
                     >
                       {selectableLeaveTypes.map((type) => (
@@ -597,9 +698,9 @@ export const LeaveApplication = (props: Props) => {
                       fullWidth
                       className="d-flex flex-row align-items-center gap-4"
                       disabled={
-                        selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId && !type.halfDayAllowed)
+                        mustBeSecondHalfToday || (selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId && !type.halfDayAllowed)
                           ? true
-                          : false
+                          : false)
                       }
                     >
                       <FormLabel id="half-day" sx={{ color: "text.primary" }}>
@@ -609,11 +710,11 @@ export const LeaveApplication = (props: Props) => {
                         aria-labelledby="half-day"
                         name="isHalfDay"
                         row={true}
-                        value={values.isHalfDay}
+                        value={mustBeSecondHalfToday ? true : values.isHalfDay}
                         onChange={(e, value) => {
                           const half = value === "true";
                           setFieldValue("isHalfDay", half);
-                          setFieldValue("halfDayPeriod", half ? values.halfDayPeriod ?? "FIRST_HALF" : undefined);
+                          setFieldValue("halfDayPeriod", half ? (mustBeSecondHalfToday ? "SECOND_HALF" : values.halfDayPeriod ?? "FIRST_HALF") : undefined);
 
                           if (half && values.startDate) {
                             setFieldValue("endDate", values.startDate);
@@ -632,22 +733,25 @@ export const LeaveApplication = (props: Props) => {
                           value={false}
                           control={<AppRadio />}
                           label={i({ id: "NO" })}
+                          disabled={mustBeSecondHalfToday}
                         />
                       </RadioGroup>
                     </FormControl>
                   </Grid>
                 }
-                {values.isHalfDay && (
+                {(values.isHalfDay || mustBeSecondHalfToday) && (
                   <Grid size={12}>
                     <FormControl fullWidth>
                       <InputLabel id="half-day-period-label">Leave half</InputLabel>
                       <AppSelect
                         labelId="half-day-period-label"
                         label="Leave half"
-                        value={values.halfDayPeriod ?? "FIRST_HALF"}
+                        value={mustBeSecondHalfToday ? "SECOND_HALF" : (values.halfDayPeriod ?? "FIRST_HALF")}
                         onChange={(event) => setFieldValue("halfDayPeriod", event.target.value)}
                       >
-                        <MenuItem value="FIRST_HALF">First half</MenuItem>
+                        <MenuItem value="FIRST_HALF" disabled={mustBeSecondHalfToday}>
+                          First half {mustBeSecondHalfToday ? "(Shift already started)" : ""}
+                        </MenuItem>
                         <MenuItem value="SECOND_HALF">Second half</MenuItem>
                       </AppSelect>
                     </FormControl>
@@ -663,16 +767,26 @@ export const LeaveApplication = (props: Props) => {
                     label={i({ id: "FORM.START_DATE" })}
                     value={values.startDate}
                     setValue={(newDate: Dayjs | null) => {
-                      // setFieldTouched("startDate", true);
-                      if (values.isHalfDay) {
-                        setFieldValue("startDate", newDate?.startOf("day"), true);
-                        setFieldValue("endDate", newDate?.startOf("day"), true);
+                      const startDay = newDate?.startOf("day") ?? null;
+                      const isToday = Boolean(startDay && dayjs(startDay).isSame(dayjs(wfhEligibility?.businessDate ?? dayjs()), "day"));
+                      const forceSecondHalf = Boolean(isWfhSelected && isToday && wfhEligibility?.isFirstHalfPassedToday);
+
+                      if (forceSecondHalf) {
+                        setFieldValue("isHalfDay", true);
+                        setFieldValue("halfDayPeriod", "SECOND_HALF");
+                        setFieldValue("startDate", startDay, true);
+                        setFieldValue("endDate", startDay, true);
+                      } else if (values.isHalfDay) {
+                        setFieldValue("startDate", startDay, true);
+                        setFieldValue("endDate", startDay, true);
+                      } else {
+                        setFieldValue("startDate", startDay);
                       }
                       setFieldTouched("startDate", true);
-                      setFieldValue("startDate", newDate?.startOf("day"));
                     }}
                     name="startDate"
                     minDate={dayjs()}
+                    shouldDisableDate={isWfhSelected ? isDateWfhDisabled : undefined}
                   />
                   {formik.touched.startDate && formik.errors.startDate && (
                     <ErrorLabel errorLabel={formik.errors.startDate} />
@@ -699,6 +813,7 @@ export const LeaveApplication = (props: Props) => {
                         ? dayjs(values.startDate)
                         : dayjs().startOf("day")
                     }
+                    shouldDisableDate={isWfhSelected ? isDateWfhDisabled : undefined}
                   />
                   {formik.touched.endDate && formik.errors.endDate && (
                     <ErrorLabel errorLabel={formik.errors.endDate} />
@@ -826,7 +941,7 @@ export const LeaveApplication = (props: Props) => {
                 <CustomisedButton
                   label={i({ id: edit ? "BUTTON.UPDATE" : "BUTTON.APPLY" })}
                   disabled={
-                    formik.isSubmitting || !(formik.isValid && formik.dirty)
+                    formik.isSubmitting || !(formik.isValid && formik.dirty) || isWfhTodayClosed
                   }
                   type="submit"
                   loading={formik.isSubmitting}

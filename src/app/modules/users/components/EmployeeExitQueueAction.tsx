@@ -28,6 +28,7 @@ export const EmployeeExitQueueAction = ({ showButton = true }: { showButton?: bo
   const reviewCount = items.filter(item => item.status === "PendingManagerApproval" || item.status === "PendingHrApproval").length;
   const loadQueue = async (nextPage: number, nextSearch: string, nextStatus: string) => { const response = await getEmployeeExitQueue({ page: nextPage, pageSize, search: nextSearch, status: nextStatus }); if (!response.data.success) throw new Error(response.data.message || "Unable to load offboarding cases."); setItems(response.data.methodResult ?? []); setTotalRecords(response.data.totalRecords ?? 0); };
   useEffect(() => {
+    if (!hasOffboarding) { setItems([]); setIsReviewer(null); return; }
     let cancelled = false;
     void getEmployeeExitQueue().then(response => {
       if (!cancelled && response.data.success) {
@@ -45,11 +46,11 @@ export const EmployeeExitQueueAction = ({ showButton = true }: { showButton?: bo
       }
     }).catch(() => { if (!cancelled) setIsReviewer(false); });
     return () => { cancelled = true; };
-  }, [isHrOrAdmin, navigate]);
+  }, [hasOffboarding, isHrOrAdmin, navigate]);
   const show = async () => { setOpen(true); setLoading(true); try { setPage(1); await loadQueue(1, search, status); } catch (error) { setOpen(false); toast.error(error instanceof Error ? error.message : "Unable to load offboarding cases."); } finally { setLoading(false); } };
   const refreshQueue = async (nextPage: number, nextSearch: string, nextStatus: string) => { setPage(nextPage); setLoading(true); try { await loadQueue(nextPage, nextSearch, nextStatus); } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to load offboarding cases."); } finally { setLoading(false); } };
   const openCase = (item: EmployeeExitQueueItem) => { setOpen(false); navigate(`/employees/${item.employeeUserId}/about`); };
-  if (isReviewer !== true) return null;
+  if (!hasOffboarding || isReviewer !== true) return null;
   return <>
     {showButton && <AppButton fullWidth variant="outlined" size="small" startIcon={<AssignmentTurnedInOutlined />} onClick={() => void show()} sx={{ minHeight: 42, justifyContent: "center", borderRadius: 2, fontWeight: 800, whiteSpace: "nowrap", borderColor: "primary.light", bgcolor: "background.paper", transition: "background-color 160ms ease, border-color 160ms ease, transform 160ms ease", "&:hover": { borderColor: "primary.main", bgcolor: "primary.lighter", transform: "translateY(-1px)" }, "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 } }}>Offboarding cases</AppButton>}
     <CustomisedModal open={open} handleClose={() => setOpen(false)} title={<Stack spacing={.25}><Typography variant="h6" fontWeight={800}>Offboarding reminders</Typography><Typography variant="caption" color="text.secondary">Active resignation cases requiring manager, HR or administrator attention.</Typography></Stack>} maxWidth="md" fullWidth allowMaximize paperSx={{ width: { xs: "calc(100% - 20px)", md: 860 }, maxWidth: "calc(100% - 20px)", borderRadius: { xs: 2.5, sm: 3 } }} contentSx={{ px: { xs: 1.5, sm: 2.5 }, pb: 2.5 }}>

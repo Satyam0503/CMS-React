@@ -6,8 +6,11 @@ import { CurrencyInput } from "./CurrencyInput";
 
 vi.mock("react-intl", () => ({ useIntl: () => ({ formatMessage: ({ id }: { id: string }) => id }) }));
 vi.mock("../ui", () => ({
-  AppTextField: ({ slotProps }: { slotProps?: { input?: { endAdornment?: React.ReactNode } } }) => (
-    <div data-testid="input-adornment">{slotProps?.input?.endAdornment}</div>
+  AppTextField: ({ slotProps }: { slotProps?: { input?: { startAdornment?: React.ReactNode; endAdornment?: React.ReactNode } } }) => (
+    <div>
+      <div data-testid="start-adornment">{slotProps?.input?.startAdornment}</div>
+      <div data-testid="input-adornment">{slotProps?.input?.endAdornment}</div>
+    </div>
   ),
 }));
 
@@ -38,5 +41,35 @@ describe("CurrencyInput value units", () => {
 
     expect(container.querySelector('[data-testid="input-adornment"]')?.textContent).toContain("existing");
     expect(container.querySelector('[data-testid="input-adornment"]')?.textContent).toContain("%");
+  });
+
+  it("shows default currency symbol and does not duplicate if startAdornment is provided", async () => {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    root = createRoot(container);
+    await act(async () => root?.render(
+      <Formik initialValues={{ basicPay: 50000 }} onSubmit={() => undefined}>
+        <CurrencyInput
+          label="Basic Pay"
+          name="basicPay"
+        />
+      </Formik>,
+    ));
+
+    expect(container.querySelector('[data-testid="start-adornment"]')?.textContent).toContain("₹");
+
+    // Re-render with explicit startAdornment to verify it overrides rather than duplicates
+    await act(async () => root?.render(
+      <Formik initialValues={{ basicPay: 50000 }} onSubmit={() => undefined}>
+        <CurrencyInput
+          label="Basic Pay"
+          name="basicPay"
+          InputProps={{ startAdornment: <span>custom-prefix</span> }}
+        />
+      </Formik>,
+    ));
+
+    expect(container.querySelector('[data-testid="start-adornment"]')?.textContent).toContain("custom-prefix");
+    expect(container.querySelector('[data-testid="start-adornment"]')?.textContent).not.toContain("₹");
   });
 });

@@ -1,4 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
+import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import {
   Box,
@@ -16,6 +17,7 @@ import LightDarkMode from "../../../_themes/layout/components/header/navbarmenus
 import { useCompanyTheme } from "../theme/companyTheme";
 
 const AuthLayout = () => {
+  const { formatMessage: i } = useIntl();
   const { mode, systemMode } = useColorScheme();
   const isDark = (mode === "system" ? systemMode : mode) === "dark";
   const { theme: style } = useCompanyTheme();
@@ -166,7 +168,7 @@ const AuthLayout = () => {
                   mb: 2,
                 }}
               >
-                Enterprise Workforce & Payroll
+                {i({ id: "AUTH.HERO_TAG", defaultMessage: "Enterprise Workforce & Payroll" })}
               </Typography>
 
               <Typography
@@ -180,7 +182,7 @@ const AuthLayout = () => {
                   mb: 2,
                 }}
               >
-                Workforce operations, perfected.
+                {i({ id: "AUTH.HERO_TITLE", defaultMessage: "Workforce operations, perfected." })}
               </Typography>
 
               <Typography
@@ -190,7 +192,7 @@ const AuthLayout = () => {
                   lineHeight: 1.65,
                 }}
               >
-                A unified platform for team lifecycle, attendance automation, and statutory payroll compliance.
+                {i({ id: "AUTH.HERO_SUBTITLE", defaultMessage: "A unified platform for team lifecycle, attendance automation, and statutory payroll compliance." })}
               </Typography>
             </Box>
 
@@ -217,7 +219,7 @@ const AuthLayout = () => {
                   mb: 2,
                 }}
               >
-                &ldquo;CodeJi delivers the accuracy and speed required for multi-branch attendance and instant payroll reconciliation.&rdquo;
+                &ldquo;{i({ id: "AUTH.TESTIMONIAL_QUOTE", defaultMessage: "CodeJi delivers the accuracy and speed required for multi-branch attendance and instant payroll reconciliation." })}&rdquo;
               </Typography>
               <Stack direction="row" alignItems="center" spacing={1.5}>
                 <Box
@@ -237,10 +239,10 @@ const AuthLayout = () => {
                 </Box>
                 <Box>
                   <Typography sx={{ color: "common.white", fontSize: "0.82rem", fontWeight: 600 }}>
-                    Operations & People Team
+                    {i({ id: "AUTH.TESTIMONIAL_AUTHOR", defaultMessage: "Operations & People Team" })}
                   </Typography>
                   <Typography sx={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "0.72rem" }}>
-                    CodeJi Enterprise Infrastructure
+                    {i({ id: "AUTH.TESTIMONIAL_ROLE", defaultMessage: "CodeJi Enterprise Infrastructure" })}
                   </Typography>
                 </Box>
               </Stack>
@@ -262,11 +264,11 @@ const AuthLayout = () => {
             >
               <Stack direction="row" alignItems="center" spacing={1}>
                 <LockOutlined sx={{ fontSize: 15 }} />
-                <span>256-Bit TLS Encryption</span>
+                <span>{i({ id: "AUTH.TLS_ENCRYPTION", defaultMessage: "256-Bit TLS Encryption" })}</span>
               </Stack>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <ShieldOutlined sx={{ fontSize: 15 }} />
-                <span>Tenant Data Isolation</span>
+                <span>{i({ id: "AUTH.TENANT_ISOLATION", defaultMessage: "Tenant Data Isolation" })}</span>
               </Stack>
             </Stack>
           </Box>

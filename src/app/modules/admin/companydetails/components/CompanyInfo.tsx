@@ -22,7 +22,7 @@ import CustomisedButton from "../../../../shared/components/C_Button";
 import { CompanyInfoModel, CompanyModel } from "../../models";
 import { getCompanyDetails, updateCompanyDetails, getEmployeeIdSequence, skipEmployeeIds, startEmployeeIdSequence, setCompanyFormerEmployeePortalAccess } from "../../adminservices";
 import { setCompanyTheme } from "../../../theme/companyTheme";
-import { DEFAULT_COMPANY_LOGO, languages } from "../../../../../utils/constant/Constant";
+import { DEFAULT_COMPANY_LOGO, allLanguages, languages } from "../../../../../utils/constant/Constant";
 import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
 import { useFormik } from "formik";
 import { companyValidationSchema } from "../../../../../utils/Schema/companyValidationSchema";
@@ -72,8 +72,8 @@ export const CompanyInfo = () => {
   const userData = useAppSelector(state => state.user.userData)!;
   const dispatch = useAppDispatch();
 
-  const defaultLanguage = languages.find(lang => lang.lang === companyInfo?.defaultLanguage)?.name ?? "NOT_AVAILABLE";
-  const applicationLanguages = companyInfo?.applicationLanguage?.length > 0 ? languages.filter(lang => companyInfo?.applicationLanguage.includes(lang.lang)).map(lang => lang.name) : ["NOT_AVAILABLE"];
+  const defaultLanguage = (allLanguages || languages).find(lang => lang.lang === companyInfo?.defaultLanguage)?.name ?? "NOT_AVAILABLE";
+  const applicationLanguages = companyInfo?.applicationLanguage?.length > 0 ? (allLanguages || languages).filter(lang => companyInfo?.applicationLanguage.includes(lang.lang)).map(lang => lang.name) : ["NOT_AVAILABLE"];
   const { values, dirty, handleSubmit, resetForm, setFieldValue, setFieldError, setFieldTouched, errors, touched, getFieldProps, submitForm } = useFormik({
     enableReinitialize: true,
     initialValues: editedInfo,

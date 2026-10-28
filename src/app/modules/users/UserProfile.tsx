@@ -52,6 +52,7 @@ const UserProfile = () => {
     (state) => state.user.userData?.modulePermission,
   );
   const roleType = useAppSelector((state) => state.user.userData?.roleType);
+  const hasOffboarding = Boolean(modulePermission?.some((p) => p.startsWith("Offboarding.")));
   const userModulePermission = useMemo(
     () => modulePermission ?? [],
     [modulePermission],
@@ -97,15 +98,15 @@ const UserProfile = () => {
               <Grid size={12}>
                 <LeaveCalendar />
               </Grid>
-              {!empId && <Grid size={12}><ResignationAction /></Grid>}
-              {!empId && <Grid size={12}><EmployeeExitQueueAction /></Grid>}
-              {empId && <Grid size={12}><EmployeeOffboardingAction /></Grid>}
-              {empId && (
+              {hasOffboarding && !empId && <Grid size={12}><ResignationAction /></Grid>}
+              {hasOffboarding && !empId && <Grid size={12}><EmployeeExitQueueAction /></Grid>}
+              {hasOffboarding && empId && <Grid size={12}><EmployeeOffboardingAction /></Grid>}
+              {hasOffboarding && empId && (
                 <Grid size={12}>
                   <EmployeeExitManagementCard employeeUserId={empId} />
                 </Grid>
               )}
-              {!empId && (
+              {hasOffboarding && !empId && (
                 <Grid size={12}>
                   <EmployeeExitCaseCard />
                 </Grid>

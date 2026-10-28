@@ -12,6 +12,8 @@ export type WfhAttendanceTiming = {
   status?: string;
   isHalfDay?: boolean;
   isUnderHours?: boolean;
+  isCheckInOpen?: boolean;
+  checkInNotice?: string;
 };
 
 type TimingResponse = { methodResult?: WfhAttendanceTiming };

@@ -19,7 +19,7 @@ vi.mock("../attendance/hooks/wfhRequestIdempotency", () => ({
   clearWfhRequestIdempotencyKey: mocks.clearKey,
 }));
 
-import { createWorkFromHomeRequest } from "./leaveServices";
+import { canApplyForWorkFromHome, createWorkFromHomeRequest, shouldOfferWfhSelfServiceFallback } from "./leaveServices";
 
 const payload = {
   fromDate: "2026-10-26",
@@ -51,5 +51,22 @@ describe("createWorkFromHomeRequest", () => {
     await createWorkFromHomeRequest(payload);
 
     expect(mocks.clearKey).not.toHaveBeenCalled();
+  });
+});
+
+describe("canApplyForWorkFromHome", () => {
+  it("requires the exact self-service create permission", () => {
+    expect(canApplyForWorkFromHome(["Work_From_Home.ViewOwn"])).toBe(false);
+    expect(canApplyForWorkFromHome(["Work_From_Home.Create"])).toBe(true);
+    expect(canApplyForWorkFromHome(["Work_From_Home.CreateOwn"])).toBe(true);
+  });
+});
+
+describe("shouldOfferWfhSelfServiceFallback", () => {
+  it("offers the WFH workflow when the employee is eligible but has no mapped leave policy", () => {
+    expect(shouldOfferWfhSelfServiceFallback(["Work_From_Home.CreateOwn"], true, false)).toBe(true);
+    expect(shouldOfferWfhSelfServiceFallback(["Work_From_Home.ViewOwn"], true, false)).toBe(false);
+    expect(shouldOfferWfhSelfServiceFallback(["Work_From_Home.CreateOwn"], false, false)).toBe(false);
+    expect(shouldOfferWfhSelfServiceFallback(["Work_From_Home.CreateOwn"], true, true)).toBe(false);
   });
 });

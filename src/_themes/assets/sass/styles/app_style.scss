@@ -2043,7 +2043,7 @@ input[type="password"]::-ms-clear {
       // MUI's focused fieldset is the single focus indicator for inputs.
       // A second shadow on the root creates a distracting double outline,
       // particularly for compact search and autocomplete controls.
-      box-shadow: none;
+      box-shadow: none !important;
     }
   }
 
@@ -2097,4 +2097,12 @@ input[type="password"]::-ms-clear {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+
+// Eliminate double focus outlines/rings across all inputs in the project
+.MuiOutlinedInput-root.Mui-focused,
+.MuiPickersOutlinedInput-root.Mui-focused,
+.MuiInputBase-root.Mui-focused {
+  box-shadow: none !important;
 }

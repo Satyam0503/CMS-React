@@ -75,7 +75,7 @@ export function Login() {
       },
       "&.Mui-focused": {
         bgcolor: alpha(theme.palette.background.paper, 1),
-        boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.12)}`,
+        boxShadow: "none",
         "& .MuiOutlinedInput-notchedOutline": {
           borderColor: theme.palette.primary.main,
           borderWidth: "1.5px",
@@ -147,7 +147,7 @@ export function Login() {
             color: "text.primary",
           }}
         >
-          Sign in to your workspace
+          {i({ id: "AUTH.SIGNIN_TITLE", defaultMessage: "Sign in to your workspace" })}
         </Typography>
         <Typography
           variant="body2"
@@ -157,7 +157,7 @@ export function Login() {
             lineHeight: 1.5,
           }}
         >
-          Enter your credentials to continue to CodeJi CMS.
+          {i({ id: "AUTH.SIGNIN_SUBTITLE", defaultMessage: "Enter your credentials to continue to CodeJi CMS." })}
         </Typography>
       </Stack>
 
@@ -283,7 +283,7 @@ export function Login() {
                         cursor: "pointer",
                       }}
                     >
-                      Remember me
+                      {i({ id: "AUTH.REMEMBER_ME", defaultMessage: "Remember me" })}
                     </Typography>
                   }
                   sx={{ m: 0 }}
@@ -340,7 +340,7 @@ export function Login() {
                     pt: 0.5,
                   }}
                 >
-                  Don&apos;t have a workspace?{" "}
+                  {i({ id: "AUTH.DONT_HAVE_WORKSPACE", defaultMessage: "Don't have a workspace?" })}{" "}
                   <Link
                     to="/auth/registration"
                     style={{
@@ -349,7 +349,7 @@ export function Login() {
                       textDecoration: "none",
                     }}
                   >
-                    Create an account
+                    {i({ id: "AUTH.CREATE_ACCOUNT", defaultMessage: "Create an account" })}
                   </Link>
                 </Typography>
               </Stack>
@@ -368,7 +368,7 @@ export function Login() {
               >
                 <ShieldOutlined sx={{ fontSize: 14, color: "success.main" }} />
                 <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
-                  256-bit encrypted authentication & tenant security
+                  {i({ id: "AUTH.ENCRYPTED_SECURITY", defaultMessage: "256-bit encrypted authentication & tenant security" })}
                 </Typography>
               </Stack>
             </Stack>

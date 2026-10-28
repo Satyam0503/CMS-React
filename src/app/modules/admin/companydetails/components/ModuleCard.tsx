@@ -27,6 +27,7 @@ interface ModuleCardProps {
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
+  moduleId,
   titleMessageId,
   title,
   descriptionMessageId,
@@ -36,7 +37,12 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   handleChange,
   formatMessage,
 }) => {
-  const installedModule = modules.find((m) => m.isAccessible);
+  const normalizeConstant = (str?: string) => (str ?? "").replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  const installedModule = moduleId === "RECRUITMENT"
+    ? modules.find((m) => normalizeConstant(m.moduleConstant) === "jobs" && m.isAccessible)
+    : moduleId === "PAYROLL"
+    ? modules.find((m) => normalizeConstant(m.moduleConstant) === "payroll" && m.isAccessible)
+    : modules.find((m) => m.isAccessible);
   const isInstalled = Boolean(installedModule);
 
   const isHardDisabled =

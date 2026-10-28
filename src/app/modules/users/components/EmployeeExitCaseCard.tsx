@@ -48,6 +48,7 @@ import {
   withdrawOwnEmployeeExit,
 } from "../../employees/employeeServices";
 import { useUserDetails } from "../UserDataProvider";
+import { useAppSelector } from "../../../Redux/hooks";
 import { AppButton, CustomisedModal } from "../../../shared/components";
 import { toast } from "react-toastify";
 
@@ -108,6 +109,8 @@ const ReviewJourney = () => (
 
 export const EmployeeExitCaseCard = () => {
   const { userDetails, setRefresh } = useUserDetails();
+  const permissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
   const [exitCase, setExitCase] = useState<EmployeeExitCase | null>(null);
   const [history, setHistory] = useState<EmployeeExitHistory[]>([]);
   const [open, setOpen] = useState(false);
@@ -135,7 +138,11 @@ export const EmployeeExitCaseCard = () => {
   const [noticeRequestType, setNoticeRequestType] = useState("EmployeeEarlyRelease");
 
   useEffect(() => {
-    if (!userDetails.userId) return;
+    if (!hasOffboarding || !userDetails.userId) {
+      setExitCase(null);
+      setHistory([]);
+      return;
+    }
     Promise.all([
       getOwnEmployeeExitCase(userDetails.userId),
       getOwnEmployeeExitHistory(userDetails.userId),
@@ -150,7 +157,7 @@ export const EmployeeExitCaseCard = () => {
         setExitCase(null);
         setHistory([]);
       });
-  }, [userDetails.userId]);
+  }, [hasOffboarding, userDetails.userId]);
 
   useEffect(() => {
     setPersonalEmail(exitCase?.postExitContact?.personalEmail ?? "");
@@ -173,7 +180,7 @@ export const EmployeeExitCaseCard = () => {
     exitCase?.noticeAdjustments,
   ]);
 
-  if (!exitCase) return null;
+  if (!hasOffboarding || !exitCase) return null;
 
   const withdraw = async () => {
     setWithdrawing(true);

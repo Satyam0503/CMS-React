@@ -65,7 +65,7 @@ export function Registration() {
       },
       "&.Mui-focused": {
         bgcolor: alpha(theme.palette.background.paper, 1),
-        boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.12)}`,
+        boxShadow: "none",
         "& .MuiOutlinedInput-notchedOutline": {
           borderColor: theme.palette.primary.main,
           borderWidth: "1.5px",
@@ -113,7 +113,7 @@ export function Registration() {
       }
     } catch (error: any) {
       console.error(error.message);
-      setStatus("Something went wrong. Please check your information and try again.");
+      setStatus(i({ id: "ERROR.SOMETHING_WRONG", defaultMessage: "Something went wrong. Please check your information and try again." }));
     } finally {
       setSubmitting(false);
     }
@@ -126,7 +126,13 @@ export function Registration() {
     if (/[0-9]/.test(pwd)) score++;
     if (/[#?!@$%^&*-]/.test(pwd)) score++;
 
-    const labels = ["", "Weak", "Fair", "Good", "Strong"];
+    const labels = [
+      "",
+      i({ id: "AUTH.STRENGTH_WEAK", defaultMessage: "Weak" }),
+      i({ id: "AUTH.STRENGTH_FAIR", defaultMessage: "Fair" }),
+      i({ id: "AUTH.STRENGTH_GOOD", defaultMessage: "Good" }),
+      i({ id: "AUTH.STRENGTH_STRONG", defaultMessage: "Strong" }),
+    ];
     const colors = [
       theme.palette.divider,
       theme.palette.error.main,
@@ -161,7 +167,10 @@ export function Registration() {
             lineHeight: 1.5,
           }}
         >
-          Set up your organization&apos;s HR, attendance, and payroll portal.
+          {i({
+            id: "AUTH.REGISTRATION_SUBTITLE",
+            defaultMessage: "Set up your organization's HR, attendance, and payroll portal.",
+          })}
         </Typography>
       </Stack>
 
@@ -360,10 +369,10 @@ export function Registration() {
                   <Stack spacing={0.75} sx={{ pt: 0.25 }}>
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
                       <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.75rem" }}>
-                        Password strength: <Box component="span" sx={{ fontWeight: 600, color: strengthColor }}>{strengthLabel}</Box>
+                        {i({ id: "AUTH.PASSWORD_STRENGTH", defaultMessage: "Password strength:" })}{" "}<Box component="span" sx={{ fontWeight: 600, color: strengthColor }}>{strengthLabel}</Box>
                       </Typography>
                       <Typography variant="caption" sx={{ color: "text.disabled", fontSize: "0.72rem" }}>
-                        8+ chars, mixed case, number &amp; symbol
+                        {i({ id: "AUTH.PASSWORD_CRITERIA", defaultMessage: "8+ chars, mixed case, number & symbol" })}
                       </Typography>
                     </Stack>
                     <Stack direction="row" spacing={0.75} sx={{ height: 3.5 }}>
@@ -404,7 +413,7 @@ export function Registration() {
                         lineHeight: 1.4,
                       }}
                     >
-                      I agree to the{" "}
+                      {i({ id: "AUTH.AGREE_TERMS_PREFIX", defaultMessage: "I agree to the" })}{" "}
                       <Typography
                         component="span"
                         variant="body2"
@@ -414,9 +423,9 @@ export function Registration() {
                           fontSize: "0.85rem",
                         }}
                       >
-                        Terms of Service
+                        {i({ id: "AUTH.TERMS_OF_SERVICE", defaultMessage: "Terms of Service" })}
                       </Typography>{" "}
-                      and{" "}
+                      {i({ id: "AUTH.AND", defaultMessage: "and" })}{" "}
                       <Typography
                         component="span"
                         variant="body2"
@@ -426,7 +435,7 @@ export function Registration() {
                           fontSize: "0.85rem",
                         }}
                       >
-                        Privacy Policy
+                        {i({ id: "AUTH.PRIVACY_POLICY", defaultMessage: "Privacy Policy" })}
                       </Typography>
                     </Typography>
                   </Stack>
@@ -505,7 +514,10 @@ export function Registration() {
                 >
                   <ShieldOutlined sx={{ fontSize: 14, color: "success.main" }} />
                   <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
-                    Protected by enterprise role-based security &amp; tenant data isolation
+                    {i({
+                      id: "AUTH.ENTERPRISE_PROTECTION",
+                      defaultMessage: "Protected by enterprise role-based security & tenant data isolation",
+                    })}
                   </Typography>
                 </Stack>
               </Stack>

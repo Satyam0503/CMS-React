@@ -371,7 +371,7 @@ export const Applications = () => {
                 transition: "background-color .2s, box-shadow .2s",
                 "&.Mui-focused": {
                   bgcolor: "background.paper",
-                  boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 16%, transparent)",
+                  boxShadow: "none",
                 },
               },
             }}

@@ -25,9 +25,6 @@ export const SidebarMenuMain: FC<Props> = ({
   const { formatMessage } = useIntl();
   const getTabTitle = (titleKey?: string) => {
     if (!titleKey) return "";
-    if (titleKey === ModulesTitles.LifecycleManagement || titleKey === "MODULES.LIFECYCLE_MANAGEMENT") {
-      return "Employee Lifecycle";
-    }
     return formatMessage({ id: titleKey });
   };
   const { pathname } = useLocation();

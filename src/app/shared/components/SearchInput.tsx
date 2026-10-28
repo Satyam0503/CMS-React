@@ -79,7 +79,7 @@ export const SearchInput: FC<PropsType> = memo(
               },
               "&.Mui-focused": {
                 bgcolor: "background.paper",
-                boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent)",
+                boxShadow: "none",
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderColor: "primary.main",
                   borderWidth: "1.5px",

@@ -1,6 +1,6 @@
 import { ColorSystemOptions } from "@mui/material";
 import { LANGUAGE } from "../../../utils/enums";
-import { frFR, enUS, deDE, jaJP, esES, zhCN } from "@mui/material/locale";
+import { frFR, enUS, deDE, jaJP, esES, zhCN, hiIN } from "@mui/material/locale";
 
 export const colors = {
   primary: {
@@ -49,6 +49,8 @@ declare module "@mui/material/styles" {
 
 export const getCurrentLocaleForMui = (lang: LANGUAGE) => {
   switch (lang) {
+    case LANGUAGE.HINDI:
+      return hiIN;
     case LANGUAGE.FRENCH:
       return frFR;
     case LANGUAGE.ENGLISH:
