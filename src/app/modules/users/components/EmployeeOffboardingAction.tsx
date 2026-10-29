@@ -26,7 +26,7 @@ export const EmployeeOffboardingAction = () => {
   const [hasActiveExit, setHasActiveExit] = useState<boolean | null>(null);
   const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
   const isOwnProfile = !userDetails.userId || userDetails.userId === currentUserId;
-  const canManage = hasOffboarding && !isOwnProfile && hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, permissions);
+  const canManage = hasOffboarding && !isOwnProfile && (hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, permissions) || permissions.includes("Offboarding.CaseManage") || permissions.includes("Offboarding.Edit"));
   const status = userDetails.employmentStatus ?? "Active";
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export const EmployeeOffboardingAction = () => {
     void getEmployeeExitCaseForManagement(userDetails.userId)
       .then((response) => {
         const exitCase = response.data.success ? response.data.methodResult : null;
-        setHasActiveExit(Boolean(exitCase && !["Withdrawn", "Resigned", "Terminated"].includes(exitCase.status)));
+        setHasActiveExit(Boolean(exitCase && !["Withdrawn", "Resigned", "Terminated", "Retired", "ContractEnded", "Deceased", "Cancelled", "Rejected"].includes(exitCase.status)));
       })
       .catch(() => setHasActiveExit(false));
   }, [canManage, userDetails.userId]);

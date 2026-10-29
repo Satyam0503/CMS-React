@@ -34,7 +34,7 @@ export const WorkShiftCard = ({ actionTarget }: { actionTarget?: HTMLElement | n
   const employeeId = useParams().employeeid;
   const { userDetails } = useUserDetails();
   const permissions = useAppSelector((state) => state.user.userData?.modulePermission) || [];
-  const isFormerEmployee = userDetails?.employmentStatus === "Resigned" || userDetails?.employmentStatus === "Terminated";
+  const isFormerEmployee = ["Resigned", "Terminated", "Retired", "ContractEnded", "Deceased"].includes(userDetails?.employmentStatus ?? "");
   const canManage = Boolean(!isFormerEmployee && employeeId && hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, permissions));
   const [assignment, setAssignment] = useState<OfficeScheduleAssignment | null>();
   const [schedules, setSchedules] = useState<OfficeSchedule[]>([]);

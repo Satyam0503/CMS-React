@@ -143,6 +143,9 @@ export function PayrollPolicyFields({
       ? "0 2px 10px rgba(0, 0, 0, 0.25)"
       : "0 2px 10px rgba(15, 23, 42, 0.03)",
     minWidth: 0,
+    width: "100%",
+    maxWidth: "100%",
+    boxSizing: "border-box" as const,
     height: "100%",
     transition: "border-color 0.2s ease, box-shadow 0.2s ease",
     "&:hover": {
@@ -163,6 +166,12 @@ export function PayrollPolicyFields({
       "&.Mui-focused": {
         boxShadow: "none",
       },
+    },
+    "& .MuiSelect-select": {
+      whiteSpace: "normal",
+      wordBreak: "break-word",
+      lineHeight: 1.35,
+      py: 1,
     },
   };
 
@@ -198,6 +207,11 @@ export function PayrollPolicyFields({
       <Box
         key={feature.key}
         sx={{
+          width: "100%",
+          maxWidth: "100%",
+          minWidth: 0,
+          boxSizing: "border-box",
+          overflow: "hidden",
           p: { xs: 1.25, sm: 1.5 },
           minHeight: 64,
           display: "flex",
@@ -236,9 +250,18 @@ export function PayrollPolicyFields({
           sx={{
             m: 0,
             width: "100%",
+            maxWidth: "100%",
+            minWidth: 0,
+            display: "flex",
             alignItems: "flex-start",
             cursor: canEdit ? "pointer" : "default",
             userSelect: "none",
+            "& .MuiFormControlLabel-label": {
+              flex: 1,
+              width: "100%",
+              minWidth: 0,
+              overflow: "hidden",
+            },
           }}
           control={
             <Checkbox
@@ -253,6 +276,7 @@ export function PayrollPolicyFields({
                 p: 0.25,
                 mr: 1.25,
                 mt: 0.1,
+                flexShrink: 0,
                 color: feature.checked ? accentColor : "text.secondary",
                 "&.Mui-checked": {
                   color: accentColor,
@@ -265,15 +289,15 @@ export function PayrollPolicyFields({
             />
           }
           label={
-            <Box sx={{ width: "100%", minWidth: 0 }}>
+            <Box sx={{ width: "100%", maxWidth: "100%", minWidth: 0, overflow: "hidden" }}>
               <Stack
                 direction="row"
                 spacing={1}
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ mb: 0.35 }}
+                sx={{ width: "100%", minWidth: 0, mb: 0.35 }}
               >
-                <Stack direction="row" spacing={1} alignItems="center" minWidth={0} sx={{ flex: 1, pr: 0.5 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, flex: 1, pr: 0.5 }}>
                   <Box
                     sx={{
                       width: 26,
@@ -292,13 +316,17 @@ export function PayrollPolicyFields({
                     variant="body2"
                     sx={{
                       fontWeight: 700,
-                      fontSize: "0.86rem",
-                      lineHeight: 1.3,
+                      fontSize: "0.85rem",
+                      lineHeight: 1.25,
                       color: feature.checked ? "text.primary" : "text.secondary",
                       letterSpacing: "-0.01em",
+                      minWidth: 0,
+                      flex: 1,
+                      wordBreak: "break-word",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
                       overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
                     }}
                   >
                     {feature.title}
@@ -334,6 +362,8 @@ export function PayrollPolicyFields({
                   lineHeight: 1.4,
                   display: "block",
                   pl: "34px",
+                  wordBreak: "break-word",
+                  minWidth: 0,
                 }}
               >
                 {feature.detail}
@@ -451,7 +481,7 @@ export function PayrollPolicyFields({
                 {features
                   .filter((feature) => ["epf", "esic", "tds"].includes(feature.key))
                   .map((feature) => (
-                    <Grid key={feature.key} size={{ xs: 12, sm: 6, lg: 4 }}>
+                    <Grid key={feature.key} size={{ xs: 12, sm: 12, md: 6, lg: 4, xl: 3 }} sx={{ minWidth: 0, display: "flex" }}>
                       {renderFeatureToggle(feature)}
                     </Grid>
                   ))}
@@ -485,7 +515,7 @@ export function PayrollPolicyFields({
                 {features
                   .filter((feature) => feature.key === "attendance")
                   .map((feature) => (
-                    <Grid key={feature.key} size={{ xs: 12, sm: 6, lg: 4 }}>
+                    <Grid key={feature.key} size={{ xs: 12, sm: 12, md: 6, lg: 4, xl: 3 }} sx={{ minWidth: 0, display: "flex" }}>
                       {renderFeatureToggle(feature)}
                     </Grid>
                   ))}
@@ -522,7 +552,7 @@ export function PayrollPolicyFields({
                   {features
                     .filter((feature) => "component" in feature)
                     .map((feature) => (
-                      <Grid key={feature.key} size={{ xs: 12, sm: 6, lg: 4 }}>
+                      <Grid key={feature.key} size={{ xs: 12, sm: 12, md: 6, lg: 4, xl: 3 }} sx={{ minWidth: 0, display: "flex" }}>
                         {renderFeatureToggle(feature)}
                       </Grid>
                     ))}
@@ -591,7 +621,7 @@ export function PayrollPolicyFields({
             </Box>
 
             <Grid container spacing={2} alignItems="stretch">
-              <Grid size={{ xs: 12, md: 6 }}>
+              <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", minWidth: 0 }}>
                 <Stack spacing={2} sx={modernConfigCardSx}>
                   <Stack
                     direction="row"
@@ -730,7 +760,7 @@ export function PayrollPolicyFields({
               </Grid>
 
               {epfEnabled && (
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", minWidth: 0 }}>
                   <Stack spacing={2} sx={modernConfigCardSx}>
                     <Stack
                       direction="row"
@@ -794,7 +824,7 @@ export function PayrollPolicyFields({
                     </TextField>
 
                     <Grid container spacing={1.5}>
-                      <Grid size={{ xs: 12, sm: 6 }}>
+                      <Grid size={{ xs: 12, sm: 12, xl: 6 }}>
                         <TextField
                           fullWidth
                           size="small"
@@ -812,7 +842,7 @@ export function PayrollPolicyFields({
                           sx={inputSx}
                         />
                       </Grid>
-                      <Grid size={{ xs: 12, sm: 6 }}>
+                      <Grid size={{ xs: 12, sm: 12, xl: 6 }}>
                         <TextField
                           fullWidth
                           size="small"
@@ -873,7 +903,7 @@ export function PayrollPolicyFields({
               )}
 
               {esicEnabled && (
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", minWidth: 0 }}>
                   <Stack spacing={2} sx={modernConfigCardSx}>
                     <Stack
                       direction="row"
@@ -918,7 +948,7 @@ export function PayrollPolicyFields({
                     </Stack>
 
                     <Grid container spacing={1.5}>
-                      <Grid size={{ xs: 12, sm: 6 }}>
+                      <Grid size={{ xs: 12, sm: 12, xl: 6 }}>
                         <TextField
                           fullWidth
                           size="small"
@@ -936,7 +966,7 @@ export function PayrollPolicyFields({
                           sx={inputSx}
                         />
                       </Grid>
-                      <Grid size={{ xs: 12, sm: 6 }}>
+                      <Grid size={{ xs: 12, sm: 12, xl: 6 }}>
                         <TextField
                           fullWidth
                           size="small"
@@ -995,7 +1025,7 @@ export function PayrollPolicyFields({
               )}
 
               {tdsEnabled && (
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", minWidth: 0 }}>
                   <Stack spacing={2} sx={modernConfigCardSx}>
                     <Stack
                       direction="row"
@@ -1080,7 +1110,7 @@ export function PayrollPolicyFields({
               )}
 
               {config.requireAttendanceLock && (
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, md: 6 }} sx={{ display: "flex", minWidth: 0 }}>
                   <Stack spacing={2} sx={modernConfigCardSx}>
                     <Stack
                       direction="row"

@@ -28,7 +28,7 @@ export const ResignationAction = () => {
     let isCurrent = true;
     getOwnEmployeeExitCase(currentUserId)
       .then((response) => {
-        if (isCurrent) setHasActiveExitCase(Boolean(response.data.success && response.data.methodResult && response.data.methodResult.status !== "Withdrawn"));
+        if (isCurrent) setHasActiveExitCase(Boolean(response.data.success && response.data.methodResult && !["Withdrawn", "Rejected", "Cancelled"].includes(response.data.methodResult.status)));
       })
       .catch(() => {
         // The resignation endpoint remains the authority; do not leave the

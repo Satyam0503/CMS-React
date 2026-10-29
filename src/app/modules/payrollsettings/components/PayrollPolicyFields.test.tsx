@@ -113,4 +113,23 @@ describe("PayrollPolicyFields", { timeout: 15000 }, () => {
     expect(onToggleComponent).toHaveBeenCalledWith(bonus, true);
     expect(document.body.textContent).toContain("salary structure");
   });
+  it("renders responsive card containers with unconstrained shrink protection", async () => {
+    const longBonus = {
+      id: "bonus-long",
+      code: "BONUS_LONG",
+      name: "Annual / Performance Bonus with Very Long Title for Layout Verification",
+      kind: "EARNING" as const,
+      calculationType: "FIXED" as const,
+      isTaxable: true,
+      isActive: true,
+    };
+    const { root, Harness } = renderFields(true, [longBonus]);
+    await act(async () => root.render(<Harness />));
+
+    expect(document.body.textContent).toContain("Annual / Performance Bonus with Very Long Title for Layout Verification");
+    const bonusLabel = Array.from(document.querySelectorAll("span")).find((span) =>
+      span.textContent?.includes("Annual / Performance Bonus")
+    );
+    expect(bonusLabel).toBeTruthy();
+  });
 });

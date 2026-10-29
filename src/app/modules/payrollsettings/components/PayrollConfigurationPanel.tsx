@@ -1499,7 +1499,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                     </Grid>
 
                     {/* Row 2: Statutory Jurisdiction (4) + Financial Year (4) + Rule Version (4) */}
-                    <Grid size={{ xs: 12, sm: 6 }}>
+                    <Grid size={{ xs: 12, sm: 12, md: 4 }}>
                       <AppTextField
                         fullWidth
                         size="small"
@@ -1511,7 +1511,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                         helperText="Enter the company’s applicable jurisdiction."
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6 }}>
+                    <Grid size={{ xs: 12, sm: 12, md: 4 }}>
                       <AppTextField
                         fullWidth
                         size="small"

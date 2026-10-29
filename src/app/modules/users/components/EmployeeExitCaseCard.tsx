@@ -457,7 +457,9 @@ export const EmployeeExitCaseCard = () => {
     }
   };
 
-  const activeCase = exitCase.status !== "Withdrawn";
+  const isClosedOrInactive = ["Withdrawn", "Cancelled", "Rejected"].includes(exitCase.status);
+  const isExitComplete = ["Resigned", "Terminated", "Retired", "ContractEnded", "Deceased", "Completed"].includes(exitCase.status);
+  const activeCase = !isClosedOrInactive && !isExitComplete;
   const pendingNoticeHr = exitCase.noticeAdjustments.find(
     (item) => item.status === "Pending",
   );
@@ -502,7 +504,6 @@ export const EmployeeExitCaseCard = () => {
     textTransform: "none",
   };
 
-  const isExitComplete = ["Resigned", "Terminated"].includes(exitCase.status);
   const managerReviewCurrent = [
     "PendingManagerApproval",
     "DiscussionRequested",
@@ -719,24 +720,32 @@ export const EmployeeExitCaseCard = () => {
                 >
                   <Box>
                     <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 1.2 }}>
-                      {activeCase ? "CASE PROGRESS" : "RESIGNATION RECORD"}
+                      {activeCase ? "CASE PROGRESS" : isClosedOrInactive ? "CLOSED RECORD" : "EXIT RECORD"}
                     </Typography>
                     <Typography variant="h6" fontWeight={750}>
-                      {activeCase ? "Your Exit Journey" : "Withdrawn Resignation"}
+                      {activeCase ? "Your Exit Journey" : isClosedOrInactive ? `${format(exitCase.status)} Resignation` : "Completed Exit"}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       {activeCase
                         ? "Track milestones, notice countdown and case approvals."
-                        : `Original last working day: ${new Date(exitCase.lastWorkingDate).toLocaleDateString()}`}
+                        : isClosedOrInactive
+                          ? `This resignation was ${exitCase.status.toLowerCase()}. Employment remains active.`
+                          : `Original last working day: ${new Date(exitCase.lastWorkingDate).toLocaleDateString()}`}
                     </Typography>
                   </Box>
                   <Chip
                     size="small"
-                    color={activeCase ? "primary" : "warning"}
+                    color={activeCase ? "primary" : isClosedOrInactive ? "default" : "warning"}
                     label={format(exitCase.status)}
                     sx={{ fontWeight: 700 }}
                   />
                 </Stack>
+
+                {isClosedOrInactive && (
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    This exit case has been <strong>{exitCase.status}</strong>. Your employment continues as an active employee and no further offboarding actions are required.
+                  </Alert>
+                )}
 
                 {activeCase && (
                   <Box
@@ -1375,6 +1384,11 @@ export const EmployeeExitCaseCard = () => {
           {/* TAB 1: TASKS & SIGN-OFF */}
           {activeTab === 1 && (
             <Stack spacing={2}>
+              {isClosedOrInactive && (
+                <Alert severity="info">
+                  Handover tasks and exit sign-offs are not required because this exit case is <strong>{exitCase.status}</strong>.
+                </Alert>
+              )}
               {/* Handover Tasks Section */}
               <Box sx={cardSx}>
                 <Stack spacing={1.5}>
@@ -1515,14 +1529,15 @@ export const EmployeeExitCaseCard = () => {
                       placeholder="name@personal.com"
                       value={personalEmail}
                       disabled={
-                        Boolean(exitCase.postExitContact?.personalEmail) &&
-                        !confirmPostExitContact
+                        isClosedOrInactive ||
+                        (Boolean(exitCase.postExitContact?.personalEmail) &&
+                          !confirmPostExitContact)
                       }
                       onChange={(event) => setPersonalEmail(event.target.value)}
                     />
 
                     <Box sx={{ mt: "auto", pt: 1 }}>
-                      {exitCase.postExitContact?.personalEmail &&
+                      {isClosedOrInactive ? null : exitCase.postExitContact?.personalEmail &&
                       !confirmPostExitContact ? (
                         <AppButton
                           variant="outlined"
@@ -1567,14 +1582,20 @@ export const EmployeeExitCaseCard = () => {
                     </Alert>
 
                     <Box sx={{ mt: "auto", pt: 1 }}>
-                      <AppButton
-                        variant="contained"
-                        disabled={withdrawing}
-                        onClick={() => void acknowledge()}
-                        sx={actionSx}
-                      >
-                        Acknowledge summary
-                      </AppButton>
+                      {isClosedOrInactive ? (
+                        <Alert severity="info" sx={{ py: 0.5 }}>
+                          Exit acknowledgement is not required for a {exitCase.status.toLowerCase()} case.
+                        </Alert>
+                      ) : (
+                        <AppButton
+                          variant="contained"
+                          disabled={withdrawing}
+                          onClick={() => void acknowledge()}
+                          sx={actionSx}
+                        >
+                          Acknowledge summary
+                        </AppButton>
+                      )}
                     </Box>
                   </Stack>
                 </Box>
@@ -1602,93 +1623,101 @@ export const EmployeeExitCaseCard = () => {
                     </Box>
                   </Stack>
 
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: { xs: "1fr", sm: "minmax(220px, 1fr) 2fr" },
-                      gap: 1.5,
-                      alignItems: "center",
-                    }}
-                  >
-                    <TextField
-                      select
-                      size="small"
-                      label="Evidence category"
-                      value={evidenceCategory}
-                      onChange={(event) =>
-                        setEvidenceCategory(event.target.value)
-                      }
-                    >
-                      {[
-                        ["Resignation", "Resignation document / confirmation"],
-                        ["Medical", "Medical certificate"],
-                        ["Handover", "Handover clearance note"],
-                        ["Other", "Other exit evidence"],
-                      ].map(([catKey, catLabel]) => (
-                        <MenuItem key={catKey} value={catKey}>
-                          {catLabel}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-
-                    <Box
-                      sx={{
-                        p: 1.5,
-                        border: "1.5px dashed",
-                        borderColor: evidenceFile ? "primary.main" : "divider",
-                        borderRadius: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1.5,
-                        bgcolor: evidenceFile ? "primary.lighter" : "background.default",
-                        minWidth: 0,
-                      }}
-                    >
-                      <AppButton
-                        component="label"
-                        variant="outlined"
-                        size="small"
-                        disabled={withdrawing}
-                        sx={{ flexShrink: 0 }}
-                      >
-                        Choose file
-                        <input
-                          hidden
-                          type="file"
-                          accept="application/pdf,image/png,image/jpeg,message/rfc822"
-                          onChange={(event) =>
-                            setEvidenceFile(event.target.files?.[0] || null)
-                          }
-                        />
-                      </AppButton>
-                      <Typography
-                        variant="body2"
-                        color={evidenceFile ? "primary.dark" : "text.secondary"}
+                  {isClosedOrInactive ? (
+                    <Alert severity="info">
+                      Evidence upload is not available because this resignation was <strong>{exitCase.status}</strong>.
+                    </Alert>
+                  ) : (
+                    <>
+                      <Box
                         sx={{
-                          minWidth: 0,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
+                          display: "grid",
+                          gridTemplateColumns: { xs: "1fr", sm: "minmax(220px, 1fr) 2fr" },
+                          gap: 1.5,
+                          alignItems: "center",
                         }}
                       >
-                        {evidenceFile
-                          ? evidenceFile.name
-                          : "Supported formats: PDF, PNG, JPG (Max 25MB)"}
-                      </Typography>
-                    </Box>
-                  </Box>
+                        <TextField
+                          select
+                          size="small"
+                          label="Evidence category"
+                          value={evidenceCategory}
+                          onChange={(event) =>
+                            setEvidenceCategory(event.target.value)
+                          }
+                        >
+                          {[
+                            ["Resignation", "Resignation document / confirmation"],
+                            ["Medical", "Medical certificate"],
+                            ["Handover", "Handover clearance note"],
+                            ["Other", "Other exit evidence"],
+                          ].map(([catKey, catLabel]) => (
+                            <MenuItem key={catKey} value={catKey}>
+                              {catLabel}
+                            </MenuItem>
+                          ))}
+                        </TextField>
 
-                  <Stack direction="row" justifyContent="flex-end">
-                    <AppButton
-                      disabled={
-                        withdrawing || !evidenceFile || !evidenceCategory.trim()
-                      }
-                      onClick={() => setConfirmEvidenceUpload(true)}
-                      sx={actionSx}
-                    >
-                      Review & submit
-                    </AppButton>
-                  </Stack>
+                        <Box
+                          sx={{
+                            p: 1.5,
+                            border: "1.5px dashed",
+                            borderColor: evidenceFile ? "primary.main" : "divider",
+                            borderRadius: 2,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1.5,
+                            bgcolor: evidenceFile ? "primary.lighter" : "background.default",
+                            minWidth: 0,
+                          }}
+                        >
+                          <AppButton
+                            component="label"
+                            variant="outlined"
+                            size="small"
+                            disabled={withdrawing}
+                            sx={{ flexShrink: 0 }}
+                          >
+                            Choose file
+                            <input
+                              hidden
+                              type="file"
+                              accept="application/pdf,image/png,image/jpeg,message/rfc822"
+                              onChange={(event) =>
+                                setEvidenceFile(event.target.files?.[0] || null)
+                              }
+                            />
+                          </AppButton>
+                          <Typography
+                            variant="body2"
+                            color={evidenceFile ? "primary.dark" : "text.secondary"}
+                            sx={{
+                              minWidth: 0,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {evidenceFile
+                              ? evidenceFile.name
+                              : "Supported formats: PDF, PNG, JPG (Max 25MB)"}
+                          </Typography>
+                        </Box>
+                      </Box>
+
+                      <Stack direction="row" justifyContent="flex-end">
+                        <AppButton
+                          disabled={
+                            withdrawing || !evidenceFile || !evidenceCategory.trim()
+                          }
+                          onClick={() => setConfirmEvidenceUpload(true)}
+                          sx={actionSx}
+                        >
+                          Review & submit
+                        </AppButton>
+                      </Stack>
+                    </>
+                  )}
 
                   {/* Submitted Evidence List (Overflow Fixed) */}
                   {exitCase.evidence.length > 0 && (
@@ -1816,48 +1845,60 @@ export const EmployeeExitCaseCard = () => {
                     </Box>
                   </Stack>
 
-                  <TextField
-                    select
-                    size="small"
-                    label="Document type"
-                    value={requestType}
-                    onChange={(event) =>
-                      setRequestType(event.target.value as typeof requestType)
-                    }
-                  >
-                    {[
-                      "RelievingLetter",
-                      "ExperienceLetter",
-                      "FnFStatement",
-                      "TaxDocument",
-                      "Correction",
-                      "Other",
-                    ].map((value) => (
-                      <MenuItem key={value} value={value}>
-                        {format(value)}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                  {isClosedOrInactive ? (
+                    <Alert severity="info">
+                      Post-employment document requests are not applicable because this resignation was <strong>{exitCase.status}</strong> and your employment is active.
+                    </Alert>
+                  ) : !isExitComplete ? (
+                    <Alert severity="info">
+                      Post-employment letters (Relieving letter, Experience certificate) become available once your exit is completed.
+                    </Alert>
+                  ) : (
+                    <>
+                      <TextField
+                        select
+                        size="small"
+                        label="Document type"
+                        value={requestType}
+                        onChange={(event) =>
+                          setRequestType(event.target.value as typeof requestType)
+                        }
+                      >
+                        {[
+                          "RelievingLetter",
+                          "ExperienceLetter",
+                          "FnFStatement",
+                          "TaxDocument",
+                          "Correction",
+                          "Other",
+                        ].map((value) => (
+                          <MenuItem key={value} value={value}>
+                            {format(value)}
+                          </MenuItem>
+                        ))}
+                      </TextField>
 
-                  <TextField
-                    size="small"
-                    label="Additional details / context"
-                    placeholder="Provide any specific requirements or dispatch address..."
-                    value={requestDetails}
-                    onChange={(event) => setRequestDetails(event.target.value)}
-                    multiline
-                    minRows={2}
-                  />
+                      <TextField
+                        size="small"
+                        label="Additional details / context"
+                        placeholder="Provide any specific requirements or dispatch address..."
+                        value={requestDetails}
+                        onChange={(event) => setRequestDetails(event.target.value)}
+                        multiline
+                        minRows={2}
+                      />
 
-                  <Stack direction="row" justifyContent="flex-end">
-                    <AppButton
-                      disabled={withdrawing || !requestDetails.trim()}
-                      onClick={() => void createRequest()}
-                      sx={actionSx}
-                    >
-                      Send to HR
-                    </AppButton>
-                  </Stack>
+                      <Stack direction="row" justifyContent="flex-end">
+                        <AppButton
+                          disabled={withdrawing || !requestDetails.trim()}
+                          onClick={() => void createRequest()}
+                          sx={actionSx}
+                        >
+                          Send to HR
+                        </AppButton>
+                      </Stack>
+                    </>
+                  )}
 
                   {/* Document Requests List */}
                   {exitCase.formerEmployeeRequests.length > 0 && (

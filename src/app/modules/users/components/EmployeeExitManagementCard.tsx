@@ -446,9 +446,9 @@ export const EmployeeExitManagementCard = ({ employeeUserId }: Props) => {
     exitCase.isAssignedManagerReviewer &&
     exitCase.isHrReviewer;
   const canRejoin =
-    ["Resigned", "Terminated"].includes(exitCase.status) &&
+    ["Resigned", "Terminated", "Retired", "ContractEnded", "Completed"].includes(exitCase.status) &&
     exitCase.permittedActions.includes("Rejoin") &&
-    exitCase.exitInterview?.isRehireEligible === true;
+    (exitCase.exitInterview?.isRehireEligible ?? true);
 
   const workflowSteps = [
     "Submitted",
@@ -467,7 +467,7 @@ export const EmployeeExitManagementCard = ({ employeeUserId }: Props) => {
               exitCase.status,
             )
           ? 3
-          : ["Resigned", "Terminated"].includes(exitCase.status)
+          : ["Resigned", "Terminated", "Retired", "ContractEnded", "Completed"].includes(exitCase.status)
             ? 4
             : 0;
 
