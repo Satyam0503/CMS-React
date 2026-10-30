@@ -11,7 +11,7 @@ import { getAllCalendarItem, importCalendarItems } from './calendarServices'
 import { toast } from 'react-toastify'
 import * as XLSX from 'xlsx'
 import { formatServerDate, hasModuleFeaturePermission } from '../../../utils/common'
-import { ModulesName, Permission } from '../../../utils/enums'
+import { ModulesName, Permission, Roles } from '../../../utils/enums'
 import { useAppSelector } from '../../Redux/hooks'
 
 
@@ -30,8 +30,9 @@ export default function Calendar() {
     const [importing, setImporting] = useState(false);
     const userData = useAppSelector(state => state.user.userData);
     const permissions = userData?.modulePermission ?? [];
-    const canImport = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Create, permissions);
-    const isHrOrAdmin = Boolean(
+    const isAdministrator = userData?.roleType === Roles.Administrator;
+    const canImport = isAdministrator || hasModuleFeaturePermission(ModulesName.Calendar, Permission.Create, permissions);
+    const isHrOrAdmin = isAdministrator || Boolean(
         hasModuleFeaturePermission(ModulesName.Recruitment, Permission.View, permissions) ||
         hasModuleFeaturePermission(ModulesName.Admin, Permission.View, permissions)
     );

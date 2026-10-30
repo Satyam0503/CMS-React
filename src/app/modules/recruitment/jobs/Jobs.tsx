@@ -26,7 +26,7 @@ import {
   removeUnwantedString,
 } from "../../../../utils/common";
 import { useAppSelector } from "../../../Redux/hooks";
-import { ModulesName, Permission } from "../../../../utils/enums";
+import { ModulesName, Permission, Roles } from "../../../../utils/enums";
 import {
   initialJobFilter,
   JobFilter,
@@ -377,12 +377,14 @@ export default function Jobs() {
     [columnList, compactView],
   );
 
-  const hasAddPermission = hasModuleFeaturePermission(
+  const userRoleType = useAppSelector((state) => state.user.userData?.roleType);
+  const isAdministrator = userRoleType === Roles.Administrator;
+  const hasAddPermission = isAdministrator || hasModuleFeaturePermission(
     ModulesName.Jobs,
     Permission.Create,
     userModulesPermissions
   );
-  const hasEditPermission = hasModuleFeaturePermission(
+  const hasEditPermission = isAdministrator || hasModuleFeaturePermission(
     ModulesName.Jobs,
     Permission.Edit,
     userModulesPermissions

@@ -38,7 +38,7 @@ export default function CalendarDays(props: Props) {
 
     const popoverOpen = Boolean(anchorEl);
     const isSmallScreen = useMediaQuery(muiTheme.breakpoints.down("sm"));
-    const weekDayShort = dayjs.weekdaysShort();
+    const weekDayShort = typeof dayjs.weekdaysShort === "function" ? dayjs.weekdaysShort() : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const open = Boolean(smlScreenAnchr);
     const [selectedInterview, setSelectedInterview] = useState<CalendarItem | null>(null);
 
@@ -239,6 +239,16 @@ export default function CalendarDays(props: Props) {
                                                                 aria-haspopup="true"
                                                                 onMouseEnter={handlePopoverOpen}
                                                                 onMouseLeave={handlePopoverClose}
+                                                                onClick={(e) => {
+                                                                    const meta = parseInterviewCalendarItem(holiday);
+                                                                    if (meta.isInterview) {
+                                                                        e.stopPropagation();
+                                                                        setSelectedInterview(holiday);
+                                                                    }
+                                                                }}
+                                                                sx={{
+                                                                    cursor: parseInterviewCalendarItem(holiday).isInterview ? "pointer" : "default",
+                                                                }}
                                                             >
 
                                                                 {holiday.name.length > 10
@@ -255,6 +265,16 @@ export default function CalendarDays(props: Props) {
                                                                 aria-haspopup="true"
                                                                 onMouseEnter={handlePopoverOpen}
                                                                 onMouseLeave={handlePopoverClose}
+                                                                onClick={(e) => {
+                                                                    const meta = parseInterviewCalendarItem(holiday);
+                                                                    if (meta.isInterview) {
+                                                                        e.stopPropagation();
+                                                                        setSelectedInterview(holiday);
+                                                                    }
+                                                                }}
+                                                                sx={{
+                                                                    cursor: parseInterviewCalendarItem(holiday).isInterview ? "pointer" : "default",
+                                                                }}
                                                             >
                                                             </Box>
                                                         }
@@ -285,10 +305,20 @@ export default function CalendarDays(props: Props) {
                 <Box component='div' className="d-flex flex-column gap-2 p-2">
                     {selectedDateOccasions.map((occ, index) => {
                         const date = dayjs(occ.date);
+                        const meta = parseInterviewCalendarItem(occ);
                         return (<Box
                             component="div"
                             className={`d-flex gap-2 align-items-center rounded `}
-                            key={index}>
+                            key={index}
+                            onClick={(e) => {
+                                if (meta.isInterview) {
+                                    e.stopPropagation();
+                                    setSelectedInterview(occ);
+                                    handleCloseSmlPopover();
+                                }
+                            }}
+                            sx={{ cursor: meta.isInterview ? "pointer" : "default" }}
+                        >
                             {occ.imageUrl ? (
                                 <Avatar
                                     sx={{
@@ -316,13 +346,22 @@ export default function CalendarDays(props: Props) {
                                         color: "inherit",
                                         wordBreak: "break-word"
                                     }}
-                                >{occ.description}
+                                >
+                                    {meta.isInterview ? "📋 Click to open Interview Dossier & Scorecard" : occ.description}
                                 </Typography>
                             </Box>
                         </Box>)
                     })}
                 </Box>
             </Popover>
+            {selectedInterview && (
+                <InterviewDossierModal
+                    open={Boolean(selectedInterview)}
+                    onClose={() => setSelectedInterview(null)}
+                    occasion={selectedInterview}
+                    onScorecardSubmitted={props.handleRefresh}
+                />
+            )}
         </Box>
     );
 }
@@ -332,6 +371,7 @@ type PropType = {
 };
 
 const ToolTipPopOver = ({ holiday }: PropType) => {
+    const meta = parseInterviewCalendarItem(holiday);
     return (
         <Box component="div" className="d-flex gap-2 align-items-center ">
             {holiday.imageUrl ? (
@@ -360,7 +400,7 @@ const ToolTipPopOver = ({ holiday }: PropType) => {
             <Box component={"div"} className="d-flex flex-column ">
                 <Typography variant="body1" sx={{ wordBreak: "break-all" }}>{holiday.name}</Typography>
                 <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
-                    {holiday.description}
+                    {meta.isInterview ? "📋 Click item to open Interview Dossier & Scorecard" : holiday.description}
                 </Typography>
             </Box>
         </Box>

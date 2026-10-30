@@ -59,10 +59,12 @@ const defaultRatingScale: RecruitmentRatingScaleConfig = {
   levels: [],
 };
 
-const initialCompetencies: RecruitmentCompetencyConfig[] = [
-  { code: "CORE_SKILLS", name: "Role Specific Technical Skills", weight: 50, isMandatory: true, minScore: 60, description: "Core competencies and execution efficiency required for role" },
-  { code: "PROBLEM_SOLVING", name: "Analytical Problem Solving", weight: 30, isMandatory: false, minScore: 50, description: "System design, logic, and debugging approach" },
-  { code: "COMM_CULTURE", name: "Communication & Collaboration", weight: 20, isMandatory: false, minScore: 50, description: "Clarity of articulation, empathy, team fit" },
+type CompetencyItem = RecruitmentCompetencyConfig & { _clientId?: string };
+
+const initialCompetencies: CompetencyItem[] = [
+  { _clientId: "comp-init-1", code: "CORE_SKILLS", name: "Role Specific Technical Skills", weight: 50, isMandatory: true, minScore: 60, description: "Core competencies and execution efficiency required for role" },
+  { _clientId: "comp-init-2", code: "PROBLEM_SOLVING", name: "Analytical Problem Solving", weight: 30, isMandatory: false, minScore: 50, description: "System design, logic, and debugging approach" },
+  { _clientId: "comp-init-3", code: "COMM_CULTURE", name: "Communication & Collaboration", weight: 20, isMandatory: false, minScore: 50, description: "Clarity of articulation, empathy, team fit" },
 ];
 
 const fadeInSlideUp = keyframes`
@@ -90,7 +92,7 @@ export default function RecruitmentInterviewPlanEditor() {
   const [activeSection, setActiveSection] = useState<"scale" | "competencies" | "stages" | "all">("scale");
   const [stages, setStages] = useState<RecruitmentInterviewPlanStageCommand[]>(initialStages);
   const [ratingScale, setRatingScale] = useState<RecruitmentRatingScaleConfig>(defaultRatingScale);
-  const [competencies, setCompetencies] = useState<RecruitmentCompetencyConfig[]>(initialCompetencies);
+  const [competencies, setCompetencies] = useState<CompetencyItem[]>(initialCompetencies);
   const [hiringTargetScore, setHiringTargetScore] = useState<number>(70);
   const [missingScorePolicy, setMissingScorePolicy] = useState<string>("Exclude");
 
@@ -158,7 +160,10 @@ export default function RecruitmentInterviewPlanEditor() {
         }
 
         if (plan.competencies?.length) {
-          setCompetencies(plan.competencies);
+          setCompetencies(plan.competencies.map((c, i) => ({
+            ...c,
+            _clientId: (c as any)._clientId || `comp-loaded-${i}-${c.code || Date.now()}`,
+          })));
         } else {
           setCompetencies(initialCompetencies);
         }
@@ -273,6 +278,7 @@ export default function RecruitmentInterviewPlanEditor() {
     setCompetencies((current) => [
       ...current,
       {
+        _clientId: `comp-new-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         code: `COMP_${nextIdx}_${Date.now().toString(36).slice(-3).toUpperCase()}`,
         name: `Competency ${nextIdx}`,
         weight: 0,
@@ -283,11 +289,15 @@ export default function RecruitmentInterviewPlanEditor() {
     ]);
   };
 
-  const updateCompetency = (index: number, patch: Partial<RecruitmentCompetencyConfig>) =>
-    setCompetencies((current) => current.map((comp, i) => (i === index ? { ...comp, ...patch } : comp)));
+  const updateCompetency = (cid: string | number, patch: Partial<RecruitmentCompetencyConfig>) =>
+    setCompetencies((current) =>
+      current.map((comp, i) => ((comp._clientId ? comp._clientId === cid : i === cid) ? { ...comp, ...patch } : comp))
+    );
 
-  const removeCompetency = (index: number) =>
-    setCompetencies((current) => current.filter((_, i) => i !== index));
+  const removeCompetency = (cid: string | number) =>
+    setCompetencies((current) =>
+      current.filter((comp, i) => (comp._clientId ? comp._clientId !== cid : i !== cid))
+    );
 
   const totalCompWeight = competencies.reduce((acc, c) => acc + (Number(c.weight) || 0), 0);
   const hasCompWeights = competencies.some((c) => (Number(c.weight) || 0) > 0);
@@ -308,7 +318,7 @@ export default function RecruitmentInterviewPlanEditor() {
         isDefault: !scopedVacancy,
         stages,
         ratingScale,
-        competencies,
+        competencies: competencies.map(({ _clientId, ...rest }) => rest),
         hiringTargetScore,
         missingScorePolicy,
         idempotencyKey: key(),
@@ -721,9 +731,11 @@ export default function RecruitmentInterviewPlanEditor() {
           )}
 
           <Stack spacing={2}>
-            {competencies.map((comp, idx) => (
+            {competencies.map((comp, idx) => {
+              const compKey = comp._clientId || `comp-${idx}`;
+              return (
               <Box
-                key={comp.code || idx}
+                key={compKey}
                 sx={{
                   p: { xs: 1.75, sm: 2.25 },
                   borderRadius: "12px",
@@ -757,7 +769,7 @@ export default function RecruitmentInterviewPlanEditor() {
                   </Grid>
 
                   <Grid size={{ xs: 3, sm: 1, md: 1 }} textAlign="right">
-                    <IconButton size="small" color="error" onClick={() => removeCompetency(idx)} sx={{ p: 0.75 }}>
+                    <IconButton size="small" color="error" onClick={() => removeCompetency(comp._clientId || idx)} sx={{ p: 0.75 }}>
                       <DeleteOutlineRounded sx={{ fontSize: 20 }} />
                     </IconButton>
                   </Grid>
@@ -800,7 +812,8 @@ export default function RecruitmentInterviewPlanEditor() {
                   </Grid>
                 </Grid>
               </Box>
-            ))}
+            );
+          })}
           </Stack>
         </Box>
       )}

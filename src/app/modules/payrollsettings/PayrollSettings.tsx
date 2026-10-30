@@ -16,7 +16,7 @@ import { useIntl } from "react-intl";
 import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../utils/common";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { useAppSelector } from "../../Redux/hooks";
-import { UnAuthorizedAccess } from "../../shared/components/UnAuthorizedAccess";
+import { UnauthorizedStay } from "../users/about/components/ProtectedRoute";
 import { ModulesName, Permission, Roles } from "../../../utils/enums";
 import { SalaryTable } from "./components/SalaryTable";
 import { CompanySalaryResponseModel } from "./model";
@@ -350,7 +350,7 @@ export default function PayrollSettings() {
     (attendanceLocked || !policyConfig.requireAttendanceLock);
 
   if (!canAccessHrManagement(userRoleType)) {
-    return <UnAuthorizedAccess type="unauthorise" />;
+    return <UnauthorizedStay />;
   }
 
   return (

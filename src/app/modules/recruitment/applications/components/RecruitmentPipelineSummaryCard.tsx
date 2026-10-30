@@ -45,7 +45,7 @@ export default function RecruitmentPipelineSummaryCard({
     void load();
   }, [load]);
 
-  const totalCount = stages.reduce(
+  const totalCount = analytics?.totalApplicants ?? stages.reduce(
     (sum, item) => sum + (analytics?.byStage?.[item.key] ?? 0),
     0
   );

@@ -18,7 +18,7 @@ import RecruitmentPipelineSummaryCard from "./components/RecruitmentPipelineSumm
 import RecruitmentOnboardingQueueCard from "./components/RecruitmentOnboardingQueueCard";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { Applicant, ApplicationPayload } from "../models";
-import { ApplicantStatus, ApplicationStatus, ModulesName, Permission } from "../../../../utils/enums";
+import { ApplicantStatus, ApplicationStatus, ModulesName, Permission, Roles } from "../../../../utils/enums";
 import {
   applicantStatusDecoder,
   applicationStatusMapper,
@@ -244,6 +244,8 @@ export const Applications = () => {
   const id = open ? "application-filter" : undefined;
   const totalAppliedFilter = countAppliedFilter(applicationFilters);
 
+  const userRoleType = useAppSelector((state) => state.user.userData?.roleType);
+  const isAdministrator = userRoleType === Roles.Administrator;
   const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const jobId = searchParam.get("jobId");
 
@@ -407,7 +409,7 @@ export const Applications = () => {
                 toolbar
               />
             </Badge>
-            {userPermissionsForModule.includes(`${ModulesName.Applications}.${Permission.Create}`) && (
+            {(isAdministrator || userPermissionsForModule.includes(`${ModulesName.Applications}.${Permission.Create}`)) && (
               <CustomIconButton
                 icon={<Add />}
                 ariaLabel="Add application"

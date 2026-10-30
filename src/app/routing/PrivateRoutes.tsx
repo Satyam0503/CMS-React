@@ -2,8 +2,8 @@ import { lazy, Suspense, ReactNode } from "react";
 import { Route, Routes, Navigate, useParams } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
-import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
-import { ModulesName, Permission } from "../../utils/enums.ts";
+import { ProtectedRoute, UnauthorizedStay } from "../modules/users/about/components/ProtectedRoute.tsx";
+import { ModulesName, Permission, Roles } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 import { useTheme } from "@mui/material";
 import { useAppSelector } from "../Redux/hooks";
@@ -39,8 +39,17 @@ const EmployeeProfileRedirect = () => {
   return <Navigate to={employeeid ? `/employees/${employeeid}` : "/employees"} replace />;
 };
 
-const RecruitmentGuard = ({ children }: { children: ReactNode }) => {
-  const permissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+export const RecruitmentGuard = ({ children }: { children: ReactNode }) => {
+  const token = useAppSelector((state) => state.auth?.token);
+  const userData = useAppSelector((state) => state.user.userData);
+  if (token && !userData) {
+    return null;
+  }
+  const userRoleType = userData?.roleType;
+  if (userRoleType === Roles.Administrator) {
+    return <>{children}</>;
+  }
+  const permissions = userData?.modulePermission ?? [];
   const hasRecruitment = permissions.some(
     (p: string) =>
       p.startsWith("Jobs.") ||
@@ -48,7 +57,7 @@ const RecruitmentGuard = ({ children }: { children: ReactNode }) => {
       p.startsWith("Process_Log.")
   );
   if (!hasRecruitment) {
-    return <Navigate to="/unauthorize" replace />;
+    return <UnauthorizedStay />;
   }
   return <>{children}</>;
 };
@@ -154,7 +163,7 @@ const PrivateRoutes = () => {
           }
         />
         <Route path="attendance-settings" element={<ProtectedRoute adminOnly={true} module={ModulesName.Attendance}><SuspensedView><AttendanceStatusSettings /></SuspensedView></ProtectedRoute>} />
-        <Route path="recruitment-settings" element={<ProtectedRoute adminOnly={true} module={ModulesName.Jobs}><SuspensedView><RecruitmentSettings /></SuspensedView></ProtectedRoute>} />
+        <Route path="recruitment-settings" element={<Navigate to="/recruitment/settings" replace />} />
         <Route
           path="leavemanagement/*"
           element={
@@ -217,7 +226,7 @@ const PrivateRoutes = () => {
         />
         <Route
           path="/unauthorize"
-          element={<UnAuthorizedAccess type="unauthorise" />}
+          element={<UnauthorizedStay />}
         />
 
         <Route path="*" element={<Navigate to={"/error/404"} />} />

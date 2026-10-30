@@ -7,7 +7,8 @@ import Jobs from "../modules/recruitment/jobs/Jobs";
 import { Applications } from "../modules/recruitment/applications/Applications";
 import ProcessLogs from "../modules/recruitment/processlog/ProcessLog";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
-import { useEffect } from "react";
+import { useEffect, lazy } from "react";
+const RecruitmentSettings = lazy(() => import("../modules/recruitment/RecruitmentSettings"));
 import { CareerProfileAdminPage } from "../modules/careerPortal/pages/CareerProfileAdminPage";
 
 const recruitmentBreadcrumb: Array<Breadcrumb> = [
@@ -34,6 +35,11 @@ const recruitmentBreadcrumb: Array<Breadcrumb> = [
   {
     label: "PAGE.PROCESS_LOG",
     path: "/recruitment/processlog",
+    parent: "/",
+  },
+  {
+    label: "PAGE.SETTINGS",
+    path: "/recruitment/settings",
     parent: "/",
   },
 
@@ -94,6 +100,14 @@ const RecruitmentRoutes = () => {
           element={
             <ProtectedRoute module={ModulesName.CareerProfile} permission={Permission.View}>
               <CareerProfileAdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <ProtectedRoute module={ModulesName.Jobs}>
+              <RecruitmentSettings />
             </ProtectedRoute>
           }
         />

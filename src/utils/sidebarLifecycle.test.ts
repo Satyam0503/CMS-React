@@ -213,4 +213,34 @@ describe("Administrator module filtering in sidebar", () => {
       "Offboarding",
     ]);
   });
+
+  describe("Non-Administrator Role Isolation in sidebar", () => {
+    it("never shows Admin tab to an Employee even if permissions are provided", () => {
+      const employeePermissions = [
+        `${ModulesName.Employees}.View`,
+        `${ModulesName.Attendance}.View`,
+      ];
+      const tabs = filterSideBarTabs(employeePermissions, Roles.Employee);
+      const tabConstants = tabs.map((t) => t.constant);
+
+      expect(tabConstants).not.toContain(ModulesName.Admin);
+    });
+
+    it("never shows Payroll management or Payroll settings to regular employees", () => {
+      const employeePermissions = [
+        `${ModulesName.Employees}.View`,
+        `${ModulesName.Attendance}.View`,
+        `${ModulesName.PayRoll}.View`,
+        `${ModulesName.PayrollSettings}.View`,
+      ];
+      const tabs = filterSideBarTabs(employeePermissions, Roles.Employee);
+      const tabConstants = tabs.map((t) => t.constant);
+
+      const payrollTab = tabs.find((t) => t.constant === ModulesName.PayRoll);
+      const payrollSubRoutes = (payrollTab?.subTabs ?? []).map((s) => s.route);
+
+      expect(payrollSubRoutes).not.toContain("/payroll");
+      expect(payrollSubRoutes).not.toContain("/settingspayroll");
+    });
+  });
 });

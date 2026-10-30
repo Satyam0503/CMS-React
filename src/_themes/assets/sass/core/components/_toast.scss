@@ -56,7 +56,8 @@
 }
 
 .dark .app-toast.Toastify__toast,
-[data-bs-theme="dark"] .app-toast.Toastify__toast {
+[data-bs-theme="dark"] .app-toast.Toastify__toast,
+.app-toast.Toastify__toast.Toastify__toast-theme--dark {
   background: linear-gradient(135deg, rgba(26, 38, 57, .96), rgba(17, 24, 39, .96));
   border-color: rgba(255, 255, 255, .12);
   box-shadow: 0 14px 34px rgba(0, 0, 0, .45), 0 3px 10px rgba(0, 0, 0, .3);
@@ -118,8 +119,40 @@
   min-width: 0;
 }
 
+.app-toast.app-toast--notification {
+  & > .Toastify__toast-icon {
+    display: none !important;
+  }
+  grid-template-columns: minmax(0, 1fr) 24px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+
+  .Toastify__toast-body {
+    grid-column: 1;
+    align-items: flex-start;
+  }
+
+  .Toastify__close-button {
+    grid-column: 2;
+    margin-top: 2px;
+  }
+}
+
+.dark .app-toast.app-toast--notification,
+[data-bs-theme="dark"] .app-toast.app-toast--notification {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: #f8fafc;
+}
+
 .app-toast--notification .app-toast__dismiss {
-  display: block;
+  display: inline-block;
 }
 
 .app-toast .Toastify__toast-icon {

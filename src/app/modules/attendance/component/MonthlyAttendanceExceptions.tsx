@@ -256,7 +256,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
       setWfhLeaveConflictDecision("KEEP_WFH_CANCEL_LEAVE");
       return;
     }
-    const affectedDate = item.affectedDates?.[0];
+    const affectedDate = item.affectedDates?.[0] || item.attendanceDate;
     if (!affectedDate) {
       toast.error("No affected attendance date is available for this exception.");
       return;
@@ -399,7 +399,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
   };
 
   const openWfhHoursCorrection = (item: PayrollException) => {
-    const date = item.affectedDates?.[0];
+    const date = item.affectedDates?.[0] || item.attendanceDate;
     if (!date) {
       toast.error("No affected attendance date is available for this exception.");
       return;

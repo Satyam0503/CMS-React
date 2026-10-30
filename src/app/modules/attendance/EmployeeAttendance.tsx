@@ -14,6 +14,11 @@ import {
   Button,
   alpha,
   useTheme,
+  Chip,
+  Badge,
+  CircularProgress,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import {
   EventAvailable,
@@ -26,7 +31,13 @@ import {
   HistoryOutlined,
   SendRounded,
   UploadFile,
+  CheckCircleOutline,
+  HighlightOffOutlined,
+  AccessTimeOutlined,
+  CalendarToday as CalendarTodayIcon,
+  InfoOutlined,
 } from "@mui/icons-material";
+import CustomisedDatePicker from "../../shared/components/C_DatePicker";
 
 import { SearchInput } from "../../shared/components/SearchInput";
 import { AttendanceCalendarGrid } from "./component/AttendanceCalendar";
@@ -38,7 +49,7 @@ import { getAllDepartments } from "../admin/adminservices";
 
 import { AppSelect } from "../../shared/components/ui";
 import { CustomisedModal } from "../../shared/components/C_Modal";
-import { getRequest, postRequest } from "../../../server/axios";
+import { getRequest, postRequest, putRequest } from "../../../server/axios";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../Redux/hooks";
@@ -75,7 +86,11 @@ const EmployeeAttendance = () => {
   const isHrAttendanceRole = userData?.roleType === Roles.HRManager || userData?.roleType === Roles.HRExecutive;
   const hasWfhAccess = (userData?.modulePermission ?? []).some((item) => item.startsWith(`${ModulesName.WorkFromHome}.`));
   const hasAnyAttendancePermission = (userData?.modulePermission ?? []).some((item) => item.startsWith(`${ModulesName.Attendance}.`));
-  const canViewAllAttendance = isAdministrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.ViewAll, userData?.modulePermission ?? []) ||
+  const canViewAllAttendance =
+    isAdministrator ||
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.ViewAll, userData?.modulePermission ?? []) ||
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Review, userData?.modulePermission ?? []) ||
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Approve, userData?.modulePermission ?? []) ||
     (isHrAttendanceRole && hasAnyAttendancePermission);
   // Updating a row can alter payroll and must mirror the API's explicit
   // Attendance.Override requirement. Viewing or creating attendance does not
@@ -85,7 +100,9 @@ const EmployeeAttendance = () => {
     isAdministrator ||
     isHrAttendanceRole ||
     hasModuleFeaturePermission(ModulesName.Attendance, Permission.Override, userData?.modulePermission ?? []) ||
-    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Edit, userData?.modulePermission ?? []);
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Edit, userData?.modulePermission ?? []) ||
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Review, userData?.modulePermission ?? []) ||
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Approve, userData?.modulePermission ?? []);
 
   const [selectedPeriod, setSelectedPeriod] = React.useState<AttendancePeriod>("today");
   const [calendarOffset, setCalendarOffset] = React.useState(0);
@@ -138,11 +155,42 @@ const EmployeeAttendance = () => {
   const [refreshTrigger, setRefreshTrigger] = React.useState(0);
   const [correctionRequests, setCorrectionRequests] = React.useState<any[]>([]);
   const [reviewCorrection, setReviewCorrection] = React.useState<any | null>(null);
+  const [pendingCorrections, setPendingCorrections] = React.useState<any[]>([]);
+  const [pendingCorrectionQueueOpen, setPendingCorrectionQueueOpen] = React.useState(false);
+  const [resolutionNote, setResolutionNote] = React.useState("");
+  const [submittingReview, setSubmittingReview] = React.useState(false);
+  const [correctionTab, setCorrectionTab] = React.useState<"submit" | "history">("submit");
+  const [historyFilter, setHistoryFilter] = React.useState<"ALL" | "Pending" | "Approved" | "Rejected">("ALL");
   const debouncedSearch = useDebounce(searchValue, 500);
 
+  const pendingCorrectionCount = React.useMemo(
+    () => correctionRequests.filter((r) => r.status === "Pending").length,
+    [correctionRequests],
+  );
+
+  const filteredCorrectionRequests = React.useMemo(() => {
+    if (historyFilter === "ALL") return correctionRequests;
+    return correctionRequests.filter((r) => r.status === historyFilter);
+  }, [correctionRequests, historyFilter]);
+
   useEffect(() => {
-    setPageTitle("Attendance Report");
-  }, [setPageTitle]);
+    const handleReportCorrectionEvent = (e: any) => {
+      if (e.detail?.date) {
+        setCorrectionDate(e.detail.date);
+        setCorrectionTab("submit");
+        const el = document.getElementById("attendance-correction-card");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+    window.addEventListener("report-attendance-correction", handleReportCorrectionEvent);
+    return () => {
+      window.removeEventListener("report-attendance-correction", handleReportCorrectionEvent);
+    };
+  }, []);
+
+  useEffect(() => {
+    setPageTitle(canViewAllAttendance ? "Attendance Report" : "My Attendance");
+  }, [canViewAllAttendance, setPageTitle]);
 
   useEffect(() => {
     if (!canViewAllAttendance) return;
@@ -220,6 +268,24 @@ const EmployeeAttendance = () => {
     void loadMyCorrectionRequests();
   }, [loadMyCorrectionRequests]);
 
+  const loadPendingCorrectionRequests = React.useCallback(async () => {
+    if (!canViewAllAttendance) return;
+    try {
+      const response = await getRequest<{ items?: any[] }>("api/admin/attendance/correction-requests", {
+        headers: { "Cache-Control": "no-cache" },
+      });
+      setPendingCorrections(Array.isArray(response.data?.items) ? response.data.items : []);
+    } catch (error) {
+      console.error("Unable to load pending attendance correction requests", error);
+    }
+  }, [canViewAllAttendance]);
+
+  useEffect(() => {
+    if (canViewAllAttendance) {
+      void loadPendingCorrectionRequests();
+    }
+  }, [canViewAllAttendance, loadPendingCorrectionRequests, refreshTrigger]);
+
   useEffect(() => {
     const stateObj =
       location.state && typeof location.state === "object"
@@ -258,7 +324,10 @@ const EmployeeAttendance = () => {
       return;
     }
 
-    const requestId = typeof location.state === "string" ? location.state : null;
+    const rawRequestId = typeof location.state === "string" ? location.state : null;
+    const requestId = rawRequestId?.startsWith("attendance-review-")
+      ? rawRequestId.substring("attendance-review-".length)
+      : rawRequestId;
     if (!canViewAllAttendance || !requestId) return;
 
     (async () => {
@@ -332,18 +401,49 @@ const EmployeeAttendance = () => {
       setCorrectionDate("");
       setCorrectionReason("");
       await loadMyCorrectionRequests();
+      setCorrectionTab("history");
     } catch (error) {
-      const status = error instanceof AxiosError ? error.response?.status : undefined;
+      const axiosError = error as AxiosError<{ message?: string; error?: string }>;
+      const status = axiosError.response?.status;
+      const backendMsg = axiosError.response?.data?.error || axiosError.response?.data?.message;
+
       if (status === 409) {
         toast.info("A correction request for this date is already pending. See your request status below.");
         await loadMyCorrectionRequests();
+        setCorrectionTab("history");
+      } else if (backendMsg) {
+        toast.error(backendMsg);
       } else if (status === 404) {
-        toast.error("No attendance record exists for the selected date. Select a date that is shown in your attendance grid.");
+        toast.error("Employee profile not found. Please contact HR.");
       } else {
         toast.error("Unable to send the correction request. Please try again or contact HR.");
       }
     } finally {
       setSubmittingCorrection(false);
+    }
+  };
+
+  const handleReviewCorrection = async (resolution: "Approved" | "Rejected") => {
+    if (!reviewCorrection?.id) return;
+    try {
+      setSubmittingReview(true);
+      await putRequest(`api/admin/attendance/correction-requests/${reviewCorrection.id}`, {
+        resolution,
+        note: resolutionNote.trim() || undefined,
+      });
+      toast.success(`Correction request ${resolution.toLowerCase()} successfully.`);
+      setReviewCorrection(null);
+      setResolutionNote("");
+      setRefreshTrigger((prev) => prev + 1);
+      await loadPendingCorrectionRequests();
+    } catch (error: any) {
+      const errorMsg =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to process correction request.";
+      toast.error(errorMsg);
+    } finally {
+      setSubmittingReview(false);
     }
   };
 
@@ -423,7 +523,7 @@ const EmployeeAttendance = () => {
           >
             <Box>
               <Typography fontWeight={800} sx={{ color: "text.primary", fontSize: "1.05rem" }}>
-                Today’s attendance overview
+                Today's attendance overview
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
                 {todayOverview.startDate.format("dddd, DD MMMM YYYY")}
@@ -612,7 +712,7 @@ const EmployeeAttendance = () => {
                   lineHeight: 1.25,
                 }}
               >
-                Attendance Report
+                {canViewAllAttendance ? "Attendance Report" : "My Attendance"}
               </Typography>
               <Typography
                 variant="caption"
@@ -627,10 +727,10 @@ const EmployeeAttendance = () => {
               >
                 <span>
                   {selectedPeriod === "today"
-                    ? `Today · ${dateRange.startDate.format("DD MMMM YYYY")}`
+                    ? `Today \u00B7 ${dateRange.startDate.format("DD MMMM YYYY")}`
                     : selectedPeriod === "this-week"
-                    ? `Week · ${dateRange.startDate.format("DD MMM")} – ${dateRange.startDate.endOf("week").format("DD MMM YYYY")}`
-                    : `Month · ${dateRange.startDate.format("MMMM YYYY")}`}
+                    ? `Week \u00B7 ${dateRange.startDate.format("DD MMM")} \u2013 ${dateRange.startDate.endOf("week").format("DD MMM YYYY")}`
+                    : `Month \u00B7 ${dateRange.startDate.format("MMMM YYYY")}`}
                 </span>
               </Typography>
             </Box>
@@ -644,6 +744,40 @@ const EmployeeAttendance = () => {
                   "& > *": { flex: { xs: 1, sm: "initial" } },
                 }}
               >
+                {canManageAttendance && (
+                  <Button
+                    variant="outlined"
+                    startIcon={
+                      <Badge
+                        badgeContent={pendingCorrections.length}
+                        color="error"
+                        max={99}
+                        sx={{ "& .MuiBadge-badge": { fontSize: 10, height: 16, minWidth: 16 } }}
+                      >
+                        <AssignmentTurnedInOutlined />
+                      </Badge>
+                    }
+                    onClick={() => setPendingCorrectionQueueOpen(true)}
+                    sx={{
+                      height: 40,
+                      minHeight: 40,
+                      borderRadius: "10px",
+                      fontWeight: 700,
+                      fontSize: 13.5,
+                      bgcolor: "background.paper",
+                      borderColor: pendingCorrections.length > 0 ? "warning.main" : "divider",
+                      color: pendingCorrections.length > 0 ? "warning.dark" : "text.primary",
+                      whiteSpace: "nowrap",
+                      px: 2,
+                      "&:hover": {
+                        bgcolor: "action.hover",
+                        borderColor: "warning.main",
+                      },
+                    }}
+                  >
+                    Corrections {pendingCorrections.length > 0 ? `(${pendingCorrections.length})` : ""}
+                  </Button>
+                )}
                 <Button
                   variant="outlined"
                   startIcon={<DownloadOutlined />}
@@ -698,16 +832,21 @@ const EmployeeAttendance = () => {
             )}
           </Stack>
 
-          {/* Filter Toolbar: 4 cleanly aligned controls */}
+          {/* Filter Toolbar: cleanly aligned controls */}
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: {
                 xs: "1fr",
-                sm: "repeat(2, minmax(0, 1fr))",
+                sm: canViewAllAttendance
+                  ? "repeat(2, minmax(0, 1fr))"
+                  : "repeat(2, minmax(0, 1fr))",
+                md: canViewAllAttendance
+                  ? "repeat(3, minmax(0, 1fr))"
+                  : "minmax(200px, 260px) minmax(200px, 260px)",
                 lg: canViewAllAttendance
                   ? "minmax(180px, 1.4fr) minmax(130px, 0.9fr) minmax(130px, 0.9fr) minmax(150px, 1fr) minmax(150px, 1fr)"
-                  : "minmax(200px, 2fr) minmax(170px, 1fr) minmax(190px, 1fr)",
+                  : "minmax(220px, 280px) minmax(220px, 280px)",
               },
               gap: 1.5,
               alignItems: "end",
@@ -722,47 +861,49 @@ const EmployeeAttendance = () => {
               boxShadow: "none",
             }}
           >
-            <Box sx={{ minWidth: 0 }}>
-              <Stack spacing={0.6}>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: "text.secondary",
-                    fontWeight: 700,
-                    minHeight: 17,
-                    lineHeight: "17px",
-                    letterSpacing: "0.01em",
-                  }}
-                >
-                  Search employee
-                </Typography>
-                <SearchInput
-                  search={searchValue}
-                  setSearch={handleSearchChange}
-                  sx={{
-                    width: "100%",
-                    maxWidth: "none",
-                    "& .MuiOutlinedInput-root": {
-                      minHeight: 40,
-                      height: 40,
-                      borderRadius: "10px",
-                      bgcolor: "background.paper",
-                      backdropFilter: "blur(8px)",
-                      WebkitBackdropFilter: "blur(8px)",
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "divider",
+            {canViewAllAttendance && (
+              <Box sx={{ minWidth: 0 }}>
+                <Stack spacing={0.6}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      fontWeight: 700,
+                      minHeight: 17,
+                      lineHeight: "17px",
+                      letterSpacing: "0.01em",
+                    }}
+                  >
+                    Search employee
+                  </Typography>
+                  <SearchInput
+                    search={searchValue}
+                    setSearch={handleSearchChange}
+                    sx={{
+                      width: "100%",
+                      maxWidth: "none",
+                      "& .MuiOutlinedInput-root": {
+                        minHeight: 40,
+                        height: 40,
+                        borderRadius: "10px",
+                        bgcolor: "background.paper",
+                        backdropFilter: "blur(8px)",
+                        WebkitBackdropFilter: "blur(8px)",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "divider",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "text.secondary",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "primary.main",
+                        },
                       },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "text.secondary",
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "primary.main",
-                      },
-                    },
-                  }}
-                />
-              </Stack>
-            </Box>
+                    }}
+                  />
+                </Stack>
+              </Box>
+            )}
 
             <Box sx={{ minWidth: 0 }}>
               <Stack spacing={0.6}>
@@ -1006,7 +1147,7 @@ const EmployeeAttendance = () => {
               </Box>
             )}
           </Box>
-          {selectedPeriod === "this-week" && <Box sx={{ mb: 2, px: 1.5, py: 1, borderRadius: 2, bgcolor: "action.hover", color: "text.secondary", fontSize: 13, fontWeight: 700 }}>{dateRange.startDate.format("DD MMM")} – {dateRange.startDate.endOf("week").format("DD MMM YYYY")} · Full week view</Box>}
+          {selectedPeriod === "this-week" && <Box sx={{ mb: 2, px: 1.5, py: 1, borderRadius: 2, bgcolor: "action.hover", color: "text.secondary", fontSize: 13, fontWeight: 700 }}>{`${dateRange.startDate.format("DD MMM")} \u2013 ${dateRange.startDate.endOf("week").format("DD MMM YYYY")} \u00B7 Full week view`}</Box>}
           {!canViewAllAttendance && canManageAttendance && <Typography color="text.secondary" sx={{ mb: 2 }}>You can manage attendance for yourself or assigned employees.</Typography>}
 
           <Box sx={{ mb: 3 }}>
@@ -1031,76 +1172,830 @@ const EmployeeAttendance = () => {
         <Stack spacing={1}>{summaryModal?.people.length ? summaryModal.people.map((person) => <Box key={person} sx={{ px: 1.5, py: 1, borderRadius: 1, bgcolor: "action.hover" }}>{person}</Box>) : <Typography color="text.secondary">No employees match this status for the selected period.</Typography>}</Stack>
       </CustomisedModal>
 
-      <CustomisedModal open={Boolean(reviewCorrection)} handleClose={() => setReviewCorrection(null)} title="Attendance correction request" maxWidth="sm">
-        {reviewCorrection && <Stack spacing={1.5}>
-          <Box sx={{ bgcolor: "action.hover", borderRadius: 2, p: 1.5 }}>
-            <Typography variant="caption" color="text.secondary">Attendance date</Typography>
-            <Typography fontWeight={800}>{new Date(reviewCorrection.attendanceDate).toLocaleDateString()}</Typography>
+      <CustomisedModal
+        open={pendingCorrectionQueueOpen}
+        handleClose={() => setPendingCorrectionQueueOpen(false)}
+        title={
+          <Stack direction="row" spacing={1.25} alignItems="center">
+            <AssignmentTurnedInOutlined color="primary" />
+            <Typography variant="h6" fontWeight={800}>
+              Pending Attendance Corrections ({pendingCorrections.length})
+            </Typography>
+          </Stack>
+        }
+        maxWidth="md"
+        fullWidth
+      >
+        {pendingCorrections.length === 0 ? (
+          <Box sx={{ py: 5, textAlign: "center", borderRadius: 2, border: "1px dashed", borderColor: "divider" }}>
+            <CheckCircleOutline sx={{ fontSize: 44, color: "success.main", mb: 1, opacity: 0.8 }} />
+            <Typography variant="subtitle1" fontWeight={700}>
+              All caught up!
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              There are no pending attendance correction requests to review.
+            </Typography>
           </Box>
-          <Box>
-            <Typography variant="caption" color="text.secondary">Requested correction</Typography>
-            <Typography sx={{ whiteSpace: "pre-wrap" }}>{reviewCorrection.reason}</Typography>
+        ) : (
+          <Box sx={{ maxHeight: 480, overflowY: "auto", pr: 0.5 }}>
+            <Stack spacing={1.5}>
+              {pendingCorrections.map((req) => (
+                <Card
+                  key={req.id}
+                  variant="outlined"
+                  sx={{
+                    p: 2,
+                    borderRadius: 2.5,
+                    bgcolor: "background.paper",
+                    borderColor: "divider",
+                    transition: "border-color 0.2s, box-shadow 0.2s",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      boxShadow: "0 4px 14px rgba(122, 73, 190, 0.08)",
+                    },
+                  }}
+                >
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }}>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ mb: 0.75 }}>
+                        <Typography variant="subtitle2" fontWeight={800}>
+                          {req.employeeName || "Employee"}
+                        </Typography>
+                        {req.employeeId && (
+                          <Chip
+                            size="small"
+                            label={req.employeeId}
+                            variant="outlined"
+                            sx={{ height: 20, fontSize: 11, fontWeight: 700 }}
+                          />
+                        )}
+                        <Chip
+                          size="small"
+                          label={`Date: ${dayjs(req.attendanceDate).format("DD MMM YYYY")}`}
+                          color="primary"
+                          sx={{ height: 20, fontSize: 11, fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.1), color: "primary.main" }}
+                        />
+                      </Stack>
+                      <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "pre-wrap", mb: 0.5 }}>
+                        {req.reason}
+                      </Typography>
+                      {req.requestedAt && (
+                        <Typography variant="caption" color="text.secondary" sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+                          <AccessTimeOutlined sx={{ fontSize: 12 }} />
+                          Requested {dayjs(req.requestedAt).format("DD MMM YYYY, hh:mm A")}
+                        </Typography>
+                      )}
+                    </Box>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() => {
+                        setReviewCorrection(req);
+                        setPendingCorrectionQueueOpen(false);
+                      }}
+                      sx={{
+                        minWidth: 100,
+                        height: 36,
+                        borderRadius: "8px",
+                        fontWeight: 700,
+                        textTransform: "none",
+                        alignSelf: { xs: "stretch", sm: "center" },
+                      }}
+                    >
+                      Review
+                    </Button>
+                  </Stack>
+                </Card>
+              ))}
+            </Stack>
           </Box>
-          <Typography variant="body2" color="text.secondary">Review this request from the attendance correction workflow.</Typography>
-        </Stack>}
+        )}
       </CustomisedModal>
 
-      {!canViewAllAttendance && <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
-        <Card sx={{ p: { xs: 2, sm: 2.5, md: 3 }, borderRadius: 3, border: "1px solid", borderColor: alpha(theme.palette.primary.main, 0.18), boxShadow: "0 12px 32px rgba(71, 46, 117, 0.10)", background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.06)}, transparent 45%)` }}>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ xs: "flex-start", sm: "center" }} justifyContent="space-between" sx={{ mb: 2.5 }}>
-            <Stack direction="row" spacing={1.25} alignItems="center">
-              <Box sx={{ width: 42, height: 42, borderRadius: 2, display: "grid", placeItems: "center", color: "primary.main", bgcolor: "background.paper", boxShadow: "0 4px 12px rgba(71, 46, 117, 0.12)" }}><AssignmentTurnedInOutlined /></Box>
-              <Box>
-                <Typography variant="h6" fontWeight={800}>Report incorrect attendance</Typography>
-                <Typography variant="body2" color="text.secondary">Send a correction request for HR or Admin review.</Typography>
-              </Box>
-            </Stack>
-            <Box sx={{ px: 1.25, py: 0.75, borderRadius: 2, bgcolor: "action.hover", color: "text.secondary", fontSize: 12, fontWeight: 700 }}>Attendance stays unchanged until reviewed</Box>
+      <CustomisedModal
+        open={Boolean(reviewCorrection)}
+        handleClose={() => {
+          if (!submittingReview) {
+            setReviewCorrection(null);
+            setResolutionNote("");
+          }
+        }}
+        title={
+          <Stack direction="row" spacing={1} alignItems="center">
+            <AssignmentTurnedInOutlined color="primary" />
+            <Typography variant="h6" fontWeight={800}>
+              Review Attendance Correction
+            </Typography>
           </Stack>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1.35fr) minmax(280px, 0.65fr)" }, gap: { xs: 2.5, lg: 3 } }}>
-          <Box component="form" onSubmit={(event) => { event.preventDefault(); void submitCorrection(); }}>
-          <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 0.5 }}>Request details</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Include the date and a short, specific description for a faster review.</Typography>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" }, gap: 1.75 }}>
-            <TextField fullWidth label="Attendance date" type="date" value={correctionDate} onChange={(e) => setCorrectionDate(e.target.value)} InputLabelProps={{ shrink: true }} inputProps={{ max: new Date().toISOString().slice(0, 10) }} />
-            <TextField fullWidth select label="Issue type" value={correctionType} onChange={(e) => setCorrectionType(e.target.value)}>
-              <MenuItem value="Incorrect status">Incorrect status</MenuItem>
-              <MenuItem value="Missing check-in">Missing punch in</MenuItem>
-              <MenuItem value="Missing check-out">Missing punch out</MenuItem>
-              <MenuItem value="Incorrect working hours">Incorrect working hours</MenuItem>
-              <MenuItem value="Other">Other</MenuItem>
-            </TextField>
-            <TextField fullWidth sx={{ gridColumn: { xs: "auto", sm: "1 / -1" } }} label="Describe the correction needed" placeholder="For example: I checked in at 9:15 AM, but the status shows absent." value={correctionReason} onChange={(e) => setCorrectionReason(e.target.value)} multiline minRows={5} helperText={`${correctionReason.length}/1000 characters`} inputProps={{ maxLength: 1000 }} />
-          </Box>
-          <Box sx={{ display: "flex", justifyContent: { xs: "stretch", sm: "flex-end" }, mt: 2 }}>
-            <Button type="submit" variant="contained" size="large" startIcon={<SendRounded />} disabled={submittingCorrection} sx={{ minHeight: 46, px: { xs: 2, sm: 3 }, width: { xs: "100%", sm: "auto" }, borderRadius: 2, boxShadow: "0 8px 18px rgba(122, 73, 190, 0.28)" }}>{submittingCorrection ? "Sending request..." : "Send correction request"}</Button>
-          </Box>
-          </Box>
-          <Box sx={{ p: { xs: 1.5, sm: 2 }, border: "1px solid", borderColor: alpha(theme.palette.primary.main, 0.16), borderRadius: 2.5, bgcolor: alpha(theme.palette.primary.main, 0.035), minWidth: 0 }}>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-              <HistoryOutlined color="primary" fontSize="small" />
-              <Typography variant="subtitle1" fontWeight={800}>My requests</Typography>
-              <Box sx={{ ml: "auto", px: 0.9, py: 0.25, borderRadius: 99, bgcolor: alpha(theme.palette.primary.main, 0.12), color: "primary.main", fontSize: 12, fontWeight: 800 }}>{correctionRequests.length}</Box>
-            </Stack>
-          {correctionRequests.length > 0 ? (
-            <Box sx={{ maxHeight: { xs: "none", lg: 310 }, overflowY: "auto", pr: { lg: 0.5 } }}>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Recent correction requests</Typography>
-              <Stack spacing={1}>
-                {correctionRequests.map((request) => (
-                  <Box key={request.id} sx={{ p: 1.35, border: "1px solid", borderColor: "divider", borderRadius: 2, bgcolor: "background.paper" }}>
-                    <Typography variant="body2" fontWeight={700}>
-                      {new Date(request.attendanceDate).toLocaleDateString()} — {request.status}
+        }
+        maxWidth="sm"
+        fullWidth
+      >
+        {reviewCorrection && (
+          <Stack spacing={2.5}>
+            <Box sx={{ p: 2, bgcolor: "action.hover", borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
+              <Grid container spacing={1.5}>
+                {reviewCorrection.employeeName && (
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <Typography variant="caption" color="text.secondary">Employee</Typography>
+                    <Typography variant="body2" fontWeight={800}>
+                      {reviewCorrection.employeeName} {reviewCorrection.employeeId ? `(${reviewCorrection.employeeId})` : ""}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">{request.reason}</Typography>
-                  </Box>
-                ))}
-              </Stack>
+                  </Grid>
+                )}
+                <Grid size={{ xs: 12, sm: reviewCorrection.employeeName ? 6 : 12 }}>
+                  <Typography variant="caption" color="text.secondary">Attendance Date</Typography>
+                  <Typography variant="body2" fontWeight={800}>
+                    {dayjs(reviewCorrection.attendanceDate).format("dddd, DD MMMM YYYY")}
+                  </Typography>
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <Typography variant="caption" color="text.secondary">Requested Issue / Reason</Typography>
+                  <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", mt: 0.5, fontWeight: 500 }}>
+                    {reviewCorrection.reason}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Box>
-          ) : <Box sx={{ py: 3, textAlign: "center", borderRadius: 2, border: "1px dashed", borderColor: "divider" }}><Typography variant="body2" color="text.secondary">No correction requests yet.</Typography></Box>}
-          </Box>
-          </Box>
-        </Card>
-      </Grid>}
+
+            <Box>
+              <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
+                Resolution Note (Optional)
+              </Typography>
+              <TextField
+                fullWidth
+                multiline
+                minRows={3}
+                placeholder="Reason or remarks for approval or rejection..."
+                value={resolutionNote}
+                onChange={(e) => setResolutionNote(e.target.value)}
+                disabled={submittingReview}
+              />
+            </Box>
+
+            <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: alpha(theme.palette.info.main, 0.08), border: "1px solid", borderColor: alpha(theme.palette.info.main, 0.2) }}>
+              <Typography variant="caption" color="info.dark" sx={{ display: "block", fontWeight: 600 }}>
+                • Approving will mark attendance as Present (P) with standard shift punch times.
+              </Typography>
+              <Typography variant="caption" color="info.dark" sx={{ display: "block", fontWeight: 600 }}>
+                • Monthly penalties are automatically recalculated and payroll readiness is unblocked.
+              </Typography>
+            </Box>
+
+            <Stack direction="row" spacing={1.5} justifyContent="flex-end" sx={{ pt: 1, borderTop: "1px solid", borderColor: "divider" }}>
+              <Button
+                variant="outlined"
+                color="inherit"
+                onClick={() => {
+                  setReviewCorrection(null);
+                  setResolutionNote("");
+                }}
+                disabled={submittingReview}
+                sx={{ borderRadius: "8px" }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => handleReviewCorrection("Rejected")}
+                disabled={submittingReview}
+                startIcon={submittingReview ? <CircularProgress size={16} color="inherit" /> : <HighlightOffOutlined />}
+                sx={{ borderRadius: "8px", fontWeight: 700 }}
+              >
+                Reject
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => handleReviewCorrection("Approved")}
+                disabled={submittingReview}
+                startIcon={submittingReview ? <CircularProgress size={16} color="inherit" /> : <CheckCircleOutline />}
+                sx={{
+                  borderRadius: "8px",
+                  fontWeight: 700,
+                  bgcolor: "success.main",
+                  color: "#FFFFFF",
+                  "&:hover": { bgcolor: "success.dark" },
+                }}
+              >
+                Approve & Regularize
+              </Button>
+            </Stack>
+          </Stack>
+        )}
+      </CustomisedModal>
+
+      {!canViewAllAttendance && (
+        <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
+          <Card
+            id="attendance-correction-card"
+            sx={{
+              p: { xs: 2, sm: 2.5, md: 3 },
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: alpha(theme.palette.primary.main, 0.16),
+              boxShadow: (t) =>
+                t.palette.mode === "dark"
+                  ? "0 10px 30px 0 rgba(0, 0, 0, 0.45)"
+                  : "0 12px 32px rgba(71, 46, 117, 0.08)",
+              bgcolor: "background.paper",
+              backdropFilter: "blur(20px)",
+              overflow: "hidden",
+            }}
+          >
+            {/* Header: Title, Subtitle, and Segmented Navigation Tabs */}
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              alignItems={{ xs: "flex-start", sm: "center" }}
+              justifyContent="space-between"
+              sx={{
+                pb: 2,
+                borderBottom: "1px solid",
+                borderColor: "divider",
+                mb: 2.5,
+              }}
+            >
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 2,
+                    display: "grid",
+                    placeItems: "center",
+                    color: "primary.main",
+                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    border: "1px solid",
+                    borderColor: alpha(theme.palette.primary.main, 0.2),
+                    flexShrink: 0,
+                  }}
+                >
+                  <AssignmentTurnedInOutlined sx={{ fontSize: 22 }} />
+                </Box>
+                <Box>
+                  <Typography variant="h6" fontWeight={800} sx={{ lineHeight: 1.25, fontSize: "1.05rem" }}>
+                    Attendance Correction
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.825rem", mt: 0.25 }}>
+                    Request regularization for missed punches or attendance discrepancies
+                  </Typography>
+                </Box>
+              </Stack>
+
+              {/* Segmented Pill Tabs */}
+              <Tabs
+                value={correctionTab}
+                onChange={(_, val) => setCorrectionTab(val)}
+                sx={{
+                  minHeight: 38,
+                  bgcolor: (t) => t.palette.mode === "dark" ? "rgba(255, 255, 255, 0.05)" : "#f1f5f9",
+                  p: 0.5,
+                  borderRadius: "10px",
+                  border: "1px solid",
+                  borderColor: "divider",
+                  width: { xs: "100%", sm: "auto" },
+                  "& .MuiTabs-indicator": {
+                    display: "none",
+                  },
+                  "& .MuiTab-root": {
+                    minHeight: 30,
+                    py: 0.5,
+                    px: 1.75,
+                    borderRadius: "8px",
+                    fontSize: "0.825rem",
+                    fontWeight: 700,
+                    textTransform: "none",
+                    color: "text.secondary",
+                    transition: "all 0.18s ease",
+                    flex: { xs: 1, sm: "initial" },
+                    "&.Mui-selected": {
+                      color: "primary.main",
+                      bgcolor: "background.paper",
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+                    },
+                  },
+                }}
+              >
+                <Tab
+                  value="submit"
+                  icon={<SendRounded sx={{ fontSize: 15 }} />}
+                  iconPosition="start"
+                  label="Report Issue"
+                />
+                <Tab
+                  value="history"
+                  icon={<HistoryOutlined sx={{ fontSize: 16 }} />}
+                  iconPosition="start"
+                  label={
+                    <Stack direction="row" spacing={0.75} alignItems="center">
+                      <span>My Requests</span>
+                      {correctionRequests.length > 0 && (
+                        <Chip
+                          size="small"
+                          label={correctionRequests.length}
+                          sx={{
+                            height: 18,
+                            fontSize: "0.7rem",
+                            fontWeight: 800,
+                            bgcolor:
+                              pendingCorrectionCount > 0
+                                ? alpha(theme.palette.warning.main, 0.16)
+                                : alpha(theme.palette.primary.main, 0.12),
+                            color:
+                              pendingCorrectionCount > 0
+                                ? "warning.dark"
+                                : "primary.main",
+                          }}
+                        />
+                      )}
+                    </Stack>
+                  }
+                />
+              </Tabs>
+            </Stack>
+
+            {/* TAB 1: Submit Correction Form */}
+            {correctionTab === "submit" && (
+              <Box
+                component="form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void submitCorrection();
+                }}
+              >
+                {/* Minimal 1-line guidance banner */}
+                <Box
+                  sx={{
+                    px: 1.75,
+                    py: 1.25,
+                    mb: 2.5,
+                    borderRadius: 2,
+                    bgcolor: (t) => t.palette.mode === "dark" ? "rgba(14, 165, 233, 0.08)" : "#f0f9ff",
+                    border: "1px solid",
+                    borderColor: (t) => t.palette.mode === "dark" ? "rgba(14, 165, 233, 0.22)" : "#bae6fd",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.25,
+                  }}
+                >
+                  <InfoOutlined sx={{ fontSize: 18, color: "#0284c7", flexShrink: 0 }} />
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontSize: "0.825rem",
+                      color: (t) => t.palette.mode === "dark" ? "#e0f2fe" : "#0369a1",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    Approved corrections automatically regularize the day to Present with shift timings and recalculate monthly hours.
+                  </Typography>
+                </Box>
+
+                <Grid container spacing={2}>
+                  {/* Attendance Date (Balanced 50/50 on sm+) */}
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <CustomisedDatePicker
+                      label="Attendance date"
+                      value={correctionDate ? dayjs(correctionDate) : null}
+                      setValue={(date) =>
+                        setCorrectionDate(date ? date.format("YYYY-MM-DD") : "")
+                      }
+                      maxDate={dayjs()}
+                      format="DD/MM/YYYY"
+                      clearable
+                      required
+                    />
+                  </Grid>
+
+                  {/* Issue Type */}
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      select
+                      size="small"
+                      label="Issue type"
+                      value={correctionType}
+                      onChange={(e) => setCorrectionType(e.target.value)}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          height: 40,
+                          bgcolor: "background.paper",
+                        },
+                      }}
+                    >
+                      <MenuItem value="Incorrect status">Incorrect status (marked absent)</MenuItem>
+                      <MenuItem value="Missing check-in">Missing punch in</MenuItem>
+                      <MenuItem value="Missing check-out">Missing punch out</MenuItem>
+                      <MenuItem value="Incorrect working hours">Incorrect working hours</MenuItem>
+                      <MenuItem value="Half day regularization">Half day regularization</MenuItem>
+                      <MenuItem value="Other">Other discrepancy</MenuItem>
+                    </TextField>
+                  </Grid>
+
+                  {/* Quick Reason Suggestions */}
+                  <Grid size={{ xs: 12 }}>
+                    <Stack spacing={0.75}>
+                      <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                        Quick reason tags (click to add):
+                      </Typography>
+                      <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ gap: 0.75 }}>
+                        {[
+                          "Forgot to punch in at shift start",
+                          "Biometric device did not register fingerprint",
+                          "Forgot to punch out before leaving",
+                          "On-site client meeting during shift hours",
+                          "System error marked absent while present",
+                        ].map((preset) => (
+                          <Chip
+                            key={preset}
+                            label={preset}
+                            size="small"
+                            variant="outlined"
+                            onClick={() => {
+                              setCorrectionReason((prev) =>
+                                prev.trim() ? `${prev.trim()}\n${preset}.` : `${preset}.`
+                              );
+                            }}
+                            sx={{
+                              borderRadius: "16px",
+                              cursor: "pointer",
+                              fontSize: "0.76rem",
+                              height: 26,
+                              borderColor: "divider",
+                              bgcolor: (t) => t.palette.mode === "dark" ? "rgba(255, 255, 255, 0.03)" : "#f8fafc",
+                              transition: "all 0.15s ease",
+                              "&:hover": {
+                                borderColor: "primary.main",
+                                bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
+                                color: "primary.main",
+                              },
+                            }}
+                          />
+                        ))}
+                      </Stack>
+                    </Stack>
+                  </Grid>
+
+                  {/* Description Textarea */}
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      fullWidth
+                      multiline
+                      minRows={3}
+                      label="Describe the correction needed"
+                      placeholder="Briefly explain the reason for regularization (e.g. biometric machine was offline at 9:30 AM)..."
+                      value={correctionReason}
+                      onChange={(e) => setCorrectionReason(e.target.value)}
+                      helperText={`${correctionReason.length}/1000 characters`}
+                      inputProps={{ maxLength: 1000 }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          bgcolor: "background.paper",
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+
+                {/* Form Action Footer */}
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={2}
+                  alignItems={{ xs: "stretch", sm: "center" }}
+                  justifyContent="space-between"
+                  sx={{ mt: 2.5, pt: 2, borderTop: "1px solid", borderColor: "divider" }}
+                >
+                  <Typography variant="caption" color="text.secondary">
+                    * Submitting notifies HR Manager for review. Attendance stays unchanged until approved.
+                  </Typography>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={
+                      submittingCorrection || !correctionDate || !correctionReason.trim()
+                    }
+                    startIcon={
+                      submittingCorrection ? (
+                        <CircularProgress size={16} color="inherit" />
+                      ) : (
+                        <SendRounded sx={{ fontSize: 18 }} />
+                      )
+                    }
+                    sx={{
+                      minHeight: 40,
+                      px: 3,
+                      borderRadius: 2,
+                      fontWeight: 700,
+                      textTransform: "none",
+                      boxShadow: "0 4px 14px rgba(11, 92, 171, 0.25)",
+                    }}
+                  >
+                    {submittingCorrection ? "Submitting..." : "Submit Request"}
+                  </Button>
+                </Stack>
+              </Box>
+            )}
+
+            {/* TAB 2: Request History & Status */}
+            {correctionTab === "history" && (
+              <Box>
+                {/* Status Filter Chips */}
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={1.5}
+                  alignItems={{ xs: "flex-start", sm: "center" }}
+                  justifyContent="space-between"
+                  sx={{ mb: 2 }}
+                >
+                  <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ gap: 0.75 }}>
+                    {(["ALL", "Pending", "Approved", "Rejected"] as const).map((filter) => {
+                      const count =
+                        filter === "ALL"
+                          ? correctionRequests.length
+                          : correctionRequests.filter((r) => r.status === filter).length;
+                      const isSelected = historyFilter === filter;
+                      return (
+                        <Chip
+                          key={filter}
+                          label={`${filter === "ALL" ? "All Requests" : filter} (${count})`}
+                          size="small"
+                          onClick={() => setHistoryFilter(filter)}
+                          variant={isSelected ? "filled" : "outlined"}
+                          color={
+                            filter === "Approved"
+                              ? "success"
+                              : filter === "Rejected"
+                              ? "error"
+                              : filter === "Pending"
+                              ? "warning"
+                              : "primary"
+                          }
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "0.78rem",
+                            height: 28,
+                            borderRadius: "16px",
+                            cursor: "pointer",
+                          }}
+                        />
+                      );
+                    })}
+                  </Stack>
+
+                  <Typography variant="caption" color="text.secondary">
+                    Showing {filteredCorrectionRequests.length} of {correctionRequests.length} requests
+                  </Typography>
+                </Stack>
+
+                {filteredCorrectionRequests.length > 0 ? (
+                  <Grid container spacing={2}>
+                    {filteredCorrectionRequests.map((request) => {
+                      const isApproved = request.status === "Approved";
+                      const isRejected = request.status === "Rejected";
+                      const isPending = request.status === "Pending";
+
+                      return (
+                        <Grid key={request.id} size={{ xs: 12, md: 6 }}>
+                          <Card
+                            variant="outlined"
+                            sx={{
+                              p: 2,
+                              borderRadius: 2.5,
+                              bgcolor: "background.paper",
+                              borderColor: isApproved
+                                ? alpha(theme.palette.success.main, 0.3)
+                                : isRejected
+                                ? alpha(theme.palette.error.main, 0.3)
+                                : alpha(theme.palette.warning.main, 0.4),
+                              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                              display: "flex",
+                              flexDirection: "column",
+                              height: "100%",
+                              transition: "transform 0.18s ease, box-shadow 0.18s ease",
+                              "&:hover": {
+                                transform: "translateY(-2px)",
+                                boxShadow: "0 6px 18px rgba(0, 0, 0, 0.08)",
+                              },
+                            }}
+                          >
+                            {/* Card Header: Date & Status Badge */}
+                            <Stack
+                              direction="row"
+                              justifyContent="space-between"
+                              alignItems="center"
+                              sx={{ mb: 1.5 }}
+                            >
+                              <Stack direction="row" spacing={1} alignItems="center">
+                                <CalendarTodayIcon
+                                  fontSize="small"
+                                  sx={{ color: "primary.main", fontSize: 16 }}
+                                />
+                                <Typography variant="subtitle2" fontWeight={800} sx={{ fontSize: "0.875rem" }}>
+                                  {dayjs(request.attendanceDate).format("dddd, DD MMMM YYYY")}
+                                </Typography>
+                              </Stack>
+                              <Chip
+                                size="small"
+                                icon={
+                                  isApproved ? (
+                                    <CheckCircleOutline sx={{ fontSize: "14px !important" }} />
+                                  ) : isRejected ? (
+                                    <HighlightOffOutlined sx={{ fontSize: "14px !important" }} />
+                                  ) : (
+                                    <AccessTimeOutlined sx={{ fontSize: "14px !important" }} />
+                                  )
+                                }
+                                label={
+                                  isApproved
+                                    ? "Approved"
+                                    : isRejected
+                                    ? "Rejected"
+                                    : "Pending Review"
+                                }
+                                color={
+                                  isApproved
+                                    ? "success"
+                                    : isRejected
+                                    ? "error"
+                                    : "warning"
+                                }
+                                variant={isPending ? "outlined" : "filled"}
+                                sx={{
+                                  height: 22,
+                                  fontSize: "0.72rem",
+                                  fontWeight: 800,
+                                  borderRadius: "12px",
+                                }}
+                              />
+                            </Stack>
+
+                            {/* Card Body: Reason */}
+                            <Box sx={{ mb: 1.5, flex: 1 }}>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                fontWeight={700}
+                                sx={{ display: "block", mb: 0.5, fontSize: "0.75rem" }}
+                              >
+                                Requested Correction:
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  whiteSpace: "pre-wrap",
+                                  color: "text.primary",
+                                  fontSize: "0.825rem",
+                                  lineHeight: 1.5,
+                                  p: 1.25,
+                                  borderRadius: 1.5,
+                                  bgcolor: (t) => t.palette.mode === "dark" ? "rgba(255, 255, 255, 0.03)" : "#f8fafc",
+                                  border: "1px solid",
+                                  borderColor: (t) => t.palette.mode === "dark" ? "rgba(255, 255, 255, 0.06)" : "rgba(226, 232, 240, 0.8)",
+                                }}
+                              >
+                                {request.reason}
+                              </Typography>
+                            </Box>
+
+                            {/* HR Resolution Note */}
+                            {request.resolutionNote && (
+                              <Box
+                                sx={{
+                                  mt: "auto",
+                                  mb: 1.5,
+                                  p: 1.25,
+                                  borderRadius: 1.5,
+                                  bgcolor: isApproved
+                                    ? alpha(theme.palette.success.main, 0.08)
+                                    : alpha(theme.palette.error.main, 0.08),
+                                  border: "1px solid",
+                                  borderColor: isApproved
+                                    ? alpha(theme.palette.success.main, 0.25)
+                                    : alpha(theme.palette.error.main, 0.25),
+                                }}
+                              >
+                                <Typography
+                                  variant="caption"
+                                  fontWeight={800}
+                                  color={isApproved ? "success.dark" : "error.dark"}
+                                  sx={{ display: "block", fontSize: "0.75rem" }}
+                                >
+                                  HR Resolution Note:
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    fontSize: "0.8rem",
+                                    color: "text.primary",
+                                    mt: 0.25,
+                                    whiteSpace: "pre-wrap",
+                                  }}
+                                >
+                                  {request.resolutionNote}
+                                </Typography>
+                              </Box>
+                            )}
+
+                            {/* Card Footer: Timestamps */}
+                            <Stack
+                              direction="row"
+                              justifyContent="space-between"
+                              alignItems="center"
+                              sx={{
+                                pt: 1,
+                                borderTop: "1px dashed",
+                                borderColor: "divider",
+                              }}
+                            >
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ fontSize: "0.72rem" }}
+                              >
+                                {request.createdAtUtc
+                                  ? `Submitted on ${dayjs(request.createdAtUtc).format("DD MMM YYYY, hh:mm A")}`
+                                  : "Submitted recently"}
+                              </Typography>
+                              {request.reviewedAtUtc && (
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                  sx={{ fontSize: "0.72rem", fontWeight: 600 }}
+                                >
+                                  Reviewed on {dayjs(request.reviewedAtUtc).format("DD MMM YYYY, hh:mm A")}
+                                </Typography>
+                              )}
+                            </Stack>
+                          </Card>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                ) : (
+                  <Box
+                    sx={{
+                      py: 5,
+                      px: 2,
+                      textAlign: "center",
+                      borderRadius: 3,
+                      border: "1px dashed",
+                      borderColor: (t) =>
+                        t.palette.mode === "dark"
+                          ? "rgba(255, 255, 255, 0.12)"
+                          : "rgba(203, 213, 225, 0.8)",
+                      bgcolor: (t) =>
+                        t.palette.mode === "dark"
+                          ? "rgba(255, 255, 255, 0.02)"
+                          : "#f8fafc",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: "50%",
+                        display: "grid",
+                        placeItems: "center",
+                        mx: "auto",
+                        mb: 1.25,
+                        bgcolor: alpha(theme.palette.primary.main, 0.08),
+                        color: "primary.main",
+                      }}
+                    >
+                      <HistoryOutlined sx={{ fontSize: 24 }} />
+                    </Box>
+                    <Typography variant="subtitle1" fontWeight={700} sx={{ fontSize: "0.95rem" }}>
+                      {historyFilter === "ALL"
+                        ? "No attendance correction requests yet"
+                        : `No ${historyFilter.toLowerCase()} correction requests`}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ maxWidth: 420, mx: "auto", mt: 0.5, mb: 2, fontSize: "0.825rem" }}
+                    >
+                      {historyFilter === "ALL"
+                        ? "If you notice an incorrect status or missed punches, submit a request to get it regularized."
+                        : `You do not have any requests with "${historyFilter}" status at this time.`}
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<SendRounded sx={{ fontSize: 16 }} />}
+                      onClick={() => setCorrectionTab("submit")}
+                      sx={{ borderRadius: "8px", fontWeight: 700, textTransform: "none", px: 2 }}
+                    >
+                      Submit Correction Request
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Card>
+        </Grid>
+      )}
 
       <ImportAttendanceModal
         open={importModalOpen}

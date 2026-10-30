@@ -30,9 +30,9 @@ export const UpcomingAnniversaries = ({
         : false;
 
   const list: CelebrationModule[] =
-    anniversaries !== undefined
+    Array.isArray(anniversaries)
       ? anniversaries
-      : query.data?.success
+      : query.data?.success && Array.isArray(query.data.methodResult?.workAnniversary)
         ? query.data.methodResult.workAnniversary
         : [];
 

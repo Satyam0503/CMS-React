@@ -20,9 +20,12 @@ export const UpComingHolidayAndEvents = () => {
   const isDark = useIsDark();
   const { formatMessage: i } = useIntl();
   const { data, isPending: isLoading } = useUpcomingEventsQuery();
-  const holidayandEvent: UpComingHolidayAndEventModel = data?.success
-    ? data.methodResult
-    : { holiday: [], event: [] };
+  const holidayandEvent: UpComingHolidayAndEventModel = {
+    holiday: data?.success && Array.isArray(data.methodResult?.holiday) ? data.methodResult.holiday : [],
+    event: data?.success && Array.isArray(data.methodResult?.event) ? data.methodResult.event : [],
+  };
+
+
 
   if (isLoading) {
     return <CardSkeleton />;

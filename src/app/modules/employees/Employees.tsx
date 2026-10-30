@@ -31,7 +31,7 @@ import {
   canAccessHrManagement,
 } from "../../../utils/common";
 import { CustomIconButton } from "../../shared/components/C_IconButton";
-import { ModulesName, Permission } from "../../../utils/enums";
+import { ModulesName, Permission, Roles } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
@@ -69,7 +69,9 @@ const useEmployeeTableColumnList = (canManageLifecycle = false, onLifecycleSaved
     const { formatMessage: i } = useIntl();
     const modulePermission =
       useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
-    const canInviteEmployee = hasModuleFeaturePermission(
+    const userRoleType = useAppSelector((state) => state.user.userData?.roleType);
+    const isAdministrator = userRoleType === Roles.Administrator;
+    const canInviteEmployee = isAdministrator || hasModuleFeaturePermission(
       ModulesName.Employees,
       Permission.Create,
       modulePermission,
@@ -281,7 +283,7 @@ const Employees = () => {
     : "Active";
   const totalAppliedFilter = countAppliedFilter(employeeFilters);
   const canManageLifecycle = canAccessHrManagement(userRoleType)
-    && userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Edit}`);
+    && (userRoleType === Roles.Administrator || userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Edit}`));
   const columns = useEmployeeTableColumnList(canManageLifecycle, () => setRefresh((value) => !value));
 
   const handlePaginationModelChange = (model: GridPaginationModel) => {
@@ -508,7 +510,7 @@ const Employees = () => {
                 />
               </Badge>
             </Stack>
-            {userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`) && (
+            {(userRoleType === Roles.Administrator || userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`)) && (
               <Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="nowrap" sx={{ width: "auto", flexShrink: 0 }}>
                 <AppButton aria-label="Bulk import employees" title="Bulk import employees" variant="outlined" size="small" startIcon={<UploadFile />} onClick={() => setShowBulkImportModal(true)} sx={{ minHeight: 38, minWidth: { xs: 40, sm: 0 }, borderRadius: 2, px: { xs: 1, sm: 1.5 }, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: "0 0 auto", whiteSpace: "nowrap", "& .MuiButton-startIcon": { mr: { xs: 0, sm: 1 } } }}><Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Bulk Import</Box></AppButton>
                 <AppButton aria-label="Bulk export employees" title="Bulk export employees" variant="outlined" size="small" startIcon={isExporting ? <CircularProgress size={16} /> : <FileDownload />} onClick={handleBulkExport} disabled={isExporting || totalRecords === 0} sx={{ minHeight: 38, minWidth: { xs: 40, sm: 0 }, borderRadius: 2, px: { xs: 1, sm: 1.5 }, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: "0 0 auto", whiteSpace: "nowrap", "& .MuiButton-startIcon": { mr: { xs: 0, sm: 1 } } }}><Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Bulk Export</Box></AppButton>

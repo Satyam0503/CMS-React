@@ -253,6 +253,17 @@ export const OfficeSchedule = () => {
       .finally(() => setLoading(false));
   }, [loadSchedules]);
 
+  const loadDepartmentAssignments = useCallback(async () => {
+    try {
+      const response = await getRequest<any>("api/CompanyMaster/DepartmentOfficeScheduleAssignments");
+      if (response?.data?.success) {
+        setDepartmentAssignments(response.data.methodResults ?? []);
+      }
+    } catch {
+      // Non-blocking
+    }
+  }, []);
+
   useEffect(() => {
     Promise.all([
       getRequest<any>("api/CompanyMaster/GetDepartmentList?isActive=true"),
@@ -370,7 +381,8 @@ export const OfficeSchedule = () => {
       setExpanded(false);
       await new Promise((resolve) => window.setTimeout(resolve, 220));
       setSchedules((current) => current.filter((schedule) => schedule.scheduleId !== selected.scheduleId));
-      await loadSchedules();
+      setDepartmentAssignments((current) => current.filter((assignment) => assignment.scheduleId !== selected.scheduleId));
+      await Promise.all([loadSchedules(), loadDepartmentAssignments()]);
       toast.success("Office schedule deleted.");
     } catch (error: any) {
       const message = error?.response?.data?.message || error?.message;
@@ -1273,7 +1285,7 @@ export const OfficeSchedule = () => {
           open
           confirming={deleting}
           title={`Delete ${schedulePendingDelete.name}?`}
-          content="This shift will be permanently removed. Employees assigned to this shift should be reassigned to another shift. Default shifts cannot be deleted."
+          content="This shift will be permanently removed. Any employees or departments currently assigned to this shift will automatically fall back to the default shift. Default shifts cannot be deleted."
           handleClose={() => !deleting && setSchedulePendingDelete(null)}
           handleConfirmation={() => void deleteSchedule()}
         />

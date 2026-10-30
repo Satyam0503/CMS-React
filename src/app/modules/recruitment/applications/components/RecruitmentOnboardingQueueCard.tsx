@@ -96,7 +96,7 @@ export default function RecruitmentOnboardingQueueCard({
             {items.slice(0, 8).map((item) => {
               const candidate = applicantLookup?.[item.applicantId];
               const displayName =
-                candidate?.fullName || `Candidate #${item.applicantId.slice(-6).toUpperCase()}`;
+                item.applicantName || candidate?.fullName || `Candidate #${item.applicantId.slice(-6).toUpperCase()}`;
               const subtitle = item.firstBlockingTaskTitle
                 ? `Next step: ${item.firstBlockingTaskTitle}`
                 : "All onboarding tasks completed";
@@ -104,7 +104,7 @@ export default function RecruitmentOnboardingQueueCard({
               return (
                 <Tooltip
                   key={item.caseId}
-                  title={`Case ID: ${item.caseId} · Applicant ID: ${item.applicantId}`}
+                  title={item.email || candidate?.email ? `${item.email || candidate?.email} (Case: ${item.caseId})` : `Case ID: ${item.caseId} · Applicant ID: ${item.applicantId}`}
                   placement="top"
                   arrow
                 >

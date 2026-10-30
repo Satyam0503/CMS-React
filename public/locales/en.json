@@ -335,7 +335,7 @@
     "TOTAL_SUBMISSION": "Total Submissions"
   },
   "APPLICATION": {
-    "UPDATE_APPLICANT": "Update Appliant Details",
+    "UPDATE_APPLICANT": "Update Applicant Details",
     "SELECT_STATE": "Select State",
     "CUSTOMISE_EXPERIENCE": "Customized experience",
     "EXP_IN_YEAR": "Experience in Years",
@@ -379,7 +379,7 @@
     "APPLICANT_DETAILS": "Applicant Details",
     "MIN_EXP": "Min. Experience",
     "MAX_EXP": "Max. Experience",
-    "STATUS_LABEL": "Appliant Status",
+    "STATUS_LABEL": "Applicant Status",
     "ADD_APPLICANT": "Add New Applicant",
     "STATUS": {
       "ACTIVE": "Active",

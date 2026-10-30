@@ -95,15 +95,15 @@ export default function RecruitmentPreboardingQueueCard({
             {items.slice(0, 8).map((item) => {
               const candidate = applicantLookup?.[item.applicantId];
               const displayName =
-                candidate?.fullName || `Candidate #${item.applicantId.slice(-6).toUpperCase()}`;
-              const subtitle = candidate?.vacancyName
-                ? `${candidate.vacancyName} · ${item.firstBlockerCode || "All tasks clear"}`
+                item.applicantName || candidate?.fullName || `Candidate #${item.applicantId.slice(-6).toUpperCase()}`;
+              const subtitle = (item.vacancyName || candidate?.vacancyName)
+                ? `${item.vacancyName || candidate?.vacancyName} · ${item.firstBlockerCode || "All tasks clear"}`
                 : `${item.ownerUserId || "HR Team"} · ${item.firstBlockerCode || "All tasks clear"}`;
 
               return (
                 <Tooltip
                   key={item.caseId}
-                  title={`Applicant ID: ${item.applicantId}`}
+                  title={item.email || candidate?.email ? `${item.email || candidate?.email} (ID: ${item.applicantId})` : `Applicant ID: ${item.applicantId}`}
                   placement="top"
                   arrow
                 >

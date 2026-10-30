@@ -198,7 +198,7 @@ export interface RecruitmentOfferCommand {
 }
 
 export interface RecruitmentOnboardingTask { code: string; title: string; status: "Pending" | "InProgress" | "Completed" | "Skipped"; assigneeUserId?: string | null; }
-export interface RecruitmentOnboardingQueueItem { caseId: string; applicantId: string; employeeUserId: string; status: RecruitmentOnboardingCase["status"]; version: number; totalTasks: number; completedTasks: number; requiredPendingTasks: number; completionPercent: number; firstBlockingTaskCode?: string | null; firstBlockingTaskTitle?: string | null; updatedDate?: string | null; }
+export interface RecruitmentOnboardingQueueItem { caseId: string; applicantId: string; applicantName?: string | null; email?: string | null; vacancyId?: string | null; vacancyName?: string | null; employeeUserId: string; status: RecruitmentOnboardingCase["status"]; version: number; totalTasks: number; completedTasks: number; requiredPendingTasks: number; completionPercent: number; firstBlockingTaskCode?: string | null; firstBlockingTaskTitle?: string | null; updatedDate?: string | null; }
 export interface RecruitmentOnboardingCase { caseId: string; applicantId: string; employeeUserId: string; status: "PendingActivation" | "InProgress" | "Completed"; tasks: RecruitmentOnboardingTask[]; version?: number; }
 export interface RecruitmentOnboardingUpdateCommand { caseId: string; status: RecruitmentOnboardingCase["status"]; tasks: Array<{ code: string; status: RecruitmentOnboardingTask["status"] }>; idempotencyKey: string; expectedVersion?: number; }
 
@@ -452,7 +452,7 @@ export interface RecruitmentSelectedCandidateQueueItem { applicantId: string; va
 
 export interface RecruitmentOfferPendingQueueItem { offerId: string; applicantId: string; vacancyId: string; applicantName: string; status: string; salary: number; currency: string; approvalRequired: boolean; }
 
-export interface RecruitmentPreboardingQueueItem { caseId: string; applicantId: string; offerId: string; status: string; ownerUserId: string; pendingTaskCount: number; readyForHire: boolean; firstBlockerCode?: string | null; }
+export interface RecruitmentPreboardingQueueItem { caseId: string; applicantId: string; applicantName?: string | null; email?: string | null; vacancyId?: string | null; vacancyName?: string | null; offerId: string; status: string; ownerUserId: string; pendingTaskCount: number; readyForHire: boolean; firstBlockerCode?: string | null; }
 
 export interface RecruitmentPreboardingUpdateCommand { caseId: string; status: string; tasks: Array<{ code: string; status: string; assigneeUserId?: string | null }>; expectedVersion?: number; idempotencyKey: string; }
 

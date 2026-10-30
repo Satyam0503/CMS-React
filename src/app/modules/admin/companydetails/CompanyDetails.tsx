@@ -22,8 +22,9 @@ export const CompanyDetailsTab = () => {
   const token = useAppSelector((state) => state.auth.token);
   const userData = useAppSelector((state) => state.user.userData);
   const permissions = userData?.modulePermission ?? [];
-  const hasPayroll = permissions.some((p) => p.startsWith("PayRoll.")) && permissions.some((p) => p.startsWith("Payroll_Settings."));
-  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
+  const isAdministrator = userData?.roleType === Roles.Administrator;
+  const hasPayroll = isAdministrator || (permissions.some((p) => p.startsWith("PayRoll.")) && permissions.some((p) => p.startsWith("Payroll_Settings.")));
+  const hasOffboarding = isAdministrator || permissions.some((p) => p.startsWith("Offboarding."));
 
   if (token && !userData) {
     return null;
@@ -82,8 +83,9 @@ const CompanyDetails = () => {
   const { currentLanguage } = useAppLang();
   const userData = useAppSelector((state) => state.user.userData);
   const permissions = userData?.modulePermission ?? [];
-  const hasPayroll = permissions.some((p) => p.startsWith("PayRoll.")) && permissions.some((p) => p.startsWith("Payroll_Settings."));
-  const hasOffboarding = permissions.some((p) => p.startsWith("Offboarding."));
+  const isAdministrator = userData?.roleType === Roles.Administrator;
+  const hasPayroll = isAdministrator || (permissions.some((p) => p.startsWith("PayRoll.")) && permissions.some((p) => p.startsWith("Payroll_Settings.")));
+  const hasOffboarding = isAdministrator || permissions.some((p) => p.startsWith("Offboarding."));
 
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.COMPANY_DETAILS" }));

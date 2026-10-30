@@ -38,6 +38,8 @@ export enum Permission {
   CreateForEmployee = "CreateForEmployee",
   Approve = "Approve",
   Override = "Override",
+  Review = "Review",
+  Submit = "Submit",
 }
 export enum Modules {
   Dashboard = 1,

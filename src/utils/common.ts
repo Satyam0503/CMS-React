@@ -537,16 +537,16 @@ export const filterSideBarTabs = (
       return tab;
     }
 
-    // If an administrator disabled the entire payroll suite, do not render the payroll tab
+    // If payroll suite is disabled, do not render the payroll tab
     if (
       tab.constant === ModulesName.PayRoll &&
-      isAdministrator &&
       !userModulePermission.some(
         (p) =>
           p.startsWith("PayRoll.") ||
           p.startsWith("Leave_Management.") ||
           p.startsWith("Attendance.") ||
-          p.startsWith("Payroll_Settings.")
+          p.startsWith("Payroll_Settings.") ||
+          p.startsWith(`${ModulesName.Employees}.`)
       )
     ) {
       return null;
@@ -567,6 +567,15 @@ export const filterSideBarTabs = (
 
     if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) => {
+        // Lifecycle Management under PayRoll requires Employees.Edit
+        if (subTab.route === "/lifecycle-management") {
+          return hasModuleFeaturePermission(
+            ModulesName.Employees,
+            Permission.Edit,
+            userModulePermission
+          );
+        }
+
         // If recruitment is disabled, hide all recruitment subtabs including Career Profile
         if (tab.constant === ModulesName.Recruitment || subTab.constant === ModulesName.CareerProfile) {
           const hasRecruitment = userModulePermission.some(
@@ -594,6 +603,9 @@ export const filterSideBarTabs = (
         }
         if (isAdministrator) {
           return userModulePermission.some((p) => p.startsWith(`${subTab.constant}.`));
+        }
+        if (subTab.constant === ModulesName.Attendance) {
+          return userModulePermission.some((p) => p.startsWith(`${ModulesName.Attendance}.`));
         }
         return hasModuleFeaturePermission(
           subTab.constant,

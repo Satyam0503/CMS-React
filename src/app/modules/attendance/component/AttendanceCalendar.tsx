@@ -1159,8 +1159,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const dateIso = date.format("YYYY-MM-DD");
     const isHoliday = holidays.has(dateIso);
     const isFutureDate = date.isAfter(today, "day");
-    const editable =
-      !readOnly && dateObj <= today.toDate() && !isHoliday && !isWeekend;
+    const isNonWorkingDay = isHoliday || isWeekend;
+    const editable = !readOnly && !isFutureDate;
     const value = (row[`day-${index + 1}`] ??
       initialModalState) as AttendanceData;
     const joiningDate = row.dateOfJoining
@@ -1292,7 +1292,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                         formattedDate,
                       ].filter(Boolean).join("\n");
     const canEdit =
-      editable && !isWorkflowOwned && !isSourceOwnedSegment && !isBeforeJoining && !isAfterExit;
+      editable && !isBeforeJoining && !isAfterExit;
     const tooltipLines: string[] = tooltipText.split("\n");
     const tooltipTitle = (
       <Box sx={{ display: "grid", gap: 0.35, maxWidth: 280 }}>
@@ -1394,7 +1394,16 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         <Box
           onClick={() => {
             if (isFutureDate) return;
-            if (readOnly) return;
+            if (readOnly) {
+      if (!companyView && dateObj) {
+        window.dispatchEvent(
+          new CustomEvent("report-attendance-correction", {
+            detail: { date: dayjs(dateObj).format("YYYY-MM-DD") },
+          })
+        );
+      }
+      return;
+    }
             if (isWorkflowOwned || isSourceOwnedSegment) {
               if (!readOnly && !isBeforeJoining && !isAfterExit) {
                 setSelectedCell({
@@ -1414,6 +1423,17 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   ? "This record is generated from an approved WFH request. Update or cancel the WFH request through its workflow to make a correction."
                   : "This record is generated from an approved leave request. Use the authorized leave-attendance conflict-resolution workflow to make a correction.",
               });
+              return;
+            }
+            if (isNonWorkingDay) {
+              if (canEdit) {
+                setSelectedCell({
+                  employee: row,
+                  dateObj,
+                  isOverride: true,
+                  sourceLabel: isHoliday ? "Holiday" : "Weekly Off",
+                });
+              }
               return;
             }
             if (canEdit) setSelectedCell({ employee: row, dateObj });
@@ -1884,7 +1904,16 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       return;
     }
 
-    if (readOnly) return;
+    if (readOnly) {
+      if (!companyView && dateObj) {
+        window.dispatchEvent(
+          new CustomEvent("report-attendance-correction", {
+            detail: { date: dayjs(dateObj).format("YYYY-MM-DD") },
+          })
+        );
+      }
+      return;
+    }
 
     const isWorkflowOwned = [
       "LEAVE",
@@ -1963,12 +1992,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, minmax(0, 1fr))",
-                lg: "repeat(3, minmax(0, 1fr))",
-                xl: "repeat(4, minmax(0, 1fr))",
-              },
+              gridTemplateColumns: !companyView
+                ? { xs: "1fr", sm: "minmax(320px, 460px)" }
+                : {
+                    xs: "1fr",
+                    sm: "repeat(2, minmax(0, 1fr))",
+                    lg: "repeat(3, minmax(0, 1fr))",
+                    xl: "repeat(4, minmax(0, 1fr))",
+                  },
               gap: 2,
               alignItems: "stretch",
               "@keyframes attendance-card-in": {
@@ -2025,7 +2056,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     flexDirection: "column",
                     justifyContent: "space-between",
                     borderRadius: "12px",
-                    cursor: readOnly ? "default" : "pointer",
+                    cursor: readOnly ? (!companyView ? "pointer" : "default") : "pointer",
                     bgcolor: "var(--mui-palette-background-card, var(--mui-palette-background-paper))",
                     backdropFilter: "blur(14px) saturate(180%)",
                     WebkitBackdropFilter: "blur(14px) saturate(180%)",
@@ -2036,7 +2067,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     animation: `attendance-card-in 320ms ease-out ${Math.min(index * 35, 280)}ms both`,
                     transition:
                       "transform 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease, background 180ms ease",
-                    "&:hover": readOnly
+                    "&:hover": readOnly && companyView
                       ? {}
                       : {
                           transform: "translateY(-4px)",
@@ -2230,7 +2261,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     }}
                   >
                     {readOnly
-                      ? "Attendance status"
+                      ? (!companyView ? "Report correction for this date →" : "Attendance status")
                       : isWorkflowOwned
                         ? "Select to update / regularize →"
                         : "Select to update attendance →"}
@@ -2526,27 +2557,29 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             )}
           </Box>
         )}
-        <TablePagination
-          component="div"
-          count={rows.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          onPageChange={(_, nextPage) => setPage(nextPage)}
-          onRowsPerPageChange={(event) => {
-            setRowsPerPage(Number(event.target.value));
-            setPage(0);
-          }}
-          sx={{
-            borderTop: "1px solid",
-            borderColor: "divider",
-            mt: 1.5,
-            px: 0,
-            "& .MuiTablePagination-toolbar": {
-              px: { xs: 1, sm: 2 },
-            },
-          }}
-        />
+        {rows.length > 5 && (
+          <TablePagination
+            component="div"
+            count={rows.length}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            onPageChange={(_, nextPage) => setPage(nextPage)}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(Number(event.target.value));
+              setPage(0);
+            }}
+            sx={{
+              borderTop: "1px solid",
+              borderColor: "divider",
+              mt: 1.5,
+              px: 0,
+              "& .MuiTablePagination-toolbar": {
+                px: { xs: 1, sm: 2 },
+              },
+            }}
+          />
+        )}
       </Box>
       {!readOnly && dateRange.startDate.isSame(dateRange.endDate, "month") && (
         <MonthlyAttendanceExceptions month={dateRange.startDate} />

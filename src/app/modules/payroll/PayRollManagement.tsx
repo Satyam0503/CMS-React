@@ -48,7 +48,7 @@ import { AddUpdateEmployeePayRoll } from "./AddUpdateEmployeePayRoll";
 
 import { useAppSelector } from "../../Redux/hooks";
 import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../utils/common";
-import { UnAuthorizedAccess } from "../../shared/components/UnAuthorizedAccess";
+import { UnauthorizedStay } from "../users/about/components/ProtectedRoute";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { payrollActionButtonSx } from "./components/payrollActionButtonSx";
 import { ProcessPayrollModal } from "./components/ProcessPayrollModal";
@@ -363,7 +363,7 @@ const PayRollManagement = () => {
     }, [search, payMonth, refresh, currentUser?.roleType]);
 
     if (!canAccessHrManagement(currentUser?.roleType)) {
-        return <UnAuthorizedAccess type="unauthorise" />;
+        return <UnauthorizedStay />;
     }
 
     return (

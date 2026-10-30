@@ -30,9 +30,9 @@ export const UpcomingBirthdays = ({
         : false;
 
   const list: CelebrationModule[] =
-    birthdays !== undefined
+    Array.isArray(birthdays)
       ? birthdays
-      : query.data?.success
+      : query.data?.success && Array.isArray(query.data.methodResult?.birthday)
         ? query.data.methodResult.birthday
         : [];
 

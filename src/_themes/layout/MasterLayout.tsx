@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { redirectUserToTargetUrl } from "../../utils/common";
+import { NotificationModel } from "../../app/modules/users/models";
 import { Box, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { CSSProperties } from "react";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
@@ -14,7 +16,19 @@ import { EmployeeExitQueueAction } from "../../app/modules/users/components/Empl
 const MasterLayout = () => {
   const theme = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const handleNotificationClick = (event: Event) => {
+      const customEvent = event as CustomEvent<NotificationModel>;
+      if (customEvent.detail) {
+        redirectUserToTargetUrl(customEvent.detail, navigate);
+      }
+    };
+    window.addEventListener("codeji:notification-click", handleNotificationClick);
+    return () => window.removeEventListener("codeji:notification-click", handleNotificationClick);
+  }, [navigate]);
   const isSmallScreen = useMediaQuery(
     theme.breakpoints.down(theme.breakpoints.values.md),
   );
