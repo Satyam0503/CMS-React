@@ -3,17 +3,17 @@ import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../util
 import { ModulesName, Permission } from "../../../utils/enums";
 
 export const isLeaveTabEnabled = (modulePermissions: string[] = []) =>
-  hasModuleFeaturePermission(
-    ModulesName.LeaveManagement,
-    Permission.View,
-    modulePermissions,
-  ) || modulePermissions.some((p) => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement."));
+  modulePermissions.some((p) => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement."));
 
 const createTabs = (modulePermissions: string[], empId?: string, roleType?: number): TabModel[] => {
-  // The signed-in employee uses the dedicated self-service leave endpoints,
-  // which do not require the admin Leave Management module permission.
-  // Viewing another employee's leave remains protected by Leave Management.View.
-  const isLeaveEnabled = !empId || isLeaveTabEnabled(modulePermissions);
+  const isLeaveModuleActive = isLeaveTabEnabled(modulePermissions);
+  const hasLeaveView =
+    hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.View, modulePermissions) ||
+    modulePermissions.includes("LeaveManagement.View") ||
+    modulePermissions.includes("Leave_Management.View");
+  const isLeaveEnabled =
+    isLeaveModuleActive &&
+    (!empId || hasLeaveView || canAccessHrManagement(roleType));
 
   const tabsRoutes: TabModel[] = [
     {

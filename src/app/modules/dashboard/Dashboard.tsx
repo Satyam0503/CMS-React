@@ -68,6 +68,17 @@ export default function Dashboard() {
     [userModulesPermissions],
   );
 
+  const hasAccessToLeaveModule = useMemo(
+    () =>
+      userModulesPermissions.some((p) => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement.")),
+    [userModulesPermissions],
+  );
+
+  const hasAccessToCalendar = useMemo(
+    () => userModulesPermissions.some((p) => p.startsWith("Calendar.")),
+    [userModulesPermissions],
+  );
+
   useEffect(() => {
     setPageTitle("");
   }, []);
@@ -92,7 +103,7 @@ export default function Dashboard() {
           </Grid>
           <Grid size={{ xs: 12, lg: 4 }}>
             <Stack spacing={{ xs: 2, md: 3 }}>
-              <UpComingHolidayAndEvents />
+              {hasAccessToCalendar && <UpComingHolidayAndEvents />}
               <UpComingCelebration />
             </Stack>
           </Grid>
@@ -170,8 +181,8 @@ export default function Dashboard() {
           }}
         >
           {typeof Notification !== "undefined" && Notification.permission === "default" && <PushNotification />}
-          {hasAccessToEmpModule && <EmpOnLeave />}
-          <UpComingHolidayAndEvents />
+          {hasAccessToEmpModule && hasAccessToLeaveModule && <EmpOnLeave />}
+          {hasAccessToCalendar && <UpComingHolidayAndEvents />}
           <UpComingCelebration />
           {/* <Punctual />
           <EmpOfMonth /> */}

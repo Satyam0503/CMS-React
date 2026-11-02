@@ -8,8 +8,15 @@ describe("profile tabs visibility", () => {
     expect(isLeaveTabEnabled(["LeaveManagement.View"])).toBe(true);
   });
 
-  it("shows the self-service leave tab to employees without admin leave-module permission", () => {
+  it("hides the leave tab when leave management module is disabled", () => {
     const tabs = getProfileTabs(["NoticeBoard.View"]);
+    const leaveTab = tabs.find((tab) => tab.to === "leave");
+
+    expect(leaveTab).toBeUndefined();
+  });
+
+  it("shows the self-service leave tab when leave management module is enabled", () => {
+    const tabs = getProfileTabs(["LeaveManagement.View"]);
     const leaveTab = tabs.find((tab) => tab.to === "leave");
 
     expect(leaveTab).toBeDefined();

@@ -48,6 +48,11 @@ export default function ProfileCard() {
   const [date, setDate] = useState<Dayjs | null>(null);
   const [loading, setLoading] = useState(false);
   const paySlipControlColor = theme.palette.common.white;
+  const hasPayroll = useAppSelector((state) =>
+    (state.user.userData?.modulePermission ?? []).some(
+      (p) => p.startsWith("PayRoll.") || p.startsWith("Payroll_Settings.")
+    )
+  );
 
   const handleClose = () => {
     setOpen(false);
@@ -231,7 +236,7 @@ export default function ProfileCard() {
             </Typography>
           </Stack>
         </Stack>
-        {!employeeId && (
+        {!employeeId && hasPayroll && (
           <Stack
             spacing={1.25}
             sx={{

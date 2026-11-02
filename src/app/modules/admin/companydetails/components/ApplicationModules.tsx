@@ -23,8 +23,6 @@ const normalizeConstant = (str?: string) => (str ?? "").replace(/[^a-zA-Z0-9]/g,
 const PAYROLL_CONSTANTS = new Set([
   "payroll",
   "payrollsettings",
-  "leavemanagement",
-  "attendance",
 ]);
 
 const RECRUITMENT_CONSTANTS = new Set([

@@ -30,8 +30,10 @@ const SuspensedView = ({ children }: { children: JSX.Element }) => {
 const ProfileTabs = () => {
     const empId = useParams().employeeid;
     const roleType = useAppSelector(state => state.user.userData?.roleType);
-    const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? []
-    const hasLeavePanelAccess = hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.View, modulePermission);
+    const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
+    const isLeaveModuleActive = modulePermission.some(p => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement."));
+    const hasLeavePanelAccess = hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.View, modulePermission) || modulePermission.includes("LeaveManagement.View") || modulePermission.includes("Leave_Management.View");
+    const canAccessLeave = isLeaveModuleActive && (!empId || hasLeavePanelAccess || canAccessHrManagement(roleType));
 
     return (
         <Routes>
@@ -40,10 +42,7 @@ const ProfileTabs = () => {
                 <Route path="about" element={<SuspensedView><AboutUser /></SuspensedView>} />
                 <Route path="performance" element={canAccessHrManagement(roleType) ? <SuspensedView><UserPerformance /></SuspensedView> : <Navigate to="about" replace />} />
                 <Route path="workhistory" element={<SuspensedView><WorkHistory /></SuspensedView>} />
-                {
-                    (!empId || hasLeavePanelAccess) &&
-                    <Route path="leave" element={<SuspensedView><LeaveTracker /></SuspensedView>} />
-                }
+                <Route path="leave" element={canAccessLeave ? <SuspensedView><LeaveTracker /></SuspensedView> : <Navigate to="about" replace />} />
                 {
                     !empId &&
                     <Route path="setting" element={<SuspensedView><Setting /></SuspensedView>} />

@@ -149,13 +149,11 @@ describe("Administrator module filtering in sidebar", () => {
     expect(allRoutes).not.toContain("/offboarding");
   });
 
-  it("categorizes Career Profile into recruitment suite so it never renders as an isolated card", () => {
+  it("retains Leave_Management and Attendance as independent standalone cards in ApplicationModules", () => {
     const normalizeConstant = (str?: string) => (str ?? "").replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
     const PAYROLL_CONSTANTS = new Set([
       "payroll",
       "payrollsettings",
-      "leavemanagement",
-      "attendance",
     ]);
     const RECRUITMENT_CONSTANTS = new Set([
       "jobs",
@@ -196,14 +194,14 @@ describe("Administrator module filtering in sidebar", () => {
     // Career Profile must be in recruitment suite and never in remaining (otherModules)
     expect(recruitment.map((m) => m.moduleConstant)).toContain("Career_Profile");
     expect(payroll.map((m) => m.moduleConstant)).toContain("Payroll_Settings");
-    expect(payroll.map((m) => m.moduleConstant)).toContain("Leave_Management");
-    expect(payroll.map((m) => m.moduleConstant)).toContain("Attendance");
+    expect(payroll.map((m) => m.moduleConstant)).not.toContain("Leave_Management");
+    expect(payroll.map((m) => m.moduleConstant)).not.toContain("Attendance");
 
     const remainingConstants = remaining.map((m) => m.moduleConstant);
     expect(remainingConstants).not.toContain("Career_Profile");
     expect(remainingConstants).not.toContain("Payroll_Settings");
-    expect(remainingConstants).not.toContain("Leave_Management");
-    expect(remainingConstants).not.toContain("Attendance");
+    expect(remainingConstants).toContain("Leave_Management");
+    expect(remainingConstants).toContain("Attendance");
     expect(remainingConstants).toEqual([
       "Employees",
       "Calendar",
@@ -211,7 +209,38 @@ describe("Administrator module filtering in sidebar", () => {
       "Policy",
       "Work_From_Home",
       "Offboarding",
+      "Leave_Management",
+      "Attendance",
     ]);
+  });
+
+  it("preserves Leave Management and Attendance subtabs when only Payroll is disabled", () => {
+    const permissionsWithoutPayroll = allPermissions.filter(
+      (p) => !p.startsWith("PayRoll.") && !p.startsWith("Payroll_Settings.")
+    );
+    const tabs = filterSideBarTabs(permissionsWithoutPayroll, Roles.Administrator);
+    const payrollTab = tabs.find((t) => t.constant === ModulesName.PayRoll);
+    expect(payrollTab).toBeDefined();
+
+    const subRoutes = (payrollTab?.subTabs ?? []).map((s) => s.route);
+    expect(subRoutes).toContain("/leavemanagement");
+    expect(subRoutes).toContain("/attendance");
+    expect(subRoutes).not.toContain("/payroll");
+    expect(subRoutes).not.toContain("/settingspayroll");
+  });
+
+  it("denies Offboarding and Payroll settings tab visibility when modules are uninstalled even for Administrator", () => {
+    const permissionsWithoutOffboardingOrPayroll = allPermissions.filter(
+      (p) => !p.startsWith("Offboarding.") && !p.startsWith("PayRoll.") && !p.startsWith("Payroll_Settings.")
+    );
+
+    const hasOffboarding = permissionsWithoutOffboardingOrPayroll.some((p) => p.startsWith("Offboarding."));
+    const hasPayroll =
+      permissionsWithoutOffboardingOrPayroll.some((p) => p.startsWith("PayRoll.")) ||
+      permissionsWithoutOffboardingOrPayroll.some((p) => p.startsWith("Payroll_Settings."));
+
+    expect(hasOffboarding).toBe(false);
+    expect(hasPayroll).toBe(false);
   });
 
   describe("Non-Administrator Role Isolation in sidebar", () => {
