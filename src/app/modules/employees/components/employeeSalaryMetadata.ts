@@ -84,7 +84,19 @@ export const calculateEmployeePayrollComponents = (components: PayrollComponentI
   const gross = Math.max(0, sum((component) => component.kind.toUpperCase() === "EARNING" && component.isRecurring && !component.isStatutory && !component.isEmployerContribution));
   const deductions = Math.max(0, sum((component) => component.kind.toUpperCase() === "DEDUCTION" && component.isRecurring && !component.isStatutory && !component.isEmployerContribution));
   if (deductions > gross) return { success: false as const, errorCode: "PAYROLL_NET_NEGATIVE", errorMessage: "Recurring employee deductions exceed recurring gross salary. Review the salary structure before payroll can proceed." };
-  return { success: true as const, values: Object.fromEntries(values), gross, deductions, net: roundMoney(gross - deductions) };
+  const employerContributions = Math.max(0, sum((component) => component.isEmployerContribution && component.isRecurring));
+  const ctc = roundMoney(gross + employerContributions);
+  return {
+    success: true as const,
+    values: Object.fromEntries(values),
+    gross,
+    deductions,
+    net: roundMoney(gross - deductions),
+    employerContributions,
+    ctc,
+    annualCtc: roundMoney(ctc * 12),
+    annualGross: roundMoney(gross * 12),
+  };
 };
 
 // Offer documents provide currency amounts while configured formula components

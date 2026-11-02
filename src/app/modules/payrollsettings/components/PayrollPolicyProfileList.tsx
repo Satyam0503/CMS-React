@@ -405,6 +405,12 @@ export function PayrollPolicyProfileList({
                     </Typography>
                   </Stack>
 
+                  <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.35, fontSize: "0.72rem" }}>
+                    Created by: <strong>{formatAuditUser(profile.createdBy)}</strong>
+                    {profile.approvedBy ? ` · Authorized by: ${formatAuditUser(profile.approvedBy)}` : ""}
+                    {!profile.isActive ? " · Retained for statutory audit trail (inactive)" : ""}
+                  </Typography>
+
                   
 
                   {/* Visible Payroll Features Pills */}

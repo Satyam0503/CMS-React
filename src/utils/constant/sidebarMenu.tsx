@@ -131,6 +131,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         icon: <WebRounded />,
         isDefault: false,
       },
+      {
+        id: Modules.RecruitmentSettings,
+        constant: ModulesName.RecruitmentSettings,
+        title: ModulesTitles.RecruitmentSettings,
+        route: "/recruitment/settings",
+        icon: <Settings />,
+        isDefault: false,
+      },
     ],
   },
   {

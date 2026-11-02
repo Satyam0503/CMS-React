@@ -18,6 +18,22 @@ import {
 
 import ModuleCard from "./ModuleCard";
 
+const normalizeConstant = (str?: string) => (str ?? "").replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+
+const PAYROLL_CONSTANTS = new Set([
+  "payroll",
+  "payrollsettings",
+  "leavemanagement",
+  "attendance",
+]);
+
+const RECRUITMENT_CONSTANTS = new Set([
+  "jobs",
+  "applications",
+  "processlog",
+  "careerprofile",
+]);
+
 type ActionType = "SINGLE" | "PAYROLL" | "RECRUITMENT";
 
 export const ApplicationModules: FC = () => {
@@ -59,8 +75,8 @@ export const ApplicationModules: FC = () => {
     setCurrentModuleId(null);
   };
 
-  const updateModuleAccessApi = (moduleId: string) => {
-    return updateModuleAccess(moduleId);
+  const updateModuleAccessApi = (moduleId: string, isAccessible?: boolean) => {
+    return updateModuleAccess(moduleId, isAccessible);
   };
 
   const updateSingleModule = async (moduleId: string) => {
@@ -69,7 +85,7 @@ export const ApplicationModules: FC = () => {
     try {
       setIsUpdating(true);
 
-      const response = await updateModuleAccessApi(moduleId);
+      const response = await updateModuleAccessApi(moduleId, option);
       const { success, methodResult } = response.data;
 
       if (success) {
@@ -97,13 +113,21 @@ export const ApplicationModules: FC = () => {
     try {
       setIsUpdating(true);
 
-      const modulesToUpdate = modules.filter(
+      const sortedModules = [...modules].sort((a, b) => {
+        const aNorm = normalizeConstant(a.moduleConstant);
+        const bNorm = normalizeConstant(b.moduleConstant);
+        if (aNorm === "payroll" || aNorm === "jobs") return -1;
+        if (bNorm === "payroll" || bNorm === "jobs") return 1;
+        return 0;
+      });
+
+      const modulesToUpdate = sortedModules.filter(
         (m) => Boolean(m.isAccessible) !== targetEnable
       );
 
       let latestPermissions: string[] | null = null;
       for (const m of modulesToUpdate) {
-        const response = await updateModuleAccessApi(m.moduleId);
+        const response = await updateModuleAccessApi(m.moduleId, targetEnable);
         const { success, methodResult } = response.data;
         if (success && Array.isArray(methodResult)) {
           latestPermissions = methodResult;
@@ -185,24 +209,19 @@ export const ApplicationModules: FC = () => {
           return;
         }
 
-        const payrollValues = Object.values(PayRollModuleTitles) as string[];
-        const recruitmentValues = Object.values(
-          RecruitmentModuleTitle,
-        ) as string[];
-
         const payroll = methodResults.filter((m: ModulesInfoModel) =>
-          payrollValues.includes(m.moduleConstant),
+          PAYROLL_CONSTANTS.has(normalizeConstant(m.moduleConstant))
         );
 
         const recruitment = methodResults.filter((m: ModulesInfoModel) =>
-          recruitmentValues.includes(m.moduleConstant),
+          RECRUITMENT_CONSTANTS.has(normalizeConstant(m.moduleConstant))
         );
 
         const remaining = methodResults.filter(
           (m: ModulesInfoModel) =>
-            !payrollValues.includes(m.moduleConstant) &&
-            !recruitmentValues.includes(m.moduleConstant) &&
-            m.moduleConstant !== "Dashboard",
+            !PAYROLL_CONSTANTS.has(normalizeConstant(m.moduleConstant)) &&
+            !RECRUITMENT_CONSTANTS.has(normalizeConstant(m.moduleConstant)) &&
+            normalizeConstant(m.moduleConstant) !== "dashboard"
         );
 
         setPayrollModules(payroll);
@@ -303,10 +322,10 @@ export const ApplicationModules: FC = () => {
               formatMessage={formatMessage}
               disabled={isUpdating}
               handleChange={() => {
-                const isDisabling = payrollModules.some(
-                  (module) => module.isAccessible === true,
+                const isInstalled = payrollModules.some(
+                  (module) => normalizeConstant(module.moduleConstant) === "payroll" && module.isAccessible === true,
                 );
-                requestAction("PAYROLL", isDisabling ? false : true);
+                requestAction("PAYROLL", !isInstalled);
               }}
             />
           </Grid>
@@ -320,10 +339,10 @@ export const ApplicationModules: FC = () => {
               formatMessage={formatMessage}
               disabled={isUpdating}
               handleChange={() => {
-                const isDisabling = recruitmentModules.some(
-                  (module) => module.isAccessible === true,
+                const isInstalled = recruitmentModules.some(
+                  (module) => normalizeConstant(module.moduleConstant) === "jobs" && module.isAccessible === true
                 );
-                requestAction("RECRUITMENT", isDisabling ? false : true);
+                requestAction("RECRUITMENT", !isInstalled);
               }}
             />
           </Grid>

@@ -186,18 +186,18 @@ export default function HeaderNotificationMenu() {
         if (data.success) {
           setNotificationList((prev) => {
             if (paginationValues.pageNo === 1) {
-              return data.methodResult.notificationList;
+              return data.methodResult?.notificationList ?? [];
             }
             const existingIds = new Set(prev.map((n) => n.userNotificationId));
-            const newItems = data.methodResult.notificationList.filter(
+            const newItems = (data.methodResult?.notificationList ?? []).filter(
               (n) => !existingIds.has(n.userNotificationId)
             );
             return [...prev, ...newItems];
           });
 
           setNotificationCount({
-            totalNotification: data.methodResult.all,
-            unread: data.methodResult.unread,
+            totalNotification: data.methodResult?.all ?? 0,
+            unread: data.methodResult?.unread ?? 0,
           });
         }
       } catch (error) {
@@ -374,11 +374,11 @@ export default function HeaderNotificationMenu() {
 
         <Stack>
           <List disablePadding className="notification-wrapper">
-            {isLoading && notificationList.length === 0 ? (
+            {isLoading && (notificationList ?? []).length === 0 ? (
               <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
                 <CircularProgress size={24} />
               </Box>
-            ) : notificationList.length > 0 ? (
+            ) : (notificationList ?? []).length > 0 ? (
               notificationList.map((item) => {
                 const titleText = item.targetId?.startsWith("attendance-review-")
                   ? item.title

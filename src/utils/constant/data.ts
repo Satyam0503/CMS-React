@@ -285,7 +285,7 @@ export const ServiceUrl = {
   GET_POLICY_DOCUMENT: "api/Company/GetPolicyDocument",
 } as const;
 
-export const languages = [
+export const allLanguages = [
   {
     id: 1,
     lang: LANGUAGE.ENGLISH,
@@ -294,34 +294,47 @@ export const languages = [
   },
   {
     id: 2,
+    lang: LANGUAGE.HINDI,
+    name: "LANGUAGES.HINDI",
+    flag: toAbsoluteUrl("media/flags/india.svg"),
+  },
+  {
+    id: 3,
     lang: LANGUAGE.MANDARIN,
     name: "LANGUAGES.MANDARIN",
     flag: toAbsoluteUrl("media/flags/china.svg"),
   },
   {
-    id: 3,
+    id: 4,
     lang: LANGUAGE.SPANISH,
     name: "LANGUAGES.SPANISH",
     flag: toAbsoluteUrl("media/flags/spain.svg"),
   },
   {
-    id: 4,
+    id: 5,
     lang: LANGUAGE.JAPANESE,
     name: "LANGUAGES.JAPANESE",
     flag: toAbsoluteUrl("media/flags/japan.svg"),
   },
   {
-    id: 5,
+    id: 6,
     lang: LANGUAGE.GERMAN,
     name: "LANGUAGES.GERMAN",
     flag: toAbsoluteUrl("media/flags/germany.svg"),
   },
   {
-    id: 6,
+    id: 7,
     lang: LANGUAGE.FRENCH,
     name: "LANGUAGES.FRENCH",
     flag: toAbsoluteUrl("media/flags/france.svg"),
   },
+];
+
+// Active frontend languages: English and Hindi only.
+// Other languages remain preserved in code (allLanguages) but are disabled and unreachable from the UI.
+export const languages = [
+  allLanguages[0], // English
+  allLanguages[1], // Hindi
 ];
 
 export const Regex = {

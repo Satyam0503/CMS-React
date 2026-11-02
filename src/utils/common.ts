@@ -219,6 +219,7 @@ export const JobTypeMapper: { [index: number]: string } = {
 
 export const LanguageNameMapper: { [index: string]: string } = {
   [LANGUAGE.ENGLISH]: "LANGUAGES.ENGLISH",
+  [LANGUAGE.HINDI]: "LANGUAGES.HINDI",
   [LANGUAGE.MANDARIN]: "LANGUAGES.MANDARIN",
   [LANGUAGE.SPANISH]: "LANGUAGES.SPANISH",
   [LANGUAGE.JAPANESE]: "LANGUAGES.JAPANESE",
@@ -426,6 +427,8 @@ export const getCustomStatusCodesErrorMessage = (
   }
 };
 
+export const ACTIVE_LANGUAGES: LANGUAGE[] = [LANGUAGE.ENGLISH, LANGUAGE.HINDI];
+
 const initialState: AppLanguageProps = {
   selectedLang: LANGUAGE.ENGLISH,
 };
@@ -434,7 +437,8 @@ export const getCurrentAppLanguage = (): LANGUAGE => {
   if (ls) {
     try {
       const selectedLang = (JSON.parse(ls) as AppLanguageProps).selectedLang;
-      if (Object.values(LANGUAGE).includes(selectedLang as LANGUAGE)) {
+      // Only permit active languages (English and Hindi); any disabled/legacy language falls back to English.
+      if (ACTIVE_LANGUAGES.includes(selectedLang as LANGUAGE)) {
         return selectedLang as LANGUAGE;
       }
     } catch (er) {
@@ -445,7 +449,7 @@ export const getCurrentAppLanguage = (): LANGUAGE => {
 };
 
 export function setAppLanguage(lang: string) {
-  if (Object.values(LANGUAGE).includes(lang as LANGUAGE)) {
+  if (ACTIVE_LANGUAGES.includes(lang as LANGUAGE)) {
     localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({ selectedLang: lang }));
   }
 }
@@ -466,6 +470,7 @@ export const transformAttributeObjectToList = (
 // map current language to dayjs locale files
 const mapLocal = {
   [LANGUAGE.ENGLISH]: () => import("dayjs/locale/en"),
+  [LANGUAGE.HINDI]: () => import("dayjs/locale/hi"),
   [LANGUAGE.MANDARIN]: () => import("dayjs/locale/zh"),
   [LANGUAGE.SPANISH]: () => import("dayjs/locale/es"),
   [LANGUAGE.JAPANESE]: () => import("dayjs/locale/ja"),
@@ -532,16 +537,29 @@ export const filterSideBarTabs = (
       return tab;
     }
 
-    // If an administrator disabled the entire payroll suite, do not render the payroll tab
+    // If payroll suite is disabled, do not render the payroll tab
     if (
       tab.constant === ModulesName.PayRoll &&
-      isAdministrator &&
       !userModulePermission.some(
         (p) =>
           p.startsWith("PayRoll.") ||
           p.startsWith("Leave_Management.") ||
           p.startsWith("Attendance.") ||
-          p.startsWith("Payroll_Settings.")
+          p.startsWith("Payroll_Settings.") ||
+          p.startsWith(`${ModulesName.Employees}.`)
+      )
+    ) {
+      return null;
+    }
+
+    // If recruitment suite is disabled, do not render the recruitment tab
+    if (
+      tab.constant === ModulesName.Recruitment &&
+      !userModulePermission.some(
+        (p) =>
+          p.startsWith("Jobs.") ||
+          p.startsWith("Applications.") ||
+          p.startsWith("Process_Log.")
       )
     ) {
       return null;
@@ -549,6 +567,31 @@ export const filterSideBarTabs = (
 
     if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) => {
+        // Lifecycle Management under PayRoll requires Employees.Edit
+        if (subTab.route === "/lifecycle-management") {
+          return hasModuleFeaturePermission(
+            ModulesName.Employees,
+            Permission.Edit,
+            userModulePermission
+          );
+        }
+
+        // If recruitment is disabled, hide all recruitment subtabs including Career Profile
+        if (tab.constant === ModulesName.Recruitment || subTab.constant === ModulesName.CareerProfile) {
+          const hasRecruitment = userModulePermission.some(
+            (p) =>
+              p.startsWith("Jobs.") ||
+              p.startsWith("Applications.") ||
+              p.startsWith("Process_Log.")
+          );
+          if (!hasRecruitment) return false;
+        }
+
+        // If payroll is disabled, hide payroll settings subtab
+        if (subTab.constant === ModulesName.PayrollSettings && !userModulePermission.some((p) => p.startsWith("PayRoll."))) {
+          return false;
+        }
+
         // Company-wide payroll console and payroll settings are strictly for HR and Administrators
         if (
           subTab.constant === ModulesName.PayRoll ||
@@ -560,6 +603,9 @@ export const filterSideBarTabs = (
         }
         if (isAdministrator) {
           return userModulePermission.some((p) => p.startsWith(`${subTab.constant}.`));
+        }
+        if (subTab.constant === ModulesName.Attendance) {
+          return userModulePermission.some((p) => p.startsWith(`${ModulesName.Attendance}.`));
         }
         return hasModuleFeaturePermission(
           subTab.constant,

@@ -2,6 +2,7 @@
 import * as signalR from "@microsoft/signalr";
 import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
 import { queryClient } from "../app/query/queryClient";
+import { getLocalKey } from "../app/modules/auth";
 
 class Connector {
     private static instance: Connector | null = null;
@@ -35,7 +36,7 @@ class Connector {
             this.activeToken = token;
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl(`${BaseUrl}${ServiceUrl.NOTIFICATION_HUB}`, {
-                    accessTokenFactory: () => this.activeToken ?? "",
+                    accessTokenFactory: () => getLocalKey()?.token ?? this.activeToken ?? "",
                 })
                 .withAutomaticReconnect()
                 .build();

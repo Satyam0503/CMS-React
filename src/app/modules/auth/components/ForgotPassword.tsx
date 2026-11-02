@@ -96,7 +96,7 @@ export function ForgotPassword() {
       },
       "&.Mui-focused": {
         bgcolor: alpha(theme.palette.background.paper, 1),
-        boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.12)}`,
+        boxShadow: "none",
         "& .MuiOutlinedInput-notchedOutline": {
           borderColor: theme.palette.primary.main,
           borderWidth: "1.5px",
@@ -213,7 +213,7 @@ export function ForgotPassword() {
                 }}
               >
                 <ArrowBackRounded sx={{ fontSize: 16 }} />
-                <span>Back to sign in</span>
+                <span>{i({ id: "AUTH.BACK_TO_SIGNIN", defaultMessage: "Back to sign in" })}</span>
               </Link>
             </Box>
           </Stack>

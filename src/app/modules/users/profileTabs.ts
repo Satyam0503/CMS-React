@@ -10,7 +10,10 @@ export const isLeaveTabEnabled = (modulePermissions: string[] = []) =>
   ) || modulePermissions.some((p) => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement."));
 
 const createTabs = (modulePermissions: string[], empId?: string, roleType?: number): TabModel[] => {
-  const isLeaveEnabled = isLeaveTabEnabled(modulePermissions);
+  // The signed-in employee uses the dedicated self-service leave endpoints,
+  // which do not require the admin Leave Management module permission.
+  // Viewing another employee's leave remains protected by Leave Management.View.
+  const isLeaveEnabled = !empId || isLeaveTabEnabled(modulePermissions);
 
   const tabsRoutes: TabModel[] = [
     {

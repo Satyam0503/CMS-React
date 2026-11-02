@@ -64,7 +64,7 @@ export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) 
       borderRadius: 2.5,
       bgcolor: "action.hover",
       transition: "background-color .2s, box-shadow .2s",
-      "&.Mui-focused": { bgcolor: "background.paper", boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 16%, transparent)" },
+      "&.Mui-focused": { bgcolor: "background.paper", boxShadow: "none" },
     },
   };
 

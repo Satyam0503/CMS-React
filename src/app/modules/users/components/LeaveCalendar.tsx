@@ -93,14 +93,26 @@ function LeaveCalendar() {
     () => new Map(statuses.map((status) => [status.code, status])),
     [statuses],
   );
-  const visibleStatuses = useMemo(
-    () => Array.from(new Set(attendance.map((item) => item.status))).map((code) => ({
+  const visibleStatuses = useMemo(() => {
+    const renderedCodes = new Set<string>();
+    for (const dayAttendance of attendanceByDay.values()) {
+      const records = dayAttendance.segments.length
+        ? dayAttendance.segments
+        : dayAttendance.daily
+          ? [dayAttendance.daily]
+          : [];
+      for (const record of records) {
+        if (record.status) {
+          renderedCodes.add(record.status);
+        }
+      }
+    }
+    return Array.from(renderedCodes).map((code) => ({
       code,
       name: statusByCode.get(code)?.name ?? code,
       color: statusByCode.get(code)?.colorHex ?? fallbackColors[code] ?? "#64748B",
-    })),
-    [attendance, statusByCode],
-  );
+    }));
+  }, [attendanceByDay, statusByCode]);
 
   if (!mayViewCalendar) {
     return null;

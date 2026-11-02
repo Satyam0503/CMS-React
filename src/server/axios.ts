@@ -7,6 +7,7 @@ import {
   getLocalKey,
   RefreshTokenPayload,
   setLocalKey,
+  removeLocalKey,
 } from "../app/modules/auth";
 
 import { refreshTokenAsync } from "../app/modules/auth/core/_requests";
@@ -14,9 +15,11 @@ import { getCurrentAppLanguage } from "../utils/common";
 import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
 import { queryClient } from "../app/query/queryClient";
 import { apiQueryKey } from "../app/query/queryKeys";
+import { store } from "../app/Redux/store";
+import { setToken } from "../app/Redux/Reducers/authSlice";
 
-let isRefreshing = false;
-let failedRequestsQueue: Array<(token: string) => void> = [];
+let refreshTokenPromise: Promise<string | null> | null = null;
+
 
 const anonymousAuthRoutes = new Set([
   ServiceUrl.USER_LOGIN,
@@ -53,29 +56,59 @@ const instance = axios.create({
   timeout: timeout,
 });
 
+export const rawPostRequest = async <RequestData, ResponseData>(
+  path: string,
+  data?: RequestData,
+  config?: AxiosRequestConfig,
+  isformData: boolean = false
+) => {
+  const headers: Record<string, string> = { "Cache-Control": "max-age=3600" };
+  if (!isformData) headers["Content-Type"] = "application/json";
+
+  return instance.post<ResponseData>(path, data, {
+    ...config,
+    headers: { ...headers, ...config?.headers },
+  });
+};
+
 // function to get new access token
-export const refreshToken = async () => {
-  try {
-    isRefreshing = true;
-    const refreshToken = getLocalKey()?.refreshToken;
-    if (!refreshToken) {
-      throw new Error();
-    }
-    const { data } = await refreshTokenAsync({
-      refreshToken,
-    });
-    if (data.success) {
-      setLocalKey(data.methodResult);
-      return data.methodResult.token;
-    } else {
-      throw new Error();
-    }
-  } catch (error) {
-    localStorage.clear();
-    window.location.href = "/auth";
-  } finally {
-    isRefreshing = false;
+export const refreshToken = async (): Promise<string | null> => {
+  if (refreshTokenPromise) {
+    return refreshTokenPromise;
   }
+
+  refreshTokenPromise = (async () => {
+    try {
+      const storedRefreshToken = getLocalKey()?.refreshToken;
+      if (!storedRefreshToken) {
+        throw new Error("No refresh token");
+      }
+      const { data } = await refreshTokenAsync({
+        refreshToken: storedRefreshToken,
+      });
+      if (data.success && data.methodResult?.token) {
+        setLocalKey(data.methodResult);
+        instance.defaults.headers.common.Authorization = `Bearer ${data.methodResult.token}`;
+        try {
+          store.dispatch(setToken({ token: data.methodResult.token }));
+        } catch {
+          // ignore if store is not yet initialized
+        }
+        return data.methodResult.token;
+      } else {
+        throw new Error(data.message || "Failed to refresh token");
+      }
+    } catch (error) {
+      removeLocalKey();
+      localStorage.clear();
+      window.location.href = "/auth";
+      return null;
+    } finally {
+      refreshTokenPromise = null;
+    }
+  })();
+
+  return refreshTokenPromise;
 };
 
 // using interceptors to automatically set token and current Language for each request
@@ -104,41 +137,25 @@ instance.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
-    if (error.response) {
-      if (
-        error.response.status === 401 &&
-        !isAnonymousAuthRoute(originalRequest?.url) &&
-        !originalRequest?._retry &&
-        !isRefreshing
-      ) {
-        originalRequest._retry = true;
-        const token = await refreshToken();
-        if (token) {
-          if (originalRequest.url === ServiceUrl.LOGOUT) {
-            const payload: RefreshTokenPayload = {
-              refreshToken: getLocalKey()?.refreshToken ?? "",
-            };
-            originalRequest.data = JSON.stringify(payload);
-          }
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-          instance.defaults.headers.common.Authorization = `Bearer ${token}`;
-          failedRequestsQueue.forEach((callback) => callback(token));
-          failedRequestsQueue = [];
-          return instance.request(originalRequest);
-        } else {
-          return Promise.reject(error);
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !isAnonymousAuthRoute(originalRequest.url) &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+      const token = await refreshToken();
+      if (token) {
+        if (originalRequest.url === ServiceUrl.LOGOUT) {
+          const payload: RefreshTokenPayload = {
+            refreshToken: getLocalKey()?.refreshToken ?? "",
+          };
+          originalRequest.data = JSON.stringify(payload);
         }
+        originalRequest.headers.Authorization = `Bearer ${token}`;
+        return instance.request(originalRequest);
       }
-      if (error.response.status === 401 && isRefreshing) {
-        return new Promise((resolve) => {
-          failedRequestsQueue.push((token: string) => {
-            originalRequest.headers["Authorization"] = `Bearer ${token}`;
-            resolve(instance(originalRequest));
-          });
-        });
-      }
-    } else {
-      console.error("Something Went Wrong");
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   }

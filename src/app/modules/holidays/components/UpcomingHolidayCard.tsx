@@ -169,7 +169,19 @@ export const UpcomingHolidayCard = (props: Props) => {
         }}
         arrow
       >
-        <Box component='div' className="d-flex gap-2 align-items-center" sx={{ flexGrow: 1, }}>
+        <Box
+          component='div'
+          className="d-flex gap-2 align-items-center"
+          sx={{
+            flexGrow: 1,
+            cursor: interviewMeta.isInterview ? "pointer" : "default",
+          }}
+          onClick={() => {
+            if (interviewMeta.isInterview) {
+              setInterviewModalOpen(true);
+            }
+          }}
+        >
           <Box className={`date-box ${calendarItemStyleMapper[props.occasion.type]}`}>
             <span>{getOrdinalSuffix(date.date())}</span>
             <span>{dateFormatter(date, "MMM")}</span>
@@ -180,7 +192,9 @@ export const UpcomingHolidayCard = (props: Props) => {
             overflow: 'hidden',
           }}>
             <Typography variant="body1" className="text-truncate">{props.occasion.name} </Typography>
-            <Typography variant="body2" className="text-truncate">{props.occasion.description}</Typography>
+            <Typography variant="body2" className="text-truncate">
+              {interviewMeta.isInterview ? "📋 Click to open Interview Dossier & Scorecard" : props.occasion.description}
+            </Typography>
           </Box>
         </Box>
       </Tooltip >
@@ -275,6 +289,14 @@ export const UpcomingHolidayCard = (props: Props) => {
           />
         )
       }
+      {interviewMeta.isInterview && (
+        <InterviewDossierModal
+          open={interviewModalOpen}
+          onClose={() => setInterviewModalOpen(false)}
+          occasion={props.occasion}
+          onScorecardSubmitted={props.handleRefresh}
+        />
+      )}
     </Stack>
 
   );

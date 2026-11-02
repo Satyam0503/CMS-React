@@ -84,10 +84,11 @@ export const updateDepartment = async (payload: DepartmentRequestModel[]) => {
 };
 
 // application modules
-export const updateModuleAccess = async (moduleId: string) => {
-  return patchRequest<object, UpdateModuleAccessResponse>(
-    `${ServiceUrl.UPDATE_MODULE_ACCESS}/${moduleId}`
-  );
+export const updateModuleAccess = async (moduleId: string, isAccessible?: boolean) => {
+  const url = isAccessible !== undefined
+    ? `${ServiceUrl.UPDATE_MODULE_ACCESS}/${moduleId}?isAccessible=${isAccessible}`
+    : `${ServiceUrl.UPDATE_MODULE_ACCESS}/${moduleId}`;
+  return patchRequest<object, UpdateModuleAccessResponse>(url);
 };
 
 //modules

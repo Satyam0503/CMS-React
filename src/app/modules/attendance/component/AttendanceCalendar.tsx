@@ -9,6 +9,9 @@ import {
   Card,
   Chip,
   TablePagination,
+  Tabs,
+  Tab,
+  Divider,
   alpha,
   useMediaQuery,
   useTheme,
@@ -32,10 +35,13 @@ import EventBusyIcon from "@mui/icons-material/EventBusy";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import { GetLeaveRequestPayLoad, LeaveRequestModel } from "../../leaves/model";
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import { getAllLeaveRequest } from "../../leaves/leaveServices";
-import { getRequest } from "../../../../server/axios";
+import { getRequest, postRequest } from "../../../../server/axios";
+import { toast } from "react-toastify";
 import { ResponseData } from "../../../../utils/common_types";
 import { AttendanceStatusSetting } from "../AttendanceStatusSettings";
 import MonthlyAttendanceExceptions from "./MonthlyAttendanceExceptions";
@@ -60,6 +66,33 @@ import {
 } from "../attendanceStatusCalculation";
 
 import { AppButton, AppTextField } from "../../../shared/components/ui";
+
+export const computeShiftHalves = (
+  startTime?: string | null,
+  endTime?: string | null,
+) => {
+  const start = startTime && startTime.trim() ? startTime.trim() : "09:00";
+  const end = endTime && endTime.trim() ? endTime.trim() : "18:00";
+  const [sH, sM] = start.split(":").map(Number);
+  const [eH, eM] = end.split(":").map(Number);
+  const startMins = (isNaN(sH) ? 9 : sH) * 60 + (isNaN(sM) ? 0 : sM);
+  let endMins = (isNaN(eH) ? 18 : eH) * 60 + (isNaN(eM) ? 0 : eM);
+  if (endMins <= startMins) endMins += 24 * 60;
+  const midMins = Math.round((startMins + endMins) / 2);
+  const formatMins = (m: number) => {
+    const h = Math.floor((m % (24 * 60)) / 60);
+    const min = Math.floor(m % 60);
+    return `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
+  };
+  const mid = formatMins(midMins);
+  return {
+    start,
+    end,
+    mid,
+    firstHalf: { in: start, out: mid },
+    secondHalf: { in: mid, out: end },
+  };
+};
 interface Employee {
   name: string;
   id: string;
@@ -97,6 +130,8 @@ interface AttendanceData {
   scheduleId?: string | null;
   isDaySegment?: boolean;
   segment?: string | null;
+  lateCount?: number;
+  earlyExitCount?: number;
   halfDaySegments?: Partial<
     Record<"FIRST_HALF" | "SECOND_HALF", AttendanceSegmentData>
   >;
@@ -106,6 +141,8 @@ interface AttendanceSegmentData {
   status: AttendanceStatus | string;
   sourceType?: string | null;
   sourceId?: string | null;
+  checkIn?: string | null;
+  checkOut?: string | null;
 }
 
 const attendanceStatusOptions: Array<{
@@ -229,16 +266,19 @@ const createPunchPresets = (from?: string | null, until?: string | null, fallbac
 };
 
 // Leave and WFH statuses are owned by their respective request workflows.
-// Letting the generic attendance editor write one of these values would create
-// a visual attendance result without the leave balance, approval history, or
-// request-owned audit trail that payroll relies on.
+// Letting the generic attendance editor manufacture unapproved leave requests
+// would create inconsistency. WFH and hybrid statuses can now be regularized
+// by HR/Admin when adjusting exact punch timings.
 const workflowOwnedStatusCodes = new Set([
-  "SL", "CL", "EL", "UL", "COMP-OFF", "WFH", "WFH+WFO", "WFH-HD",
+  "SL", "CL", "EL", "UL", "COMP-OFF",
   "WFH+SL", "WFH+CL", "CL-HALF", "SL-HALF", "MED", "ML", "SAB",
 ]);
 
 const isManualAttendanceStatus = (code: string) =>
   !workflowOwnedStatusCodes.has(code.trim().toUpperCase());
+
+const isWfhStatus = (status: string) =>
+  ["WFH", "WFH+WFO", "WFH-HD", "WFH+SL", "WFH+CL"].includes(status);
 
 const manualAttendanceStatusOptions = attendanceStatusOptions.filter((option) =>
   isManualAttendanceStatus(option.value),
@@ -410,9 +450,30 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   const [selectedCell, setSelectedCell] = useState<{
     employee: AttendanceRow;
     dateObj: Date;
+    isOverride?: boolean;
+    sourceLabel?: string;
   } | null>(null);
 
   const [modalData, setModalData] = useState<AttendanceData>(initialModalState);
+  const [modalTab, setModalTab] = useState<"OFFICE" | "WFH">("OFFICE");
+  const [wfhGrantData, setWfhGrantData] = useState<{
+    grantType: "FullDay" | "WfhWfo" | "WfoWfh" | "WfhHd" | "HdWfh";
+    remarks: string;
+    officeCheckIn: string;
+    officeCheckOut: string;
+    wfhCheckIn: string;
+    wfhCheckOut: string;
+    leaveStatusCode: string;
+  }>({
+    grantType: "FullDay",
+    remarks: "",
+    officeCheckIn: "09:00",
+    officeCheckOut: "13:30",
+    wfhCheckIn: "13:30",
+    wfhCheckOut: "18:00",
+    leaveStatusCode: "SL",
+  });
+  const [wfhGrantLoading, setWfhGrantLoading] = useState(false);
   const scheduleTimePresets = useMemo(() => {
     const employee = selectedCell?.employee;
     const checkInPresets = createPunchPresets(employee?.punchInAllowedFrom, employee?.punchInAllowedUntil, employee?.scheduledStartTime || "09:00");
@@ -428,7 +489,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
   const handlePunchInChange = useCallback((newInTime: string) => {
     setModalData((prev) => {
-      const derived = deriveAttendanceStatus(
+      const isWfh = ["WFH", "WFH+WFO", "WFH-HD"].includes(prev.status);
+      const derived = isWfh ? null : deriveAttendanceStatus(
         newInTime,
         prev.checkOut,
         selectedCell?.employee,
@@ -444,7 +506,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
   const handlePunchOutChange = useCallback((newOutTime: string) => {
     setModalData((prev) => {
-      const derived = deriveAttendanceStatus(
+      const isWfh = ["WFH", "WFH+WFO", "WFH-HD"].includes(prev.status);
+      const derived = isWfh ? null : deriveAttendanceStatus(
         prev.checkIn,
         newOutTime,
         selectedCell?.employee,
@@ -721,20 +784,23 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           // 17 Aug leave under an earlier calendar column.
           const dateISO =
             relatedLeave && relatedLeave.totalDays <= 1
-              ? dayjs(relatedLeave.startDate).format("YYYY-MM-DD")
-              : relatedWfh &&
-                  relatedWfh.fromDate.slice(0, 10) ===
-                    relatedWfh.toDate.slice(0, 10)
-                ? dayjs(relatedWfh.fromDate).format("YYYY-MM-DD")
-                : formatServerDate(item.date, "YYYY-MM-DD");
+              ? formatServerDate(relatedLeave.startDate, "YYYY-MM-DD")
+              : formatServerDate(item.date, "YYYY-MM-DD");
           if (!dateISO || dateISO === "NA") return;
 
-          // The self endpoint derives the employee from the access token.  Use
-          // the rendered row identity for that one-row grid rather than relying
-          // on a legacy user-id representation returned by older attendance rows.
+          // Resolve the row identity against the loaded employees so optimistic keys,
+          // API responses, and table rendering map to the exact same calendar row.
+          const matchedEmployee = employees.find(
+            (e) =>
+              normalizeUserId(e.userId) === normalizeUserId(item.userId) ||
+              normalizeUserId(e.id) === normalizeUserId(item.userId) ||
+              normalizeUserId(e.employeeId) === normalizeUserId(item.userId),
+          );
           const rowUserId = !companyView
             ? resolveRowId(employees[0])
-            : normalizeUserId(item.userId);
+            : matchedEmployee
+              ? resolveRowId(matchedEmployee)
+              : normalizeUserId(item.userId);
           if (!rowUserId) return;
           const key = `${rowUserId}-${dateISO}`;
 
@@ -743,6 +809,22 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             item.segment === "FIRST_HALF" || item.segment === "SECOND_HALF"
               ? (item.segment as "FIRST_HALF" | "SECOND_HALF")
               : null;
+
+          const isSystemPlaceholder = [
+            "SYSTEM_DEFAULT_PRESENT",
+            "SYSTEM_OFFICE_START_PRESENT",
+          ].includes((item.sourceType ?? "").toUpperCase());
+
+          const isWfhRecord =
+            ["WFH", "WFH+WFO", "WFH-HD", "WFH+SL", "WFH+CL", "WFO+WFH", "HD+WFH"].includes(
+              (item.status ?? "").toUpperCase()
+            ) ||
+            sourceIsWfh ||
+            Boolean(relatedWfh) ||
+            (formatted[key]?.isDaySegment &&
+              ["WFH", "WFH+WFO", "WFH-HD", "WFH+SL", "WFH+CL", "WFO+WFH", "HD+WFH"].includes(
+                (formatted[key]?.status ?? "").toUpperCase()
+              ));
 
           // Keep both authoritative half-day segments. A split day must never
           // lose one workflow because its API row happened to arrive last.
@@ -753,41 +835,118 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               checkOut: "",
               remarks: "",
             };
+
+            const updatedSegments = {
+              ...current.halfDaySegments,
+              [segmentName]: {
+                status: item.status,
+                sourceType: item.sourceType ?? null,
+                sourceId: item.sourceId ?? null,
+              },
+            };
+            const fh = updatedSegments.FIRST_HALF?.status?.toUpperCase();
+            const sh = updatedSegments.SECOND_HALF?.status?.toUpperCase();
+            let resolvedStatus: any = current.status;
+            if (fh && sh) {
+              if ((fh === "WFH" && (sh === "P" || sh === "PRESENT")) || ((fh === "P" || fh === "PRESENT") && sh === "WFH")) resolvedStatus = "WFH+WFO";
+              else if (fh === "WFH" && sh === "WFH") resolvedStatus = "WFH";
+              else if ((fh === "WFH" && (sh === "HD" || sh.includes("HALF") || sh.includes("LEAVE") || ["SL", "CL", "EL", "PL", "ML", "COMP-OFF", "CO", "LWP"].includes(sh))) ||
+                       (sh === "WFH" && (fh === "HD" || fh.includes("HALF") || fh.includes("LEAVE") || ["SL", "CL", "EL", "PL", "ML", "COMP-OFF", "CO", "LWP"].includes(fh)))) resolvedStatus = "WFH-HD";
+              else if ((fh === "WFH" && sh === "A") || (sh === "WFH" && fh === "A")) resolvedStatus = "WFH-HD";
+              else resolvedStatus = `${fh}/${sh}`;
+            } else if (fh === "WFH" && !sh) {
+              resolvedStatus = "WFH-HD";
+            } else if (sh === "WFH" && !fh) {
+              resolvedStatus = "WFH-HD";
+            } else {
+              resolvedStatus = item.status || current.status;
+            }
+
+            const isWfhCombo = ["WFH", "WFH+WFO", "WFH-HD", "WFH+SL", "WFH+CL", "WFO+WFH", "HD+WFH"].includes(
+              (resolvedStatus ?? "").toUpperCase()
+            );
+
+            // WFH and combination records must NEVER display full-shift system placeholders (09:00 - 18:00)
+            const segIn = (isWfhCombo && isSystemPlaceholder) ? "" : formatIndianTime(item.checkInTime);
+            const segOut = (isWfhCombo && isSystemPlaceholder) ? "" : formatIndianTime(item.checkOutTime);
+            if (updatedSegments[segmentName]) {
+              updatedSegments[segmentName]!.checkIn = segIn || null;
+              updatedSegments[segmentName]!.checkOut = segOut || null;
+            }
+
+            const prevWasPlaceholder = (current.sourceType === "SYSTEM_DEFAULT_PRESENT" || current.sourceType === "SYSTEM_OFFICE_START_PRESENT");
+            const finalIn = isWfhCombo && prevWasPlaceholder
+              ? (segIn || "")
+              : (segIn && current.checkIn ? (segIn < current.checkIn ? segIn : current.checkIn) : (segIn || current.checkIn));
+            const finalOut = isWfhCombo && prevWasPlaceholder
+              ? (segOut || "")
+              : (segOut && current.checkOut ? (segOut > current.checkOut ? segOut : current.checkOut) : (segOut || current.checkOut));
+
             formatted[key] = {
               ...current,
-              status: item.status,
-              checkIn: formatIndianTime(item.checkInTime),
-              checkOut: formatIndianTime(item.checkOutTime),
-              remarks: item.remarks ?? "",
+              status: resolvedStatus,
+              checkIn: finalIn,
+              checkOut: finalOut,
+              remarks: item.remarks || current.remarks || "",
               sourceType: item.sourceType ?? null,
               sourceId: item.sourceId ?? null,
               scheduleId: item.scheduleId ?? null,
               isDaySegment: true,
               segment: segmentName,
-              halfDaySegments: {
-                ...current.halfDaySegments,
-                [segmentName]: {
-                  status: item.status,
-                  sourceType: item.sourceType ?? null,
-                  sourceId: item.sourceId ?? null,
-                },
-              },
+              halfDaySegments: updatedSegments,
+              lateCount: item.lateCount ?? current.lateCount ?? 0,
+              earlyExitCount: item.earlyExitCount ?? current.earlyExitCount ?? 0,
             };
             return;
           }
 
-          if (formatted[key]?.isDaySegment && !isDaySegment) return;
+          // Synthetic system placeholders should ONLY be suppressed from showing in-office shift punches
+          // when the record is an unpunched WFH or hybrid/combination day.
+          // Normal in-office employees who have automatic attendance MUST display their
+          // scheduled shift times (e.g. 09:00 - 18:00) so automatic attendance functions correctly.
+          const isItemWfh = ["WFH", "WFH+WFO", "WFH-HD", "WFH+SL", "WFH+CL", "WFO+WFH", "HD+WFH"].includes(
+            (item.status ?? "").toUpperCase()
+          );
+          const shouldSuppressPlaceholder = isSystemPlaceholder && (isWfhRecord || isItemWfh);
+
+          if (formatted[key]?.isDaySegment && !isDaySegment) {
+            const current = formatted[key];
+            const isWfhCombo = ["WFH", "WFH+WFO", "WFH-HD", "WFH+SL", "WFH+CL", "WFO+WFH", "HD+WFH"].includes(
+              (current.status ?? "").toUpperCase()
+            );
+            const dailyIn = (shouldSuppressPlaceholder || (isWfhCombo && isSystemPlaceholder)) ? "" : formatIndianTime(item.checkInTime);
+            const dailyOut = (shouldSuppressPlaceholder || (isWfhCombo && isSystemPlaceholder)) ? "" : formatIndianTime(item.checkOutTime);
+            const hasSegments = Boolean(current.halfDaySegments?.FIRST_HALF || current.halfDaySegments?.SECOND_HALF);
+            formatted[key] = {
+              ...current,
+              status: hasSegments ? current.status : (item.status || current.status),
+              sourceType: hasSegments ? current.sourceType : (item.sourceType ?? current.sourceType),
+              sourceId: hasSegments ? current.sourceId : (item.sourceId ?? current.sourceId),
+              checkIn: isWfhCombo && isSystemPlaceholder
+                ? (current.checkIn || "")
+                : (current.checkIn && dailyIn ? (current.checkIn < dailyIn ? current.checkIn : dailyIn) : (current.checkIn || dailyIn)),
+              checkOut: isWfhCombo && isSystemPlaceholder
+                ? (current.checkOut || "")
+                : (current.checkOut && dailyOut ? (current.checkOut > dailyOut ? current.checkOut : dailyOut) : (current.checkOut || dailyOut)),
+              remarks: current.remarks || item.remarks || "",
+              lateCount: Math.max(current.lateCount ?? 0, item.lateCount ?? 0),
+              earlyExitCount: Math.max(current.earlyExitCount ?? 0, item.earlyExitCount ?? 0),
+            };
+            return;
+          }
 
           formatted[key] = {
             status: item.status,
-            checkIn: formatIndianTime(item.checkInTime),
-            checkOut: formatIndianTime(item.checkOutTime),
+            checkIn: shouldSuppressPlaceholder ? "" : formatIndianTime(item.checkInTime),
+            checkOut: shouldSuppressPlaceholder ? "" : formatIndianTime(item.checkOutTime),
             remarks: item.remarks ?? "",
             sourceType: item.sourceType ?? null,
             sourceId: item.sourceId ?? null,
             scheduleId: item.scheduleId ?? null,
             isDaySegment,
             segment: item.segment ?? null,
+            lateCount: item.lateCount ?? 0,
+            earlyExitCount: item.earlyExitCount ?? 0,
           };
         });
 
@@ -901,7 +1060,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           const employeeKey = normalizeUserId(item.userId) || employeeName;
           if (employeeName && employeeKey) halfDayEmployees.set(employeeKey, employeeName);
         }
-        if (item.exceptionId || item.hasException || item.lateCount > 0)
+        if (item.exceptionId || item.hasException || (item.lateCount ?? 0) > 0 || (item.earlyExitCount ?? 0) > 0)
           exceptions++;
       }
     });
@@ -945,21 +1104,45 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     }
 
     const dateISO = dayjs(selectedCell.dateObj).format("YYYY-MM-DD");
-    const rowId = selectedCell.employee.userId || selectedCell.employee.id;
+    const rowId = resolveRowId(selectedCell.employee as any);
     const key = `${rowId}-${dateISO}`;
     const existing = attendanceData[key];
     const isSystemDefault = [
       "SYSTEM_DEFAULT_PRESENT",
       "SYSTEM_OFFICE_START_PRESENT",
     ].includes((existing?.sourceType ?? "").toUpperCase());
-    const fallbackCheckIn = selectedCell.employee.scheduledStartTime ?? "";
-    const fallbackCheckOut = selectedCell.employee.scheduledEndTime ?? "";
+    const halves = computeShiftHalves(selectedCell.employee.scheduledStartTime, selectedCell.employee.scheduledEndTime);
+    const isOverrideCell = Boolean(selectedCell.isOverride);
+    const isHalfDay = existing?.status === "HD";
 
+    const resolvedStatus = existing?.status || (isOverrideCell ? "P" : "");
     setModalData({
-      status: existing?.status ?? "",
-      checkIn: isSystemDefault && fallbackCheckIn ? fallbackCheckIn : (existing?.checkIn ?? fallbackCheckIn),
-      checkOut: isSystemDefault && fallbackCheckOut ? fallbackCheckOut : (existing?.checkOut ?? fallbackCheckOut),
-      remarks: existing?.remarks ?? "",
+      status: resolvedStatus,
+      checkIn: existing?.checkIn || "",
+      checkOut: existing?.checkOut || (isHalfDay ? halves.firstHalf.out : ""),
+      remarks: existing?.remarks || "",
+    });
+
+    const firstSegment = existing?.halfDaySegments?.FIRST_HALF;
+    const secondSegment = existing?.halfDaySegments?.SECOND_HALF;
+    const isWfoWfh = firstSegment?.status === "P" && secondSegment?.status === "WFH";
+    const initialGrantType = isWfoWfh ? "WfoWfh" : "WfhWfo";
+    const defaultOfficeIn = isWfoWfh ? halves.firstHalf.in : halves.secondHalf.in;
+    const defaultOfficeOut = isWfoWfh ? halves.firstHalf.out : halves.secondHalf.out;
+    const defaultWfhIn = isWfoWfh ? halves.secondHalf.in : halves.firstHalf.in;
+    const defaultWfhOut = isWfoWfh ? halves.secondHalf.out : halves.firstHalf.out;
+
+    const officeSegment = isWfoWfh ? firstSegment : secondSegment;
+    const wfhSegment = isWfoWfh ? secondSegment : firstSegment;
+
+    setWfhGrantData({
+      grantType: initialGrantType,
+      remarks: existing?.remarks || "",
+      officeCheckIn: officeSegment?.checkIn || defaultOfficeIn,
+      officeCheckOut: officeSegment?.checkOut || defaultOfficeOut,
+      wfhCheckIn: wfhSegment?.checkIn || defaultWfhIn,
+      wfhCheckOut: wfhSegment?.checkOut || defaultWfhOut,
+      leaveStatusCode: "SL",
     });
   }, [selectedCell, attendanceData]);
 
@@ -976,8 +1159,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const dateIso = date.format("YYYY-MM-DD");
     const isHoliday = holidays.has(dateIso);
     const isFutureDate = date.isAfter(today, "day");
-    const editable =
-      !readOnly && dateObj <= today.toDate() && !isHoliday && !isWeekend;
+    const isNonWorkingDay = isHoliday || isWeekend;
+    const editable = !readOnly && !isFutureDate;
     const value = (row[`day-${index + 1}`] ??
       initialModalState) as AttendanceData;
     const joiningDate = row.dateOfJoining
@@ -1014,6 +1197,36 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       "SYSTEM_DEFAULT_PRESENT",
       "SYSTEM_OFFICE_START_PRESENT",
     ].includes(value.sourceType?.toUpperCase() ?? "");
+    const isCellWfh =
+      isWfhGenerated ||
+      [firstHalf, secondHalf].some(
+        (half) => (half?.sourceType ?? "").toUpperCase() === "WFH_REQUEST",
+      );
+    const isCellLeave =
+      isLeaveGenerated ||
+      [firstHalf, secondHalf].some(
+        (half) => (half?.sourceType ?? "").toUpperCase() === "LEAVE",
+      );
+    const isCellLifecycle =
+      isLifecycleGenerated ||
+      [firstHalf, secondHalf].some(
+        (half) => (half?.sourceType ?? "").toUpperCase() === "LIFECYCLE_CASE",
+      );
+    const resolvedSourceLabel =
+      isCellWfh && isCellLeave
+        ? "Leave / WFH"
+        : isCellWfh
+          ? "Work From Home"
+          : isCellLifecycle
+            ? "Lifecycle Leave"
+            : "Approved Leave";
+
+    const formatSegmentStatus = (segmentStatus?: string) => {
+      if (!segmentStatus) return "";
+      const upper = segmentStatus.trim().toUpperCase();
+      return upper === "WFH-HD" ? "WFH" : upper;
+    };
+
     const relatedLeave = isLeaveGenerated
       ? leaveRequests.find((leave) => leave.leaveRequestId === value.sourceId)
       : undefined;
@@ -1035,21 +1248,33 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       ? `${relatedLeave.leavePolicyName} • ${relatedLeave.isHalfDay ? "Half day" : "Full day"} • Approved • Generated from leave request`
       : "Approved leave • Generated from leave request";
     const halfDayDetail = [
-      firstHalf && `First half: ${firstHalf.status}`,
-      secondHalf && `Second half: ${secondHalf.status}`,
+      firstHalf && `First half: ${formatSegmentStatus(firstHalf.status)}`,
+      secondHalf && `Second half: ${formatSegmentStatus(secondHalf.status)}`,
     ]
       .filter(Boolean)
       .join("\n");
+    const timingDetail =
+      value.checkIn || value.checkOut
+        ? `Timing: ${value.checkIn || "—"} – ${value.checkOut || "—"}`
+        : "";
+    const cleanRemarks =
+      value.remarks &&
+      !value.remarks.toLowerCase().includes("system default present created on the basis of date of joining")
+        ? value.remarks
+        : "";
+    const reasonDetail = cleanRemarks ? `Reason: ${cleanRemarks}` : "";
+    const formattedDate = dayjs(dateObj).format("DD MMMM YYYY");
+
     const tooltipText = isBeforeJoining
       ? `Not applicable — employee joins on ${joiningDate?.format("DD MMM YYYY")}.`
       : isAfterExit
         ? `Not employed — last working date was ${lastWorkingDate?.format("DD MMM YYYY")}.`
       : hasHalfDaySegments
-        ? `${halfDayDetail}\n${dayjs(dateObj).format("DD MMMM YYYY")}\nGenerated from approved attendance workflows.`
+        ? `${halfDayDetail}\n${formattedDate}${timingDetail ? `\n${timingDetail}` : ""}${reasonDetail ? `\n${reasonDetail}` : ""}\nGenerated from approved attendance workflows.`
         : isLeaveGenerated
-          ? `${statusCode} — ${statusLabel}\n${leaveDetail}\n${dayjs(dateObj).format("DD MMMM YYYY")}`
+          ? `${statusCode} — ${statusLabel}\n${leaveDetail}\n${formattedDate}${reasonDetail ? `\n${reasonDetail}` : ""}`
           : isWfhGenerated
-            ? `${statusCode} — ${statusLabel}\nApproved work-from-home request • Generated from WFH workflow\n${dayjs(dateObj).format("DD MMMM YYYY")}`
+            ? `${statusCode} — ${statusLabel}\nApproved work-from-home request • Generated from WFH workflow\n${formattedDate}${timingDetail ? `\n${timingDetail}` : ""}${reasonDetail ? `\n${reasonDetail}` : ""}`
             : isSystemDefault
               ? `${statusCode} - System default Present\nCreated automatically. An authorized attendance, Leave, or WFH workflow can update it.`
                 : isFutureDate
@@ -1060,9 +1285,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   ? "Public Holiday"
                   : isWeekend
                     ? "Weekend"
-                    : statusLabel;
+                    : [
+                        `${statusCode} — ${statusLabel}`,
+                        timingDetail,
+                        reasonDetail,
+                        formattedDate,
+                      ].filter(Boolean).join("\n");
     const canEdit =
-      editable && !isWorkflowOwned && !isSourceOwnedSegment && !isBeforeJoining && !isAfterExit;
+      editable && !isBeforeJoining && !isAfterExit;
     const tooltipLines: string[] = tooltipText.split("\n");
     const tooltipTitle = (
       <Box sx={{ display: "grid", gap: 0.35, maxWidth: 280 }}>
@@ -1164,17 +1394,46 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         <Box
           onClick={() => {
             if (isFutureDate) return;
-            if (readOnly) return;
+            if (readOnly) {
+      if (!companyView && dateObj) {
+        window.dispatchEvent(
+          new CustomEvent("report-attendance-correction", {
+            detail: { date: dayjs(dateObj).format("YYYY-MM-DD") },
+          })
+        );
+      }
+      return;
+    }
             if (isWorkflowOwned || isSourceOwnedSegment) {
+              if (!readOnly && !isBeforeJoining && !isAfterExit) {
+                setSelectedCell({
+                  employee: row,
+                  dateObj,
+                  isOverride: true,
+                  sourceLabel: resolvedSourceLabel,
+                });
+                return;
+              }
               setConfirmationModal({
                 open: true,
-                title: isWfhGenerated
+                title: isCellWfh
                   ? "WFH-generated attendance"
                   : "Leave-generated attendance",
-                content: isWfhGenerated
+                content: isCellWfh
                   ? "This record is generated from an approved WFH request. Update or cancel the WFH request through its workflow to make a correction."
                   : "This record is generated from an approved leave request. Use the authorized leave-attendance conflict-resolution workflow to make a correction.",
               });
+              return;
+            }
+            if (isNonWorkingDay) {
+              if (canEdit) {
+                setSelectedCell({
+                  employee: row,
+                  dateObj,
+                  isOverride: true,
+                  sourceLabel: isHoliday ? "Holiday" : "Weekly Off",
+                });
+              }
               return;
             }
             if (canEdit) setSelectedCell({ employee: row, dateObj });
@@ -1243,9 +1502,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   component="span"
                   fontSize={9}
                   fontWeight={800}
-                  aria-label={`First half ${firstHalf.status}`}
+                  aria-label={`First half ${formatSegmentStatus(firstHalf.status)}`}
                 >
-                  FH: {firstHalf.status}
+                  FH: {formatSegmentStatus(firstHalf.status)}
                 </Typography>
               )}
               {secondHalf && (
@@ -1253,9 +1512,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   component="span"
                   fontSize={9}
                   fontWeight={800}
-                  aria-label={`Second half ${secondHalf.status}`}
+                  aria-label={`Second half ${formatSegmentStatus(secondHalf.status)}`}
                 >
-                  SH: {secondHalf.status}
+                  SH: {formatSegmentStatus(secondHalf.status)}
                 </Typography>
               )}
               {isSourceOwnedSegment && (
@@ -1318,6 +1577,20 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               >
                 {statusCode}
               </Typography>
+              {Boolean(value.checkIn || value.checkOut) && (
+                <Typography
+                  component="span"
+                  fontSize={8}
+                  color="text.secondary"
+                  fontWeight={700}
+                  aria-hidden="true"
+                  sx={{ lineHeight: 1 }}
+                >
+                  {value.checkIn && value.checkOut
+                    ? `${value.checkIn}–${value.checkOut}`
+                    : value.checkIn || value.checkOut}
+                </Typography>
+              )}
             </Stack>
           ) : (
             getIcon(value)
@@ -1370,7 +1643,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
   /* --------------------------------------------------------------- SAVE -------------------------------------------------------------------------- */
 
-  const saveAttendance = async () => {
+  const handleSaveAttendance = async () => {
     if (!selectedCell || !modalData.status) {
       setConfirmationModal({
         open: true,
@@ -1380,7 +1653,174 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       return;
     }
 
+    const isOverride = Boolean(selectedCell.isOverride);
     const dateISO = dayjs(selectedCell.dateObj).format("YYYY-MM-DD");
+    const rowId = resolveRowId(selectedCell.employee as any);
+    const key = `${rowId}-${dateISO}`;
+    const isWfh = isWfhStatus(modalData.status);
+
+    if (isWfh) {
+      const justification = (modalData.remarks || wfhGrantData.remarks || "").trim();
+      if (justification.length < 3) {
+        setConfirmationModal({
+          open: true,
+          title: "Justification Required",
+          content: "Please provide an explanatory reason of at least 3 characters for this Work From Home schedule.",
+        });
+        return;
+      }
+
+      setWfhGrantLoading(true);
+      try {
+        const grantType: "FullDay" | "WfhWfo" | "WfoWfh" | "WfhHd" | "HdWfh" =
+          modalData.status === "WFH"
+            ? "FullDay"
+            : modalData.status === "WFH+WFO"
+              ? (wfhGrantData.grantType === "WfoWfh" ? "WfoWfh" : "WfhWfo")
+              : modalData.status === "WFO+WFH"
+                ? "WfoWfh"
+                : modalData.status === "WFH-HD"
+                  ? (wfhGrantData.grantType === "HdWfh" ? "HdWfh" : "WfhHd")
+                  : modalData.status === "HD+WFH"
+                    ? "HdWfh"
+                    : "FullDay";
+
+        const isHybrid = grantType === "WfhWfo" || grantType === "WfoWfh";
+        const isWfhHd = grantType === "WfhHd" || grantType === "HdWfh";
+        const officeIn = isHybrid
+          ? (wfhGrantData.officeCheckIn || modalData.checkIn)
+          : null;
+        const officeOut = isHybrid
+          ? (wfhGrantData.officeCheckOut || modalData.checkOut)
+          : null;
+        const wfhIn = (isHybrid || isWfhHd)
+          ? wfhGrantData.wfhCheckIn
+          : (modalData.status === "WFH" && modalData.checkIn?.trim() ? modalData.checkIn.trim() : null);
+        const wfhOut = (isHybrid || isWfhHd)
+          ? wfhGrantData.wfhCheckOut
+          : (modalData.status === "WFH" && modalData.checkOut?.trim() ? modalData.checkOut.trim() : null);
+
+        if (wfhIn && wfhOut) {
+          const inM = timeToMinutes(wfhIn);
+          const outM = timeToMinutes(wfhOut);
+          if (inM !== null && outM !== null) {
+            if (outM <= inM) {
+              toast.error("WFH punch-out time must be later than punch-in time.");
+              setWfhGrantLoading(false);
+              return;
+            }
+            if (grantType === "FullDay") {
+              const hours = (outM - inM) / 60;
+              if (hours < 4.0) {
+                toast.error(`Verified WFH duration (${hours.toFixed(1)}h) is below the minimum required 4.0 hours for attendance credit.`);
+                setWfhGrantLoading(false);
+                return;
+              }
+            }
+          }
+        }
+
+        const payload = {
+          targetUserId: selectedCell.employee.userId || selectedCell.employee.id,
+          attendanceDate: dateISO,
+          grantType,
+          remarks: justification,
+          officeCheckInTime: officeIn ? (officeIn.length === 5 ? `${officeIn}:00` : officeIn) : null,
+          officeCheckOutTime: officeOut ? (officeOut.length === 5 ? `${officeOut}:00` : officeOut) : null,
+          wfhCheckInTime: wfhIn ? (wfhIn.length === 5 ? `${wfhIn}:00` : wfhIn) : null,
+          wfhCheckOutTime: wfhOut ? (wfhOut.length === 5 ? `${wfhOut}:00` : wfhOut) : null,
+          leaveStatusCode: isWfhHd ? (wfhGrantData.leaveStatusCode || "SL") : null,
+        };
+
+        const response = await postRequest<any, { success?: boolean; message?: string }>("api/wfh/admin-grant", payload);
+        if (response?.data?.success) {
+          toast.success("Work From Home granted successfully.");
+          const appliedStatus = modalData.status as AttendanceStatus;
+
+          const effectiveCheckIn = grantType === "FullDay" ? (wfhIn || "") : (officeIn || "");
+          const effectiveCheckOut = grantType === "FullDay" ? (wfhOut || "") : (officeOut || "");
+          const halves = computeShiftHalves(selectedCell.employee.scheduledStartTime, selectedCell.employee.scheduledEndTime);
+          const shiftStartM = timeToMinutes(halves.start) ?? 9 * 60;
+          const shiftEndM = timeToMinutes(halves.end) ?? 18 * 60;
+          const graceM = typeof selectedCell.employee.graceMinutes === "number" ? selectedCell.employee.graceMinutes : 15;
+          const lateArrivalBoundary = shiftStartM + graceM;
+          const earlyDepartureBoundary = shiftEndM - graceM;
+
+          let isLate = false;
+          let isEarly = false;
+          if (effectiveCheckIn) {
+            const m = timeToMinutes(effectiveCheckIn);
+            if (m !== null && m > lateArrivalBoundary) isLate = true;
+          }
+          if (effectiveCheckOut) {
+            const m = timeToMinutes(effectiveCheckOut);
+            if (m !== null && m < earlyDepartureBoundary) isEarly = true;
+          }
+
+          setAttendanceData((prev) => ({
+            ...prev,
+            [key]: {
+              ...prev[key],
+              status: appliedStatus,
+              remarks: justification,
+              sourceType: "WFH_REQUEST",
+              checkIn: effectiveCheckIn,
+              checkOut: effectiveCheckOut,
+              lateCount: isLate ? 1 : 0,
+              earlyExitCount: isEarly ? 1 : 0,
+              halfDaySegments:
+                grantType === "FullDay"
+                  ? undefined
+                  : {
+                      FIRST_HALF: {
+                        status: grantType === "WfoWfh" ? "P" : "WFH",
+                        sourceType: grantType === "WfoWfh" ? "ADMIN_MANUAL" : "WFH_REQUEST",
+                      },
+                      SECOND_HALF: {
+                        status: grantType === "WfoWfh" ? "WFH" : (grantType === "WfhWfo" ? "P" : "HD"),
+                        sourceType: grantType === "WfoWfh" ? "WFH_REQUEST" : (grantType === "WfhWfo" ? "ADMIN_MANUAL" : "WFH_REQUEST"),
+                      },
+                    },
+            },
+          }));
+          setReloadKey((k) => k + 1);
+          setConfirmationModal({
+            open: true,
+            title: "Success",
+            content: "Work From Home schedule applied and attendance updated successfully!",
+          });
+          setSelectedCell(null);
+          setModalData(initialModalState);
+        } else {
+          setConfirmationModal({
+            open: true,
+            title: "Error",
+            content: response?.data?.message || "Failed to grant Work From Home",
+          });
+        }
+      } catch (err: any) {
+        const msg = err?.response?.data?.message || err?.message || "Failed to grant Work From Home";
+        setConfirmationModal({
+          open: true,
+          title: "Error",
+          content: msg,
+        });
+      } finally {
+        setWfhGrantLoading(false);
+      }
+      return;
+    }
+
+    // In-Office Attendance Save
+    if (isOverride && (!modalData.remarks || modalData.remarks.trim().length < 10)) {
+      setConfirmationModal({
+        open: true,
+        title: "Justification Required",
+        content: "Please provide an explanatory justification of at least 10 characters for this administrative override.",
+      });
+      return;
+    }
+
     const payload: AdminAttendanceCreateDto = {
       UserId: selectedCell.employee.userId || selectedCell.employee.id,
       EmployeeId: selectedCell.employee.employeeId,
@@ -1389,10 +1829,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       CheckOutTime: modalData.checkOut || undefined,
       Status: modalData.status,
       Remarks: modalData.remarks || null,
+      AllowSourceOverride: isOverride ? true : undefined,
     };
-
-    const rowId = selectedCell.employee.userId || selectedCell.employee.id;
-    const key = `${rowId}-${dateISO}`;
 
     try {
       const saveRes = await addEditAttendance(payload);
@@ -1411,36 +1849,72 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       setConfirmationModal({
         open: true,
         title: "Success",
-        content: "Attendance saved successfully!",
+        content: isOverride
+          ? selectedCell.sourceLabel === "Work From Home"
+            ? "Attendance overridden to in-office successfully! Office conversion logged."
+            : "Attendance overridden successfully! Leave balance has been refunded."
+          : "Attendance saved successfully!",
       });
-    } catch (err) {
-      console.error("Save failed", err);
-      const responseMessage =
-        typeof err === "object" && err !== null && "response" in err
-          ? (err.response as { data?: { message?: string } })?.data?.message
-          : err instanceof Error
-            ? err.message
-            : undefined;
+      setSelectedCell(null);
+      setModalData(initialModalState);
+    } catch (err: any) {
+      const responseMessage = err?.response?.data?.message || err?.message || "Failed to save attendance";
       const isLocked = /locked/i.test(responseMessage ?? "");
-      const message = responseMessage === "ATTENDANCE_WORKFLOW_STATUS_REQUIRES_LEAVE_OR_WFH_REQUEST"
-        ? "Leave and Work From Home must be created through their respective request workflows."
-        : responseMessage || "Failed to save attendance";
       setConfirmationModal({
         open: true,
         title: isLocked ? "Attendance Locked" : "Error",
-        content: message,
+        content: responseMessage,
       });
-      return;
     }
-
-    setSelectedCell(null);
-    setModalData(initialModalState);
   };
 
   const openTodayAttendance = (row: AttendanceRow) => {
     const value = row["day-1"] as AttendanceData;
     const dateObj = visibleDates[0]?.toDate();
-    if (!dateObj || readOnly || dayjs(dateObj).isAfter(today, "day")) return;
+    if (!dateObj || dayjs(dateObj).isAfter(today, "day")) return;
+
+    const joiningDate = row.dateOfJoining
+      ? dayjs(row.dateOfJoining).startOf("day")
+      : null;
+    const isBeforeJoining = Boolean(
+      joiningDate?.isValid() && dayjs(dateObj).isBefore(joiningDate, "day"),
+    );
+    const exitDate = row.lastWorkingDate
+      ? dayjs(row.lastWorkingDate).startOf("day")
+      : null;
+    const isAfterExit = Boolean(
+      exitDate?.isValid() && dayjs(dateObj).isAfter(exitDate, "day"),
+    );
+
+    if (isBeforeJoining) {
+      setConfirmationModal({
+        open: true,
+        title: "Not applicable",
+        content: `Attendance cannot be marked before the employee's joining date of ${joiningDate?.format("DD MMM YYYY")}.`,
+      });
+      return;
+    }
+
+    if (isAfterExit) {
+      setConfirmationModal({
+        open: true,
+        title: "Not applicable",
+        content: `Attendance cannot be marked after the employee's exit date of ${exitDate?.format("DD MMM YYYY")}.`,
+      });
+      return;
+    }
+
+    if (readOnly) {
+      if (!companyView && dateObj) {
+        window.dispatchEvent(
+          new CustomEvent("report-attendance-correction", {
+            detail: { date: dayjs(dateObj).format("YYYY-MM-DD") },
+          })
+        );
+      }
+      return;
+    }
+
     const isWorkflowOwned = [
       "LEAVE",
       "WFH_REQUEST",
@@ -1454,21 +1928,36 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       ),
     );
     if (isWorkflowOwned || isSourceOwnedSegment) {
-      const isWfh = value.sourceType?.toUpperCase() === "WFH_REQUEST";
+      const isWfh =
+        value.sourceType?.toUpperCase() === "WFH_REQUEST" ||
+        Object.values(value.halfDaySegments ?? {}).some(
+          (seg) => (seg?.sourceType ?? "").toUpperCase() === "WFH_REQUEST",
+        );
+      const isLeave =
+        value.sourceType?.toUpperCase() === "LEAVE" ||
+        Object.values(value.halfDaySegments ?? {}).some(
+          (seg) => (seg?.sourceType ?? "").toUpperCase() === "LEAVE",
+        );
       const isLifecycle =
-        value.sourceType?.toUpperCase() === "LIFECYCLE_CASE";
-      setConfirmationModal({
-        open: true,
-        title: isWfh
-          ? "WFH-generated attendance"
-          : isLifecycle
-            ? "Lifecycle-managed attendance"
-            : "Workflow-owned attendance",
-        content: isWfh
-          ? "This status is maintained by the approved WFH request. Update or cancel that request to make a change."
-          : isLifecycle
-            ? "This status is maintained by an approved employee lifecycle case (e.g. Medical/Maternity leave). Update or complete that lifecycle case to make a change."
-            : "This status is maintained by an approved leave or half-day workflow and cannot be edited from attendance.",
+        value.sourceType?.toUpperCase() === "LIFECYCLE_CASE" ||
+        Object.values(value.halfDaySegments ?? {}).some(
+          (seg) => (seg?.sourceType ?? "").toUpperCase() === "LIFECYCLE_CASE",
+        );
+
+      const sourceLabel =
+        isWfh && isLeave
+          ? "Leave / WFH"
+          : isWfh
+            ? "Work From Home"
+            : isLifecycle
+              ? "Lifecycle Leave"
+              : "Approved Leave";
+
+      setSelectedCell({
+        employee: row,
+        dateObj,
+        isOverride: true,
+        sourceLabel,
       });
       return;
     }
@@ -1503,12 +1992,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, minmax(0, 1fr))",
-                lg: "repeat(3, minmax(0, 1fr))",
-                xl: "repeat(4, minmax(0, 1fr))",
-              },
+              gridTemplateColumns: !companyView
+                ? { xs: "1fr", sm: "minmax(320px, 460px)" }
+                : {
+                    xs: "1fr",
+                    sm: "repeat(2, minmax(0, 1fr))",
+                    lg: "repeat(3, minmax(0, 1fr))",
+                    xl: "repeat(4, minmax(0, 1fr))",
+                  },
               gap: 2,
               alignItems: "stretch",
               "@keyframes attendance-card-in": {
@@ -1565,7 +2056,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     flexDirection: "column",
                     justifyContent: "space-between",
                     borderRadius: "12px",
-                    cursor: readOnly ? "default" : "pointer",
+                    cursor: readOnly ? (!companyView ? "pointer" : "default") : "pointer",
                     bgcolor: "var(--mui-palette-background-card, var(--mui-palette-background-paper))",
                     backdropFilter: "blur(14px) saturate(180%)",
                     WebkitBackdropFilter: "blur(14px) saturate(180%)",
@@ -1576,7 +2067,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     animation: `attendance-card-in 320ms ease-out ${Math.min(index * 35, 280)}ms both`,
                     transition:
                       "transform 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease, background 180ms ease",
-                    "&:hover": readOnly
+                    "&:hover": readOnly && companyView
                       ? {}
                       : {
                           transform: "translateY(-4px)",
@@ -1637,18 +2128,52 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                           </Typography>
                         </Box>
                       </Stack>
-                      <Chip
-                        size="small"
-                        label={status}
-                        variant={isWorkflowOwned ? "filled" : "outlined"}
-                        sx={{
-                          ...getStatusChipStyle(value.status),
-                          height: 24,
-                          fontSize: "0.72rem",
-                          opacity: isWorkflowOwned ? 0.96 : 1,
-                          flexShrink: 0,
-                        }}
-                      />
+                      <Stack direction="row" spacing={0.75} alignItems="center" sx={{ flexShrink: 0 }}>
+                        <Chip
+                          size="small"
+                          label={status}
+                          variant={isWorkflowOwned ? "filled" : "outlined"}
+                          sx={{
+                            ...getStatusChipStyle(value.status),
+                            height: 24,
+                            fontSize: "0.72rem",
+                            opacity: isWorkflowOwned ? 0.96 : 1,
+                            flexShrink: 0,
+                          }}
+                        />
+                        {(value.lateCount ?? 0) > 0 && (
+                          <Chip
+                            size="small"
+                            label="LHD"
+                            title="Late Arrival"
+                            sx={{
+                              height: 22,
+                              fontSize: "0.68rem",
+                              fontWeight: 800,
+                              bgcolor: "rgba(234, 88, 12, 0.12)",
+                              color: "#EA580C",
+                              border: "1px solid rgba(234, 88, 12, 0.35)",
+                              flexShrink: 0,
+                            }}
+                          />
+                        )}
+                        {(value.earlyExitCount ?? 0) > 0 && (
+                          <Chip
+                            size="small"
+                            label="ED"
+                            title="Early Departure"
+                            sx={{
+                              height: 22,
+                              fontSize: "0.68rem",
+                              fontWeight: 800,
+                              bgcolor: "rgba(220, 38, 38, 0.12)",
+                              color: "#DC2626",
+                              border: "1px solid rgba(220, 38, 38, 0.35)",
+                              flexShrink: 0,
+                            }}
+                          />
+                        )}
+                      </Stack>
                     </Stack>
 
                     {row.scheduleName && (
@@ -1689,19 +2214,33 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       }}
                     >
                       <Box>
-                        <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
-                          Punch in
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 700, fontSize: "0.8rem" }}>
-                          {value.checkIn || (isLegacySystemPresent ? (row.scheduledStartTime || "09:00") : "—")}
+                        <Stack direction="row" spacing={0.5} alignItems="center">
+                          <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 600 }}>
+                            Punch in
+                          </Typography>
+                          {(value.lateCount ?? 0) > 0 && (
+                            <Box component="span" sx={{ fontSize: "0.65rem", color: "#EA580C", fontWeight: 700 }}>
+                              (Late)
+                            </Box>
+                          )}
+                        </Stack>
+                        <Typography variant="caption" sx={{ color: (value.lateCount ?? 0) > 0 ? "#EA580C" : "text.primary", fontWeight: 700, fontSize: "0.8rem" }}>
+                          {value.checkIn || "—"}
                         </Typography>
                       </Box>
                       <Box sx={{ borderLeft: "1px solid", borderColor: "divider", pl: 1 }}>
-                        <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
-                          Punch out
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: "text.primary", fontWeight: 700, fontSize: "0.8rem" }}>
-                          {value.checkOut || (isLegacySystemPresent ? (row.scheduledEndTime || "18:00") : "—")}
+                        <Stack direction="row" spacing={0.5} alignItems="center">
+                          <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.68rem", fontWeight: 600 }}>
+                            Punch out
+                          </Typography>
+                          {(value.earlyExitCount ?? 0) > 0 && (
+                            <Box component="span" sx={{ fontSize: "0.65rem", color: "#DC2626", fontWeight: 700 }}>
+                              (Early)
+                            </Box>
+                          )}
+                        </Stack>
+                        <Typography variant="caption" sx={{ color: (value.earlyExitCount ?? 0) > 0 ? "#DC2626" : "text.primary", fontWeight: 700, fontSize: "0.8rem" }}>
+                          {value.checkOut || "—"}
                         </Typography>
                       </Box>
                     </Box>
@@ -1721,10 +2260,10 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       transition: "color 180ms ease, transform 180ms ease",
                     }}
                   >
-                    {isWorkflowOwned
-                      ? "Managed by approved workflow"
-                      : readOnly
-                        ? "Attendance status"
+                    {readOnly
+                      ? (!companyView ? "Report correction for this date →" : "Attendance status")
+                      : isWorkflowOwned
+                        ? "Select to update / regularize →"
                         : "Select to update attendance →"}
                   </Typography>
                 </Card>
@@ -2018,27 +2557,29 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             )}
           </Box>
         )}
-        <TablePagination
-          component="div"
-          count={rows.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          onPageChange={(_, nextPage) => setPage(nextPage)}
-          onRowsPerPageChange={(event) => {
-            setRowsPerPage(Number(event.target.value));
-            setPage(0);
-          }}
-          sx={{
-            borderTop: "1px solid",
-            borderColor: "divider",
-            mt: 1.5,
-            px: 0,
-            "& .MuiTablePagination-toolbar": {
-              px: { xs: 1, sm: 2 },
-            },
-          }}
-        />
+        {rows.length > 5 && (
+          <TablePagination
+            component="div"
+            count={rows.length}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            onPageChange={(_, nextPage) => setPage(nextPage)}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(Number(event.target.value));
+              setPage(0);
+            }}
+            sx={{
+              borderTop: "1px solid",
+              borderColor: "divider",
+              mt: 1.5,
+              px: 0,
+              "& .MuiTablePagination-toolbar": {
+                px: { xs: 1, sm: 2 },
+              },
+            }}
+          />
+        )}
       </Box>
       {!readOnly && dateRange.startDate.isSame(dateRange.endDate, "month") && (
         <MonthlyAttendanceExceptions month={dateRange.startDate} />
@@ -2048,6 +2589,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         handleClose={() => {
           setSelectedCell(null);
           setModalData(initialModalState);
+          setModalTab("OFFICE");
         }}
         title={
           selectedCell ? (
@@ -2106,20 +2648,81 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               </Typography>
             )}
 
-            <Box
-              sx={{
-                px: 1.25,
-                py: 1,
-                borderRadius: 2,
-                bgcolor: "info.lighter",
-                border: "1px solid",
-                borderColor: "info.light",
-              }}
-            >
-              <Typography variant="caption" color="text.secondary">
-                This editor is for attendance corrections. Create or manage a Leave or WFH request for leave and work-from-home days; those workflows keep balances, approvals, and payroll history in sync.
-              </Typography>
-            </Box>
+            {(() => {
+              const isWfh = isWfhStatus(modalData.status);
+              if (isWfh) {
+                return (
+                  <Box
+                    sx={{
+                      px: 1.5,
+                      py: 1.25,
+                      borderRadius: 2,
+                      bgcolor: (theme) => alpha(theme.palette.info.main, 0.08),
+                      border: "1px solid",
+                      borderColor: (theme) => alpha(theme.palette.info.main, 0.3),
+                    }}
+                  >
+                    <Typography variant="subtitle2" color="info.dark" fontWeight={800}>
+                      {modalData.status === "WFH"
+                        ? "Work From Home (Full Day)"
+                        : modalData.status === "WFH+WFO"
+                          ? (wfhGrantData.grantType === "WfoWfh"
+                              ? "Hybrid Work (First Half Office + Second Half WFH)"
+                              : "Hybrid Work (First Half WFH + Second Half Office)")
+                          : "Hybrid Work (WFH + Half-Day)"}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {modalData.status === "WFH"
+                        ? "Employee is scheduled for Work From Home. Punch timings are tracked via the employee WFH portal or can be optionally regularized below."
+                        : modalData.status === "WFH+WFO"
+                          ? (wfhGrantData.grantType === "WfoWfh"
+                              ? "First half (morning) is in-office; second half (afternoon) is remote (WFH). Specify the verified in-office punch window below."
+                              : "First half (morning) is remote (WFH); second half (afternoon) is in-office. Specify the verified in-office punch window below.")
+                          : "One half of the shift is remote (WFH), and the other half is half-day off / leave."}
+                    </Typography>
+                  </Box>
+                );
+              }
+              if (selectedCell.isOverride) {
+                return (
+                  <Box
+                    sx={{
+                      px: 1.5,
+                      py: 1.25,
+                      borderRadius: 2,
+                      bgcolor: (theme) => alpha(theme.palette.warning.main, 0.12),
+                      border: "1px solid",
+                      borderColor: "warning.main",
+                    }}
+                  >
+                    <Typography variant="subtitle2" color="warning.dark" fontWeight={800}>
+                      Administrative Attendance Override ({selectedCell.sourceLabel || "Leave / WFH"})
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {selectedCell.sourceLabel === "Work From Home" || selectedCell.sourceLabel === "Leave / WFH"
+                        ? "This date includes an approved Work From Home schedule. Selecting in-office status (e.g. Present) converts the day to office work and records an audited office conversion (min 10 characters justification required)."
+                        : "This date is currently governed by an approved Leave. Submitting this form overrides attendance to your selected status and refunds the employee's leave balance (min 10 characters justification required)."}
+                    </Typography>
+                  </Box>
+                );
+              }
+              return (
+                <Box
+                  sx={{
+                    px: 1.25,
+                    py: 1,
+                    borderRadius: 2,
+                    bgcolor: "info.lighter",
+                    border: "1px solid",
+                    borderColor: "info.light",
+                  }}
+                >
+                  <Typography variant="caption" color="text.secondary">
+                    Record or regularize daily status and exact punch in / out timestamps.
+                  </Typography>
+                </Box>
+              );
+            })()}
 
             <AppTextField
               select
@@ -2130,7 +2733,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 renderValue: (value) => {
                   const option = statusOptions.find((item) => item.value === value);
                   const optionColor = option
-                    ? getStatusColor(option.value)
+                    ? getStatusColor(option.value as AttendanceStatus)
                     : DEFAULT_ATTENDANCE_STATUS_COLOR;
                   return option ? (
                     <Stack direction="row" spacing={1} alignItems="center">
@@ -2170,15 +2773,22 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               }}
               onChange={(e) => {
                 const newStatus = e.target.value as AttendanceData["status"];
+                const halves = computeShiftHalves(selectedCell?.employee?.scheduledStartTime, selectedCell?.employee?.scheduledEndTime);
                 setModalData((prev) => {
-                  let inTime = prev.checkIn || selectedCell?.employee?.scheduledStartTime || "09:00";
-                  let outTime = prev.checkOut || selectedCell?.employee?.scheduledEndTime || "18:00";
-                  if (newStatus === "ED" && (!prev.checkOut || prev.checkOut === "18:00")) {
-                    outTime = "14:00";
-                  } else if (newStatus === "LHD" && (!prev.checkIn || prev.checkIn === "09:00")) {
-                    inTime = "13:30";
-                  } else if (newStatus === "HD" && (!prev.checkOut || prev.checkOut === "18:00")) {
-                    outTime = "13:30";
+                  let inTime = prev.checkIn || halves.start;
+                  let outTime = prev.checkOut || halves.end;
+                  if (newStatus === "ED" && (!prev.checkOut || prev.checkOut === halves.end)) {
+                    outTime = halves.mid;
+                  } else if (newStatus === "LHD" && (!prev.checkIn || prev.checkIn === halves.start)) {
+                    inTime = halves.mid;
+                  } else if (newStatus === "HD" && (!prev.checkOut || prev.checkOut === halves.end)) {
+                    outTime = halves.firstHalf.out;
+                  } else if (newStatus === "WFH") {
+                    inTime = "";
+                    outTime = "";
+                  } else if (newStatus === "WFH+WFO") {
+                    inTime = wfhGrantData.grantType === "WfoWfh" ? halves.firstHalf.in : halves.secondHalf.in;
+                    outTime = wfhGrantData.grantType === "WfoWfh" ? halves.firstHalf.out : halves.secondHalf.out;
                   }
                   return {
                     ...prev,
@@ -2187,47 +2797,304 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     checkOut: outTime,
                   };
                 });
+                if (newStatus === "WFH") {
+                  setWfhGrantData((prev) => ({ ...prev, grantType: "FullDay" }));
+                } else if (newStatus === "WFH+WFO") {
+                  setWfhGrantData((prev) => ({
+                    ...prev,
+                    grantType: prev.grantType === "WfoWfh" ? "WfoWfh" : "WfhWfo",
+                    officeCheckIn: prev.grantType === "WfoWfh" ? halves.firstHalf.in : halves.secondHalf.in,
+                    officeCheckOut: prev.grantType === "WfoWfh" ? halves.firstHalf.out : halves.secondHalf.out,
+                  }));
+                } else if (newStatus === "WFH-HD") {
+                  setWfhGrantData((prev) => ({ ...prev, grantType: "WfhHd" }));
+                }
               }}
             >
-              {statusOptions.map((option) => (
-                <MenuItem
-                  key={option.value}
-                  value={option.value}
-                  sx={{ borderRadius: 1.75, py: 1, px: 1.25, mb: 0.25 }}
-                >
-                  <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0 }}>
-                    <Box
-                      component="span"
-                      sx={{
-                        minWidth: 38,
-                        px: 0.75,
-                        py: 0.35,
-                        borderRadius: 1,
-                        bgcolor: toAlphaHex(getStatusColor(option.value), 14),
-                        color: getStatusColor(option.value),
-                        border: `1px solid ${toAlphaHex(getStatusColor(option.value), 40)}`,
-                        fontSize: 11,
-                        fontWeight: 800,
-                        textAlign: "center",
-                      }}
-                    >
-                      {option.value}
-                    </Box>
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography fontSize={14} fontWeight={700}>{option.label}</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {option.requiresTime || statusesWithTimes.has(option.value as AttendanceStatus) ? "Punch in and punch out required" : "Attendance status"}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </MenuItem>
-              ))}
+              {statusOptions
+                .filter((opt) => (opt.value as string) !== "SWITCH_TO_WFH")
+                .map((option) => (
+                  <MenuItem
+                    key={option.value}
+                    value={option.value}
+                    sx={{ borderRadius: 1.75, py: 1, px: 1.25, mb: 0.25 }}
+                  >
+                    <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0 }}>
+                      <Box
+                        component="span"
+                        sx={{
+                          minWidth: 38,
+                          px: 0.75,
+                          py: 0.35,
+                          borderRadius: 1,
+                          bgcolor: toAlphaHex(getStatusColor(option.value), 14),
+                          color: getStatusColor(option.value),
+                          border: `1px solid ${toAlphaHex(getStatusColor(option.value), 40)}`,
+                          fontSize: 11,
+                          fontWeight: 800,
+                          textAlign: "center",
+                        }}
+                      >
+                        {option.value}
+                      </Box>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography fontSize={14} fontWeight={700}>{option.label}</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {["WFH", "WFH+WFO", "WFH-HD", "WFH+SL", "WFH+CL"].includes(option.value)
+                            ? "Work From Home & Hybrid schedule"
+                            : option.requiresTime || statusesWithTimes.has(option.value as AttendanceStatus)
+                              ? "Punch in and punch out required"
+                              : "Attendance status"}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </MenuItem>
+                ))}
             </AppTextField>
 
-            {modalData.status &&
+            {modalData.status === "WFH+WFO" && (() => {
+              const halves = computeShiftHalves(selectedCell?.employee?.scheduledStartTime, selectedCell?.employee?.scheduledEndTime);
+              const isMorningOffice = wfhGrantData.grantType === "WfoWfh";
+              return (
+                <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: (theme) => alpha(theme.palette.background.default, 0.6), border: "1px solid", borderColor: "divider" }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mb: 1, display: "block" }}>
+                    Select Hybrid Work Session Split ({selectedCell?.employee?.scheduleName || "Shift"}: {halves.start} – {halves.end}):
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
+                    <AppButton
+                      size="small"
+                      variant={!isMorningOffice ? "contained" : "outlined"}
+                      onClick={() => {
+                        setWfhGrantData((prev) => ({
+                          ...prev,
+                          grantType: "WfhWfo",
+                          officeCheckIn: halves.secondHalf.in,
+                          officeCheckOut: halves.secondHalf.out,
+                          wfhCheckIn: halves.firstHalf.in,
+                          wfhCheckOut: halves.firstHalf.out,
+                        }));
+                        setModalData((prev) => ({
+                          ...prev,
+                          checkIn: halves.secondHalf.in,
+                          checkOut: halves.secondHalf.out,
+                        }));
+                      }}
+                      sx={{ textTransform: "none", borderRadius: 1.5, fontSize: 12, flex: 1 }}
+                    >
+                      Morning WFH + Afternoon In-Office
+                    </AppButton>
+                    <AppButton
+                      size="small"
+                      variant={isMorningOffice ? "contained" : "outlined"}
+                      onClick={() => {
+                        setWfhGrantData((prev) => ({
+                          ...prev,
+                          grantType: "WfoWfh",
+                          officeCheckIn: halves.firstHalf.in,
+                          officeCheckOut: halves.firstHalf.out,
+                          wfhCheckIn: halves.secondHalf.in,
+                          wfhCheckOut: halves.secondHalf.out,
+                        }));
+                        setModalData((prev) => ({
+                          ...prev,
+                          checkIn: halves.firstHalf.in,
+                          checkOut: halves.firstHalf.out,
+                        }));
+                      }}
+                      sx={{ textTransform: "none", borderRadius: 1.5, fontSize: 12, flex: 1 }}
+                    >
+                      Morning In-Office + Afternoon WFH
+                    </AppButton>
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mb: 1, display: "block" }}>
+                    {isMorningOffice
+                      ? `In-Office Half Punch Window (Morning Shift: ${halves.firstHalf.in} – ${halves.firstHalf.out} - Optional)`
+                      : `In-Office Half Punch Window (Afternoon Shift: ${halves.secondHalf.in} – ${halves.secondHalf.out} - Optional)`}
+                  </Typography>
+                  <Stack direction="row" spacing={2} sx={{ mb: 1.5 }}>
+                    <AppTextField
+                      label="Office punch in"
+                      fullWidth
+                      value={wfhGrantData.officeCheckIn}
+                      placeholder={`HH:MM (e.g. ${isMorningOffice ? halves.firstHalf.in : halves.secondHalf.in})`}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setWfhGrantData((prev) => ({ ...prev, officeCheckIn: v }));
+                        setModalData((prev) => ({ ...prev, checkIn: v }));
+                      }}
+                    />
+                    <AppTextField
+                      label="Office punch out"
+                      fullWidth
+                      value={wfhGrantData.officeCheckOut}
+                      placeholder={`HH:MM (e.g. ${isMorningOffice ? halves.firstHalf.out : halves.secondHalf.out})`}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setWfhGrantData((prev) => ({ ...prev, officeCheckOut: v }));
+                        setModalData((prev) => ({ ...prev, checkOut: v }));
+                      }}
+                    />
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mb: 1, display: "block" }}>
+                    {!isMorningOffice
+                      ? `Remote WFH Half Punch Window (Morning Shift: ${halves.firstHalf.in} – ${halves.firstHalf.out} - Optional)`
+                      : `Remote WFH Half Punch Window (Afternoon Shift: ${halves.secondHalf.in} – ${halves.secondHalf.out} - Optional)`}
+                  </Typography>
+                  <Stack direction="row" spacing={2}>
+                    <AppTextField
+                      label="WFH punch in"
+                      fullWidth
+                      value={wfhGrantData.wfhCheckIn}
+                      placeholder={`HH:MM (e.g. ${!isMorningOffice ? halves.firstHalf.in : halves.secondHalf.in})`}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setWfhGrantData((prev) => ({ ...prev, wfhCheckIn: v }));
+                      }}
+                    />
+                    <AppTextField
+                      label="WFH punch out"
+                      fullWidth
+                      value={wfhGrantData.wfhCheckOut}
+                      placeholder={`HH:MM (e.g. ${!isMorningOffice ? halves.firstHalf.out : halves.secondHalf.out})`}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setWfhGrantData((prev) => ({ ...prev, wfhCheckOut: v }));
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              );
+            })()}
+
+            {modalData.status === "WFH-HD" && (() => {
+              const halves = computeShiftHalves(selectedCell?.employee?.scheduledStartTime, selectedCell?.employee?.scheduledEndTime);
+              const isMorningWfh = wfhGrantData.grantType === "WfhHd";
+              return (
+                <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: (theme) => alpha(theme.palette.background.default, 0.6), border: "1px solid", borderColor: "divider" }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mb: 1, display: "block" }}>
+                    Select Half WFH + Half Leave Split ({selectedCell?.employee?.scheduleName || "Shift"}: {halves.start} – {halves.end}):
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
+                    <AppButton
+                      size="small"
+                      variant={isMorningWfh ? "contained" : "outlined"}
+                      onClick={() => {
+                        setWfhGrantData((prev) => ({
+                          ...prev,
+                          grantType: "WfhHd",
+                          wfhCheckIn: halves.firstHalf.in,
+                          wfhCheckOut: halves.firstHalf.out,
+                        }));
+                      }}
+                      sx={{ textTransform: "none", borderRadius: 1.5, fontSize: 12, flex: 1 }}
+                    >
+                      Morning WFH + Afternoon Leave
+                    </AppButton>
+                    <AppButton
+                      size="small"
+                      variant={!isMorningWfh ? "contained" : "outlined"}
+                      onClick={() => {
+                        setWfhGrantData((prev) => ({
+                          ...prev,
+                          grantType: "HdWfh",
+                          wfhCheckIn: halves.secondHalf.in,
+                          wfhCheckOut: halves.secondHalf.out,
+                        }));
+                      }}
+                      sx={{ textTransform: "none", borderRadius: 1.5, fontSize: 12, flex: 1 }}
+                    >
+                      Morning Leave + Afternoon WFH
+                    </AppButton>
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mb: 1, display: "block" }}>
+                    Companion Half-Day Leave Type:
+                  </Typography>
+                  <AppTextField
+                    select
+                    fullWidth
+                    size="small"
+                    value={wfhGrantData.leaveStatusCode || "SL"}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setWfhGrantData((prev) => ({ ...prev, leaveStatusCode: v }));
+                    }}
+                    sx={{ mb: 1.5 }}
+                  >
+                    <MenuItem value="SL">Sick Leave (SL - 0.5 Day)</MenuItem>
+                    <MenuItem value="CL">Casual Leave (CL - 0.5 Day)</MenuItem>
+                    <MenuItem value="UL">Unpaid Leave (UL - 0.5 Day)</MenuItem>
+                    <MenuItem value="COMP-OFF">Compensatory Off (COMP-OFF - 0.5 Day)</MenuItem>
+                  </AppTextField>
+                  <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mb: 1, display: "block" }}>
+                    {isMorningWfh
+                      ? `Remote WFH Half Punch Window (Morning Shift: ${halves.firstHalf.in} – ${halves.firstHalf.out} - Optional)`
+                      : `Remote WFH Half Punch Window (Afternoon Shift: ${halves.secondHalf.in} – ${halves.secondHalf.out} - Optional)`}
+                  </Typography>
+                  <Stack direction="row" spacing={2}>
+                    <AppTextField
+                      label="WFH punch in"
+                      fullWidth
+                      value={wfhGrantData.wfhCheckIn}
+                      placeholder={`HH:MM (e.g. ${isMorningWfh ? halves.firstHalf.in : halves.secondHalf.in})`}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setWfhGrantData((prev) => ({ ...prev, wfhCheckIn: v }));
+                      }}
+                    />
+                    <AppTextField
+                      label="WFH punch out"
+                      fullWidth
+                      value={wfhGrantData.wfhCheckOut}
+                      placeholder={`HH:MM (e.g. ${isMorningWfh ? halves.firstHalf.out : halves.secondHalf.out})`}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setWfhGrantData((prev) => ({ ...prev, wfhCheckOut: v }));
+                      }}
+                    />
+                  </Stack>
+                </Box>
+              );
+            })()}
+
+            {!isWfhStatus(modalData.status) &&
+              modalData.status &&
               (Boolean(statusOptions.find((x) => x.value === modalData.status)?.requiresTime) ||
                 statusesWithTimes.has(modalData.status)) && (
                 <Stack spacing={2}>
+                  {(modalData.status === "HD" || modalData.status === "LHD") && (() => {
+                    const halves = computeShiftHalves(selectedCell?.employee?.scheduledStartTime, selectedCell?.employee?.scheduledEndTime);
+                    return (
+                      <Box sx={{ p: 1.25, borderRadius: 2, bgcolor: (theme) => alpha(theme.palette.primary.main, 0.06), border: "1px dashed", borderColor: "divider" }}>
+                        <Typography variant="caption" color="text.secondary" fontWeight={700} display="block" sx={{ mb: 1 }}>
+                          Select Half-Day Session Preset ({selectedCell?.employee?.scheduleName || "Shift"}: {halves.start} – {halves.end}):
+                        </Typography>
+                        <Stack direction="row" spacing={1}>
+                          <AppButton
+                            size="small"
+                            variant={modalData.checkIn === halves.firstHalf.in && modalData.checkOut === halves.firstHalf.out ? "contained" : "outlined"}
+                            onClick={() => {
+                              handlePunchInChange(halves.firstHalf.in);
+                              handlePunchOutChange(halves.firstHalf.out);
+                            }}
+                            sx={{ textTransform: "none", borderRadius: 1.5, fontSize: 12 }}
+                          >
+                            First Half ({halves.firstHalf.in} – {halves.firstHalf.out})
+                          </AppButton>
+                          <AppButton
+                            size="small"
+                            variant={modalData.checkIn === halves.secondHalf.in && modalData.checkOut === halves.secondHalf.out ? "contained" : "outlined"}
+                            onClick={() => {
+                              handlePunchInChange(halves.secondHalf.in);
+                              handlePunchOutChange(halves.secondHalf.out);
+                            }}
+                            sx={{ textTransform: "none", borderRadius: 1.5, fontSize: 12 }}
+                          >
+                            Second Half ({halves.secondHalf.in} – {halves.secondHalf.out})
+                          </AppButton>
+                        </Stack>
+                      </Box>
+                    );
+                  })()}
                   <Stack spacing={0.75}>
                     <AppTextField
                       label="Punch in time"
@@ -2295,19 +3162,132 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 </Stack>
               )}
 
+            {modalData.status === "WFH" && (() => {
+              const inM = timeToMinutes(modalData.checkIn);
+              const outM = timeToMinutes(modalData.checkOut);
+              const hasIn = Boolean(modalData.checkIn?.trim());
+              const hasOut = Boolean(modalData.checkOut?.trim());
+              const isOrderInvalid = hasIn && hasOut && inM !== null && outM !== null && outM <= inM;
+              const durationHours = hasIn && hasOut && inM !== null && outM !== null && outM > inM ? (outM - inM) / 60 : null;
+              const isUnderHours = durationHours !== null && durationHours < 4.0;
+              const halves = computeShiftHalves(selectedCell?.employee?.scheduledStartTime, selectedCell?.employee?.scheduledEndTime);
+              const shiftStartM = timeToMinutes(halves.start) ?? 9 * 60;
+              const shiftEndM = timeToMinutes(halves.end) ?? 18 * 60;
+              const graceM = typeof selectedCell?.employee?.graceMinutes === "number" ? selectedCell.employee.graceMinutes : 15;
+              const lateArrivalBoundary = shiftStartM + graceM;
+              const earlyDepartureBoundary = shiftEndM - graceM;
+
+              const isLate = inM !== null && inM > lateArrivalBoundary;
+              const isEarly = outM !== null && outM < earlyDepartureBoundary;
+
+              return (
+                <Stack spacing={1.5}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                      Optional Verified Punches (Leave empty for standard remote work):
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.72rem", mt: 0.25 }}>
+                      Scheduled shift: {halves.start} – {halves.end} (Grace: {graceM}m · Late after {formatMinutesToTime(lateArrivalBoundary)} · Early before {formatMinutesToTime(earlyDepartureBoundary)})
+                    </Typography>
+                  </Box>
+                  <Stack direction="row" spacing={2}>
+                    <AppTextField
+                      label="Punch in time (Optional)"
+                      fullWidth
+                      value={modalData.checkIn}
+                      placeholder={`HH:MM (e.g. ${halves.start})`}
+                      inputProps={{ inputMode: "numeric", maxLength: 5 }}
+                      error={isOrderInvalid}
+                      onChange={(e) => setModalData((prev) => ({ ...prev, checkIn: e.target.value }))}
+                    />
+                    <AppTextField
+                      label="Punch out time (Optional)"
+                      fullWidth
+                      value={modalData.checkOut}
+                      placeholder={`HH:MM (e.g. ${halves.end})`}
+                      inputProps={{ inputMode: "numeric", maxLength: 5 }}
+                      error={isOrderInvalid}
+                      onChange={(e) => setModalData((prev) => ({ ...prev, checkOut: e.target.value }))}
+                    />
+                  </Stack>
+
+                  {isOrderInvalid && (
+                    <Box sx={{ p: 1.25, borderRadius: 2, bgcolor: "rgba(220, 38, 38, 0.1)", border: "1px solid rgba(220, 38, 38, 0.3)", display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box component="span" sx={{ fontSize: 16 }}>❌</Box>
+                      <Typography variant="caption" sx={{ color: "error.main", fontWeight: 700 }}>
+                        Invalid timings: Punch-out time must be later than punch-in time.
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {!isOrderInvalid && isUnderHours && (
+                    <Box sx={{ p: 1.25, borderRadius: 2, bgcolor: "rgba(234, 88, 12, 0.1)", border: "1px solid rgba(234, 88, 12, 0.3)", display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box component="span" sx={{ fontSize: 16 }}>⚠️</Box>
+                      <Typography variant="caption" sx={{ color: "warning.main", fontWeight: 700 }}>
+                        Insufficient hours ({durationHours!.toFixed(2)}h worked): Minimum 4.0 hours required for full-day WFH credit.
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {!isOrderInvalid && !isUnderHours && (hasIn || hasOut) && (
+                    <Box sx={{ p: 1.25, borderRadius: 2, bgcolor: (isLate || isEarly) ? "rgba(234, 88, 12, 0.08)" : "rgba(16, 185, 129, 0.08)", border: "1px dashed", borderColor: (isLate || isEarly) ? "warning.main" : "success.main", display: "flex", alignItems: "center", gap: 1 }}>
+                      <Box component="span" sx={{ fontSize: 16 }}>{(isLate || isEarly) ? "⚡" : "✓"}</Box>
+                      <Typography variant="caption" sx={{ color: (isLate || isEarly) ? "warning.dark" : "success.dark", fontWeight: 700 }}>
+                        {isLate && isEarly
+                          ? `Late arrival (after ${formatMinutesToTime(lateArrivalBoundary)}) & Early departure (before ${formatMinutesToTime(earlyDepartureBoundary)}) -> Flags LHD+ED (${durationHours?.toFixed(1)}h worked)`
+                          : isLate
+                            ? `Late arrival (after ${formatMinutesToTime(lateArrivalBoundary)}) -> Flags Late Arrival (LHD)`
+                            : isEarly
+                              ? `Early departure (before ${formatMinutesToTime(earlyDepartureBoundary)}) -> Flags Early Departure (ED)`
+                              : `Verified punches comply with shift schedule (${durationHours ? `${durationHours.toFixed(1)}h worked` : "Complying"})`}
+                      </Typography>
+                    </Box>
+                  )}
+                </Stack>
+              );
+            })()}
+
             <AppTextField
-              label="Remarks (optional)"
+              label={
+                isWfhStatus(modalData.status)
+                  ? "Administrative Justification (Required, min 3 characters)"
+                  : selectedCell.isOverride
+                    ? "Override justification reason (Required, min 10 characters)"
+                    : "Remarks (optional)"
+              }
               fullWidth
               multiline
               minRows={2}
-              placeholder="Add a note for this attendance update"
-              value={modalData.remarks}
-              onChange={(e) =>
-                setModalData((prev) => ({
-                  ...prev,
-                  remarks: e.target.value,
-                }))
+              placeholder={
+                isWfhStatus(modalData.status)
+                  ? "Explain the reason for this Work From Home schedule (e.g. Approved hybrid schedule)"
+                  : selectedCell.isOverride
+                    ? selectedCell.sourceLabel === "Work From Home" || selectedCell.sourceLabel === "Leave / WFH"
+                      ? "Explain the business reason or verification details for updating attendance / timings (min 10 chars)"
+                      : "Explain the business reason for overriding this leave (e.g. unexpected office presence)"
+                    : "Add a note for this attendance update"
               }
+              value={modalData.remarks}
+              error={Boolean(
+                (isWfhStatus(modalData.status) && (modalData.remarks?.trim().length ?? 0) < 3) ||
+                (selectedCell.isOverride && !isWfhStatus(modalData.status) && (modalData.remarks?.trim().length ?? 0) < 10)
+              )}
+              helperText={
+                isWfhStatus(modalData.status)
+                  ? (modalData.remarks?.trim().length ?? 0) < 3
+                    ? "At least 3 characters required for administrative WFH schedule."
+                    : "Logged in the administrative attendance audit trail."
+                  : selectedCell.isOverride
+                    ? (modalData.remarks?.trim().length ?? 0) < 10
+                      ? "A justification of at least 10 characters is required for administrative overrides."
+                      : "Stored in the immutable attendance audit trail."
+                    : undefined
+              }
+              onChange={(e) => {
+                const val = e.target.value;
+                setModalData((prev) => ({ ...prev, remarks: val }));
+                setWfhGrantData((prev) => ({ ...prev, remarks: val }));
+              }}
             />
 
             <Stack direction="row" spacing={2}>
@@ -2318,9 +3298,29 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   textTransform: "none",
                   fontWeight: 600,
                 }}
-                onClick={saveAttendance}
+                disabled={Boolean(
+                  wfhGrantLoading ||
+                  (isWfhStatus(modalData.status) && (modalData.remarks?.trim().length ?? 0) < 3) ||
+                  (selectedCell.isOverride && !isWfhStatus(modalData.status) && (modalData.remarks?.trim().length ?? 0) < 10) ||
+                  (modalData.status === "WFH" && Boolean(modalData.checkIn?.trim()) && Boolean(modalData.checkOut?.trim()) && (() => {
+                    const inM = timeToMinutes(modalData.checkIn);
+                    const outM = timeToMinutes(modalData.checkOut);
+                    if (inM === null || outM === null || outM <= inM) return true;
+                    if ((outM - inM) / 60 < 4.0) return true;
+                    return false;
+                  })())
+                )}
+                onClick={handleSaveAttendance}
               >
-                Save attendance
+                {wfhGrantLoading ? "Saving..." : (() => {
+                  const isWfh = isWfhStatus(modalData.status);
+                  if (isWfh) return "Save WFH Schedule & Timings";
+                  if (selectedCell.isOverride) {
+                    if (selectedCell.sourceLabel === "Work From Home") return "Convert to In-Office & Save";
+                    return "Confirm Override & Save";
+                  }
+                  return "Save Attendance";
+                })()}
               </AppButton>
               <AppButton
                 onClick={() => {

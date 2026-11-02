@@ -9,10 +9,12 @@ export type AttendanceStatus =
   | "ED"
   | "LHD"
   | "WFH+WFO"
+  | "WFO+WFH"
   | "COMP-OFF"
   | "CL-HALF"
   | "SL-HALF"
   | "WFH-HD"
+  | "HD+WFH"
   | "WFH+SL"
   | "WFH+CL"
   | "LHD+ED"
@@ -76,6 +78,7 @@ export interface AdminAttendanceCreateDto {
   CheckOutTime?: string;
   Status: AttendanceStatus;
   Remarks?: string | null;
+  AllowSourceOverride?: boolean;
 }
 
 export interface AttendanceImportIssue {

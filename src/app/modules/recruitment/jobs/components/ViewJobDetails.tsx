@@ -15,7 +15,7 @@ import { useState } from "react";
 import { RecruitmentRequisitionDrawer } from "./RecruitmentRequisitionDrawer";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../../../utils/common";
-import { ModulesName, Permission } from "../../../../../utils/enums";
+import { ModulesName, Permission, Roles } from "../../../../../utils/enums";
 
 interface PropsTypes {
   jobData: JobModal;
@@ -27,7 +27,8 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
   const { formatMessage: i } = useIntl();
   const [requisitionOpen, setRequisitionOpen] = useState(false);
   const permissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
-  const canPlanHeadcount = hasModuleFeaturePermission(ModulesName.Jobs, Permission.Edit, permissions);
+  const userRoleType = useAppSelector(state => state.user.userData?.roleType);
+  const canPlanHeadcount = userRoleType === Roles.Administrator || hasModuleFeaturePermission(ModulesName.Jobs, Permission.Edit, permissions);
   const handleClose = () => {
     setOpen(false);
   };

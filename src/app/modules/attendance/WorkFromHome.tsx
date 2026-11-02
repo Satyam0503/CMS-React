@@ -13,6 +13,7 @@ import { WfhClockOutModal } from "./component/WfhClockOutModal";
 import { useWfhAttendanceTiming } from "./hooks/useWfhAttendanceTiming";
 import { useAppSelector } from "../../Redux/hooks";
 import { ModulesName } from "../../../utils/enums";
+import { formatServerDate } from "../../../utils/common";
 import WorkFromHomeDeadLetterPanel from "./component/WorkFromHomeDeadLetterPanel";
 import { buildWfhHistoryUrl, wfhHistoryLastPage } from "./wfhRequestHistory";
 
@@ -22,15 +23,12 @@ type RequestPage = { success?: boolean; message?: string; methodResults?: Reques
 type RequestFilters = { employeeSearch:string; department:string; status:string; fromDate:string; toDate:string; pageNo:number; pageSize:number };
 type Context = { isFeatureEnabled:boolean; isEligible:boolean; weeklyLimit:number; usedThisWeek:number; remainingThisWeek:number; canSchedule:boolean; disabledReasonCode?:string; nextAvailableDate?:string; managerApprovalRequired:boolean; minimumAdvanceNoticeHours:number; businessDate?:string; todayApprovedRequest?:Request | null; todayRequestIssueCode?:string | null; isSameDayRequestCutoffPassed?:boolean; officeStartTime?:string; officeEndTime?:string; checkInAvailableFrom?:string; checkInAvailableUntil?:string; checkOutAvailableFrom?:string; checkOutAvailableUntil?:string };
 const defaultPolicy: Policy = { isEnabled:true, maxDaysPerWeek:1, applyToAllEmployees:true, applicableDepartments:[], applicableEmployeeIds:[], allowHalfDay:false, allowMixedDay:false, requireReason:true, fullDayAttendanceStatusCode:"WFH", halfDayAttendanceStatusCode:"WFH-HD", mixedAttendanceStatusCode:"WFH+WFO" };
-const dateOnly = (value: string) => value.slice(0, 10);
+const dateOnly = (value: string) => formatServerDate(value, "YYYY-MM-DD");
 const requestErrorMessage = (error: unknown, fallback: string) => {
   const apiMessage = (error as { response?: { data?: { message?: string } } } | null)?.response?.data?.message;
   return apiMessage || (error instanceof Error ? error.message : fallback) || fallback;
 };
-const formatBusinessDate = (value: string) => {
-  const [year, month, day] = dateOnly(value).split("-").map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString();
-};
+const formatBusinessDate = (value: string) => formatServerDate(value, "DD/MM/YYYY");
 const convertibleDates = (request: Request) => {
   const converted = new Set((request.officeConvertedDates ?? []).map(dateOnly));
   const dates: string[] = [];
@@ -269,7 +267,16 @@ export default function WorkFromHome() {
         {todayTimingError ? <Alert severity="error">Unable to verify today's attendance. Refresh and try again. {todayTimingError}</Alert>
           : !todayTiming ? <AppButton size="small" disabled>Checking attendance…</AppButton>
           : todayTiming.checkOutTime ? <Chip color={todayTiming.isUnderHours ? "warning" : todayTiming.isHalfDay ? "info" : "success"} icon={<CheckCircle/>} label={todayTiming.isUnderHours ? "Under-hours (Pending review)" : todayTiming.isHalfDay ? "Half day clocked out" : "Clocked out"}/>
-          : todayTiming.isApprovedForToday ? <AppButton size="small" variant="contained" startIcon={todayTiming.checkInTime ? <Logout/> : <Login/>} disabled={clockingRequestId === todayApprovedRequest.requestId} onClick={() => void act(todayApprovedRequest.requestId, todayTiming.checkInTime ? "check-out" : "check-in")}>{clockingRequestId === todayApprovedRequest.requestId ? "Saving…" : todayTiming.checkInTime ? "Clock out from WFH" : "Clock in to WFH"}</AppButton>
+          : todayTiming.isApprovedForToday ? (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <AppButton size="small" variant="contained" startIcon={todayTiming.checkInTime ? <Logout/> : <Login/>} disabled={clockingRequestId === todayApprovedRequest.requestId || (!todayTiming.checkInTime && todayTiming.isCheckInOpen === false)} onClick={() => void act(todayApprovedRequest.requestId, todayTiming.checkInTime ? "check-out" : "check-in")}>{clockingRequestId === todayApprovedRequest.requestId ? "Saving…" : todayTiming.checkInTime ? "Clock out from WFH" : todayTiming.isCheckInOpen === false ? "Clock in closed" : "Clock in to WFH"}</AppButton>
+              {!todayTiming.checkInTime && (
+                <AppButton size="small" variant="outlined" color="primary" onClick={() => openOfficeConversion(todayApprovedRequest)}>
+                  Switch to Office Check-In
+                </AppButton>
+              )}
+            </Stack>
+          )
           : <Typography color="text.secondary">This approval does not cover today's attendance date. Contact HR to review the request dates.</Typography>}
       </Stack>
     </Card>}
@@ -367,14 +374,64 @@ export default function WorkFromHome() {
         </AppButton>
       </DialogActions>
     </Dialog>
-    {canManagePolicy ? <Card sx={{ p:{ xs:2, md:3 } }}><Stack direction={{xs:"column",sm:"row"}} justifyContent="space-between" gap={2}><Box><Typography variant="h6" fontWeight={800}>WFH policy</Typography><Typography variant="body2" color="text.secondary">HR/Admin controls eligibility and whether requests require approval.</Typography></Box><AppButton variant="contained" startIcon={<Save/>} disabled={saving} onClick={()=>void savePolicy()}>Save policy</AppButton></Stack><Divider sx={{ my:2.5 }}/><Stack spacing={2}><FormControlLabel control={<AppSwitch checked={policy.isEnabled} onChange={e=>setPolicy({...policy,isEnabled:e.target.checked})}/>} label="Enable WFH"/><FormControlLabel control={<AppSwitch checked={policy.managerApprovalRequired ?? true} onChange={e=>setPolicy({...policy,managerApprovalRequired:e.target.checked})}/>} label="Require manager approval"/><AppTextField label="Maximum WFH days per week" type="number" inputProps={{min:1,max:31}} value={policy.maxDaysPerWeek} onChange={e=>setPolicy({...policy,maxDaysPerWeek:Math.max(1,Math.min(31,Number(e.target.value)||1))})} helperText="Allowed WFH days per employee, Monday–Sunday (1–31)."/><FormControlLabel control={<AppSwitch checked={policy.applyToAllEmployees} onChange={e=>setPolicy({...policy,applyToAllEmployees:e.target.checked})}/>} label="Apply to all employees"/>{!policy.applyToAllEmployees && <Box sx={{ display:"grid", gridTemplateColumns:{xs:"1fr",md:"1fr 1fr"}, gap:2 }}><AppTextField label="Departments" value={policy.applicableDepartments.join(", ")} onChange={e=>setPolicy({...policy,applicableDepartments:e.target.value.split(",").map(x=>x.trim()).filter(Boolean)})} helperText="Comma-separated department names."/><AppTextField label="Employee IDs" value={policy.applicableEmployeeIds.join(", ")} onChange={e=>setPolicy({...policy,applicableEmployeeIds:e.target.value.split(",").map(x=>x.trim()).filter(Boolean)})} helperText="Comma-separated employee IDs; either match grants eligibility."/></Box>}</Stack></Card> : <Typography variant="body2" color="text.secondary" sx={{px:1}}>Your remaining allowance is validated when you submit.</Typography>}
+    {canManagePolicy ? <Card sx={{ p:{ xs:2, md:3 } }}><Stack direction={{xs:"column",sm:"row"}} justifyContent="space-between" gap={2}><Box><Typography variant="h6" fontWeight={800}>WFH policy</Typography><Typography variant="body2" color="text.secondary">HR/Admin controls eligibility and whether requests require approval.</Typography></Box><AppButton variant="contained" startIcon={<Save/>} disabled={saving} onClick={()=>void savePolicy()}>Save policy</AppButton></Stack><Divider sx={{ my:2.5 }}/><Stack spacing={2}><FormControlLabel control={<AppSwitch checked={policy.isEnabled} onChange={e=>setPolicy({...policy,isEnabled:e.target.checked})}/>} label="Enable WFH"/><FormControlLabel control={<AppSwitch checked={policy.managerApprovalRequired ?? true} onChange={e=>setPolicy({...policy,managerApprovalRequired:e.target.checked})}/>} label="Require manager approval"/><AppTextField label="Maximum WFH days per week" type="number" inputProps={{min:1,max:7}} value={policy.maxDaysPerWeek} onChange={e=>setPolicy({...policy,maxDaysPerWeek:Math.max(1,Math.min(7,Number(e.target.value)||1))})} helperText="Allowed WFH days per employee, Monday–Sunday (1–7 working days)."/><FormControlLabel control={<AppSwitch checked={policy.applyToAllEmployees} onChange={e=>setPolicy({...policy,applyToAllEmployees:e.target.checked})}/>} label="Apply to all employees"/>{!policy.applyToAllEmployees && <Box sx={{ display:"grid", gridTemplateColumns:{xs:"1fr",md:"1fr 1fr"}, gap:2 }}><AppTextField label="Departments" value={policy.applicableDepartments.join(", ")} onChange={e=>setPolicy({...policy,applicableDepartments:e.target.value.split(",").map(x=>x.trim()).filter(Boolean)})} helperText="Comma-separated department names."/><AppTextField label="Employee IDs" value={policy.applicableEmployeeIds.join(", ")} onChange={e=>setPolicy({...policy,applicableEmployeeIds:e.target.value.split(",").map(x=>x.trim()).filter(Boolean)})} helperText="Comma-separated employee IDs; either match grants eligibility."/></Box>}</Stack></Card> : <Typography variant="body2" color="text.secondary" sx={{px:1}}>Your remaining allowance is validated when you submit.</Typography>}
     {canReviewWfh && <Card sx={{ p:{ xs:2, md:3 } }}>
       <Stack direction={{xs:"column",sm:"row"}} justifyContent="space-between" alignItems={{sm:"center"}} gap={.5}>
         <Box><Typography variant="h6" fontWeight={800}>This week’s WFH roster</Typography><Typography variant="body2" color="text.secondary">Approved WFH for {currentWeekStart.toLocaleDateString()} – {currentWeekEnd.toLocaleDateString()}. This automatically refreshes each Monday.</Typography></Box>
         <Chip label={`${rosterTotal} employee${rosterTotal === 1 ? "" : "s"}`} color="primary" size="small" />
       </Stack>
-      <Box sx={{ display:"grid", gridTemplateColumns:{xs:"1fr",sm:"repeat(2, minmax(0, 1fr))",lg:"repeat(3, minmax(0, 1fr))"}, gap:1.25, mt:2 }}>
-        {currentWeekWfh.length ? currentWeekWfh.map(request => <Box key={request.requestId} sx={{ p:1.5, border:"1px solid", borderColor:"divider", borderRadius:2, bgcolor:"action.hover" }}><Typography fontWeight={750}>{request.employeeName || request.employeeId || "Employee"}</Typography><Typography variant="body2" color="text.secondary">{request.department || "No department"} · {formatBusinessDate(request.fromDate)} – {formatBusinessDate(request.toDate)}</Typography><Typography variant="caption" color="text.secondary">{request.durationType.replace(/([A-Z])/g, " $1").trim()}</Typography></Box>) : <Typography color="text.secondary" sx={{ gridColumn:"1 / -1", py:1 }}>No approved WFH is scheduled for this week.</Typography>}
+      <Box sx={{ display:"grid", gridTemplateColumns:{xs:"1fr",sm:"repeat(2, minmax(0, 1fr))",lg:"repeat(3, minmax(0, 1fr))"}, gap:1.5, mt:2 }}>
+        {currentWeekWfh.length ? currentWeekWfh.map(request => {
+          const isGuid = Boolean(request.department && (request.department.includes("-") && request.department.length > 20));
+          const deptDisplay = isGuid || !request.department ? (request.employeeId ? `Employee ID: ${request.employeeId}` : "Company Employee") : request.department;
+          return (
+            <Box
+              key={request.requestId}
+              sx={{
+                p: 2,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 2.5,
+                bgcolor: "background.paper",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                gap: 1.25,
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                  borderColor: "primary.light",
+                },
+              }}
+            >
+              <Box>
+                <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography fontWeight={800} fontSize="0.95rem" noWrap>
+                      {request.employeeName || request.employeeId || "Employee"}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" fontSize="0.8rem" noWrap>
+                      {deptDisplay}
+                    </Typography>
+                  </Box>
+                  <Chip
+                    size="small"
+                    label={request.durationType.replace(/([A-Z])/g, " $1").trim()}
+                    color={request.durationType === "FullDay" ? "primary" : "info"}
+                    variant="outlined"
+                    sx={{ fontSize: 11, fontWeight: 700, borderRadius: 1.5, height: 24 }}
+                  />
+                </Stack>
+              </Box>
+              <Box sx={{ pt: 1, borderTop: "1px dashed", borderColor: "divider" }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={600} sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  📅 {formatBusinessDate(request.fromDate)} {request.fromDate !== request.toDate ? `– ${formatBusinessDate(request.toDate)}` : ""}
+                </Typography>
+              </Box>
+            </Box>
+          );
+        }) : <Typography color="text.secondary" sx={{ gridColumn:"1 / -1", py:2, textAlign: "center" }}>No approved WFH is scheduled for this week.</Typography>}
       </Box>
       <TablePagination component="div" count={rosterTotal} page={rosterPage - 1} rowsPerPage={filters.pageSize} rowsPerPageOptions={[10,25,50,100]} onPageChange={(_, page)=>setRosterPage(page + 1)} onRowsPerPageChange={event=>{ setRosterPage(1); setFilters(value=>({ ...value, pageSize:Number(event.target.value) })); }}/>
     </Card>}

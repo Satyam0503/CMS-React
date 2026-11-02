@@ -4,7 +4,7 @@ import {
   RefreshTokenPayload,
   UserLoginModel,
 } from "./_models";
-import { postRequest } from "../../../../server/axios";
+import { postRequest, rawPostRequest } from "../../../../server/axios";
 import { ServiceUrl } from "../../../../utils/constant/Constant";
 import {
   ApiResponse,
@@ -41,7 +41,7 @@ export const logoutUser = async (payload: RefreshTokenPayload) => {
 };
 
 export const refreshTokenAsync = async (payload: RefreshTokenPayload) => {
-  return postRequest<RefreshTokenPayload, LogInResponseModel>(
+  return rawPostRequest<RefreshTokenPayload, LogInResponseModel>(
     ServiceUrl.REFRESH_TOKEN,
     payload
   );

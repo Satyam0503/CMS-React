@@ -38,6 +38,8 @@ export enum Permission {
   CreateForEmployee = "CreateForEmployee",
   Approve = "Approve",
   Override = "Override",
+  Review = "Review",
+  Submit = "Submit",
 }
 export enum Modules {
   Dashboard = 1,
@@ -122,6 +124,7 @@ export enum RecruitmentModuleTitle {
   Jobs = "Jobs",
   Applications = "Applications",
   ProcessLog = "Process_Log",
+  CareerProfile = "Career_Profile",
 }
 
 export enum DefaultModles {
@@ -153,6 +156,7 @@ export enum SALARY_PERIOD {
 
 export enum LANGUAGE {
   ENGLISH = "en",
+  HINDI = "hi",
   MANDARIN = "zh",
   SPANISH = "es",
   JAPANESE = "ja",

@@ -10,9 +10,12 @@ export { UpcomingAnniversaries } from "./UpcomingAnniversaries";
 
 export const UpComingCelebration = () => {
   const { data: response, isPending: isLoading } = useUpcomingCelebrationsQuery();
-  const data: UpcomingCelebrationType = response?.success
-    ? response.methodResult
-    : { birthday: [], workAnniversary: [] };
+  const data: UpcomingCelebrationType = {
+    birthday: response?.success && Array.isArray(response.methodResult?.birthday) ? response.methodResult.birthday : [],
+    workAnniversary: response?.success && Array.isArray(response.methodResult?.workAnniversary) ? response.methodResult.workAnniversary : [],
+  };
+
+
 
   if (isLoading) {
     return (

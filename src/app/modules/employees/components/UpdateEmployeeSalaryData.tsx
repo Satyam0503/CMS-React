@@ -113,6 +113,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
     departmentId?: string | null;
   }>({});
   const [importedSalaryComponents, setImportedSalaryComponents] = useState<EmployeeSalaryComponentValueModel[]>([]);
+  const [activeSalaryRecord, setActiveSalaryRecord] = useState<EmployeeSalaryStructureModel | null>(null);
   const [isImportingSalary, setIsImportingSalary] = useState(false);
   const [importFeedback, setImportFeedback] = useState<{ severity: "success" | "error"; message: string } | null>(null);
   const salaryFileInput = useRef<HTMLInputElement>(null);
@@ -151,7 +152,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
       ...(isEnabled("HRA") ? [["HRA", "HRA", values.hra, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
       ...(isEnabled("LTA") ? [["LTA", "LTA", values.lta, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
       ...(isSpecialOrOtherEnabled ? [[specialOrOtherCode, specialOrOtherName, values.otherAllowance, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
-      ...(isEnabled("BONUS") ? [["BONUS", "Bonus", values.bonus, false, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
+      ...(isEnabled("BONUS") ? [["BONUS", "Bonus", values.bonus, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
       ...(isEnabled("HEALTH_INSURANCE") ? [["HEALTH_INSURANCE", "Health Insurance", values.healthInsurance, true, "DEDUCTION"] as [string, string, unknown, boolean, "DEDUCTION"]] : []),
     ];
     const fixedComponents = fixedRows.map(([componentCode, defaultName, value, isRecurring, defaultKind]) => {
@@ -206,6 +207,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
       const sorted = (data ?? []).slice().sort((left, right) => dayjs(right.effectiveFrom).valueOf() - dayjs(left.effectiveFrom).valueOf());
       const current = sorted.find((salary) => salary.status === "ACTIVE" && salary.approvalStatus === "APPROVED") ?? sorted[0];
       if (!current) return;
+      setActiveSalaryRecord(current);
       setSelectedTemplateId(current.salaryTemplateId ?? "");
       setSelectedPayGroupId(current.payGroupId ?? "");
       setImportedSalaryMetadata({
@@ -261,7 +263,10 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
         await onUserUpdate(false);
         return;
       }
+      const isSameEffectiveDate = activeSalaryRecord && dayjs(activeSalaryRecord.effectiveFrom).format("YYYY-MM-DD") === effectiveFrom;
       const canonicalPayload: EmployeeSalaryStructureModel = {
+        id: isSameEffectiveDate ? activeSalaryRecord.id : undefined,
+        version: isSameEffectiveDate ? (activeSalaryRecord.version ?? 1) : 1,
         employeeId,
         userId,
         ...salaryMetadata,
@@ -274,7 +279,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
         status: "DRAFT",
         approvalStatus: "DRAFT",
         source: "ONBOARDING_MANUAL",
-        version: 1,
+
         components,
       };
       const response = await saveEmployeeSalaryStructure(canonicalPayload);

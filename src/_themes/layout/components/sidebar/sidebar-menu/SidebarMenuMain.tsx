@@ -25,9 +25,6 @@ export const SidebarMenuMain: FC<Props> = ({
   const { formatMessage } = useIntl();
   const getTabTitle = (titleKey?: string) => {
     if (!titleKey) return "";
-    if (titleKey === ModulesTitles.LifecycleManagement || titleKey === "MODULES.LIFECYCLE_MANAGEMENT") {
-      return "Employee Lifecycle";
-    }
     return formatMessage({ id: titleKey });
   };
   const { pathname } = useLocation();
@@ -80,7 +77,7 @@ export const SidebarMenuMain: FC<Props> = ({
             return (
               <SidebarMenuItemWithSub
                 index={index}
-                key={tab?.id}
+                key={tab?.route || tab?.id}
                 to={tab?.route}
                 isOpen={currentIndex === index}
                 hasActiveChild={hasActiveChild}
@@ -93,7 +90,7 @@ export const SidebarMenuMain: FC<Props> = ({
                 {tab?.subTabs?.map((subTab) => {
                   return (
                     <SidebarMenuItem
-                      key={subTab?.id}
+                      key={subTab?.route || subTab?.id}
                       to={subTab?.route}
                       title={getTabTitle(subTab?.title)}
                       icon={subTab?.icon}

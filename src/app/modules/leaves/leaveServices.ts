@@ -32,6 +32,16 @@ import {
   EmployeeLeaveBalanceData,
 } from "./model";
 
+export const canApplyForWorkFromHome = (modulePermissions: string[]) =>
+  modulePermissions.includes("Work_From_Home.CreateOwn") ||
+  modulePermissions.includes("Work_From_Home.Create");
+
+export const shouldOfferWfhSelfServiceFallback = (
+  modulePermissions: string[],
+  isEligible: boolean,
+  hasMappedLeavePolicy: boolean
+) => canApplyForWorkFromHome(modulePermissions) && isEligible && !hasMappedLeavePolicy;
+
 export const createUpdateLeaveType = (payload: LeaveType) => {
   return postRequest<LeaveType, ApiResponse>(
     ServiceUrl.CREATE_UPDATE_LEAVE_TYPE,

@@ -3,6 +3,8 @@ import { LANGUAGE } from "../../utils/enums";
 const languageAliases: Record<string, LANGUAGE> = {
   en: LANGUAGE.ENGLISH,
   english: LANGUAGE.ENGLISH,
+  hi: LANGUAGE.HINDI,
+  hindi: LANGUAGE.HINDI,
   zh: LANGUAGE.MANDARIN,
   mandarin: LANGUAGE.MANDARIN,
   chinese: LANGUAGE.MANDARIN,

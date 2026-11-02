@@ -10,7 +10,7 @@ import HolidayForm from './HolidayForm';
 import { CalendarItem, GetCalendarItemPayload } from '../models';
 import dayjs, { Dayjs } from 'dayjs';
 import { formatServerDate, hasModuleFeaturePermission } from '../../../../utils/common';
-import { ModulesName, Permission } from '../../../../utils/enums';
+import { ModulesName, Permission, Roles } from '../../../../utils/enums';
 import { useAppSelector } from '../../../Redux/hooks';
 import { Cake, CalendarMonth, Celebration, Event } from '@mui/icons-material';
 import { getAllCalendarItem } from '../calendarServices';
@@ -72,7 +72,8 @@ export default function CalendarSidebar(props: Props) {
     const [initialHolidayValues, setInitialHolidayValues] = useState(initialValues);
 
     const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
-    const hasAddPermission = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Create, modulePermission);
+    const isAdministrator = useAppSelector(state => state.user.userData?.roleType) === Roles.Administrator;
+    const hasAddPermission = isAdministrator || hasModuleFeaturePermission(ModulesName.Calendar, Permission.Create, modulePermission);
     const [allOccasionsForYear, setAllOccasionsForYear] = useState<CalendarItem[]>([])
 
     const [monthSummary, setMonthSummary] = useState({

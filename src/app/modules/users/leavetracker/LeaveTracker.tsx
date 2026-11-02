@@ -1,4 +1,4 @@
-import { Alert, Card, Chip, Divider, Stack, TablePagination, Typography } from "@mui/material";
+import { Alert, Box, Card, Chip, Divider, Stack, TablePagination, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { LeaveApplication } from "./components/LeaveApplication";
@@ -13,9 +13,9 @@ import {
   RequestLeaveModel,
 } from "../../leaves/model";
 import { useAppSelector } from "../../../Redux/hooks";
-import { getEmployeeLeaveBalance, getMyProfileLeaveBalance } from "../../leaves/leaveServices";
+import { canApplyForWorkFromHome, getEmployeeLeaveBalance, getMyProfileLeaveBalance } from "../../leaves/leaveServices";
 import { toast } from "react-toastify";
-import { hasModuleFeaturePermission } from "../../../../utils/common";
+import { hasModuleFeaturePermission, formatServerDate } from "../../../../utils/common";
 import { resolveLeaveBalanceTargetUserId } from "./leaveTrackerUtils";
 import { getRequest, postRequest } from "../../../../server/axios";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
@@ -36,6 +36,8 @@ type WorkFromHomeContext = {
   todayRequestIssueCode?: string | null;
   isSameDayRequestCutoffPassed?: boolean;
   effectiveOfficeStartTime?: string | null;
+  allowedDaysOfWeek?: string[];
+  blockedDaysOfWeek?: string[];
 };
 
 type WorkFromHomeRequest = {
@@ -52,10 +54,7 @@ type WorkFromHomeRequest = {
   officeConvertedDates?: string[];
 };
 
-const formatBusinessDate = (value: string) => {
-  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString();
-};
+const formatBusinessDate = (value: string) => formatServerDate(value, "DD/MM/YYYY");
 
 const initialLeaveRequestValue: RequestLeaveModel = {
   isHalfDay: false,
@@ -95,13 +94,14 @@ export const LeaveTracker: FC = () => {
   const modulePermission =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const hasWfhPermission = modulePermission.some((p) => p.startsWith("Work_From_Home."));
+  const canCreateWfhRequest = canApplyForWorkFromHome(modulePermission);
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleOpen = () => {
-    if (empLeaveTypeBalance.length > 0 || (hasWfhPermission && wfhContext?.isEligible) || hasLifecycleLeavePolicy) {
+    if (empLeaveTypeBalance.length > 0 || (canCreateWfhRequest && wfhContext?.isEligible) || hasLifecycleLeavePolicy) {
       setOpen(true);
     } else {
       toast.error(i({ id: "VALIDATION_ERR.LEAVE_TYPES_NOT_AVAILABLE" }));
@@ -398,17 +398,19 @@ export const LeaveTracker: FC = () => {
                   />
                ) : (
                  <CustomisedButton
-                   label={clockingRequestId === todayWfhRequest?.requestId ? "Saving..." : wfhTiming.checkInTime ? "Clock out from WFH" : "Clock in to WFH"}
+                   label={clockingRequestId === todayWfhRequest?.requestId ? "Saving..." : wfhTiming.checkInTime ? "Clock out from WFH" : wfhTiming.isCheckInOpen === false ? "Clock in closed" : "Clock in to WFH"}
                    color={wfhTiming.checkInTime ? "warning" : "primary"}
-                   disabled={clockingRequestId === todayWfhRequest?.requestId || Boolean(wfhTimingError)}
+                   disabled={clockingRequestId === todayWfhRequest?.requestId || Boolean(wfhTimingError) || (!wfhTiming.checkInTime && wfhTiming.isCheckInOpen === false)}
                    handleClick={() => void toggleWfhAttendance()}
                  />
                )}
-               <Typography variant="body2" color="text.secondary">
+               <Typography variant="body2" color={!wfhTiming.checkInTime && wfhTiming.isCheckInOpen === false ? "warning.main" : "text.secondary"}>
                  {wfhTiming.checkOutTime && wfhTiming.checkInTime
                    ? `Checked in at ${new Date(wfhTiming.checkInTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}, checked out at ${new Date(wfhTiming.checkOutTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} (${wfhTiming.totalHours ?? 0} hour(s) verified${wfhTiming.isHalfDay ? " · Half-Day" : ""}).`
                    : wfhTiming.checkInTime
                    ? `Checked in at ${new Date(wfhTiming.checkInTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. Required: ${wfhTiming.requiredHours} hour(s) (or clock out when done for half-day).`
+                   : !wfhTiming.checkInTime && wfhTiming.isCheckInOpen === false
+                   ? wfhTiming.checkInNotice || "WFH check-in window is currently closed."
                    : "Clock in is available only for your approved WFH request and policy time window."}
                </Typography>
              </Stack>
@@ -456,17 +458,85 @@ export const LeaveTracker: FC = () => {
             ) : wfhRequests.length === 0 ? (
               <Typography color="text.secondary">No Work From Home requests yet.</Typography>
             ) : wfhRequests.map((request) => (
-              <Stack key={request.requestId} direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1.25} sx={{ p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
-                <Stack spacing={0.25}>
-                  <Typography fontWeight={700}>{formatBusinessDate(request.fromDate)} – {formatBusinessDate(request.toDate)}</Typography>
-                  <Typography variant="body2" color="text.secondary">{request.durationType.replace(/([A-Z])/g, " $1").trim()}{request.createdDate ? ` · Requested ${new Date(request.createdDate).toLocaleDateString()}` : ""}</Typography>
-                  {request.reasonText && <Typography variant="body2" color="text.secondary">{request.reasonText}</Typography>}
+              <Box
+                key={request.requestId}
+                sx={{
+                  p: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2.5,
+                  bgcolor: "background.paper",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    borderColor: "primary.light",
+                    boxShadow: "0 3px 12px rgba(0,0,0,0.06)",
+                  },
+                }}
+              >
+                <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1.25}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                      <Typography fontWeight={800} fontSize="0.95rem">
+                        {formatBusinessDate(request.fromDate)} {request.fromDate !== request.toDate ? `– ${formatBusinessDate(request.toDate)}` : ""}
+                      </Typography>
+                      <Chip
+                        size="small"
+                        label={request.durationType.replace(/([A-Z])/g, " $1").trim()}
+                        variant="outlined"
+                        color={request.durationType === "FullDay" ? "primary" : "info"}
+                        sx={{ fontSize: 11, fontWeight: 700, borderRadius: 1.5, height: 22 }}
+                      />
+                    </Stack>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
+                      {request.createdDate ? `Requested on ${new Date(request.createdDate).toLocaleDateString()}` : "Submitted request"}
+                    </Typography>
+                  </Box>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Chip
+                      label={request.status}
+                      color={
+                        request.status === "Approved"
+                          ? "success"
+                          : request.status === "Rejected"
+                          ? "error"
+                          : request.status === "Cancelled"
+                          ? "default"
+                          : "warning"
+                      }
+                      size="small"
+                      sx={{ fontWeight: 700, borderRadius: 1.5 }}
+                    />
+                    {canWithdrawWfhRequest(request) && (
+                      <CustomisedButton
+                        label="Withdraw"
+                        size="small"
+                        color="error"
+                        variant="outlined"
+                        handleClick={() => void withdrawWfhRequest(request)}
+                      />
+                    )}
+                  </Stack>
                 </Stack>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Chip label={request.status} color={request.status === "Approved" ? "success" : request.status === "Rejected" ? "error" : request.status === "Cancelled" ? "default" : "warning"} size="small" />
-                  {canWithdrawWfhRequest(request) && <CustomisedButton label="Withdraw" size="small" color="error" variant="outlined" handleClick={() => void withdrawWfhRequest(request)} />}
-                </Stack>
-              </Stack>
+                {request.reasonText && (
+                  <Box
+                    sx={{
+                      mt: 1.25,
+                      p: 1,
+                      px: 1.25,
+                      borderRadius: 1.5,
+                      bgcolor: "action.hover",
+                      borderLeft: "3px solid",
+                      borderColor: "primary.main",
+                    }}
+                  >
+                    <Typography variant="caption" color="text.secondary" sx={{ fontStyle: "italic", display: "block" }}>
+                      <Box component="span" fontWeight={700} sx={{ fontStyle: "normal", mr: 0.5 }}>Reason:</Box>
+                      "{request.reasonText}"
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
             ))}
           </Stack>
           <TablePagination

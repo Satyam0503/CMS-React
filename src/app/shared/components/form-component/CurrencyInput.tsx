@@ -15,6 +15,7 @@ interface CurrencyInputProps {
   currencySymbol?: string;
   labelVarient?: "notched" | "seperate";
   showErrorLabel?: boolean;
+  size?: "small" | "medium";
   inputProps?: InputBaseProps["inputProps"];
   InputProps?: Partial<OutlinedInputProps>;
   sx?: SxProps<Theme>;
@@ -32,6 +33,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   currencySymbol = "₹",
   labelVarient = "notched",
   showErrorLabel = true,
+  size,
   ...props
 }) => {
   const { formatMessage: i } = useIntl();
@@ -56,6 +58,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       <AppTextField
         {...props}
         fullWidth
+        size={size}
         name={name}
         label={labelVarient === "notched" ? label : ""}
         type="text"
@@ -75,14 +78,15 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           },
           input: {
             ...InputProps,
-            startAdornment: (currencySymbol && valueUnit !== "%") ? (
-              <>
-                <InputAdornment position="start" sx={{ mr: 0.25 }}>
-                  <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#64748B" }}>{currencySymbol}</span>
-                </InputAdornment>
-                {InputProps?.startAdornment}
-              </>
-            ) : InputProps?.startAdornment,
+            startAdornment: InputProps?.startAdornment !== undefined
+              ? InputProps.startAdornment
+              : (currencySymbol && valueUnit !== "%")
+                ? (
+                  <InputAdornment position="start" sx={{ mr: 0.25 }}>
+                    <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#64748B" }}>{currencySymbol}</span>
+                  </InputAdornment>
+                )
+                : undefined,
             endAdornment: valueUnit ? (
               <>
                 {InputProps?.endAdornment}

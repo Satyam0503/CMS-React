@@ -18,27 +18,29 @@ export const leaveTypeValidationSchma = Yup.object().shape({
 export const LeavePolicyValidationSchema = Yup.object().shape({
   name: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   code: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
-  description: Yup.string(),
+  description: Yup.string().nullable(),
   status: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   paid: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   accrualPeriod: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
   policyType: Yup.number().oneOf([1, 2, 3]).required(),
-  accrualAmount: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE").when("policyType", {
-    is: 1,
+  accrualAmount: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE").when(["policyType", "accrualPeriod", "lifecycle"], {
+    is: (policyType: number, accrualPeriod: number, lifecycle: any) =>
+      policyType === 1 && accrualPeriod !== 3 && !lifecycle?.enabled,
     then: schema => schema.min(0.5, "VALIDATION_ERR.MIN_CREDITED_LEAVES"),
     otherwise: schema => schema.min(0),
   }),
   maxBalance: Yup.number()
     .required("VALIDATION_ERR.REQUIRED_TYPE")
-    .when("policyType", {
-      is: 1,
+    .when(["policyType", "accrualPeriod", "lifecycle"], {
+      is: (policyType: number, accrualPeriod: number, lifecycle: any) =>
+        policyType === 1 && accrualPeriod !== 3 && !lifecycle?.enabled,
       then: (schema: Yup.NumberSchema<number>) =>
         schema.min(Yup.ref("accrualAmount"), "VALIDATION_ERR.MAX_BALANCE_LESS_THAN_CREDITED"),
       otherwise: (schema: Yup.NumberSchema<number>) => schema.min(0),
     }),
   carryOverAllowed: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   carryOverLimit: Yup.number().nullable(),
-  minNoticeDays: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  minNoticeDays: Yup.number().min(0).required("VALIDATION_ERR.REQUIRED_TYPE"),
   halfDayAllowed: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   weekendInclusive: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   holidayInclusive: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
@@ -52,15 +54,15 @@ export const LeavePolicyValidationSchema = Yup.object().shape({
     then: () => Yup.object({
       fullDayAttendanceStatusCode: Yup.string().trim().required("VALIDATION_ERR.REQUIRED_TYPE"),
       halfDayAttendanceStatusCode: Yup.string().trim().when(["allowFirstHalf", "allowSecondHalf"], {
-        is: (first: boolean, second: boolean) => first || second,
+        is: (first: boolean, second: boolean) => Boolean(first || second),
         then: schema => schema.required("VALIDATION_ERR.REQUIRED_TYPE"),
         otherwise: schema => schema.notRequired(),
       }),
-      maxDaysPerWeek: Yup.number().nullable().min(1),
+      maxDaysPerWeek: Yup.number().nullable().min(1).max(7, "Maximum WFH days per week cannot exceed 7 days"),
       maxDaysPerMonth: Yup.number().nullable().min(1),
       fullDayRequiredWorkingMinutes: Yup.number().nullable().min(0),
       halfDayRequiredWorkingMinutes: Yup.number().nullable().min(0),
-      breakMinutes: Yup.number().min(0).required(),
+      breakMinutes: Yup.number().nullable().min(0),
       sameDayCutoffTime: Yup.string().nullable(),
       sameDayGraceMinutes: Yup.number().nullable().min(0),
       allowLateApplicationWithApproval: Yup.boolean().nullable(),
