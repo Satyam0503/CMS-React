@@ -698,8 +698,10 @@ const EmployeeAttendance = () => {
             direction={{ xs: "column", sm: "row" }}
             alignItems={{ xs: "flex-start", sm: "center" }}
             justifyContent="space-between"
-            spacing={1.5}
-            sx={{ mb: 2 }}
+            spacing={2}
+            flexWrap="wrap"
+            useFlexGap
+            sx={{ mb: 2.5 }}
           >
             <Box>
               <Typography
@@ -739,9 +741,11 @@ const EmployeeAttendance = () => {
                 direction="row"
                 spacing={1.25}
                 alignItems="center"
+                flexWrap="wrap"
+                useFlexGap
                 sx={{
                   width: { xs: "100%", sm: "auto" },
-                  "& > *": { flex: { xs: 1, sm: "initial" } },
+                  "& > *": { flex: { xs: "1 1 auto", sm: "initial" } },
                 }}
               >
                 {canManageAttendance && (
@@ -838,40 +842,51 @@ const EmployeeAttendance = () => {
               display: "grid",
               gridTemplateColumns: {
                 xs: "1fr",
-                sm: canViewAllAttendance
-                  ? "repeat(2, minmax(0, 1fr))"
-                  : "repeat(2, minmax(0, 1fr))",
+                sm: "repeat(2, minmax(0, 1fr))",
                 md: canViewAllAttendance
                   ? "repeat(3, minmax(0, 1fr))"
-                  : "minmax(200px, 260px) minmax(200px, 260px)",
+                  : "repeat(2, minmax(0, 1fr))",
                 lg: canViewAllAttendance
-                  ? "minmax(180px, 1.4fr) minmax(130px, 0.9fr) minmax(130px, 0.9fr) minmax(150px, 1fr) minmax(150px, 1fr)"
-                  : "minmax(220px, 280px) minmax(220px, 280px)",
+                  ? "minmax(200px, 1.4fr) minmax(140px, 1fr) minmax(170px, 1.1fr) minmax(150px, 1fr) minmax(150px, 1fr)"
+                  : "repeat(2, minmax(0, 1fr))",
               },
-              gap: 1.5,
+              gap: { xs: 1.5, sm: 2 },
               alignItems: "end",
               mb: 2.5,
-              p: 1.75,
-              borderRadius: "12px",
-              bgcolor: "var(--mui-palette-background-box, action.hover)",
+              p: { xs: 1.75, sm: 2 },
+              borderRadius: "14px",
+              bgcolor: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.04)"
+                  : "rgba(248, 250, 252, 0.95)",
               border: "1px solid",
               borderColor: "divider",
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
-              boxShadow: "none",
+              boxShadow: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "0 4px 20px rgba(0, 0, 0, 0.25)"
+                  : "0 2px 10px rgba(11, 92, 171, 0.04)",
             }}
           >
             {canViewAllAttendance && (
-              <Box sx={{ minWidth: 0 }}>
+              <Box
+                sx={{
+                  minWidth: 0,
+                  width: "100%",
+                  gridColumn: { xs: "auto", sm: "span 2", md: "auto" },
+                }}
+              >
                 <Stack spacing={0.6}>
                   <Typography
                     variant="caption"
                     sx={{
                       color: "text.secondary",
                       fontWeight: 700,
-                      minHeight: 17,
-                      lineHeight: "17px",
-                      letterSpacing: "0.01em",
+                      minHeight: 18,
+                      lineHeight: "18px",
+                      letterSpacing: "0.02em",
+                      display: "block",
                     }}
                   >
                     Search employee
@@ -879,9 +894,11 @@ const EmployeeAttendance = () => {
                   <SearchInput
                     search={searchValue}
                     setSearch={handleSearchChange}
+                    fullWidth
                     sx={{
                       width: "100%",
-                      maxWidth: "none",
+                      maxWidth: "100%",
+                      minWidth: 0,
                       "& .MuiOutlinedInput-root": {
                         minHeight: 40,
                         height: 40,
@@ -905,16 +922,17 @@ const EmployeeAttendance = () => {
               </Box>
             )}
 
-            <Box sx={{ minWidth: 0 }}>
+            <Box sx={{ minWidth: 0, width: "100%" }}>
               <Stack spacing={0.6}>
                 <Typography
                   variant="caption"
                   sx={{
                     color: "text.secondary",
                     fontWeight: 700,
-                    minHeight: 17,
-                    lineHeight: "17px",
-                    letterSpacing: "0.01em",
+                    minHeight: 18,
+                    lineHeight: "18px",
+                    letterSpacing: "0.02em",
+                    display: "block",
                   }}
                 >
                   Attendance Period
@@ -929,6 +947,8 @@ const EmployeeAttendance = () => {
                   sx={{
                     height: 40,
                     minHeight: 40,
+                    width: "100%",
+                    minWidth: 0,
                     borderRadius: "10px",
                     fontSize: 13.5,
                     fontWeight: 600,
@@ -955,16 +975,17 @@ const EmployeeAttendance = () => {
               </Stack>
             </Box>
 
-            <Box sx={{ minWidth: 0 }}>
+            <Box sx={{ minWidth: 0, width: "100%" }}>
               <Stack spacing={0.6}>
                 <Typography
                   variant="caption"
                   sx={{
                     color: "text.secondary",
                     fontWeight: 700,
-                    minHeight: 17,
-                    lineHeight: "17px",
-                    letterSpacing: "0.01em",
+                    minHeight: 18,
+                    lineHeight: "18px",
+                    letterSpacing: "0.02em",
+                    display: "block",
                   }}
                 >
                   Month
@@ -976,7 +997,9 @@ const EmployeeAttendance = () => {
                   spacing={0.5}
                   sx={{
                     width: "100%",
+                    minWidth: 0,
                     height: 40,
+                    minHeight: 40,
                     bgcolor: "background.paper",
                     border: "1px solid",
                     borderColor: "divider",
@@ -996,6 +1019,7 @@ const EmployeeAttendance = () => {
                     aria-label="Previous month"
                     sx={{
                       minWidth: 32,
+                      width: 32,
                       height: 30,
                       p: 0,
                       borderRadius: "7px",
@@ -1014,6 +1038,8 @@ const EmployeeAttendance = () => {
                       px: 0.5,
                       fontSize: "0.875rem",
                       color: "text.primary",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
                     }}
                   >
                     {dateRange.startDate.format("MMMM YYYY")}
@@ -1024,6 +1050,7 @@ const EmployeeAttendance = () => {
                     aria-label="Next month"
                     sx={{
                       minWidth: 32,
+                      width: 32,
                       height: 30,
                       p: 0,
                       borderRadius: "7px",
@@ -1038,16 +1065,17 @@ const EmployeeAttendance = () => {
             </Box>
 
             {canViewAllAttendance && (
-              <Box sx={{ minWidth: 0 }}>
+              <Box sx={{ minWidth: 0, width: "100%" }}>
                 <Stack spacing={0.6}>
                   <Typography
                     variant="caption"
                     sx={{
                       color: "text.secondary",
                       fontWeight: 700,
-                      minHeight: 17,
-                      lineHeight: "17px",
-                      letterSpacing: "0.01em",
+                      minHeight: 18,
+                      lineHeight: "18px",
+                      letterSpacing: "0.02em",
+                      display: "block",
                     }}
                   >
                     Shift
@@ -1064,6 +1092,8 @@ const EmployeeAttendance = () => {
                     sx={{
                       height: 40,
                       minHeight: 40,
+                      width: "100%",
+                      minWidth: 0,
                       borderRadius: "10px",
                       fontSize: 13.5,
                       fontWeight: 600,
@@ -1093,16 +1123,17 @@ const EmployeeAttendance = () => {
             )}
 
             {canViewAllAttendance && (
-              <Box sx={{ minWidth: 0 }}>
+              <Box sx={{ minWidth: 0, width: "100%" }}>
                 <Stack spacing={0.6}>
                   <Typography
                     variant="caption"
                     sx={{
                       color: "text.secondary",
                       fontWeight: 700,
-                      minHeight: 17,
-                      lineHeight: "17px",
-                      letterSpacing: "0.01em",
+                      minHeight: 18,
+                      lineHeight: "18px",
+                      letterSpacing: "0.02em",
+                      display: "block",
                     }}
                   >
                     Department
@@ -1119,6 +1150,8 @@ const EmployeeAttendance = () => {
                     sx={{
                       height: 40,
                       minHeight: 40,
+                      width: "100%",
+                      minWidth: 0,
                       borderRadius: "10px",
                       fontSize: 13.5,
                       fontWeight: 600,

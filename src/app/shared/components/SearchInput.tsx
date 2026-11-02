@@ -42,8 +42,8 @@ export const SearchInput: FC<PropsType> = memo(
       <Box
         sx={[
           {
-            width: fullWidth ? "100%" : { xs: "100%", sm: "clamp(200px, 22vw, 300px)" },
-            maxWidth: fullWidth ? "none" : "100%",
+            width: (fullWidth || (Array.isArray(sx) ? (sx as any[]).some((s: any) => Boolean(s?.width)) : Boolean((sx as any)?.width))) ? "100%" : { xs: "100%", sm: "clamp(200px, 22vw, 300px)" },
+            maxWidth: "100%",
             minWidth: 0,
             flexShrink: 1,
             flexGrow: fullWidth ? 1 : undefined,

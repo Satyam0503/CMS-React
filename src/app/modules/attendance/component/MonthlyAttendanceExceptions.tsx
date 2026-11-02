@@ -714,13 +714,38 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           </Stack>
         </Stack>
       </CustomisedModal>
-      <Dialog open={!!wfhException} onClose={() => !savingCorrection && setWfhException(null)} fullWidth maxWidth="xs">
-        <DialogTitle>Correct WFH working hours</DialogTitle>
+      <Dialog
+        open={!!wfhException}
+        onClose={() => !savingCorrection && setWfhException(null)}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            p: 1,
+            boxShadow: "0 20px 45px -10px rgba(0, 0, 0, 0.25)",
+          },
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" fontWeight={800}>
+            Correct WFH Working Hours
+          </Typography>
+          {wfhException && (
+            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.25, fontWeight: 600 }}>
+              {wfhException.employeeName ? `${wfhException.employeeName} (${wfhException.employeeId})` : wfhException.employeeId} · Affected Date: {dayjs(wfhException.affectedDates?.[0] || wfhException.attendanceDate).format("DD MMMM YYYY")}
+            </Typography>
+          )}
+        </DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             Enter the verified hours for the approved WFH half only. Any approved leave in the other half remains unchanged. The WFH status is retained and this exception resolves only when the policy minimum is met.
           </Typography>
-          {!!wfhCorrectionError && <Alert severity="error" sx={{ mb: 2 }}><strong>Why it failed:</strong> {wfhCorrectionError}</Alert>}
+          {!!wfhCorrectionError && (
+            <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
+              <strong>Why it failed:</strong> {wfhCorrectionError}
+            </Alert>
+          )}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Stack spacing={2} sx={{ pt: 1 }}>
               <DateTimePicker
@@ -728,22 +753,52 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                 value={checkInTime ? dayjs(checkInTime) : null}
                 onChange={(value) => setCheckInTime(value?.format("YYYY-MM-DDTHH:mm") ?? "")}
                 format="DD MMM YYYY, hh:mm A"
-                slotProps={{ textField: { fullWidth: true, required: true }, openPickerButton: { sx: { border: 0, boxShadow: "none", bgcolor: "transparent", "&:hover": { bgcolor: "action.hover" } } } }}
+                slotProps={{
+                  textField: { fullWidth: true, required: true },
+                  openPickerButton: { sx: { border: 0, boxShadow: "none", bgcolor: "transparent", "&:hover": { bgcolor: "action.hover" } } },
+                }}
               />
               <DateTimePicker
                 label="Punch out"
                 value={checkOutTime ? dayjs(checkOutTime) : null}
                 onChange={(value) => setCheckOutTime(value?.format("YYYY-MM-DDTHH:mm") ?? "")}
                 format="DD MMM YYYY, hh:mm A"
-                slotProps={{ textField: { fullWidth: true, required: true }, openPickerButton: { sx: { border: 0, boxShadow: "none", bgcolor: "transparent", "&:hover": { bgcolor: "action.hover" } } } }}
+                slotProps={{
+                  textField: { fullWidth: true, required: true },
+                  openPickerButton: { sx: { border: 0, boxShadow: "none", bgcolor: "transparent", "&:hover": { bgcolor: "action.hover" } } },
+                }}
               />
-              <AppTextField label="Correction reason" value={correctionReason} onChange={(event) => setCorrectionReason(event.target.value)} multiline minRows={3} required helperText="At least 3 characters. The office break is deducted from verified working hours." />
+              <AppTextField
+                label="Correction reason"
+                value={correctionReason}
+                onChange={(event) => setCorrectionReason(event.target.value)}
+                multiline
+                minRows={3}
+                required
+                helperText="At least 3 characters. The office break is deducted from verified working hours."
+              />
             </Stack>
           </LocalizationProvider>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <AppButton variant="outlined" disabled={savingCorrection} onClick={() => setWfhException(null)}>Cancel</AppButton>
-          <AppButton disabled={savingCorrection} onClick={() => void saveWfhHoursCorrection()}>{savingCorrection ? "Saving…" : "Update & resolve"}</AppButton>
+        <DialogActions sx={{ px: 3, pb: 2.5, pt: 1, gap: 1 }}>
+          <AppButton variant="outlined" disabled={savingCorrection} onClick={() => setWfhException(null)} sx={{ borderRadius: "8px" }}>
+            Cancel
+          </AppButton>
+          <AppButton
+            variant="contained"
+            disabled={savingCorrection}
+            onClick={() => void saveWfhHoursCorrection()}
+            sx={{
+              borderRadius: "8px",
+              fontWeight: 700,
+              px: 2.5,
+              bgcolor: "primary.main",
+              color: "#FFFFFF",
+              "&:hover": { bgcolor: "primary.dark" },
+            }}
+          >
+            {savingCorrection ? "Saving…" : "Update & resolve"}
+          </AppButton>
         </DialogActions>
       </Dialog>
       <Dialog open={!!leaveException} onClose={() => !savingResolution && setLeaveException(null)} fullWidth maxWidth="xs">

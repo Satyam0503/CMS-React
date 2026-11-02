@@ -7,7 +7,12 @@ const mocks = vi.hoisted(() => ({ getRequest: vi.fn(), postRequest: vi.fn(), pat
 
 vi.mock("../../../../server/axios", () => ({ getRequest: mocks.getRequest, postRequest: mocks.postRequest, patchRequest: mocks.patchRequest }));
 vi.mock("react-toastify", () => ({ toast: { error: mocks.toastError, success: mocks.toastSuccess } }));
-vi.mock("@mui/icons-material", () => ({ ExpandLess: () => null, ExpandMore: () => null }));
+vi.mock("@mui/icons-material", () => ({
+  __esModule: true,
+  default: () => null,
+  ExpandLess: () => null,
+  ExpandMore: () => null,
+}));
 vi.mock("@mui/x-date-pickers/AdapterDayjs", () => ({ AdapterDayjs: class {} }));
 vi.mock("@mui/x-date-pickers", () => ({
   DateTimePicker: () => null,
