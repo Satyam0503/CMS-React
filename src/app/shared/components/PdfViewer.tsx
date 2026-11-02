@@ -1,3 +1,4 @@
+import "../../../utils/promiseWithResolvers";
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { pdfjs } from "react-pdf";

@@ -100,6 +100,10 @@ vi.mock("../../../../../services/CandidateServices", () => ({
   }),
 }));
 
+vi.mock("../../../../shared/components/PdfViewer", () => ({
+  PdfViewer: () => <div data-testid="pdf-viewer">PDF Preview</div>,
+}));
+
 describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management", () => {
   let container: HTMLDivElement;
   let root: Root;

@@ -1,3 +1,4 @@
+import "./utils/promiseWithResolvers";
 import { createRoot } from "react-dom/client";
 import "./_themes/assets/sass/style.scss";
 import { AppRoutes } from "./app/routing/AppRoutes";

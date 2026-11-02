@@ -21,6 +21,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    setupFiles: [path.resolve(__dirname, 'src/test/setup.ts')],
     include: ["src/**/*.test.{ts,tsx}"],
     pool: "threads",
     // Keep local runs parallel, but avoid exhausting file handles on the
