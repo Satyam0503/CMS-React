@@ -18,6 +18,7 @@ The catalog of every feature module under [`src/app/modules/`](../src/app/module
 | [Recruitment — Jobs](#recruitment--jobs) | `recruitment/jobs/` | `/recruitment/jobs/*` | `Jobs` |
 | [Recruitment — Applications](#recruitment--applications) | `recruitment/applications/` | `/recruitment/applications/*` | `Applications` |
 | [Recruitment — Process Log](#recruitment--process-log) | `recruitment/processlog/` | `/recruitment/processlog` | `ProcessLog` |
+| [Offboarding](#offboarding) | `offboarding/` | `/admin/companydetails/offboarding` | `Offboarding` |
 | [Payroll](#payroll) | `payroll/` | `/payroll` | `PayRoll` |
 | [Payroll Settings](#payroll-settings) | `payrollsettings/` | `/settingspayroll` | `PayrollSettings` |
 | [Policies](#policies) | `policies/` | `/companypolicy/*` | (none in route, checked in services) |
@@ -218,6 +219,23 @@ No `ProtectedRoute` wrapper — accessible to any authenticated user.
 
 ---
 
+---
+
+## Offboarding
+
+**Purpose.** Separation lifecycle workflows: employee resignation submission, manager resignation review, multi-departmental clearance task tracking, handover verification, exit interviews, and final settlement triggering.
+
+| What | Where |
+|---|---|
+| Routes | Mounted under `/admin/companydetails/offboarding` and employee separation flows |
+| Service | `src/app/modules/offboarding/offboardingServices.ts` |
+| Models | `src/app/modules/offboarding/models.ts` |
+| Components | Resignation modal, manager decision drawer, clearance checklists, exit policy editor |
+| Permission | `Offboarding` |
+| Gating | Setting tab is strictly visible only when `isOffboardingAccessible` is true. **No Administrator bypass.** |
+
+---
+
 ## Payroll
 
 **Purpose.** Per-employee salary structure setup, monthly payroll generation, payslip preview / download (PDF).
@@ -271,7 +289,33 @@ No `ProtectedRoute` wrapper — accessible to any authenticated user.
 | Sub-modules | `companymaster/` (departments, job titles, custom attributes), `companydetails/`, `permissions/` (role + permission editor) |
 | Gate | `<ProtectedRoute adminOnly={true} />` — `Roles.Administrator` only |
 
-This is also where new departments / job titles can be added beyond the [defaults seeded at registration](../../CMS-Backend-Core/Codeji.CMS.Services/Companies/DefaultCompanySeeds.cs).
+This is also where new departments / job titles can be added beyond the defaults seeded at registration.
+
+### Application Modules & Granular Decoupling
+The `ApplicationModules.tsx` component renders 10 distinct module toggle cards:
+- **Employees**
+- **Attendance** (independent module toggle)
+- **Leave Management** (independent module toggle)
+- **Calendar**
+- **Notice board**
+- **Policy**
+- **Work From Home**
+- **Offboarding**
+- **Payroll Management** (toggles only Payroll and Payroll Settings)
+- **Recruitment Management**
+
+**Decoupling Policy**: Toggling `Payroll Management` off only disables Payroll and Payroll Settings; it does **not** disable `Leave Management` or `Attendance`. Each module is independently managed.
+
+### Company Details Setting Tab Protection & No Admin Bypass
+In `CompanyDetails.tsx`, setting tabs for optional modules (e.g. `Offboarding` and `Payroll configuration`) are strictly conditioned on module enablement (`isOffboardingAccessible`, `isPayrollModuleActive`).
+- If a module is disabled/uninstalled, its tab is completely hidden and inaccessible.
+- **No Administrator Bypass**: Administrators cannot access or view tabs or sub-routes for disabled modules.
+
+### Profile & Dashboard Conditional Rendering
+- **Profile Navigation** (`profileTabs.ts`): The `Leave Tracker` tab is rendered only if `isLeaveModuleActive` is true.
+- **Profile Routes** (`ProfileRoutes.tsx`): Direct navigation to `/profile/leave` is guarded by `isLeaveModuleActive` and redirects to `/profile/about` if disabled.
+- **Profile Card** (`ProfileCard.tsx`): `View Pay Slip` requires `isPayrollModuleActive`; `<LeaveCalendar />` requires `isLeaveModuleActive`.
+- **Dashboard** (`Dashboard.tsx`): `<EmpOnLeave />` requires `isLeaveModuleActive`; `<UpComingHolidayAndEvents />` requires `isCalendarModuleActive`.
 
 ---
 

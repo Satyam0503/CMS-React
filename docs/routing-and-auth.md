@@ -187,7 +187,7 @@ As of the snapshot date, the following routes in [`PrivateRoutes.tsx`](../src/ap
 | `recruitment/*` | `<RecruitmentRoutes />` | Yes — sub-routes have their own gates, but the parent is naked |
 | `noticeboard/*` | `<NoticeBoardRoutes />` | Probably not — viewable to all |
 | `companypolicy/*` | `<PoliciesRoutes />` | Yes if Policy permission should hide it |
-| `profile/*` | `<ProfileRoutes />` | Open to authed users (own profile) — fine |
+| `profile/*` | `<ProfileRoutes />` | Open to authed users, but internal sub-routes (e.g. `/profile/leave`) are strictly guarded by module enablement (`isLeaveModuleActive`), redirecting away if disabled |
 
 ## Adding a new route
 
