@@ -820,12 +820,12 @@ const EmployeeAttendance = () => {
                       borderRadius: "10px",
                       fontWeight: 700,
                       fontSize: 13.5,
-                      bgcolor: "#0B5CAB",
-                      color: "#FFFFFF",
+                      bgcolor: "primary.main",
+                      color: "primary.contrastText",
                       whiteSpace: "nowrap",
                       px: 2,
                       "&:hover": {
-                        bgcolor: "#094a8a",
+                        bgcolor: "primary.dark",
                       },
                     }}
                   >
@@ -1408,7 +1408,7 @@ const EmployeeAttendance = () => {
                   borderRadius: "8px",
                   fontWeight: 700,
                   bgcolor: "success.main",
-                  color: "#FFFFFF",
+                  color: "success.contrastText",
                   "&:hover": { bgcolor: "success.dark" },
                 }}
               >

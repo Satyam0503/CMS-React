@@ -14,7 +14,7 @@ import { refreshTokenAsync } from "../app/modules/auth/core/_requests";
 import { getCurrentAppLanguage } from "../utils/common";
 import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
 import { queryClient } from "../app/query/queryClient";
-import { apiQueryKey } from "../app/query/queryKeys";
+import { apiQueryKey, queryKeys } from "../app/query/queryKeys";
 import { store } from "../app/Redux/store";
 import { setToken } from "../app/Redux/Reducers/authSlice";
 
@@ -100,7 +100,6 @@ export const refreshToken = async (): Promise<string | null> => {
       }
     } catch (error) {
       removeLocalKey();
-      localStorage.clear();
       window.location.href = "/auth";
       return null;
     } finally {
@@ -196,7 +195,7 @@ export const getBlobRequest = (path: string) =>
   instance.get(path, { responseType: "blob", headers: { "Cache-Control": "no-cache" } });
 
 const invalidateApiQueries = () =>
-  queryClient.invalidateQueries();
+  queryClient.invalidateQueries({ queryKey: queryKeys.api });
 
 export const postRequest = async <RequestData, ResponseData>(
   path: string,

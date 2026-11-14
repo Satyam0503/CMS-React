@@ -304,11 +304,11 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
                   height: 40,
                   borderRadius: "9px",
                   fontWeight: 700,
-                  color: "#0B5CAB",
-                  borderColor: "#0B5CAB",
+                  color: "primary.main",
+                  borderColor: "primary.main",
                   whiteSpace: "nowrap",
                   alignSelf: { xs: "stretch", sm: "flex-end" },
-                  "&:hover": { bgcolor: "#EBF3FA", borderColor: "#0B5CAB" },
+                  "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" },
                 }}
               >
                 {isDownloading ? "Generating..." : "Download Template"}
@@ -357,7 +357,7 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
             >
               {file ? (
                 <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center">
-                  <InsertDriveFileOutlined sx={{ fontSize: 32, color: "#16A34A" }} />
+                  <InsertDriveFileOutlined sx={{ fontSize: 32, color: "success.main" }} />
                   <Box sx={{ textAlign: "left" }}>
                     <Typography fontWeight={700} color="text.primary">
                       {file.name}
@@ -535,10 +535,10 @@ export const ImportAttendanceModal: React.FC<ImportAttendanceModalProps> = ({
             startIcon={isCommitting ? <CircularProgress size={16} color="inherit" /> : <CloudUploadOutlined />}
             sx={{
               fontWeight: 700,
-              bgcolor: "#0B5CAB",
+              bgcolor: "primary.main",
               borderRadius: "9px",
               px: 3,
-              "&:hover": { bgcolor: "#094a8a" },
+              "&:hover": { bgcolor: "primary.dark" },
             }}
           >
             {isCommitting ? "Importing..." : "Commit Attendance Import"}
