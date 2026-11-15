@@ -1,10 +1,9 @@
-import { Box, Skeleton, alpha, useColorScheme } from "@mui/material";
+import { Box, Skeleton, alpha, useColorScheme, useTheme } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import dayjs from "dayjs";
 import { useIntl } from "react-intl";
 import { HeadcountPoint } from "../model";
 import { getChartPalette } from "../../theme/themePalettes";
-import { useCompanyTheme } from "../../theme/companyTheme";
 import { CardMessage, DashboardCard, LoadError } from "./DashboardCard";
 import { RangeLabel } from "./AttendanceOverviewCard";
 
@@ -13,7 +12,7 @@ type Props = { trend: HeadcountPoint[] | undefined; loading: boolean; error: boo
 export const EmployeeTrendCard = ({ trend, loading, error }: Props) => {
   const { formatMessage: i } = useIntl();
   const { mode, systemMode } = useColorScheme();
-  const { theme: appStyle } = useCompanyTheme();
+  const { appStyle } = useTheme();
   const color = getChartPalette(mode, systemMode, appStyle)[0];
   const points = trend ?? [];
   const labels = points.map((p) => dayjs(`${p.month}-01`).format("MMM"));

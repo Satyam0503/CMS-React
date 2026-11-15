@@ -1,11 +1,10 @@
 import { MoreHoriz } from "@mui/icons-material";
-import { Box, LinearProgress, Skeleton, Stack, Typography, alpha, useColorScheme } from "@mui/material";
+import { Box, LinearProgress, Skeleton, Stack, Typography, alpha, useColorScheme, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { useIntl } from "react-intl";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
 import { getChartPalette } from "../../theme/themePalettes";
-import { useCompanyTheme } from "../../theme/companyTheme";
 import { useDepartmentsQuery } from "../dashboardQueries";
 import { departmentRows } from "../dashboardMetrics";
 import { CardMessage, DashboardCard, LoadError } from "./DashboardCard";
@@ -19,7 +18,7 @@ export const DepartmentOverviewCard = () => {
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector((state) => state.user.userData?.defaultLanguage ?? "");
   const { mode, systemMode } = useColorScheme();
-  const { theme: appStyle } = useCompanyTheme();
+  const { appStyle } = useTheme();
   const palette = getChartPalette(mode, systemMode, appStyle);
 
   const rows = useMemo(
