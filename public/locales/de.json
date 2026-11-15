@@ -1050,5 +1050,80 @@
     "PAYROLL_MANAGEMENT_DESCRIPTION": "Verwaltet die gesamte Lohn- und Gehaltsabrechnung durch die Integration von Zeiterfassung, Urlaubsverwaltung und Gehaltsverarbeitung. Berechnet Arbeitszeiten, Urlaubsabzüge, Überstunden, Steuern, Boni und erstellt korrekte Gehaltsabrechnungen gemäß Unternehmensrichtlinien und gesetzlichen Vorgaben.",
     "RECRUITMENT_MANAGEMENT": "Recruitment Management",
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Verwaltet den gesamten Einstellungsprozess einschließlich Stellenausschreibungen, Bewerbungen, Interviewphasen, Bewertungen und detaillierter Prozessprotokolle. Bietet vollständige Transparenz über den Rekrutierungsfortschritt, durchgeführte Maßnahmen und Einstellungsentscheidungen zur Optimierung der Talentakquise."
+  },
+  "DASHBOARD": {
+    "GREETING": {
+      "MORNING": "Good Morning, {name}",
+      "AFTERNOON": "Good Afternoon, {name}",
+      "EVENING": "Good Evening, {name}"
+    },
+    "SUBTITLE": "Here's what's happening in your organization today.",
+    "SUBTITLE_SELF": "Here's what's coming up for you.",
+    "VIEW_ALL": "View All",
+    "LOAD_ERROR": "Couldn't load this section. Try refreshing the page.",
+    "KPI": {
+      "TOTAL_EMPLOYEES": "Total Employees",
+      "PRESENT_TODAY": "Present Today",
+      "ON_LEAVE": "On Leave",
+      "OPEN_POSITIONS": "Open Positions",
+      "CHANGE_HINT": "Change since last month",
+      "SHARE_HINT": "Share of total employees"
+    },
+    "ATTENDANCE": {
+      "TITLE": "Attendance Overview",
+      "TODAY": "Today",
+      "PRESENT": "Present",
+      "ON_LEAVE": "On Leave",
+      "ABSENT": "Absent",
+      "EMPTY": "No attendance recorded yet today.",
+      "NON_WORKING_TITLE": "No attendance today",
+      "NON_WORKING_BODY": "Today is a holiday or weekly off for your organization.",
+      "SUMMARY": "Today: {present} present, {leave} on leave, {absent} absent."
+    },
+    "TREND": {
+      "TITLE": "Employee Trend",
+      "RANGE": "Last 6 Months",
+      "EMPTY": "Headcount history will appear here after the first month.",
+      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}."
+    },
+    "DEPARTMENTS": {
+      "TITLE": "Department Overview",
+      "DEPARTMENT": "Department",
+      "EMPLOYEES": "Employees",
+      "SHARE": "Share",
+      "OTHERS": "Others",
+      "EMPTY": "No departments yet. Add them in company settings."
+    },
+    "ACTIVITY": {
+      "TITLE": "Recent Activities",
+      "EMPTY": "No recent activity yet.",
+      "JOINED": "{name} joined",
+      "JOINED_AS": "{name} joined as {detail}",
+      "LEAVE_APPROVED": "Leave approved for {name}",
+      "SALARY_REVISED": "Salary revised for {name}",
+      "EXIT_INITIATED": "Exit initiated for {name}",
+      "JOB_POSTED": "{name} posted a new job",
+      "JOB_POSTED_AS": "New job posted: {detail}"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "EMPTY": "You're all caught up."
+    },
+    "QUICK": {
+      "TITLE": "Quick Actions",
+      "ADD_EMPLOYEE": "Add Employee",
+      "APPLY_LEAVE": "Apply Leave",
+      "RUN_PAYROLL": "Run Payroll",
+      "POST_JOB": "Post Job"
+    },
+    "REMINDERS": {
+      "TITLE": "Upcoming & Reminders",
+      "EMPTY": "Nothing scheduled for the coming days.",
+      "BIRTHDAY": "{name}'s birthday",
+      "ANNIVERSARY": "{name}'s work anniversary · {years, plural, one {# year} other {# years}}",
+      "HOLIDAY": "Holiday",
+      "EVENT": "Event",
+      "TODAY": "Today"
+    }
   }
 }
