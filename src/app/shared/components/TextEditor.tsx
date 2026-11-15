@@ -9,8 +9,8 @@ import {
   useRef,
   useState,
 } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 import { useDebounce } from "../../hooks/useDebounce";
 import { removeUnwantedString, sanitizeHtmlContent } from "../../../utils/common";
 import { IntlContext } from "react-intl";
@@ -217,7 +217,6 @@ const TextEditor = memo(
         "strike",
         "color",
         "list",
-        "bullet",
         "blockquote",
         "link",
         "clean",
@@ -498,6 +497,7 @@ const TextEditor = memo(
                   theme="snow"
                   value={textValue}
                   onChange={setTextValue}
+                  useSemanticHTML={false}
                   formats={formats}
                   modules={modules}
                   readOnly={disabled}

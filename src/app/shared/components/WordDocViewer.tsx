@@ -1,5 +1,5 @@
 import { Box, useTheme } from "@mui/material";
-import DocViewer, { DocViewerRenderers, IDocument } from "react-doc-viewer";
+import DocViewer, { DocViewerRenderers, IDocument } from "@cyntler/react-doc-viewer";
 
 interface DocViewerProps {
   documents: IDocument[];
