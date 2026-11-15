@@ -1143,5 +1143,80 @@
       "CONTRACT_ENDED": "अनुबंध समाप्ति (Contract end)",
       "DECEASED": "निधन (Deceased)"
     }
+  },
+  "DASHBOARD": {
+    "GREETING": {
+      "MORNING": "सुप्रभात, {name}",
+      "AFTERNOON": "नमस्कार, {name}",
+      "EVENING": "शुभ संध्या, {name}"
+    },
+    "SUBTITLE": "आज आपके संगठन में क्या हो रहा है, यहाँ देखें।",
+    "SUBTITLE_SELF": "आपके लिए आगे क्या है, यहाँ देखें।",
+    "VIEW_ALL": "सभी देखें",
+    "LOAD_ERROR": "यह भाग लोड नहीं हो सका। पेज रीफ़्रेश करके देखें।",
+    "KPI": {
+      "TOTAL_EMPLOYEES": "कुल कर्मचारी",
+      "PRESENT_TODAY": "आज उपस्थित",
+      "ON_LEAVE": "छुट्टी पर",
+      "OPEN_POSITIONS": "खुले पद",
+      "CHANGE_HINT": "पिछले महीने से बदलाव",
+      "SHARE_HINT": "कुल कर्मचारियों में हिस्सा"
+    },
+    "ATTENDANCE": {
+      "TITLE": "उपस्थिति अवलोकन",
+      "TODAY": "आज",
+      "PRESENT": "उपस्थित",
+      "ON_LEAVE": "छुट्टी पर",
+      "ABSENT": "अनुपस्थित",
+      "EMPTY": "आज अभी तक कोई उपस्थिति दर्ज नहीं हुई।",
+      "NON_WORKING_TITLE": "आज उपस्थिति नहीं",
+      "NON_WORKING_BODY": "आज आपके संगठन में अवकाश या साप्ताहिक छुट्टी है।",
+      "SUMMARY": "आज: {present} उपस्थित, {leave} छुट्टी पर, {absent} अनुपस्थित।"
+    },
+    "TREND": {
+      "TITLE": "कर्मचारी रुझान",
+      "RANGE": "पिछले 6 महीने",
+      "EMPTY": "पहले महीने के बाद कर्मचारी संख्या का इतिहास यहाँ दिखेगा।",
+      "SUMMARY": "कर्मचारी संख्या {fromMonth} में {from} से {toMonth} में {to} हुई।"
+    },
+    "DEPARTMENTS": {
+      "TITLE": "विभाग अवलोकन",
+      "DEPARTMENT": "विभाग",
+      "EMPLOYEES": "कर्मचारी",
+      "SHARE": "हिस्सा",
+      "OTHERS": "अन्य",
+      "EMPTY": "अभी कोई विभाग नहीं है। इन्हें कंपनी सेटिंग्स में जोड़ें।"
+    },
+    "ACTIVITY": {
+      "TITLE": "हाल की गतिविधियाँ",
+      "EMPTY": "अभी कोई हाल की गतिविधि नहीं।",
+      "JOINED": "{name} शामिल हुए",
+      "JOINED_AS": "{name} {detail} के रूप में शामिल हुए",
+      "LEAVE_APPROVED": "{name} की छुट्टी स्वीकृत",
+      "SALARY_REVISED": "{name} का वेतन संशोधित",
+      "EXIT_INITIATED": "{name} का एग्ज़िट शुरू",
+      "JOB_POSTED": "{name} ने नई नौकरी पोस्ट की",
+      "JOB_POSTED_AS": "नई नौकरी पोस्ट हुई: {detail}"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "सूचनाएँ",
+      "EMPTY": "कोई नई सूचना नहीं।"
+    },
+    "QUICK": {
+      "TITLE": "त्वरित कार्य",
+      "ADD_EMPLOYEE": "कर्मचारी जोड़ें",
+      "APPLY_LEAVE": "छुट्टी लें",
+      "RUN_PAYROLL": "पेरोल चलाएँ",
+      "POST_JOB": "नौकरी पोस्ट करें"
+    },
+    "REMINDERS": {
+      "TITLE": "आगामी और रिमाइंडर",
+      "EMPTY": "आने वाले दिनों में कुछ निर्धारित नहीं है।",
+      "BIRTHDAY": "{name} का जन्मदिन",
+      "ANNIVERSARY": "{name} की कार्य वर्षगांठ · {years, plural, one {# वर्ष} other {# वर्ष}}",
+      "HOLIDAY": "अवकाश",
+      "EVENT": "कार्यक्रम",
+      "TODAY": "आज"
+    }
   }
 }

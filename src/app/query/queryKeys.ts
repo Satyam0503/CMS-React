@@ -10,7 +10,8 @@ export const queryKeys = {
   dashboard: {
     all: ["dashboard"] as const,
     departments: ["dashboard", "departments"] as const,
-    gender: ["dashboard", "gender"] as const,
+    notifications: ["dashboard", "notifications"] as const,
+    overview: ["dashboard", "overview"] as const,
     upcomingCelebrations: ["dashboard", "upcoming-celebrations"] as const,
     upcomingEvents: ["dashboard", "upcoming-events"] as const,
   },

@@ -189,9 +189,8 @@ export const ServiceUrl = {
   UPDATE_COMPANY_DETAILS: `api/Company/UpdateCompanyDetails`,
 
   // dashboard
-  GET_ALL_GENDERS: `api/Dashboard/GetAllGenderDetails`,
+  GET_DASHBOARD_OVERVIEW: `api/Dashboard/GetDashboardOverview`,
   GET_ALL_DEPARTMENT: `api/Dashboard/GetAllDepartmentDetails`,
-  GET_APPLICATION_DATA: `api/Dashboard/GetApplicationStatusData`,
   GET_UPCOMING_HOLIDAY_AND_EVENT: "api/Dashboard/GetUpComingHolidayAndEvents",
   GET_UPCOMING_CELEBRATIONS: "api/Dashboard/GetUpComingCelebrations",
 

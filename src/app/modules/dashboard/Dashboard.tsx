@@ -1,83 +1,58 @@
-import { Box, CircularProgress, Grid, Stack } from "@mui/material";
+import { Box, CircularProgress, Stack } from "@mui/material";
+import { useEffect, useMemo } from "react";
 import { useAppSelector } from "../../Redux/hooks";
-import React, { useEffect, useMemo } from "react";
-import { EmployeeChart } from "./components/EmployeeChart";
-import OpenPositions from "./components/OpenPositions";
-import { ApplicationsChart } from "./components/ApplicationsChart";
-import { DepartmentChart } from "./components/DepartmentChart";
-// import EmployeePerformance from "./components/EmployeePerformance";
-import EmpOnLeave from "./components/EmpOnLeave";
-import NoticeBoard from "./components/NoticeBoard";
-import Help from "./components/Help";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission, Roles } from "../../../utils/enums";
-import { DashboardHeader } from "./components/DashboardHeader";
-import { UpComingCelebration } from "./components/UpcomingCelebration";
-import { PushNotification } from "./components/PushNotification";
-import { UpComingHolidayAndEvents } from "./components/UpComingHolidayAndEvent";
 import { usePageData } from "../../Context/PageDataProvider";
+import NoticeBoard from "./components/NoticeBoard";
+import { PushNotification } from "./components/PushNotification";
+import { DashboardHeader } from "./components/DashboardHeader";
+import { KpiCards } from "./components/KpiCards";
+import { AttendanceOverviewCard } from "./components/AttendanceOverviewCard";
+import { EmployeeTrendCard } from "./components/EmployeeTrendCard";
+import { DepartmentOverviewCard } from "./components/DepartmentOverviewCard";
+import { RecentActivitiesCard } from "./components/RecentActivitiesCard";
+import { NotificationsCard } from "./components/NotificationsCard";
+import { QuickActionsCard } from "./components/QuickActionsCard";
+import { UpcomingRemindersCard } from "./components/UpcomingRemindersCard";
+import { useDashboardOverviewQuery } from "./dashboardQueries";
 
-// Main Dashboard Component
+const gap = { xs: 2, md: 2.5 };
+
+/** Two equal cards side by side once the main column (a size container) is wide enough. */
+const Pair = ({ children }: { children: React.ReactNode }) => (
+  <Box sx={{ display: "grid", gap, gridTemplateColumns: "minmax(0, 1fr)", "@container (min-width: 820px)": { gridTemplateColumns: "repeat(2, minmax(0, 1fr))" } }}>
+    {children}
+  </Box>
+);
+
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData);
-  const userModulesPermissions = useAppSelector(
-    (state) => state.user.userData?.modulePermission ?? [],
-  );
+  const permissions = useAppSelector((state) => state.user.userData?.modulePermission ?? []);
 
-  const hasAccessToEmpModule = useMemo(
-    () =>
-      hasModuleFeaturePermission(
-        ModulesName.Employees,
-        Permission.View,
-        userModulesPermissions,
-      ),
-    [userModulesPermissions],
-  );
+  const access = useMemo(() => {
+    const has = (module: ModulesName, permission: Permission) => hasModuleFeaturePermission(module, permission, permissions);
+    return {
+      employees: has(ModulesName.Employees, Permission.View),
+      companyDashboard:
+        user?.roleType === Roles.Administrator ||
+        user?.roleType === Roles.HRManager ||
+        user?.roleType === Roles.HRExecutive ||
+        has(ModulesName.Dashboard, Permission.ViewAll),
+      jobs: has(ModulesName.Jobs, Permission.View),
+      noticeBoard: has(ModulesName.NoticeBoard, Permission.View),
+      calendar: permissions.some((p) => p.startsWith("Calendar.")),
+      quick: {
+        addEmployee: has(ModulesName.Employees, Permission.Create),
+        applyLeave: permissions.some((p) => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement.")),
+        runPayroll: has(ModulesName.PayRoll, Permission.View),
+        postJob: has(ModulesName.Jobs, Permission.Create),
+      },
+    };
+  }, [permissions, user?.roleType]);
 
-  const canViewCompanyDashboard = useMemo(
-    () =>
-      user?.roleType === Roles.Administrator ||
-      user?.roleType === Roles.HRManager ||
-      user?.roleType === Roles.HRExecutive ||
-      hasModuleFeaturePermission(
-        ModulesName.Dashboard,
-        Permission.ViewAll,
-        userModulesPermissions,
-      ),
-    [user?.roleType, userModulesPermissions],
-  );
-
-  const hasAccessToJob = useMemo(
-    () =>
-      hasModuleFeaturePermission(
-        ModulesName.Jobs,
-        Permission.View,
-        userModulesPermissions,
-      ),
-    [userModulesPermissions],
-  );
-
-  const hasAccessToNoticeBoard = useMemo(
-    () =>
-      hasModuleFeaturePermission(
-        ModulesName.NoticeBoard,
-        Permission.View,
-        userModulesPermissions,
-      ),
-    [userModulesPermissions],
-  );
-
-  const hasAccessToLeaveModule = useMemo(
-    () =>
-      userModulesPermissions.some((p) => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement.")),
-    [userModulesPermissions],
-  );
-
-  const hasAccessToCalendar = useMemo(
-    () => userModulesPermissions.some((p) => p.startsWith("Calendar.")),
-    [userModulesPermissions],
-  );
+  const overview = useDashboardOverviewQuery(Boolean(user) && access.companyDashboard);
 
   useEffect(() => {
     setPageTitle("");
@@ -85,110 +60,59 @@ export default function Dashboard() {
 
   if (!user) {
     return (
-      <Box className="dashboard-modern" sx={{ p: 4, display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
+      <Box sx={{ p: 4, display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
         <CircularProgress size={36} />
       </Box>
     );
   }
 
-  if (!canViewCompanyDashboard) {
-    return (
-      <Box className="dashboard-modern">
-        <Grid container spacing={{ xs: 2, md: 3 }}>
-          <Grid size={12}>
-            <DashboardHeader fullName={user?.fullName || ""} />
-          </Grid>
-          <Grid size={{ xs: 12, lg: 8 }}>
-            {hasAccessToNoticeBoard && <NoticeBoard />}
-          </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <Stack spacing={{ xs: 2, md: 3 }}>
-              {hasAccessToCalendar && <UpComingHolidayAndEvents />}
-              <UpComingCelebration />
-            </Stack>
-          </Grid>
-        </Grid>
+  const showPushPrompt = typeof Notification !== "undefined" && Notification.permission === "default";
+  const rightRail = (
+    <Stack spacing={gap}>
+      {showPushPrompt && <PushNotification />}
+      <NotificationsCard />
+      <QuickActionsCard access={access.quick} />
+      <UpcomingRemindersCard showCalendar={access.calendar} />
+    </Stack>
+  );
+  const layout = (main: React.ReactNode, subtitleId?: string) => (
+    <Box className="dashboard-overview" sx={{ pb: 4 }}>
+      <Box
+        sx={{
+          display: "grid",
+          gap,
+          gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: "minmax(0, 1fr) minmax(300px, 360px)" },
+          alignItems: "start",
+        }}
+      >
+        <Stack spacing={gap} sx={{ minWidth: 0, containerType: "inline-size" }}>
+          <DashboardHeader fullName={user.fullName || ""} subtitleId={subtitleId} />
+          {main}
+        </Stack>
+        {rightRail}
       </Box>
-    );
+    </Box>
+  );
+
+  if (!access.companyDashboard) {
+    return layout(access.noticeBoard ? <NoticeBoard /> : null, "DASHBOARD.SUBTITLE_SELF");
   }
 
-  return (
-    <Box className="dashboard-modern">
-      <Grid container spacing={{ xs: 2, md: 3 }} className="d-flex justify-content-between">
-        <Grid size={12}>
-          <DashboardHeader fullName={user?.fullName || ""} />
-        </Grid>
-        <Grid
-          size={{
-            xs: 12,
-            lg: 8,
-          }}
-        >
-          <Grid container spacing={{ xs: 2, md: 3 }}>
-            {hasAccessToEmpModule && (
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <EmployeeChart />
-              </Grid>
-            )}
-            {hasAccessToEmpModule && <Grid
-              size={{
-                xs: 12,
-                sm: 6,
-              }}
-            >
-              <DepartmentChart />
-            </Grid>}
-            {hasAccessToJob && (
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <OpenPositions />
-              </Grid>
-            )}
-            {hasAccessToJob && (
-              <Grid
-                sx={{ minHeight: 330 }}
-                size={{
-                  xs: 12,
-                  sm: 6,
-                }}
-              >
-                <ApplicationsChart />
-              </Grid>
-            )}
+  const loading = overview.isPending;
+  const error = overview.isError || (!loading && !overview.data);
 
-            <Grid size={12}>
-              <Stack spacing={3}>
-                {hasAccessToNoticeBoard && <NoticeBoard />}
-                {/* <EmployeePerformance /> */}
-              </Stack>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid
-          className="dashboard-side-column d-flex flex-column"
-          size={{
-            xs: 12,
-            lg: 4,
-          }}
-        >
-          {typeof Notification !== "undefined" && Notification.permission === "default" && <PushNotification />}
-          {hasAccessToEmpModule && hasAccessToLeaveModule && <EmpOnLeave />}
-          {hasAccessToCalendar && <UpComingHolidayAndEvents />}
-          <UpComingCelebration />
-          {/* <Punctual />
-          <EmpOfMonth /> */}
-          <Help />
-        </Grid>
-      </Grid>
-    </Box>
+  return layout(
+    <>
+      <KpiCards overview={overview.data} loading={loading} showOpenPositions={access.jobs} />
+      <Pair>
+        <AttendanceOverviewCard overview={overview.data} loading={loading} error={error} />
+        <EmployeeTrendCard trend={overview.data?.headcountTrend} loading={loading} error={error} />
+      </Pair>
+      <Pair>
+        {access.employees && <DepartmentOverviewCard />}
+        <RecentActivitiesCard activities={overview.data?.recentActivities} loading={loading} error={error} canOpenEmployees={access.employees} />
+      </Pair>
+      {access.noticeBoard && <NoticeBoard />}
+    </>,
   );
 }

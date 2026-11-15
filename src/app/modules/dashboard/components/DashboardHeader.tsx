@@ -1,187 +1,53 @@
-import {
-  AccessTimeOutlined,
-  CalendarTodayOutlined,
-  DomainVerificationOutlined,
-} from "@mui/icons-material";
-import { Box, Stack, Typography, alpha } from "@mui/material";
-import { useIntl } from "react-intl";
-import { memo } from "react";
+import { CalendarTodayOutlined } from "@mui/icons-material";
+import { Box, Stack, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import { dateFormatter } from "../../../../utils/common";
-import { useIsDark } from "../../theme/useIsDark";
+import { useIntl } from "react-intl";
+import { greetingKey } from "../dashboardMetrics";
 
-export const DashboardHeader = memo((props: { fullName: string }) => {
-  const isDark = useIsDark();
-  const intl = useIntl();
+type Props = { fullName: string; subtitleId?: string };
+
+export const DashboardHeader = ({ fullName, subtitleId = "DASHBOARD.SUBTITLE" }: Props) => {
+  const { formatMessage: i } = useIntl();
   const now = dayjs();
+  const firstName = fullName.trim().split(/\s+/)[0] ?? "";
 
   return (
     <Stack
       direction={{ xs: "column", sm: "row" }}
-      className="dashboard-hero"
-      sx={{
-        justifyContent: "space-between",
-        alignItems: { xs: "flex-start", sm: "center" },
-        gap: 2.5,
-      }}
+      justifyContent="space-between"
+      alignItems={{ xs: "flex-start", sm: "center" }}
+      gap={2}
     >
-      <Stack spacing={0.75} sx={{ position: "relative", zIndex: 1 }}>
-        <Stack
-          direction="row"
-          spacing={0.75}
-          alignItems="center"
-          sx={{
-            width: "fit-content",
-            px: 1.25,
-            py: 0.4,
-            borderRadius: "8px",
-            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
-            border: "1px solid",
-            borderColor: (theme) => alpha(theme.palette.primary.main, 0.25),
-            boxShadow: isDark ? "none" : "inset 0 1px 1px rgba(255, 255, 255, 0.8)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
-            color: "primary.main",
-          }}
-        >
-          <DomainVerificationOutlined sx={{ fontSize: 15, color: "#0D9488" }} />
-          <Typography
-            sx={{
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              letterSpacing: "0.02em",
-              color: "primary.main",
-              textTransform: "uppercase",
-            }}
-          >
-            {intl.formatMessage({ id: "AUTH.WORKSPACE_OVERVIEW", defaultMessage: "Workspace Overview" })}
-          </Typography>
-        </Stack>
-        <Typography component="h1" variant="h2" className="dashboard-welcome-title">
-          <span className="dashboard-welcome-word">
-            {intl.formatMessage({ id: "MESSAGE.WELCOME" })}
-          </span>{" "}
-          <span className="dashboard-welcome-name">{props.fullName || ""}</span>
+      <Box>
+        <Typography component="h1" sx={{ fontSize: { xs: "1.5rem", md: "1.875rem" }, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+          {i({ id: greetingKey(now.hour()) }, { name: firstName })}{" "}
+          <span role="img" aria-hidden>
+            👋
+          </span>
         </Typography>
-        <Typography className="dashboard-welcome-copy">
-          {intl.formatMessage({
-            id: "AUTH.WORKSPACE_OVERVIEW_COPY",
-            defaultMessage: "Real-time attendance, workforce activity, and upcoming company schedules.",
-          })}
+        <Typography color="text.secondary" sx={{ mt: 0.5, fontSize: "1rem" }}>
+          {i({ id: subtitleId })}
         </Typography>
-      </Stack>
-
+      </Box>
       <Stack
         direction="row"
-        spacing={1.75}
         alignItems="center"
-        className="dashboard-date-card"
+        spacing={1}
+        sx={{
+          px: 2,
+          py: 1,
+          borderRadius: "12px",
+          border: 1,
+          borderColor: "divider",
+          bgcolor: "background.paper",
+          whiteSpace: "nowrap",
+        }}
       >
-        {/* Minimal Executive Tear-Off Calendar Tile */}
-        <Box
-          sx={{
-            width: 52,
-            height: 52,
-            borderRadius: "14px",
-            backgroundColor: isDark
-              ? "rgba(255, 255, 255, 0.08)"
-              : "rgba(255, 255, 255, 0.85)",
-            border: "1px solid",
-            borderColor: "divider",
-            boxShadow: isDark
-              ? "none"
-              : "0 4px 14px rgba(11, 92, 171, 0.08), inset 0 1px 1px rgba(255, 255, 255, 1)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-            flexShrink: 0,
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: "primary.main",
-              color: "#FFFFFF",
-              fontSize: "0.625rem",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              textAlign: "center",
-              py: "3px",
-              lineHeight: 1.1,
-            }}
-          >
-            {now.format("MMM")}
-          </Box>
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "text.primary",
-              fontSize: "1.15rem",
-              fontWeight: 800,
-              lineHeight: 1,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {now.format("DD")}
-          </Box>
-        </Box>
-
-        <Stack spacing={0.35} sx={{ alignItems: "flex-start", minWidth: 0 }}>
-          <Typography
-            sx={{
-              fontSize: "1.125rem",
-              fontWeight: 700,
-              lineHeight: 1.15,
-              letterSpacing: "-0.02em",
-              color: "text.primary",
-            }}
-          >
-            {dateFormatter(now, "dddd")}
-          </Typography>
-          <Stack direction="row" spacing={1.25} alignItems="center">
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <CalendarTodayOutlined sx={{ fontSize: 13.5, color: "primary.main" }} />
-              <Typography
-                sx={{
-                  fontSize: "0.8125rem",
-                  fontWeight: 600,
-                  color: "text.secondary",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {dateFormatter(now, "MMM DD, YYYY")}
-              </Typography>
-            </Stack>
-            <Box
-              sx={{
-                width: 3,
-                height: 3,
-                borderRadius: "50%",
-                backgroundColor: "divider",
-              }}
-            />
-            <Stack direction="row" spacing={0.4} alignItems="center">
-              <AccessTimeOutlined sx={{ fontSize: 13.5, color: "text.secondary" }} />
-              <Typography
-                sx={{
-                  fontSize: "0.75rem",
-                  fontWeight: 500,
-                  color: "text.secondary",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {now.format("YYYY")}
-              </Typography>
-            </Stack>
-          </Stack>
-        </Stack>
+        <CalendarTodayOutlined sx={{ fontSize: 18, color: "text.secondary" }} />
+        <Typography component="time" dateTime={now.format("YYYY-MM-DD")} sx={{ fontWeight: 600, fontSize: "0.9375rem" }}>
+          {now.format("ddd, D MMM YYYY")}
+        </Typography>
       </Stack>
     </Stack>
   );
-});
-
+};
