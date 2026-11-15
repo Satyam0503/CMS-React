@@ -12,9 +12,10 @@ import { usePageData } from "../../../Context/PageDataProvider";
 import { CompanyLogo } from "../components/CompanyLogo";
 import { getManagedCompanyProfile, saveManagedCompanyProfile } from "../services/careerPortalService";
 import { PublicCompanyProfile } from "../types/careerPortalTypes";
+import { DEFAULT_THEME } from "../../theme/useAppStyle";
 
 const emptyProfile: PublicCompanyProfile = {
-  publicCompanyCode: "", displayName: "", officeLocations: [], values: [], benefits: [], technologies: [], socialLinks: {}, careerTheme: "glass", isPublished: false,
+  publicCompanyCode: "", displayName: "", officeLocations: [], values: [], benefits: [], technologies: [], socialLinks: {}, careerTheme: DEFAULT_THEME, isPublished: false,
 };
 
 const parseCommaSeparatedValues = (value: string) =>

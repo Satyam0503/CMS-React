@@ -1,4 +1,5 @@
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
+import type { AppStyle } from "../../theme/useAppStyle";
 
 export type PublicCompanyProfile = {
   publicCompanyCode: string;
@@ -23,7 +24,7 @@ export type PublicCompanyProfile = {
   workCultureHtml?: string | null;
   hiringProcessHtml?: string | null;
   diversityStatementHtml?: string | null;
-  careerTheme: "glass" | "slate" | "dawn" | "blush";
+  careerTheme: AppStyle;
   isPublished: boolean;
 };
 

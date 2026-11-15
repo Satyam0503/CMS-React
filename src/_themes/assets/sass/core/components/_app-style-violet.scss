@@ -1,0 +1,250 @@
+// =============================================================================
+// Violet: full-height indigo navigation, lavender canvas, flat white cards.
+// Loaded after _sidebar-menu.scss; the doubled attribute selector out-ranks the
+// generic `.dark .sidebar ...` and `[data-sidebar-mini]` rules that use !important.
+// Colours come from the MUI palette (themePalettes.ts) wherever a token exists.
+// =============================================================================
+
+$violet: ':root[data-app-style="violet"][data-app-style]';
+$violet-wave: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 140' preserveAspectRatio='none'%3E%3Cpath d='M0 70C55 30 110 28 160 60s80 42 100 22v58H0z' fill='%238B6CFF' fill-opacity='.16'/%3E%3Cpath d='M0 100c60-34 120-26 170-4s70 26 90 14v30H0z' fill='%236D3FE6' fill-opacity='.22'/%3E%3C/svg%3E";
+
+:root:not(.dark)[data-app-style="violet"] {
+  --app-violet-sidebar-bg: linear-gradient(180deg, #25215E 0%, #1F1C50 55%, #1A1744 100%);
+  --app-violet-sidebar-text: #D9D6F5;
+  --app-violet-nav-active: #6D3FE6;
+  --app-violet-card-shadow: 0 1px 2px rgba(27, 26, 46, 0.04), 0 8px 24px -14px rgba(76, 49, 168, 0.14);
+  --app-content-background:
+    radial-gradient(ellipse 55% 40% at 100% 0%, rgba(109, 63, 230, 0.05), transparent 70%),
+    var(--mui-palette-background-body);
+}
+
+:root.dark[data-app-style="violet"] {
+  --app-violet-sidebar-bg: linear-gradient(180deg, #1D1A4A 0%, #171540 55%, #12102F 100%);
+  --app-violet-sidebar-text: #D2CEF0;
+  --app-violet-nav-active: #6D3FE6;
+  --app-violet-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -16px rgba(0, 0, 0, 0.7);
+  --app-content-background:
+    radial-gradient(ellipse 55% 40% at 100% 0%, rgba(139, 108, 255, 0.09), transparent 70%),
+    var(--mui-palette-background-body);
+}
+
+// ----- Header ----------------------------------------------------------------
+#{$violet} .app-header {
+  background: var(--mui-palette-background-header) !important;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent !important;
+  box-shadow: none !important;
+
+  & .MuiIconButton-root .MuiSvgIcon-root {
+    font-size: 24px !important;
+    color: var(--mui-palette-text-secondary) !important;
+    transition: color 160ms ease;
+  }
+
+  & .MuiIconButton-root:hover .MuiSvgIcon-root,
+  & .MuiIconButton-root:focus-visible .MuiSvgIcon-root {
+    color: var(--mui-palette-primary-main) !important;
+  }
+
+  & .MuiOutlinedInput-root .MuiSvgIcon-root {
+    color: var(--mui-palette-text-secondary);
+  }
+
+  & .MuiOutlinedInput-root {
+    border-radius: 12px;
+    background: var(--mui-palette-background-paper) !important;
+    box-shadow: 0 1px 2px rgba(27, 26, 46, 0.04);
+  }
+}
+
+// ----- Full-height sidebar (desktop) ----------------------------------------
+@media (min-width: 960px) {
+  #{$violet} .app-header {
+    margin-left: var(--sidebar-current-width);
+    transition: margin-left 0.28s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  #{$violet} .sidebar .sidebar-paper {
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+
+  #{$violet} .app-main-viewport {
+    margin-left: calc(var(--sidebar-current-width) + 28px) !important;
+    width: calc(100% - var(--sidebar-current-width) - 56px) !important;
+  }
+}
+
+#{$violet} .sidebar .sidebar-paper {
+  // Tokens used by sidebar children (mobile header rule, close button) must read on indigo.
+  --mui-palette-divider: rgba(217, 214, 245, 0.14);
+  --mui-palette-text-secondary: var(--app-violet-sidebar-text);
+  --mui-palette-text-primary: #FFFFFF;
+  --mui-palette-action-hover: rgba(255, 255, 255, 0.08);
+}
+
+#{$violet} .sidebar .sidebar-paper {
+  background: var(--app-violet-sidebar-bg) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border: 0 !important;
+  box-shadow: 6px 0 28px rgba(20, 16, 60, 0.16) !important;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 120px;
+    background: url("#{$violet-wave}") no-repeat bottom / 100% 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  &:hover { box-shadow: 6px 0 28px rgba(20, 16, 60, 0.16) !important; }
+}
+
+#{$violet} .sidebar .violet-sidebar-brand {
+  justify-content: flex-start;
+  flex-shrink: 0;
+  padding: 0 6px 12px;
+  margin: 0;
+}
+
+#{$violet} .sidebar .violet-sidebar-brand-logo {
+  display: block;
+  height: 44px;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+  padding: 6px 4px;
+
+  // Uploaded logos are made for the light headers of the other styles; the bundled default is white.
+  &.has-tile {
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: #FFFFFF;
+  }
+}
+
+#{$violet} .sidebar[data-sidebar-mini="true"] .violet-sidebar-brand {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+#{$violet} .sidebar[data-sidebar-mini="true"] .violet-sidebar-brand-logo {
+  width: 44px;
+  padding: 6px;
+  object-position: center;
+}
+
+#{$violet} .sidebar .sidebar-menu-main {
+  scrollbar-color: rgba(217, 214, 245, 0.25) transparent;
+
+  &::-webkit-scrollbar-thumb { background: rgba(217, 214, 245, 0.25); }
+}
+
+#{$violet} .sidebar .sidebar-menu-main .sidebar-menu-item {
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-block: 2px;
+  color: var(--app-violet-sidebar-text);
+
+  & .MuiTypography-root,
+  & .MuiListItemIcon-root,
+  & .MuiSvgIcon-root,
+  & .menu-arrow {
+    color: var(--app-violet-sidebar-text) !important;
+    text-shadow: none;
+  }
+
+  & .MuiTypography-root {
+    font-size: 14px;
+    font-weight: 500 !important;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+
+    & .MuiTypography-root,
+    & .MuiListItemIcon-root,
+    & .MuiSvgIcon-root,
+    & .menu-arrow { color: #FFFFFF !important; }
+  }
+
+  &:focus-visible {
+    outline: 2px solid #C4B5FD;
+    outline-offset: 2px;
+  }
+
+  &.Mui-selected {
+    background: var(--app-violet-nav-active) !important;
+    box-shadow: 0 10px 20px -8px rgba(109, 63, 230, 0.75) !important;
+    border: 0 !important;
+
+    &::before { display: none !important; }
+
+    & .MuiTypography-root,
+    & .MuiListItemIcon-root,
+    & .MuiSvgIcon-root,
+    & .menu-arrow {
+      color: #FFFFFF !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  // A group whose child is active stays quiet; only the leaf gets the filled pill.
+  &.sidebar-parent-item.Mui-selected {
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
+  }
+}
+
+#{$violet} .sidebar .sidebar-edge-toggle .MuiSvgIcon-root {
+  color: rgba(217, 214, 245, 0.7) !important;
+}
+
+#{$violet} .sidebar .sidebar-edge-toggle:hover .MuiSvgIcon-root,
+#{$violet} .sidebar .sidebar-edge-toggle:focus-visible .MuiSvgIcon-root {
+  color: #FFFFFF !important;
+}
+
+// ----- Content surfaces -------------------------------------------------------
+#{$violet} .MuiTableHead-root .MuiTableCell-root,
+#{$violet} .MuiDataGrid-columnHeaders,
+#{$violet} .MuiDataGrid-columnHeader {
+  background: var(--mui-palette-background-box) !important;
+  color: var(--mui-palette-text-secondary);
+  font-weight: 600;
+}
+
+#{$violet} .MuiTableBody-root .MuiTableRow-root:hover,
+#{$violet} .MuiDataGrid-row:hover {
+  background-color: color-mix(in srgb, var(--mui-palette-primary-main) 4%, transparent) !important;
+}
+
+// Status chips: pastel tint + strong text, as in the reference's trend chips.
+#{$violet} .MuiChip-filled {
+  &.MuiChip-colorPrimary { background: var(--mui-palette-primary-lighter); color: var(--mui-palette-primary-dark); }
+  &.MuiChip-colorSuccess { background: var(--mui-palette-success-lighter); color: var(--mui-palette-success-dark); }
+  &.MuiChip-colorWarning { background: var(--mui-palette-warning-lighter); color: var(--mui-palette-warning-dark); }
+  &.MuiChip-colorError { background: var(--mui-palette-error-lighter); color: var(--mui-palette-error-dark); }
+  &.MuiChip-colorInfo { background: var(--mui-palette-info-lighter); color: var(--mui-palette-info-dark); }
+}
+
+:root.dark[data-app-style="violet"][data-app-style] .MuiChip-filled {
+  &.MuiChip-colorPrimary { color: var(--mui-palette-primary-light); }
+  &.MuiChip-colorSuccess { color: var(--mui-palette-success-light); }
+  &.MuiChip-colorWarning { color: var(--mui-palette-warning-light); }
+  &.MuiChip-colorError { color: var(--mui-palette-error-light); }
+  &.MuiChip-colorInfo { color: var(--mui-palette-info-light); }
+}
+
+// The bundled default logo is white (made for dark grounds); darken it on the light header.
+:root:not(.dark)[data-app-style="violet"] .app-header .header-company-logo img[src$="default_logo.png"] {
+  filter: invert(0.88);
+}

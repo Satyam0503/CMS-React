@@ -45,6 +45,22 @@ interface ThemePreviewPalette {
 
 const PREVIEW_PALETTES: Record<"light" | "dark", Record<AppStyle, ThemePreviewPalette>> = {
   light: {
+    violet: {
+      canvasBg: "#F6F5FB",
+      headerBg: "#F6F5FB",
+      headerBorder: "#ECE9F5",
+      sidebarBg: "linear-gradient(180deg, #23205A 0%, #1A1744 100%)",
+      sidebarBorder: "#1A1744",
+      cardBg: "#FFFFFF",
+      cardBorder: "#ECE9F5",
+      cardSecondaryBg: "#FFFFFF",
+      cardSecondaryBorder: "#ECE9F5",
+      navActive: "#6D3FE6",
+      navItem: "rgba(226, 222, 255, 0.35)",
+      accent: "#6D3FE6",
+      textPrimary: "#1B1A2E",
+      textMuted: "#A19EB3",
+    },
     glass: {
       canvasBg: "linear-gradient(135deg, #e4eff8 0%, #d8e8f6 50%, #eaf3fa 100%)",
       headerBg: "rgba(255, 255, 255, 0.88)",
@@ -111,6 +127,22 @@ const PREVIEW_PALETTES: Record<"light" | "dark", Record<AppStyle, ThemePreviewPa
     },
   },
   dark: {
+    violet: {
+      canvasBg: "#12112A",
+      headerBg: "#12112A",
+      headerBorder: "rgba(176, 172, 204, 0.16)",
+      sidebarBg: "linear-gradient(180deg, #1D1A4A 0%, #141236 100%)",
+      sidebarBorder: "rgba(176, 172, 204, 0.16)",
+      cardBg: "#1C1A3A",
+      cardBorder: "rgba(176, 172, 204, 0.16)",
+      cardSecondaryBg: "#1C1A3A",
+      cardSecondaryBorder: "rgba(176, 172, 204, 0.12)",
+      navActive: "#8B6CFF",
+      navItem: "rgba(226, 222, 255, 0.28)",
+      accent: "#8B6CFF",
+      textPrimary: "#F4F2FF",
+      textMuted: "rgba(244, 242, 255, 0.45)",
+    },
     glass: {
       canvasBg: "linear-gradient(135deg, #09151b 0%, #0d2029 50%, #10262b 100%)",
       headerBg: "rgba(9, 20, 27, 0.92)",

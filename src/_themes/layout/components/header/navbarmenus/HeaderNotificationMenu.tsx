@@ -10,6 +10,7 @@ import {
   Tooltip,
   Typography,
   Button,
+  useTheme,
 } from "@mui/material";
 import { AccessTime, Cake, CalendarMonth, Celebration, HomeWork, NotificationsActive, ThumbDownAlt, ThumbUpAlt } from "@mui/icons-material";
 import { useIntl } from "react-intl";
@@ -88,6 +89,7 @@ const getNotificationIconBg = (type: number) => {
 const initialPaginationValue = { pageNo: 1, records: 10 };
 
 export default function HeaderNotificationMenu() {
+  const { appStyle } = useTheme();
   const intl = useIntl();
   const { formatMessage: i } = intl;
   const [notificationList, setNotificationList] = useState<NotificationModel[]>([]);
@@ -275,7 +277,7 @@ export default function HeaderNotificationMenu() {
   return (
     <>
       <Tooltip title={i({ id: "TOOLTIP.NOTIFICATIONS", defaultMessage: "Notifications" })} placement="bottom">
-        <Badge badgeContent={notificationCount.unread || undefined} color="primary" aria-live="polite">
+        <Badge badgeContent={notificationCount.unread || undefined} color={appStyle === "violet" ? "error" : "primary"} aria-live="polite">
           <AppIconButton
             onClick={handleClick}
             aria-describedby={id}

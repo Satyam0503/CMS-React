@@ -1,13 +1,49 @@
 import { createTheme } from "@mui/material";
 import { Localization } from "@mui/material/locale";
-import { darkPalette, dawnDarkPalette, dawnLightPalette, lightPalette } from "./themePalettes";
+import {
+  darkPalette,
+  dawnDarkPalette,
+  dawnLightPalette,
+  lightPalette,
+  violetDarkPalette,
+  violetLightPalette,
+} from "./themePalettes";
 import { AppStyle, DEFAULT_THEME } from "./useAppStyle";
+
+declare module "@mui/material/styles" {
+  interface Theme {
+    // The style actually rendered (careers, personal, company or default), unlike useCompanyTheme().
+    appStyle: AppStyle;
+  }
+  interface ThemeOptions {
+    appStyle?: AppStyle;
+  }
+}
+
+const getColorSchemes = (appStyle: AppStyle) => {
+  if (appStyle === "violet") return { light: violetLightPalette, dark: violetDarkPalette };
+  if (appStyle === "dawn" || appStyle === "blush") return { light: dawnLightPalette, dark: dawnDarkPalette };
+  return { light: lightPalette, dark: darkPalette };
+};
 
 // Surface treatment per style — applied to MuiCard / MuiPaper / MuiAppBar.
 // Returns CSS-in-JS objects (not full sx). Kept inline for theme integration;
 // rules outside MUI live in _app-style.scss keyed off [data-app-style].
 const getSurfaceOverrides = (appStyle: AppStyle) => {
   switch (appStyle) {
+    case "violet":
+      return {
+        card: {
+          background: "var(--mui-palette-background-card)",
+          border: "1px solid var(--mui-palette-divider)",
+          boxShadow: "var(--app-violet-card-shadow, 0 1px 2px rgba(27, 26, 46, 0.04), 0 8px 24px -12px rgba(76, 49, 168, 0.12))",
+        },
+        paper: {
+          background: "var(--mui-palette-background-paper)",
+          border: "1px solid var(--mui-palette-divider)",
+          boxShadow: "var(--app-violet-card-shadow, 0 1px 2px rgba(27, 26, 46, 0.04), 0 8px 24px -12px rgba(76, 49, 168, 0.12))",
+        },
+      };
     case "glass":
       return {
         card: {
@@ -102,15 +138,13 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       cssVariables: {
         colorSchemeSelector: "class",
       },
-      colorSchemes: {
-        dark: appStyle === "dawn" || appStyle === "blush" ? dawnDarkPalette : darkPalette,
-        light: appStyle === "dawn" || appStyle === "blush" ? dawnLightPalette : lightPalette,
-      },
+      colorSchemes: getColorSchemes(appStyle),
     },
     locale
   );
 
   const extendedTheme = createTheme(theme, {
+    appStyle,
     breakpoints: {
       values: {
         xs: 0,
