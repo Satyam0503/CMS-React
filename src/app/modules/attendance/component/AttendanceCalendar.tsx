@@ -562,7 +562,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     [],
   );
   const resolveRowId = useCallback(
-    (emp: Employee) => normalizeUserId(emp.userId || emp.id),
+    (emp: Partial<Pick<Employee, "userId" | "id">>) => normalizeUserId(emp.userId || emp.id),
     [normalizeUserId],
   );
   const [attendanceItems, setAttendanceItems] = useState<any[]>([]);
@@ -741,7 +741,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           : [attendanceResponse];
         const items = responses
           .flatMap((response) => {
-            const responsePayload = response?.data as any;
+            const responsePayload = response?.data as { items?: unknown; methodResults?: unknown; methodResult?: unknown } | undefined;
             const responseItems =
               responsePayload?.items ??
               responsePayload?.methodResults ??
@@ -1104,7 +1104,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     }
 
     const dateISO = dayjs(selectedCell.dateObj).format("YYYY-MM-DD");
-    const rowId = resolveRowId(selectedCell.employee as any);
+    const rowId = resolveRowId(selectedCell.employee);
     const key = `${rowId}-${dateISO}`;
     const existing = attendanceData[key];
     const isSystemDefault = [
@@ -1655,7 +1655,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
     const isOverride = Boolean(selectedCell.isOverride);
     const dateISO = dayjs(selectedCell.dateObj).format("YYYY-MM-DD");
-    const rowId = resolveRowId(selectedCell.employee as any);
+    const rowId = resolveRowId(selectedCell.employee);
     const key = `${rowId}-${dateISO}`;
     const isWfh = isWfhStatus(modalData.status);
 

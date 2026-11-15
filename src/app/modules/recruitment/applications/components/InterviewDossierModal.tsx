@@ -40,6 +40,9 @@ import {
   upsertRecruitmentScorecard,
 } from "../../services";
 import { Applicant, RecruitmentScorecardCommand } from "../../models";
+import type { GetAllEmployeeResponseModel } from "../../../employees/models";
+
+type ReviewerEmployee = GetAllEmployeeResponseModel & { firstName?: string; lastName?: string; name?: string };
 import { useAppSelector } from "../../../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission, Roles } from "../../../../../utils/enums";
@@ -85,7 +88,7 @@ export const InterviewDossierModal: React.FC<Props> = ({
   const [feedback, setFeedback] = useState<{ severity: "success" | "error" | "info"; text: string } | undefined>(undefined);
   const [submittingScorecard, setSubmittingScorecard] = useState(false);
   const [isEditingScorecard, setIsEditingScorecard] = useState(false);
-  const [employees, setEmployees] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<ReviewerEmployee[]>([]);
 
   const currentUser = useAppSelector((state) => state.user.userData);
   const currentUserName =
@@ -96,7 +99,7 @@ export const InterviewDossierModal: React.FC<Props> = ({
   useEffect(() => {
     if (open) {
       void getAllEmployees({ name: "", pageNo: 1, records: 500, departmentId: [], gender: [], employmentStatus: "Active" })
-        .then(({ data }) => setEmployees(((data as any).methodResults ?? (data as any).methodResult ?? []) as any[]))
+        .then(({ data }) => setEmployees(data.methodResults ?? (data.methodResult as unknown as ReviewerEmployee[] | undefined) ?? []))
         .catch(() => setEmployees([]));
     }
   }, [open]);
@@ -163,6 +166,7 @@ export const InterviewDossierModal: React.FC<Props> = ({
   const candidateDisplayName =
     applicant ? `${applicant.firstName} ${applicant.lastName}`.trim() : parsed.candidateName || "Candidate";
   const roleTitle = applicant?.vacancyName || parsed.roleTitle || "Assigned Interview";
+  const applicantSkills = (applicant as (Applicant & { skills?: unknown }) | null)?.skills;
   const roundLabel = `Round ${parsed.roundNumber || 1}${parsed.roundType ? ` (${parsed.roundType})` : ""}`;
   const meetingLink = parsed.meetingUrl;
 
@@ -382,13 +386,13 @@ export const InterviewDossierModal: React.FC<Props> = ({
                     </Grid>
                   </Grid>
 
-                  {(applicant as any)?.skills && Array.isArray((applicant as any).skills) && (applicant as any).skills.length > 0 && (
+                  {Array.isArray(applicantSkills) && applicantSkills.length > 0 && (
                     <Box sx={{ mt: 2 }}>
                       <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.75 }}>
                         Key Skills & Attributes
                       </Typography>
                       <Stack direction="row" flexWrap="wrap" gap={0.75}>
-                        {(applicant as any).skills.map((skill: string, sIdx: number) => (
+                        {(applicantSkills as string[]).map((skill, sIdx) => (
                           <Chip key={sIdx} label={skill} size="small" variant="outlined" sx={{ fontWeight: 600, fontSize: "0.75rem" }} />
                         ))}
                       </Stack>
@@ -575,7 +579,7 @@ export const InterviewDossierModal: React.FC<Props> = ({
                       </Alert>
                     ) : (
                       scorecard.criteria.map((criterion, index) => {
-                        const critId = (criterion as any).id || `crit-dossier-fallback-${index}`;
+                        const critId = criterion.id || `crit-dossier-fallback-${index}`;
                         return (
                           <Box key={critId} sx={{ p: 1.25, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "background.default" }}>
                             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1}>
@@ -587,7 +591,7 @@ export const InterviewDossierModal: React.FC<Props> = ({
                                   setScorecard((sc) => ({
                                     ...sc,
                                     criteria: sc.criteria.map((c, i) =>
-                                      ((c as any).id ? (c as any).id === critId : i === index) ? { ...c, name: e.target.value } : c
+                                      (c.id ? c.id === critId : i === index) ? { ...c, name: e.target.value } : c
                                     ),
                                   }))
                                 }
@@ -600,7 +604,7 @@ export const InterviewDossierModal: React.FC<Props> = ({
                                     setScorecard((sc) => ({
                                       ...sc,
                                       criteria: sc.criteria.map((c, i) =>
-                                        ((c as any).id ? (c as any).id === critId : i === index) ? { ...c, rating: val || 3 } : c
+                                        (c.id ? c.id === critId : i === index) ? { ...c, rating: val || 3 } : c
                                       ),
                                     }))
                                   }
@@ -614,7 +618,7 @@ export const InterviewDossierModal: React.FC<Props> = ({
                                       setScorecard((sc) => ({
                                         ...sc,
                                         criteria: sc.criteria.filter((c, i) =>
-                                          (c as any).id ? (c as any).id !== critId : i !== index
+                                          c.id ? c.id !== critId : i !== index
                                         ),
                                       }))
                                     }
@@ -633,7 +637,7 @@ export const InterviewDossierModal: React.FC<Props> = ({
                                 setScorecard((sc) => ({
                                   ...sc,
                                   criteria: sc.criteria.map((c, i) =>
-                                    ((c as any).id ? (c as any).id === critId : i === index) ? { ...c, notes: e.target.value } : c
+                                    (c.id ? c.id === critId : i === index) ? { ...c, notes: e.target.value } : c
                                   ),
                                 }))
                               }

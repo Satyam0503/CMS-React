@@ -506,11 +506,11 @@ export default function AddLeavePolicy(props: Props) {
             }
 
             // Normalise applicableTo based on scope selection
-            let applicableTo = values.applicableTo ?? [];
+            let applicableTo: string[] | null = values.applicableTo ?? [];
             if (scope === "all") {
               applicableTo = [];
             } else if (scope === "none") {
-              applicableTo = null as any;
+              applicableTo = null;
             } else {
               applicableTo = applicableTo.filter((id) => id !== "allEmployees" && id !== "noEmployee");
             }

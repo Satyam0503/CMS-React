@@ -1,3 +1,4 @@
+import type { AxiosError } from "axios";
 import {
   Badge,
   Box,
@@ -239,7 +240,7 @@ const PayRollManagement = () => {
                 toast.error(data.message || i({ id: "ERROR.500" }));
             }
         } catch (error) {
-            toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" }));
+            toast.error((error as AxiosError<{ message?: string }>)?.response?.data?.message ?? i({ id: "ERROR.500" }));
         } finally {
             setIsRecordingPayment(false);
         }
@@ -281,7 +282,7 @@ const PayRollManagement = () => {
                 toast.error(data.message || i({ id: "ERROR.500" }));
             }
         } catch (error) {
-            toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" }));
+            toast.error((error as AxiosError<{ message?: string }>)?.response?.data?.message ?? i({ id: "ERROR.500" }));
         } finally {
             setIsApproving(false);
         }
@@ -310,7 +311,7 @@ const PayRollManagement = () => {
                 toast.error(data.message || i({ id: "ERROR.500" }));
             }
         } catch (error) {
-            toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" }));
+            toast.error((error as AxiosError<{ message?: string }>)?.response?.data?.message ?? i({ id: "ERROR.500" }));
         } finally {
             setIsClosingMonth(false);
         }
@@ -331,7 +332,7 @@ const PayRollManagement = () => {
                 toast.error(data.message || i({ id: "ERROR.500" }));
             }
         } catch (error) {
-            toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" }));
+            toast.error((error as AxiosError<{ message?: string }>)?.response?.data?.message ?? i({ id: "ERROR.500" }));
         } finally {
             setIsProcessing(false);
         }

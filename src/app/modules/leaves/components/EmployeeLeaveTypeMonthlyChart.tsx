@@ -24,14 +24,14 @@ export const EmployeeLeaveTypeMonthlyChart = ({ employeeId, year }: Props) => {
     (async () => {
       setLoading(true);
       try {
-        const start = dayjs(new Date(targetYear, 0, 1)).startOf("day").toISOString();
-        const end = dayjs(new Date(targetYear, 11, 31)).endOf("day").toISOString();
+        const start = dayjs(new Date(targetYear, 0, 1)).startOf("day");
+        const end = dayjs(new Date(targetYear, 11, 31)).endOf("day");
 
         const payload: GetLeaveRequestPayLoad = {
           pageNo: 1,
           pageSize: 1000,
-          startDate: start as any,
-          endDate: end as any,
+          startDate: start,
+          endDate: end,
           status: LEAVE_REQUEST_STATUS.APPROVED,
           ...(employeeId ? { employeeId } : {}),
         } as GetLeaveRequestPayLoad;
