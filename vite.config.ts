@@ -11,17 +11,26 @@ export default defineConfig({
       ? [
           {
             find: /^@mui\/icons-material($|\/.*)/,
-            replacement: path.resolve(__dirname, 'src/test/iconMock.tsx'),
+            replacement: path.resolve(import.meta.dirname, 'src/test/iconMock.tsx'),
           },
         ]
       : [],
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        quietDeps: true,
+        // ponytail: theme SCSS still uses @import and global fns; migrate to @use before Dart Sass 3 removes them.
+        silenceDeprecations: ["import", "global-builtin", "if-function", "color-functions", "abs-percent"],
+      },
+    },
   },
   build: {
     chunkSizeWarningLimit: 3000,
   },
   test: {
     environment: "jsdom",
-    setupFiles: [path.resolve(__dirname, 'src/test/setup.ts')],
+    setupFiles: [path.resolve(import.meta.dirname, 'src/test/setup.ts')],
     include: ["src/**/*.test.{ts,tsx}"],
     pool: "threads",
     // Keep local runs parallel, but avoid exhausting file handles on the
