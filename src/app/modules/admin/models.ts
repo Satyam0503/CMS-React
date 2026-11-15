@@ -1,3 +1,4 @@
+import type { AppStyle } from "../theme/useAppStyle";
 import {
   BaseModel,
   ModulePermissoinModel,
@@ -64,7 +65,7 @@ export type CompanyModel = {
   careerPortalEnabled?: boolean;
   formerEmployeePortalEnabled?: boolean;
   address: string;
-  appTheme?: "glass" | "slate" | "dawn" | "blush";
+  appTheme?: AppStyle;
 };
 
 export type JobTitleResponseModel = Pick<
