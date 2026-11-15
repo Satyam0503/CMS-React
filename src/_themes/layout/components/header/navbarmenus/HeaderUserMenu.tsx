@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   AccountCircleOutlined,
   DarkModeOutlined,
+  KeyboardArrowDownRounded,
   LightModeOutlined,
   LogoutRounded,
   TranslateRounded,
@@ -43,6 +44,8 @@ export default function HeaderUserMenu() {
     || `${currentUser?.firstName ?? ""} ${currentUser?.lastName ?? ""}`.trim()
     || "Account";
 
+  const showIdentity = theme.appStyle === "violet" && !isMobile;
+
   const close = () => setAnchorEl(null);
   const goTo = (path: string) => {
     close();
@@ -51,6 +54,7 @@ export default function HeaderUserMenu() {
 
   return (
     <>
+      {showIdentity && <Divider orientation="vertical" flexItem sx={{ my: 2.25, mr: 0.5 }} />}
       <Tooltip title="Account and appearance">
         <ButtonBase
           id="profile-menu-button"
@@ -63,7 +67,7 @@ export default function HeaderUserMenu() {
             borderRadius: 2.5,
             p: .35,
             border: "1px solid",
-            borderColor: open ? "primary.main" : "divider",
+            borderColor: open ? "primary.main" : showIdentity ? "transparent" : "divider",
             bgcolor: open ? "action.selected" : "transparent",
             transition: "border-color 160ms ease, background-color 160ms ease",
             "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" },
@@ -73,8 +77,17 @@ export default function HeaderUserMenu() {
             variant="rounded"
             alt={displayName}
             src={profileImageUrl}
-            sx={{ width: 38, height: 38, bgcolor: "secondary.main", borderRadius: 2.2 }}
+            sx={{ width: 38, height: 38, bgcolor: "secondary.main", borderRadius: showIdentity ? "50%" : 2.2 }}
           />
+          {showIdentity && (
+            <>
+              <Box sx={{ textAlign: "left", ml: 1.25, mr: 0.5, maxWidth: 180 }}>
+                <Typography variant="body1" fontWeight={700} noWrap lineHeight={1.25}>{displayName}</Typography>
+                <Typography variant="body2" color="text.secondary" noWrap>{currentUser?.jobTitle || "Team member"}</Typography>
+              </Box>
+              <KeyboardArrowDownRounded sx={{ color: "text.secondary", fontSize: 20 }} />
+            </>
+          )}
         </ButtonBase>
       </Tooltip>
 

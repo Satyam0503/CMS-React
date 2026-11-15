@@ -25,6 +25,8 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
   const isCompactScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const companyLogo = useAppSelector((state) => state.user.userData?.companyLogo);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  // Violet puts the brand in the full-height sidebar and the search where the logo was.
+  const searchOnLeft = theme.appStyle === "violet" && !isSmallScreen;
 
   return (
     <Stack
@@ -46,26 +48,30 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
             <MenuOutlined sx={{ fontSize: { xs: 26, sm: 32 } }} />
           </AppIconButton>
         )}
-        <Avatar
-          variant="square"
-          alt="Company Logo"
-          src={companyLogo || DEFAULT_COMPANY_LOGO}
-          className="header-company-logo"
-          sx={{
-            backgroundColor: "transparent",
-            width: "auto",
-            minWidth: 0,
-            maxWidth: { xs: 94, sm: 160 },
-            height: { xs: 34, sm: 38 },
-            "& .MuiAvatar-img": {
-              objectFit: "contain",
-              objectPosition: "left center",
-            },
-          }}
-        />
+        {searchOnLeft ? (
+          <EmployeeSearchInput sx={{ width: { md: 360, lg: 460 } }} />
+        ) : (
+          <Avatar
+            variant="square"
+            alt="Company Logo"
+            src={companyLogo || DEFAULT_COMPANY_LOGO}
+            className="header-company-logo"
+            sx={{
+              backgroundColor: "transparent",
+              width: "auto",
+              minWidth: 0,
+              maxWidth: { xs: 94, sm: 160 },
+              height: { xs: 34, sm: 38 },
+              "& .MuiAvatar-img": {
+                objectFit: "contain",
+                objectPosition: "left center",
+              },
+            }}
+          />
+        )}
       </Stack>
       <Stack direction="row" alignItems="center" sx={{ flexGrow: 0, flexShrink: 0, gap: { xs: 0.25, sm: 1 } }}>
-        {isCompactScreen ? (
+        {searchOnLeft ? null : isCompactScreen ? (
           <AppIconButton aria-label="Search employees" sx={{ border: 0, width: 32, minWidth: 32, height: 32, p: 0.5 }} onClick={() => setIsMobileSearchOpen(true)}>
             <Search />
           </AppIconButton>

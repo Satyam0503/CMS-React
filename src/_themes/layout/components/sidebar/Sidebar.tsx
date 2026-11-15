@@ -2,7 +2,6 @@ import { FC, useState } from "react";
 import { Avatar, Box, ButtonBase, Drawer, Stack, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
 import { Close, KeyboardDoubleArrowLeft } from "@mui/icons-material";
-import { useCompanyTheme } from "../../../../app/modules/theme/companyTheme";
 import { useAppSelector } from "../../../../app/Redux/hooks";
 import { DEFAULT_COMPANY_LOGO } from "../../../../utils/constant/Constant";
 
@@ -26,7 +25,6 @@ const Sidebar: FC<Props> = ({
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
   const [openIndex, setOpenIndex] = useState<number | null>(null); // Track the open item index
-  const { theme: sidebarStyle } = useCompanyTheme();
   const companyLogo = useAppSelector((state) => state.user.userData?.companyLogo);
 
   const handleSideBarToggle = () => {
@@ -102,7 +100,7 @@ const Sidebar: FC<Props> = ({
       className="sidebar"
       data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar && !isHoverExpanded ? "true" : "false"}
       data-sidebar-hover-expanded={!isSmallScreen && isHoverExpanded ? "true" : "false"}
-      data-sidebar-style={sidebarStyle}
+      data-sidebar-style={theme.appStyle}
       onMouseEnter={() => {
         if (!isSmallScreen && isMiniSidebar) setHoverExpanded(true);
       }}
@@ -168,6 +166,17 @@ const Sidebar: FC<Props> = ({
               <Close fontSize="small" />
             </ButtonBase>
           </Stack>
+        )}
+
+        {!isSmallScreen && theme.appStyle === "violet" && (
+          <Box className="sidebar-brand violet-sidebar-brand">
+            <Box
+              component="img"
+              alt="Company Logo"
+              src={companyLogo || DEFAULT_COMPANY_LOGO}
+              className={companyLogo ? "violet-sidebar-brand-logo has-tile" : "violet-sidebar-brand-logo"}
+            />
+          </Box>
         )}
 
         {/* Navigation Menu */}
