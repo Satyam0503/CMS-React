@@ -635,11 +635,11 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
     else if (stage === ApplicationStatus.Rejected) setMode("interview");
 
     void getAllDepartments(true)
-      .then(({ data }) => setDepartments(((data as any).methodResults ?? (data as any).methodResult ?? []) as DepartmentModel[]))
+      .then(({ data }) => setDepartments(data.methodResults ?? (data.methodResult as unknown as DepartmentModel[] | undefined) ?? []))
       .catch(() => setDepartments([]));
 
     void getAllEmployees({ name: "", pageNo: 1, records: 500, departmentId: [], gender: [], employmentStatus: "Active" })
-      .then(({ data }) => setInterviewers(((data as any).methodResults ?? []) as any[]))
+      .then(({ data }) => setInterviewers(data.methodResults ?? []))
       .catch(() => setInterviewers([]));
 
     if (applicant.applicantId) {
@@ -908,7 +908,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
         idempotencyKey: createIdempotencyKey(),
       });
       saveResponse(offerResponse);
-      const returnedOfferId = (offerResponse.data as any).methodResult || offer.offerId;
+      const returnedOfferId = offerResponse.data.methodResult || offer.offerId;
       setOffer((prev) => ({
         ...prev,
         offerId: returnedOfferId,
@@ -2885,7 +2885,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                 select
                                 label="Hiring Committee Decision *"
                                 value={decision.decision}
-                                onChange={(e) => setDecision({ ...decision, decision: e.target.value as any })}
+                                onChange={(e) => setDecision({ ...decision, decision: e.target.value as RecruitmentHiringDecisionCommand["decision"] })}
                               >
                                 <MenuItem value="Approve">Approve (Advance to Offer)</MenuItem>
                                 <MenuItem value="Hold">Hold for Comparison</MenuItem>
@@ -4273,7 +4273,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                 select
                 label="Extraction Decision"
                 value={resumeReview.decision}
-                onChange={(e) => setResumeReview({ ...resumeReview, decision: e.target.value as any })}
+                onChange={(e) => setResumeReview({ ...resumeReview, decision: e.target.value as RecruitmentResumeExtractionReviewCommand["decision"] })}
               >
                 <MenuItem value="Pending">Pending</MenuItem>
                 <MenuItem value="Approved">Approved</MenuItem>
@@ -4327,7 +4327,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                 select
                 label="Privacy Action"
                 value={privacy.action}
-                onChange={(e) => setPrivacy({ ...privacy, action: e.target.value as any })}
+                onChange={(e) => setPrivacy({ ...privacy, action: e.target.value as RecruitmentCandidatePrivacyCommand["action"] })}
               >
                 <MenuItem value="Grant">Grant Data Retention Consent</MenuItem>
                 <MenuItem value="Revoke">Revoke Consent</MenuItem>

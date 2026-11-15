@@ -33,6 +33,7 @@ import {
 } from "./services";
 import { getAllDepartments, getCompanyDetails, getJobTitles } from "../admin/adminservices";
 import { getAllEmployees } from "../employees/employeeServices";
+import type { GetAllEmployeeResponseModel } from "../employees/models";
 import { DepartmentModel, JobTitleResponseModel } from "../admin/models";
 import { JobModal, RecruitmentOfferApprovalPolicy } from "./models";
 import { useIsDark } from "../theme/useIsDark";
@@ -141,20 +142,20 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
 
         // Employees
         if (empRes.status === "fulfilled" && empRes.value?.data) {
-          const list = (((empRes.value.data as any).methodResults ?? []) as any[]).map((e) => ({
+          const list = ((empRes.value.data.methodResults ?? []) as Array<GetAllEmployeeResponseModel & { firstName?: string; lastName?: string; name?: string; designation?: string }>).map((e) => ({
             userId: e.userId || "",
             employeeId: e.employeeId || "",
             fullName: [e.firstName, e.lastName].filter(Boolean).join(" ") || e.fullName || e.name || e.email || e.userId,
             email: e.email || "",
             department: typeof e.department === "string" ? e.department : e.department ? Object.values(e.department).join(" ") : "",
-            jobRole: e.jobRole || e.designation || "",
+            jobRole: (typeof e.jobRole === "string" ? e.jobRole : e.jobRole ? Object.values(e.jobRole).join(" ") : "") || e.designation || "",
           }));
           setEmployees(list.filter((e) => Boolean(e.userId)));
         }
 
         // Departments
         if (deptRes.status === "fulfilled" && deptRes.value?.data) {
-          const depts = (((deptRes.value.data as any).methodResults ?? (deptRes.value.data as any).methodResult ?? []) as DepartmentModel[]).map((d) => ({
+          const depts = (deptRes.value.data.methodResults ?? (deptRes.value.data.methodResult as unknown as DepartmentModel[] | undefined) ?? []).map((d) => ({
             departmentId: d.departmentId || "",
             name: Object.values(d.titles ?? {})[0] || d.departmentId || "Department",
           }));
@@ -168,7 +169,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
 
         // Vacancies
         if (vacRes.status === "fulfilled" && vacRes.value?.data?.success) {
-          const vList = (((vacRes.value.data as any).methodResults ?? []) as JobModal[]).map((v) => ({
+          const vList = (vacRes.value.data.methodResults ?? []).map((v) => ({
             jobId: v.jobId,
             title: v.title,
             department: v.department,

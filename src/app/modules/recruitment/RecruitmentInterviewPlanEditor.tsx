@@ -108,7 +108,7 @@ export default function RecruitmentInterviewPlanEditor() {
     void getAllJobVacancies({ jobTypes: [], status: null, pageNo: 1, records: 100, search: "" })
       .then(({ data }) => {
         if (data.success) {
-          const vList = (((data as any).methodResults ?? []) as JobModal[]).map((v) => ({
+          const vList = (data.methodResults ?? []).map((v) => ({
             jobId: v.jobId,
             title: v.title,
             department: v.department,
@@ -162,7 +162,7 @@ export default function RecruitmentInterviewPlanEditor() {
         if (plan.competencies?.length) {
           setCompetencies(plan.competencies.map((c, i) => ({
             ...c,
-            _clientId: (c as any)._clientId || `comp-loaded-${i}-${c.code || Date.now()}`,
+            _clientId: (c as CompetencyItem)._clientId || `comp-loaded-${i}-${c.code || Date.now()}`,
           })));
         } else {
           setCompetencies(initialCompetencies);
@@ -588,7 +588,7 @@ export default function RecruitmentInterviewPlanEditor() {
                 select
                 label="Normalization Formula"
                 value={ratingScale.normalizationMethod}
-                onChange={(e) => setRatingScale((s) => ({ ...s, normalizationMethod: e.target.value as any }))}
+                onChange={(e) => setRatingScale((s) => ({ ...s, normalizationMethod: e.target.value as RecruitmentRatingScaleConfig["normalizationMethod"] }))}
                 helperText={ratingScale.normalizationMethod === "PercentageOfMax" ? "Formula: (Rating / Max) × 100" : "Formula: ((Rating - Min) / Range) × 100"}
                 fullWidth
               >

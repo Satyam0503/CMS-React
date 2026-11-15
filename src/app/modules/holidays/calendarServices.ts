@@ -38,7 +38,7 @@ export const getHolidays = async (payload: HolidayPayload) => {
   };
   return postRequest<typeof body, ResponseData<HolidayModel>>(
     ServiceUrl.GET_HOLIDAYS,
-    body as any
+    body
   );
 };
 

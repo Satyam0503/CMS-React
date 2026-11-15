@@ -1,3 +1,4 @@
+import type { AxiosError } from "axios";
 import {
   Box,
   Card,
@@ -322,7 +323,7 @@ export default function PayrollSettings() {
       }
     } catch (error) {
       setAttendanceLocked(false);
-      toast.error((error as any)?.response?.data?.message ?? "Attendance validation or lock failed.");
+      toast.error((error as AxiosError<{ message?: string }>)?.response?.data?.message ?? "Attendance validation or lock failed.");
     } finally {
       setIsLocking(false);
     }
