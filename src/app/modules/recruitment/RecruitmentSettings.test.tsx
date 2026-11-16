@@ -137,11 +137,11 @@ describe("RecruitmentSettings Component", () => {
     expect(tab3).not.toBeNull();
     expect(tab4).not.toBeNull();
 
-    expect(tab0?.textContent).toContain("Operating Model & Pipeline");
-    expect(tab1?.textContent).toContain("Stage Gates & Capabilities");
-    expect(tab2?.textContent).toContain("Screening & Preboarding");
+    expect(tab0?.textContent).toContain("Operating model");
+    expect(tab1?.textContent).toContain("Stage gates");
+    expect(tab2?.textContent).toContain("Screening & preboarding");
     expect(tab3?.textContent).toContain("Interview Plans & SLAs");
-    expect(tab4?.textContent).toContain("Offers & Email Templates");
+    expect(tab4?.textContent).toContain("Offers & email");
   });
 
   it("switches to Stage Gates & Capabilities tab and shows Per-Job Customization banner", async () => {
@@ -195,7 +195,7 @@ describe("RecruitmentSettings Component", () => {
     const panel2 = container.querySelector("#recruitment-tabpanel-2") as HTMLElement;
     expect(panel2).not.toBeNull();
     expect(panel2.hidden).toBe(false);
-    expect(panel2.textContent).toContain("Screening & Preboarding Policy Configuration");
+    expect(panel2.textContent).toContain("Screening and preboarding defaults");
     expect(panel2.textContent).toContain("Minimum screening pass score (0–100%)");
   });
 
@@ -221,8 +221,9 @@ describe("RecruitmentSettings Component", () => {
     const panel4 = container.querySelector("#recruitment-tabpanel-4") as HTMLElement;
     expect(panel4).not.toBeNull();
     expect(panel4.hidden).toBe(false);
-    expect(panel4.textContent).toContain("Offer Letter Template & Candidate Preview");
-    expect(panel4.textContent).toContain("Sample Candidate Email Preview");
+    expect(panel4.textContent).toContain("Offer email subject");
+    expect(panel4.textContent).toContain("Candidate email");
+    expect(panel4.textContent).toContain("Live preview");
     expect(panel4.textContent).toContain("Visual Editor");
     expect(panel4.textContent).toContain("HTML Source");
     expect(panel4.textContent).toContain("[CandidateName]");

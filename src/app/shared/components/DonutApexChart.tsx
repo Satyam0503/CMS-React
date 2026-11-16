@@ -1,6 +1,11 @@
 import { Grid, } from "@mui/material";
-import Chart from "react-apexcharts";
+import ChartModule from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
+
+// Vite can expose this CommonJS package as a namespace object in development.
+// Unwrap its component export so React receives a function component either way.
+const Chart =
+  (ChartModule as unknown as { default?: typeof ChartModule }).default ?? ChartModule;
 
 interface DonutApexChartProps {
   series: Array<number>;

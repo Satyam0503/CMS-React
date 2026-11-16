@@ -386,9 +386,9 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
         p: { xs: 2, sm: 2.5 },
         border: "1px solid",
         borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-        borderRadius: "14px",
+        borderRadius: "12px",
         bgcolor: isDark ? "rgba(30, 41, 59, 0.3)" : "background.paper",
-        boxShadow: isDark ? "0 2px 10px rgba(0,0,0,0.2)" : "0 1px 3px rgba(0,0,0,0.02)",
+        boxShadow: "none",
         minWidth: 0,
         maxWidth: "100%",
         boxSizing: "border-box",
@@ -419,20 +419,20 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
             <VerifiedUserOutlined sx={{ fontSize: 22 }} />
           </Box>
           <Box>
-            <Typography variant="subtitle1" fontWeight={800} sx={{ fontSize: "0.95rem" }}>
+            <Typography variant="subtitle1" fontWeight={750} sx={{ fontSize: "1rem" }}>
               Offer Approval & Compensation Governance
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.78rem" }}>
-              Enforce authorization gates, searchable delegation authority, and salary thresholds before offers are dispatched.
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.82rem", mt: 0.25 }}>
+              Choose who approves offers, when approval is needed, and what evidence to collect.
             </Typography>
           </Box>
         </Stack>
 
         <Stack direction="row" spacing={1.25} alignItems="center" flexWrap="wrap" useFlexGap sx={{ width: { xs: "100%", sm: "auto" } }}>
           {/* Scope Segmented Pill Switcher */}
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} sx={{ width: { xs: "100%", sm: "auto" } }}>
             <Chip
-              label="Company-wide Policy"
+              label="Company policy"
               onClick={() => {
                 setScopeMode("GLOBAL");
                 setSelectedVacancy(null);
@@ -441,15 +441,15 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
               color={scopeMode === "GLOBAL" ? "primary" : "default"}
               variant={scopeMode === "GLOBAL" ? "filled" : "outlined"}
               size="small"
-              sx={{ fontWeight: 750, borderRadius: "8px", height: 32, px: 1, cursor: "pointer" }}
+              sx={{ fontWeight: 750, borderRadius: "8px", height: 32, px: 0.75, cursor: "pointer", flex: { xs: 1, sm: "none" } }}
             />
             <Chip
-              label="Vacancy-Specific Override"
+              label="Vacancy override"
               onClick={() => setScopeMode("VACANCY")}
               color={scopeMode === "VACANCY" ? "primary" : "default"}
               variant={scopeMode === "VACANCY" ? "filled" : "outlined"}
               size="small"
-              sx={{ fontWeight: 750, borderRadius: "8px", height: 32, px: 1, cursor: "pointer" }}
+              sx={{ fontWeight: 750, borderRadius: "8px", height: 32, px: 0.75, cursor: "pointer", flex: { xs: 1, sm: "none" } }}
             />
           </Stack>
 
@@ -565,17 +565,17 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
 
       <Divider sx={{ my: 2.5 }} />
 
-      <Stack spacing={2.5}>
-        {/* SECTION 1: Organizational Scope & Eligibility — Equal Height & Width Columns */}
-        <Box>
-          <Typography variant="overline" color="text.secondary" fontWeight={800} letterSpacing={0.5}>
-            Organizational Scope & Eligibility
+      <Stack spacing={0} divider={<Divider flexItem />}>
+        {/* SECTION 1: Organizational Scope & Eligibility */}
+        <Box sx={{ py: 2 }}>
+          <Typography variant="subtitle2" color="text.primary" fontWeight={750}>
+            Who does this policy cover?
           </Typography>
-          <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1.25, fontSize: "0.74rem" }}>
-            Filter the eligibility boundaries for this policy across legal entities, departments, and job grade levels.
+          <Typography variant="body2" color="text.secondary" display="block" sx={{ mb: 1.5, fontSize: "0.8rem" }}>
+            Choose the legal entities, departments, and job levels this rule applies to.
           </Typography>
 
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 1.5, md: 2 }}>
             {/* Legal Entity Autocomplete */}
             <Grid size={{ xs: 12, md: 4 }}>
               <Autocomplete
@@ -693,11 +693,11 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
           </Grid>
         </Box>
 
-        {/* SECTION 2: Delegation & Authorization Controls — Symmetrical 2-Column Grid */}
-        <Box>
+        {/* SECTION 2: Delegation & Authorization Controls */}
+        <Box sx={{ py: 2 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.25 }} flexWrap="wrap" useFlexGap>
-            <Typography variant="overline" color="text.secondary" fontWeight={800} letterSpacing={0.5}>
-              Delegation & Authorization Controls
+            <Typography variant="subtitle2" color="text.primary" fontWeight={750}>
+              Who can approve during an absence?
             </Typography>
             <Chip
               size="small"
@@ -707,8 +707,8 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
               sx={{ height: 20, fontSize: "0.68rem", fontWeight: 700 }}
             />
           </Stack>
-          <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1.5, fontSize: "0.74rem" }}>
-            Delegate executive sign-off authority to an active employee during leave or audit windows.
+          <Typography variant="body2" color="text.secondary" display="block" sx={{ mb: 1.5, fontSize: "0.8rem" }}>
+            Optionally assign a temporary approver. Leave this blank to use the standard sign-off authority.
           </Typography>
 
           <Grid container spacing={2}>
@@ -827,7 +827,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
                     </Stack>
                   ) : (
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
-                      No individual acting approver assigned. Primary HR Leadership sign-off active.
+                      Standard HR Leadership sign-off active.
                     </Typography>
                   )}
                 </Box>
@@ -895,13 +895,13 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
           </Grid>
         </Box>
 
-        {/* SECTION 3: Financial Thresholds & Verification Gate — Equal 50/50 Columns */}
-        <Box>
-          <Typography variant="overline" color="text.secondary" fontWeight={800} letterSpacing={0.5}>
-            Financial Thresholds & Verification Gate
+        {/* SECTION 3: Threshold & Evidence */}
+        <Box sx={{ py: 2 }}>
+          <Typography variant="subtitle2" color="text.primary" fontWeight={750}>
+            When is approval required?
           </Typography>
-          <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1.5, fontSize: "0.74rem" }}>
-            Specify the currency, monetary threshold that triggers approval escalation, and audit trail rules.
+          <Typography variant="body2" color="text.secondary" display="block" sx={{ mb: 1.5, fontSize: "0.8rem" }}>
+            Set the compensation threshold and decide whether an approval reference must be provided.
           </Typography>
 
           <Grid container spacing={2}>
@@ -982,7 +982,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
               >
                 <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
                   <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ mr: 0.25, fontSize: "0.72rem" }}>
-                    Quick presets:
+                    Presets:
                   </Typography>
                   {thresholdPresets.map((preset) => (
                     <Chip
@@ -1003,7 +1003,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
                 </Stack>
                 <Chip
                   size="small"
-                  label={`Active Trigger: CTC > ${formattedThreshold}`}
+                  label={threshold <= 0 ? "Applies to every offer" : `CTC over ${formattedThreshold}`}
                   color="primary"
                   variant="outlined"
                   sx={{ height: 24, fontSize: "0.72rem", fontWeight: 750, borderRadius: "6px" }}
@@ -1050,7 +1050,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
                       Approval Reference & Audit Evidence Required
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.74rem", display: "block" }}>
-                      Mandates a recorded memo ID, budget requisition number, or board approval code before dispatching offer letters.
+                      Require a memo, budget request, or approval code before sending.
                     </Typography>
                   </Box>
                 </Stack>
@@ -1074,50 +1074,41 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
           </Grid>
         </Box>
 
-        {/* SECTION 4: Live Plain-English Governance Summary Ribbon */}
+        {/* SECTION 4: Live Policy Summary */}
         <Box
           sx={{
-            p: 1.75,
-            borderRadius: "10px",
-            border: "1px dashed",
-            borderColor: isDark ? "rgba(255, 255, 255, 0.15)" : "#CBD5E1",
-            bgcolor: isDark ? "rgba(30, 41, 59, 0.2)" : alpha(theme.palette.primary.main, 0.03),
+            p: { xs: 1.5, sm: 2 },
+            borderRadius: 2,
+            border: "1px solid",
+            borderColor: "divider",
+            bgcolor: "background.default",
           }}
         >
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ xs: "flex-start", sm: "center" }}>
-            <Box
-              sx={{
-                width: 34,
-                height: 34,
-                borderRadius: "8px",
-                display: "grid",
-                placeItems: "center",
-                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                color: "primary.main",
-                flexShrink: 0,
-              }}
-            >
-              <ShieldOutlined sx={{ fontSize: 18 }} />
-            </Box>
-            <Box minWidth={0} sx={{ flex: 1 }}>
-              <Typography variant="caption" color="primary.main" fontWeight={800} letterSpacing={0.5} sx={{ textTransform: "uppercase" }}>
-                Active Governance Enforcement Rule
-              </Typography>
-              <Typography variant="body2" sx={{ fontSize: "0.82rem", mt: 0.25, lineHeight: 1.45 }}>
-                Any candidate offer issued for{" "}
-                <strong>{legalEntityId ? legalEntityId : "all legal entities"}</strong> in{" "}
-                <strong>{selectedDeptName}</strong> ({grade ? `Grade: ${grade}` : "all grades"}) with CTC exceeding{" "}
-                <strong>{formattedThreshold}</strong> will require explicit approval from{" "}
-                <strong>{selectedApprover ? selectedApprover.fullName : delegatedApproverUserId.trim() || "HR Leadership / Hiring Director"}</strong>{" "}
-                before candidate dispatch.
-              </Typography>
-              <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-                {required
-                  ? "Audit reference ID will be strictly enforced during candidate offer release."
-                  : "Audit reference is optional for this governance tier."}
-              </Typography>
-            </Box>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+            <ShieldOutlined sx={{ fontSize: 19, color: "primary.main" }} />
+            <Typography variant="subtitle2" fontWeight={750}>
+              Policy summary
+            </Typography>
           </Stack>
+          <Grid container spacing={{ xs: 1.25, sm: 2 }}>
+            {[
+              { label: "Approval trigger", value: threshold <= 0 ? "Every offer" : `CTC above ${formattedThreshold}` },
+              { label: "Covered roles", value: `${legalEntityId || "All legal entities"} · ${selectedDeptName} · ${grade || "All job levels"}` },
+              { label: "Approver", value: selectedApprover?.fullName || delegatedApproverUserId.trim() || "HR Leadership / Hiring Director" },
+              { label: "Offer evidence", value: required ? "Approval reference required" : "Approval reference optional" },
+            ].map((item) => (
+              <Grid key={item.label} size={{ xs: 12, sm: 6 }}>
+                <Box sx={{ minWidth: 0, height: "100%" }}>
+                  <Typography variant="caption" color="text.secondary" fontWeight={650}>
+                    {item.label}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={650} sx={{ mt: 0.25, overflowWrap: "anywhere" }}>
+                    {item.value}
+                  </Typography>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
         </Box>
       </Stack>
     </Box>

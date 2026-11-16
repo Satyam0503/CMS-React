@@ -10,7 +10,7 @@ import { UserDetailsProvider } from "./UserDataProvider";
 import ProfileCard from "./components/ProfileCard";
 import { useIntl } from "react-intl";
 import { useEffect, useMemo } from "react";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { TabModel } from "../../../utils/common_types";
 import { checkIsActive } from "../../../_themes/helpers";
@@ -44,6 +44,7 @@ const employeeBreadCrumbs: Array<Breadcrumb> = [
 const UserProfile = () => {
   const { formatMessage: i } = useIntl();
   const navigate = useNavigate();
+  const location = useLocation();
   const { setBreadcrumbs } = useBreadcrumbs();
   const { setPageTitle } = usePageData();
   const empId = useParams().employeeid;
@@ -151,8 +152,8 @@ const UserProfile = () => {
             >
               {filteredTabs.map((tab) => {
                 const tabTo = empId
-                  ? `employees/${empId}/${tab.to}`
-                  : `profile/${tab.to}`;
+                  ? `/employees/${empId}/${tab.to}`
+                  : `/profile/${tab.to}`;
                 if (tab.isActive) {
                   const isSelected = checkIsActive(location.pathname, tabTo);
                   return (
@@ -162,11 +163,11 @@ const UserProfile = () => {
                       className={clsx("tab-box", {
                         tab_active: isSelected,
                       })}
-                      onClick={() => navigate(tab.to)}
+                      onClick={() => navigate(tabTo)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
-                          navigate(tab.to);
+                          navigate(tabTo);
                         }
                       }}
                       role="tab"

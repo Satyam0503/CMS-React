@@ -14,6 +14,8 @@ const createTabs = (modulePermissions: string[], empId?: string, roleType?: numb
   const isLeaveEnabled =
     isLeaveModuleActive &&
     (!empId || hasLeaveView || canAccessHrManagement(roleType));
+  const isPayrollSelfServiceEnabled =
+    !empId && hasModuleFeaturePermission(ModulesName.PayRoll, Permission.View, modulePermissions);
 
   const tabsRoutes: TabModel[] = [
     {
@@ -53,6 +55,13 @@ const createTabs = (modulePermissions: string[], empId?: string, roleType?: numb
       icon: null,
       isActive: true,
     },
+    {
+      tabId: 6,
+      to: "taxdeclaration",
+      title: "PROFILE.TABS.TAX_DECLARATION",
+      icon: null,
+      isActive: isPayrollSelfServiceEnabled,
+    },
   ];
 
   return tabsRoutes.filter((tab) => {
@@ -64,6 +73,9 @@ const createTabs = (modulePermissions: string[], empId?: string, roleType?: numb
     }
     if (tab.to === "performance") {
       return canAccessHrManagement(roleType);
+    }
+    if (tab.to === "taxdeclaration") {
+      return isPayrollSelfServiceEnabled;
     }
     return true;
   });

@@ -65,8 +65,8 @@ export type PayrollAuditEventModel = { action: string; actorId: string; occurred
 export type PayrollRunModel = { id: string; companyId: string; periodStart: string; periodEnd: string; payDate: string; runType: string; status: string; populationType: string; departmentId?: string | null; payGroupId?: string | null; employeeCount: number; readyCount: number; blockedCount: number; skippedCount: number; grossTotal: number; deductionTotal: number; netTotal: number; legacyPayrollRowsSynchronizedAtUtc?: string | null; createdAtUtc: string; };
 export type PayrollRunReviewModel = { runId: string; status: string; employeeCount: number; calculatedCount: number; blockedCount: number; skippedCount: number; grossTotal: number; deductionTotal: number; netTotal: number; isReviewed: boolean; canApprove: boolean; blockingEmployeeIds: string[] };
 export type PayrollRunEmployeeModel = { employeeId: string; status: string; inclusionReason?: string | null; exclusionReason?: string | null; errorMessage?: string | null };
-export type PayrollAdjustmentModel = { id: string; originalPayrollRunId: string; correctionPayrollRunId?: string | null; employeeId: string; componentCode?: string | null; componentName?: string | null; componentKind?: string | null; isTaxable?: boolean | null; componentVersion?: number | null; targetPeriod?: string | null; type: string; status: string; amount: number; reason: string; createdBy?: string | null; createdAtUtc: string; approvedBy?: string | null; approvedAtUtc?: string | null; rejectedBy?: string | null; rejectedAtUtc?: string | null; rejectionReason?: string | null; processedBy?: string | null; processedAtUtc?: string | null };
-export type PayrollAdjustmentComponentModel = Pick<PayrollSalaryComponentModel, "code" | "name" | "kind" | "isTaxable" | "version">;
+export type PayrollAdjustmentModel = { id: string; originalPayrollRunId: string; correctionPayrollRunId?: string | null; employeeId: string; componentCode?: string | null; componentName?: string | null; componentKind?: string | null; isTaxable?: boolean | null; isStatutory?: boolean | null; isEmployerContribution?: boolean | null; includeInEsiWage?: boolean | null; includeInPfWage?: boolean | null; includeInPtWage?: boolean | null; componentVersion?: number | null; targetPeriod?: string | null; type: string; status: string; amount: number; reason: string; createdBy?: string | null; createdAtUtc: string; approvedBy?: string | null; approvedAtUtc?: string | null; rejectedBy?: string | null; rejectedAtUtc?: string | null; rejectionReason?: string | null; processedBy?: string | null; processedAtUtc?: string | null };
+export type PayrollAdjustmentComponentModel = Pick<PayrollSalaryComponentModel, "code" | "name" | "kind" | "isTaxable" | "isStatutory" | "isEmployerContribution" | "includeInEsiWage" | "includeInPfWage" | "includeInPtWage" | "version">;
 export type CreatePayrollRunPayload = { periodStart: string; periodEnd: string; payDate: string; runType: string; populationType: string; departmentId?: string; payGroupId?: string; employeeIds?: string[]; idempotencyKey?: string; };
 
 export type PayrollReportQuery = {
@@ -78,6 +78,55 @@ export type PayrollReportQuery = {
   employeeId?: string;
   lineStatus?: string;
 };
+
+export type EmployeeTaxDeclarationModel = {
+  id: string;
+  companyId: string;
+  employeeId: string;
+  financialYear: string;
+  regime: "NEW_115BAC" | "OLD_REGIME" | string;
+  status: "DRAFT" | "SUBMITTED" | "APPROVED" | "REJECTED" | string;
+  version: number;
+  previousVersionId?: string | null;
+  previousEmployerGrossSalary: number;
+  previousEmployerTds: number;
+  previousEmployerPf: number;
+  previousEmployerPt: number;
+  otherIncomeSavingsInterest: number;
+  otherIncomeOther: number;
+  declaredSection80C: number;
+  declaredSection80Ccd1B: number;
+  declaredSection80D: number;
+  declaredSection24HomeLoanInterest: number;
+  declaredHraRentPaid: number;
+  declaredSection80E: number;
+  declaredOtherDeductions: number;
+  approvedSection80C: number;
+  approvedSection80Ccd1B: number;
+  approvedSection80D: number;
+  approvedSection24HomeLoanInterest: number;
+  approvedHraExemption: number;
+  approvedSection80E: number;
+  approvedOtherDeductions: number;
+  landlordPan?: string | null;
+  rentalAddress?: string | null;
+  isMetroCity: boolean;
+  proofAttachments: Array<{ id: string; section: string; documentName: string; documentUrl: string; amount: number; isVerified: boolean }>;
+  submittedBy?: string | null;
+  submittedAtUtc?: string | null;
+  reviewedBy?: string | null;
+  reviewedAtUtc?: string | null;
+  reviewRemarks?: string | null;
+  rejectionReason?: string | null;
+};
+
+export type SubmitTaxDeclarationPayload = Omit<EmployeeTaxDeclarationModel,
+  "id" | "companyId" | "employeeId" | "status" | "version" | "approvedSection80C" |
+  "approvedSection80Ccd1B" | "approvedSection80D" | "approvedSection24HomeLoanInterest" |
+  "approvedHraExemption" | "approvedSection80E" | "approvedOtherDeductions" | "proofAttachments" |
+  "submittedBy" | "submittedAtUtc" | "reviewedBy" | "reviewedAtUtc" | "reviewRemarks" | "rejectionReason"> & {
+    proofAttachments?: Array<{ id?: string; section: string; documentName: string; documentUrl: string; amount: number }>;
+  };
 
 export type PayrollReportStatusTotalModel = {
   status: string;
@@ -171,6 +220,11 @@ export type PayrollSalaryComponentModel = {
   calculationType: "FIXED" | "PERCENT_OF_GROSS" | "PERCENT_OF_COMPONENT";
   baseComponentCode?: string | null;
   isTaxable: boolean;
+  isStatutory?: boolean;
+  isEmployerContribution?: boolean;
+  includeInPfWage?: boolean;
+  includeInEsiWage?: boolean;
+  includeInPtWage?: boolean;
   isActive: boolean;
   effectiveFrom: string;
   effectiveTo?: string | null;

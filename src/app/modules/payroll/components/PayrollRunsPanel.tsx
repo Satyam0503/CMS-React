@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import {
-  approvePayrollRun, calculatePayrollRun, cancelPayrollRun, createPayrollAdjustment, createPaymentBatch, createPayrollRun,
+  approvePayrollRun, calculatePayrollRun, cancelPayrollRun, createPayrollAdjustment, createPayrollCorrectionRun, createPaymentBatch, createPayrollRun,
   getPayrollRegister, getPayrollRegisterCsv, getPayrollReportSummary, getPaymentBatch, getPayrollRuns,
   getPayrollAdjustments, getPayrollAdjustmentComponents, getPayrollRunEmployees, getPayrollRunReview, processPayrollRun, reconcilePaymentBatch, recordPayrollRunReview, approvePayrollAdjustment, rejectPayrollAdjustment,
   submitPaymentBatch, getPayrollStatutoryRegister, getPayrollStatutoryRegisterCsv, type PayrollPaymentBatchModel,
@@ -59,6 +59,8 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
   const [batchToSubmit, setBatchToSubmit] = useState<PayrollPaymentBatchModel | null>(null);
   const [batchToReconcile, setBatchToReconcile] = useState<PayrollPaymentBatchModel | null>(null);
   const [adjustmentRun, setAdjustmentRun] = useState<PayrollRunModel | null>(null);
+  const [correctionRun, setCorrectionRun] = useState<PayrollRunModel | null>(null);
+  const [correctionReason, setCorrectionReason] = useState("");
   const [adjustmentToReject, setAdjustmentToReject] = useState<PayrollAdjustmentModel | null>(null);
   const [adjustmentRejectionReason, setAdjustmentRejectionReason] = useState("");
   const [adjustmentEmployees, setAdjustmentEmployees] = useState<PayrollRunEmployeeModel[]>([]);
@@ -73,7 +75,7 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
   const [adjustmentEmployeeId, setAdjustmentEmployeeId] = useState("");
   const [adjustmentComponentCode, setAdjustmentComponentCode] = useState("");
   const [adjustmentTargetPeriod, setAdjustmentTargetPeriod] = useState("");
-  const [adjustmentType, setAdjustmentType] = useState<"ARREARS" | "CORRECTION" | "REVERSAL">("ARREARS");
+  const [adjustmentType, setAdjustmentType] = useState<"ARREARS" | "CORRECTION">("ARREARS");
   const [adjustmentAmount, setAdjustmentAmount] = useState("");
   const [adjustmentReason, setAdjustmentReason] = useState("");
   const adjustmentComponentRequest = useRef(0);
@@ -261,8 +263,9 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
       if (!data.success) throw new Error(data.message || "Salary components could not be loaded for this month.");
       const components = data.methodResult ?? [];
       if (requestId !== adjustmentComponentRequest.current) return;
-      setAdjustmentComponents(components);
-      setAdjustmentComponentCode((current) => components.some((component) => component.code === current) ? current : "");
+      const supportedComponents = components.filter((component) => component.kind.toUpperCase() === "EARNING" && !component.isTaxable && !component.isStatutory && !component.isEmployerContribution && !component.includeInPfWage && !component.includeInPtWage);
+      setAdjustmentComponents(supportedComponents);
+      setAdjustmentComponentCode((current) => supportedComponents.some((component) => component.code === current) ? current : "");
     } catch {
       if (requestId !== adjustmentComponentRequest.current) return;
       setAdjustmentComponents([]);
@@ -284,7 +287,7 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
       if (!data.success) throw new Error(data.message || "Unable to load employees from the original run.");
       if (!componentData.success) throw new Error(componentData.message || "Unable to load salary components for the target month.");
       setAdjustmentEmployees((data.methodResult ?? []).filter((employee) => employee.status === "CALCULATED"));
-      setAdjustmentComponents(componentData.methodResult ?? []);
+      setAdjustmentComponents((componentData.methodResult ?? []).filter((component) => component.kind.toUpperCase() === "EARNING" && !component.isTaxable && !component.isStatutory && !component.isEmployerContribution && !component.includeInPfWage && !component.includeInPtWage));
     } catch {
       if (requestId === adjustmentComponentRequest.current) setError("Employees or effective salary components could not be loaded for this adjustment.");
     } finally {
@@ -310,6 +313,13 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
     const succeeded = await act(adjustmentRun.id, () => createPayrollAdjustment({ originalPayrollRunId: adjustmentRun.id, employeeId: adjustmentEmployeeId, componentCode: adjustmentComponentCode, targetPeriod: `${adjustmentTargetPeriod}-01`, type: adjustmentType, amount, reason: adjustmentReason.trim() }), "Adjustment could not be created.");
     if (succeeded) { setAdjustmentRun(null); setAdjustmentEmployeeId(""); setAdjustmentComponentCode(""); setAdjustmentAmount(""); setAdjustmentReason(""); }
   };
+  const createCorrectionRunForm = async (event: FormEvent) => {
+    event.preventDefault();
+    const reason = correctionReason.trim();
+    if (!correctionRun || reason.length < 5 || reason.length > 500) return;
+    const succeeded = await act(correctionRun.id, () => createPayrollCorrectionRun(correctionRun.id, reason), "Correction run could not be created. Refresh the run and verify no active correction already exists.");
+    if (succeeded) { setCorrectionRun(null); setCorrectionReason(""); }
+  };
 
   const renderRunActions = (run: PayrollRunModel, batch: PayrollPaymentBatchModel | undefined) => (
     <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
@@ -325,6 +335,7 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
       {canEdit && batch?.status === "DRAFT" && <Button size="small" disabled={busy === batch.id} onClick={() => { setProviderReference(""); setBatchToSubmit(batch); }}>Submit payment</Button>}
       {canEdit && (batch?.status === "SUBMITTED" || batch?.status === "RECONCILING") && <Button size="small" disabled={busy === batch.id} onClick={() => { setReconciliationNote(batch.reconciliationNote ?? ""); setReconciliationConfirmed(false); setBatchToReconcile(batch); }}>{batch.status === "RECONCILING" ? "Resume reconciliation" : "Reconcile payment"}</Button>}
       {canEdit && (run.status === "PAID" || run.status === "CLOSED") && <Button size="small" disabled={busy === run.id || adjustmentEmployeesLoading} onClick={() => void openAdjustment(run)}>Adjustment</Button>}
+      {canEdit && (run.status === "PAID" || run.status === "CLOSED") && <Button size="small" disabled={busy === run.id} onClick={() => { setCorrectionReason(""); setCorrectionRun(run); }}>Create correction run</Button>}
     </Stack>
   );
 
@@ -423,7 +434,7 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
         <Stack><Typography variant="subtitle1">Payroll adjustments</Typography><Typography variant="body2" color="text.secondary">Draft corrections remain separate from finalized payroll. Approvals are audited and tenant-scoped.</Typography></Stack>
         <Alert severity="warning" role="status">
           <Typography component="span" fontWeight={750}>Approval does not apply or pay an adjustment. </Typography>
-          Approved requests are not added to gross-to-net, payslips, or payment totals. Processing stays unavailable until this tenant has an approved rule for the earning or deduction component and its tax/statutory treatment.
+          Approved requests are not added to gross-to-net, payslips, or payment totals until included in a payroll calculation. Company component configuration supplies ESI wage classification; statutory treatment still needs review for the applicable law and payroll period.
         </Alert>
         {adjustments.length === 0 ? <Typography variant="body2" color="text.secondary">No payroll adjustments are awaiting review.</Typography> : null}
         {adjustments.length > 0 && (
@@ -565,7 +576,23 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
           <DialogActions><Button onClick={() => setAdjustmentToReject(null)}>Cancel</Button><Button type="submit" color="error" variant="contained" disabled={adjustmentRejectionReason.trim().length < 5 || adjustmentRejectionReason.trim().length > 500 || busy === adjustmentToReject?.id}>Reject request</Button></DialogActions>
         </form>
       </Dialog>
-      <Dialog open={Boolean(adjustmentRun)} onClose={() => setAdjustmentRun(null)} fullWidth maxWidth="sm"><form onSubmit={createAdjustmentForm}><DialogTitle>Create payroll adjustment</DialogTitle><DialogContent><Stack spacing={1.5} sx={{ pt: 1 }}><Typography>Creates an auditable correction request against paid/closed run {adjustmentRun?.id}; the original payslip stays unchanged.</Typography><Alert severity="warning">Approval records the request only. It will not enter gross-to-net or be paid until tax/statutory treatment is implemented and approved.</Alert><TextField select label="Employee" value={adjustmentEmployeeId} onChange={(event) => setAdjustmentEmployeeId(event.target.value)} required fullWidth disabled={adjustmentEmployeesLoading}><MenuItem value="" disabled>{adjustmentEmployeesLoading ? "Loading run employees…" : "Select employee"}</MenuItem>{adjustmentEmployees.map((employee) => <MenuItem key={employee.employeeId} value={employee.employeeId}>{employee.employeeId}</MenuItem>)}</TextField><TextField select label="Adjustment type" value={adjustmentType} onChange={(event) => setAdjustmentType(event.target.value as typeof adjustmentType)} fullWidth><MenuItem value="ARREARS">Arrears</MenuItem><MenuItem value="CORRECTION">Correction</MenuItem><MenuItem value="REVERSAL">Reversal</MenuItem></TextField><CustomisedDatePicker label="Target payroll month" views={["month", "year"]} format="YYYY-MM" value={adjustmentTargetPeriod ? dayjs(adjustmentTargetPeriod) : null} setValue={(val) => { const nextVal = val ? val.format("YYYY-MM") : ""; setAdjustmentTargetPeriod(nextVal); setAdjustmentComponentCode(""); if (nextVal) { void loadAdjustmentComponents(nextVal); } }} required helperText="The component definition is resolved for this month." /><TextField select label="Salary component" value={adjustmentComponentCode} onChange={(event) => setAdjustmentComponentCode(event.target.value)} required fullWidth disabled={adjustmentComponentsLoading || adjustmentComponents.length === 0}><MenuItem value="" disabled>{adjustmentComponentsLoading ? "Loading components…" : "Select component"}</MenuItem>{adjustmentComponents.map((component) => <MenuItem key={`${component.code}-${component.version}`} value={component.code}>{component.name} ({component.code}) · {component.kind.toLowerCase()} · {component.isTaxable ? "taxable" : "non-taxable"}</MenuItem>)}</TextField><TextField label="Amount (+ earning / − deduction)" type="number" value={adjustmentAmount} onChange={(event) => setAdjustmentAmount(event.target.value)} required inputProps={{ step: "0.01" }} fullWidth /><TextField label="Reason and audit note" value={adjustmentReason} onChange={(event) => setAdjustmentReason(event.target.value)} required multiline minRows={2} fullWidth /></Stack></DialogContent><DialogActions><Button onClick={() => setAdjustmentRun(null)}>Cancel</Button><Button type="submit" variant="contained" disabled={adjustmentEmployeesLoading || adjustmentComponentsLoading || !adjustmentEmployeeId || !adjustmentComponentCode || !adjustmentTargetPeriod || !adjustmentReason.trim() || !adjustmentAmount || Number(adjustmentAmount) === 0 || busy === adjustmentRun?.id}>Create draft</Button></DialogActions></form></Dialog>
+      <Dialog open={Boolean(correctionRun)} onClose={() => setCorrectionRun(null)} fullWidth maxWidth="sm">
+        <form onSubmit={createCorrectionRunForm}>
+          <DialogTitle>Create correction run</DialogTitle>
+          <DialogContent>
+            <Stack spacing={1.5} sx={{ pt: 1 }}>
+              <Typography>Creates a separate draft for approved adjustment amounts on {correctionRun?.id}. Only employees with approved adjustments are included, and the run pays the incremental amount. Original payroll and payslips remain unchanged.</Typography>
+              <Alert severity="info">The correction must be calculated, reviewed, approved, and processed through the normal payroll controls. Taxable, statutory, employer-contribution, PF/PT-included, deduction, and reversal adjustments are blocked until their complete gross-to-net rules are implemented.</Alert>
+              <TextField label="Correction reason" value={correctionReason} onChange={(event) => setCorrectionReason(event.target.value)} required multiline minRows={2} inputProps={{ maxLength: 500 }} helperText={`${correctionReason.trim().length}/500 (minimum 5 characters)`} fullWidth autoFocus />
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCorrectionRun(null)}>Cancel</Button>
+            <Button type="submit" variant="contained" disabled={correctionReason.trim().length < 5 || correctionReason.trim().length > 500 || busy === correctionRun?.id}>Create draft</Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+      <Dialog open={Boolean(adjustmentRun)} onClose={() => setAdjustmentRun(null)} fullWidth maxWidth="sm"><form onSubmit={createAdjustmentForm}><DialogTitle>Create payroll adjustment</DialogTitle><DialogContent><Stack spacing={1.5} sx={{ pt: 1 }}><Typography>Creates an auditable correction request against paid/closed run {adjustmentRun?.id}; the original payslip stays unchanged.</Typography><Alert severity="warning">Only positive, non-taxable, non-statutory earnings excluded from PF and professional-tax wages can currently be adjusted. Taxable, statutory, employer-contribution, PF/PT-included, deduction and reversal entries are blocked. Approval alone does not change or pay the original payroll.</Alert><TextField select label="Employee" value={adjustmentEmployeeId} onChange={(event) => setAdjustmentEmployeeId(event.target.value)} required fullWidth disabled={adjustmentEmployeesLoading}><MenuItem value="" disabled>{adjustmentEmployeesLoading ? "Loading run employees…" : "Select employee"}</MenuItem>{adjustmentEmployees.map((employee) => <MenuItem key={employee.employeeId} value={employee.employeeId}>{employee.employeeId}</MenuItem>)}</TextField><TextField select label="Adjustment type" value={adjustmentType} onChange={(event) => setAdjustmentType(event.target.value as typeof adjustmentType)} fullWidth><MenuItem value="ARREARS">Arrears</MenuItem><MenuItem value="CORRECTION">Correction</MenuItem></TextField><CustomisedDatePicker label="Target payroll month" views={["month", "year"]} format="YYYY-MM" value={adjustmentTargetPeriod ? dayjs(adjustmentTargetPeriod) : null} setValue={(val) => { const nextVal = val ? val.format("YYYY-MM") : ""; setAdjustmentTargetPeriod(nextVal); setAdjustmentComponentCode(""); if (nextVal) { void loadAdjustmentComponents(nextVal); } }} required helperText="The effective component definition and statutory classification are resolved for this month." /><TextField select label="Salary component" value={adjustmentComponentCode} onChange={(event) => setAdjustmentComponentCode(event.target.value)} required fullWidth disabled={adjustmentComponentsLoading || adjustmentComponents.length === 0}><MenuItem value="" disabled>{adjustmentComponentsLoading ? "Loading components…" : "Select component"}</MenuItem>{adjustmentComponents.map((component) => <MenuItem key={`${component.code}-${component.version}`} value={component.code}>{component.name} ({component.code}) · {component.kind.toLowerCase()} · {component.isTaxable ? "taxable" : "non-taxable"} · {component.includeInEsiWage ? "included in ESI wages" : "excluded from ESI wages"}</MenuItem>)}</TextField><TextField label="Amount (positive earning)" type="number" value={adjustmentAmount} onChange={(event) => setAdjustmentAmount(event.target.value)} required inputProps={{ step: "0.01", min: "0.01" }} fullWidth /><TextField label="Reason and audit note" value={adjustmentReason} onChange={(event) => setAdjustmentReason(event.target.value)} required multiline minRows={2} fullWidth /></Stack></DialogContent><DialogActions><Button onClick={() => setAdjustmentRun(null)}>Cancel</Button><Button type="submit" variant="contained" disabled={adjustmentEmployeesLoading || adjustmentComponentsLoading || !adjustmentEmployeeId || !adjustmentComponentCode || !adjustmentTargetPeriod || !adjustmentReason.trim() || !adjustmentAmount || Number(adjustmentAmount) <= 0 || busy === adjustmentRun?.id}>Create draft</Button></DialogActions></form></Dialog>
     </Stack>
   );
 }

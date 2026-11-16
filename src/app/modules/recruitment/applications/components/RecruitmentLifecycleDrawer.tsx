@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppSelector } from "../../../../Redux/hooks";
@@ -27,9 +27,6 @@ import {
   MenuItem,
   Rating,
   Stack,
-  Step,
-  StepLabel,
-  Stepper,
   Tooltip,
   Typography,
   Accordion,
@@ -77,6 +74,7 @@ import {
 import CustomisedButton from "../../../../shared/components/C_Button";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { PdfViewer } from "../../../../shared/components/PdfViewer";
+import { LifecycleNavigation } from "./LifecycleNavigation";
 import { applicationStatusMapper } from "../../../../../utils/common";
 import {
   Applicant,
@@ -297,6 +295,10 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
 
   // Interview state
   const [interviewSubTab, setInterviewSubTab] = useState<0 | 1>(0); // 0 = Schedule, 1 = Scorecard & Decision
+  const contentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (contentRef.current) contentRef.current.scrollTop = 0;
+  }, [mode, interviewSubTab]);
   const [interviewRounds, setInterviewRounds] = useState<any[]>([]);
   const [savedScorecards, setSavedScorecards] = useState<any[]>([]);
   const [interviewPlan, setInterviewPlan] = useState<RecruitmentInterviewPlan | null>(null);
@@ -1400,10 +1402,12 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
               xl: showSplitResumePane ? 1440 : 920,
             },
             maxWidth: "100vw",
+            boxSizing: "border-box",
             height: "100dvh",
-            p: { xs: 2, sm: 2.5 },
+            p: { xs: 1.5, sm: 2.5 },
             overflow: "hidden",
             transition: "width 220ms ease",
+            "@media (prefers-reduced-motion: reduce)": { transition: "none" },
           },
         }}
       >
@@ -1414,6 +1418,8 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
             spacing={1.5}
             alignItems="center"
             justifyContent="space-between"
+            flexWrap="wrap"
+            useFlexGap
             sx={{
               flex: "0 0 auto",
               p: 1.5,
@@ -1423,7 +1429,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
               bgcolor: "background.default",
             }}
           >
-            <Stack direction="row" spacing={1.5} alignItems="center" sx={{ minWidth: 0 }}>
+            <Stack direction="row" spacing={1.5} alignItems="center" sx={{ minWidth: 0, flex: "1 1 180px" }}>
               <Avatar sx={{ width: 42, height: 42, fontWeight: 800, bgcolor: "primary.main", color: "primary.contrastText" }}>
                 {initials}
               </Avatar>
@@ -1437,11 +1443,12 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
               </Box>
             </Stack>
 
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ flexShrink: 0 }}>
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap sx={{ width: { xs: "100%", sm: "auto" }, justifyContent: { xs: "flex-end", sm: "initial" }, minWidth: 0 }}>
               {applicant.resumeUrl && (
                 <Tooltip title={showResumePreview ? "Hide Resume" : "View Resume"}>
                   <IconButton
                     size="small"
+                    aria-label={showResumePreview ? "Hide resume" : "View resume"}
                     onClick={() => setShowResumePreview((v) => !v)}
                     sx={{
                       borderRadius: 1.75,
@@ -1469,6 +1476,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
               <Tooltip title="More Recruitment Actions">
                 <IconButton
                   size="small"
+                  aria-label="More recruitment actions"
                   onClick={(e) => setMoreToolsAnchorEl(e.currentTarget)}
                   sx={{
                     borderRadius: 1.75,
@@ -1480,6 +1488,10 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                   <MoreVert fontSize="small" />
                 </IconButton>
               </Tooltip>
+
+              <IconButton size="small" aria-label="Close hiring workflow" onClick={onClose} disabled={busy}>
+                <Close fontSize="small" />
+              </IconButton>
 
               <Menu
                 anchorEl={moreToolsAnchorEl}
@@ -1537,6 +1549,10 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                 xs: "1fr",
                 md: showSplitResumePane ? "minmax(360px, 45%) minmax(0, 55%)" : "1fr",
               },
+              gridTemplateRows: {
+                xs: showSplitResumePane ? "minmax(140px, 32%) minmax(0, 1fr)" : "minmax(0, 1fr)",
+                md: "minmax(0, 1fr)",
+              },
               gap: 2,
               overflow: "hidden",
             }}
@@ -1586,34 +1602,16 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                   border: 1,
                   borderColor: "divider",
                   borderRadius: 2.5,
-                  bgcolor: "action.hover",
+                  bgcolor: "background.default",
                 }}
               >
-                <Stepper
-                  activeStep={activeStep}
-                  alternativeLabel
-                  sx={{
-                    "& .MuiStepLabel-label": { fontSize: { xs: ".7rem", sm: ".8rem" }, mt: 0.5, fontWeight: 700 },
-                    "& .MuiStepConnector-line": { borderColor: "divider" },
-                  }}
-                >
-                  {primarySteps.map((item, index) => {
-                    const enabled = isActionEnabled(item.id) && (index <= completedStep + 1 || index === activeStep);
-                    return (
-                      <Step key={item.id} completed={index <= completedStep}>
-                        <StepLabel
-                          onClick={() => enabled && (setMode(item.id), setFeedback(undefined))}
-                          sx={{ cursor: enabled ? "pointer" : "not-allowed" }}
-                        >
-                          {item.label}
-                          <Typography component="span" variant="caption" sx={{ display: { xs: "none", sm: "block" }, color: "text.secondary" }}>
-                            {item.helper}
-                          </Typography>
-                        </StepLabel>
-                      </Step>
-                    );
-                  })}
-                </Stepper>
+                <LifecycleNavigation
+                  steps={primarySteps}
+                  activeIndex={activeStep}
+                  completedIndex={completedStep}
+                  canOpen={(id, index) => isActionEnabled(id as Mode) && (index <= completedStep + 1 || index === activeStep)}
+                  onSelect={(id) => { setMode(id as Mode); setFeedback(undefined); }}
+                />
 
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1.25 }} flexWrap="wrap" gap={1}>
                   <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
@@ -1665,17 +1663,42 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                       }}
                     />
                   </Stack>
-                  <Typography variant="caption" color="text.secondary">
-                    Step {activeStep + 1} of {primarySteps.length}
-                  </Typography>
                 </Stack>
               </Box>
 
               <Divider />
 
               {/* Form Content Area */}
-              <Box sx={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", overflowX: "hidden", pr: { xs: 0.25, sm: 0.75 } }}>
-                <Stack spacing={2} sx={{ minWidth: 0 }}>
+              <Box
+                ref={contentRef}
+                sx={{
+                  flex: "1 1 auto", minHeight: 0, minWidth: 0, overflowY: "auto", overflowX: "auto",
+                  pr: { xs: 0.25, sm: 0.75 },
+                  "& .MuiFormControl-root": { minWidth: 0, maxWidth: "100%" },
+                  "& .MuiOutlinedInput-root": { borderRadius: 1.5 },
+                  "& .MuiButton-root": { textTransform: "none", minHeight: 36 },
+                  "& .MuiChip-root": { maxWidth: "100%" },
+                  "& .MuiAlert-root": { borderRadius: 2 },
+                }}
+              >
+                <Stack
+                  key={`${mode}-${interviewSubTab}`}
+                  spacing={2}
+                  sx={{
+                    minWidth: 0,
+                    animation: "lifecycleContentEnter 200ms ease-out both",
+                    "@keyframes lifecycleContentEnter": { from: { opacity: 0, transform: "translateY(6px)" }, to: { opacity: 1, transform: "translateY(0)" } },
+                    "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+                  }}
+                >
+                  <Box component="header" sx={{ pt: 0.5 }}>
+                    <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                      Step {activeStep + 1} of {primarySteps.length}
+                    </Typography>
+                    <Typography variant="h6" fontWeight={700} sx={{ mt: 0.25 }}>
+                      {primarySteps[activeStep]?.label}
+                    </Typography>
+                  </Box>
                   {/* Concluded / Terminal State Banner */}
                   {stage === ApplicationStatus.Rejected && (
                     <Box
@@ -1721,7 +1744,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1}>
                             <Box>
                               <Typography variant="subtitle2" fontWeight={800} color={meetsScreeningThreshold ? "success.dark" : "warning.dark"}>
-                                Screening Evaluation Policy
+                                Screening score
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
                                 Pass Threshold: <strong>≥ {passThreshold}%</strong>{" "}
@@ -1746,7 +1769,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                           <Box sx={{ mt: 1.5 }}>
                             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
                               <Typography variant="caption" color="text.secondary">
-                                Evaluation Score Meter
+                                Score
                               </Typography>
                               <Typography variant="caption" fontWeight={700} color={meetsScreeningThreshold ? "success.dark" : "warning.dark"}>
                                 {currentScreeningScore} / 100
@@ -1786,12 +1809,12 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1}>
                             <Box>
                               <Typography variant="subtitle2" fontWeight={800} color="text.primary">
-                                Screening Evaluation (Flexible Review)
+                                Screening review
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
                                 {vacancyData?.workflowMode === "Direct"
-                                  ? "Fast-track / direct hire workflow active — no minimum screening score cutoff required."
-                                  : "Flexible review policy — no mandatory threshold cutoff enforced for this position."}
+                                  ? "Direct hire: no minimum score required."
+                                  : "No minimum screening score is required."}
                               </Typography>
                             </Box>
                             <Chip
@@ -1807,7 +1830,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                             <Box sx={{ mt: 1.5 }}>
                               <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
                                 <Typography variant="caption" color="text.secondary">
-                                  Evaluation Score Meter
+                                Score
                                 </Typography>
                                 <Typography variant="caption" fontWeight={700} color="text.primary">
                                   {currentScreeningScore} / 100
@@ -1868,7 +1891,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                       {/* Threshold warning alert if Pass is selected but score is insufficient */}
                       {isScreeningThresholdActive && screening.decision === "Pass" && !meetsScreeningThreshold && (
                         <Alert severity="warning" sx={{ borderRadius: 2 }}>
-                          <strong>Score below pass threshold:</strong> Evaluation policy requires a score of at least <strong>{passThreshold}%</strong> ({isJobSpecificThreshold ? "configured in the Job Description" : "company enterprise default"}) to mark an applicant as <strong>Pass</strong>. Please increase the score or select <strong>Hold</strong> / <strong>Reject</strong>.
+                          A score of at least <strong>{passThreshold}%</strong> is required to pass. Adjust the score or select Hold or Reject.
                         </Alert>
                       )}
 
@@ -1880,8 +1903,8 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                         <Stack spacing={1.25}>
                           {screening.criteria.map((criterion, index) => (
                             <Box key={`${criterion.name}-${index}`} sx={{ p: 1.5, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "background.paper" }}>
-                              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                                <Box>
+                              <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
+                                <Box sx={{ minWidth: 0 }}>
                                   <Typography fontWeight={700} variant="body2">
                                     {criterion.name}
                                   </Typography>
@@ -1896,6 +1919,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                   />
                                   <AppSwitch
                                     checked={criterion.passed}
+                                    inputProps={{ "aria-label": `Mark ${criterion.name} as met` }}
                                     onChange={(event) => {
                                       const checked = event.target.checked;
                                       setScreening((current) => {
@@ -1917,7 +1941,9 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                               <AppTextField
                                 sx={{ ...fieldSx, mt: 1 }}
                                 size="small"
-                                placeholder="Add specific evaluator notes or evidence..."
+                                label="Notes or evidence"
+                                placeholder="Add notes"
+                                fullWidth
                                 value={criterion.notes ?? ""}
                                 onChange={(event) =>
                                   setScreening((current) => ({
@@ -1963,29 +1989,34 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                     <Stack spacing={2.5}>
                       {/* Modern Segmented Control Switcher */}
                       <Box
+                        role="tablist"
+                        aria-label="Interview sections"
                         sx={{
-                          p: 0.5,
-                          bgcolor: "action.hover",
-                          borderRadius: 3,
-                          border: "1px solid",
+                          bgcolor: "background.paper",
+                          borderBottom: "1px solid",
                           borderColor: "divider",
                           display: "flex",
-                          gap: 0.75,
+                          flexDirection: { xs: "column", sm: "row" },
+                          overflowX: "auto",
                         }}
                       >
                         <ButtonBase
+                          role="tab"
+                          aria-selected={interviewSubTab === 0}
                           onClick={() => setInterviewSubTab(0)}
                           sx={{
                             flex: 1,
+                            minWidth: { xs: 0, sm: 180 },
+                            width: { xs: "100%", sm: "auto" },
                             py: 1.1,
                             px: { xs: 1.5, sm: 2.5 },
-                            borderRadius: 2.5,
-                            bgcolor: interviewSubTab === 0 ? "background.paper" : "transparent",
+                            borderRadius: 0,
+                            borderBottom: "2px solid",
+                            borderColor: interviewSubTab === 0 ? "primary.main" : "transparent",
+                            bgcolor: "transparent",
                             color: interviewSubTab === 0 ? "primary.main" : "text.secondary",
                             fontWeight: interviewSubTab === 0 ? 850 : 600,
                             fontSize: "0.835rem",
-                            boxShadow: interviewSubTab === 0 ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                            transition: "all 0.18s ease-in-out",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -1997,7 +2028,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                           }}
                         >
                           <Event sx={{ fontSize: 18 }} />
-                          <span>1. Interview Rounds</span>
+                          <span>Interview rounds</span>
                           <Chip
                             size="small"
                             label={sortedRounds.length}
@@ -2013,18 +2044,22 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                         </ButtonBase>
 
                         <ButtonBase
+                          role="tab"
+                          aria-selected={interviewSubTab === 1}
                           onClick={() => setInterviewSubTab(1)}
                           sx={{
                             flex: 1,
+                            minWidth: { xs: 0, sm: 210 },
+                            width: { xs: "100%", sm: "auto" },
                             py: 1.1,
                             px: { xs: 1.5, sm: 2.5 },
-                            borderRadius: 2.5,
-                            bgcolor: interviewSubTab === 1 ? "background.paper" : "transparent",
+                            borderRadius: 0,
+                            borderBottom: "2px solid",
+                            borderColor: interviewSubTab === 1 ? "primary.main" : "transparent",
+                            bgcolor: "transparent",
                             color: interviewSubTab === 1 ? "primary.main" : "text.secondary",
                             fontWeight: interviewSubTab === 1 ? 850 : 600,
                             fontSize: "0.835rem",
-                            boxShadow: interviewSubTab === 1 ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                            transition: "all 0.18s ease-in-out",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -2036,7 +2071,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                           }}
                         >
                           <FactCheck sx={{ fontSize: 18 }} />
-                          <span>2. Scorecard & Hiring Decision</span>
+                          <span>Scorecards & decision</span>
                           <Chip
                             size="small"
                             label={savedScorecards.length}
@@ -2070,24 +2105,11 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                               <Box>
                                 <Stack direction="row" spacing={1} alignItems="center">
                                   <Typography variant="subtitle1" fontWeight={850}>
-                                    Scheduled Interview Stages ({sortedRounds.length})
+                                    Interview rounds
                                   </Typography>
-                                  <Chip
-                                    size="small"
-                                    label={`${sortedRounds.length} ${sortedRounds.length === 1 ? "Round" : "Rounds"}`}
-                                    variant="outlined"
-                                    sx={{
-                                      fontWeight: 750,
-                                      height: 22,
-                                      borderRadius: 1.5,
-                                      bgcolor: (t) => alpha(t.palette.primary.main, 0.06),
-                                      color: "primary.main",
-                                      borderColor: (t) => alpha(t.palette.primary.main, 0.25),
-                                    }}
-                                  />
                                 </Stack>
                                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
-                                  Review interview schedules, join meeting links, track panel feedback, and advance stages.
+                                  Schedule interviews and review panel feedback.
                                 </Typography>
                               </Box>
                               {!isSchedulingRoundOpen && (
@@ -2139,14 +2161,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                       border: "1px solid",
                                       borderColor: isDebriefed ? "success.main" : "divider",
                                       bgcolor: "background.paper",
-                                      boxShadow: isDebriefed
-                                        ? "0 4px 16px rgba(16,185,129,0.06)"
-                                        : "0 2px 10px rgba(0,0,0,0.03)",
-                                      transition: "all 0.2s ease-in-out",
-                                      "&:hover": {
-                                        boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
-                                        borderColor: isDebriefed ? "success.main" : "primary.light",
-                                      },
+                                      boxShadow: "none",
                                     }}
                                   >
                                     {/* Top Row: Badges, Title, Action Buttons */}
@@ -3140,8 +3155,8 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
                                   <Typography variant="subtitle2" fontWeight={850}>
                                     {isEditingScorecard
-                                      ? `Update Scorecard for Round ${currentTargetRound}`
-                                      : `Record Panelist Scorecard for Round ${currentTargetRound}`}
+                                      ? `Edit scorecard · Round ${currentTargetRound}`
+                                      : `Scorecard · Round ${currentTargetRound}`}
                                   </Typography>
                                   {isEditingScorecard && (
                                     <Button
@@ -3282,10 +3297,11 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                         const critId = criterion.id || `crit-fallback-${index}`;
                                         return (
                                           <Box key={critId} sx={{ p: 1.5, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "action.hover" }}>
-                                            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ sm: "center" }} justifyContent="space-between">
+                                            <Stack direction={{ xs: "column", md: "row" }} spacing={1.5} alignItems={{ md: "center" }} justifyContent="space-between">
                                               <AppTextField
-                                                sx={{ ...fieldSx, flex: 1.5 }}
+                                                sx={{ ...fieldSx, flex: 1.5, minWidth: 0 }}
                                                 size="small"
+                                                fullWidth
                                                 label="Criterion Name *"
                                                 value={criterion.name}
                                                 onChange={(e) =>
@@ -3297,7 +3313,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                                   }))
                                                 }
                                               />
-                                              <Stack direction="row" spacing={1} alignItems="center">
+                                              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
                                                 <Typography variant="caption" fontWeight={700}>
                                                   Rating:
                                                 </Typography>
@@ -3326,6 +3342,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                                       value={criterion.rating || 7}
                                                       max={10}
                                                       precision={0.5}
+                                                      sx={{ fontSize: { xs: "1.05rem", sm: "1.4rem" } }}
                                                       onChange={(_, val) =>
                                                         setScorecard((c) => ({
                                                           ...c,
@@ -3533,14 +3550,14 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                       {offer.status === "Sent" && (
                         <Box sx={{ p: 2.25, borderRadius: 2.5, bgcolor: (t) => alpha(t.palette.info.main, 0.05), border: "1px solid", borderColor: "info.main" }}>
                           <Stack spacing={1.75}>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" useFlexGap gap={1}>
                               <Stack direction="row" spacing={1.25} alignItems="center">
                                 <Box sx={{ width: 36, height: 36, borderRadius: "50%", bgcolor: "info.lighter", display: "grid", placeItems: "center", color: "info.main" }}>
                                   <EmailOutlined sx={{ fontSize: 20 }} />
                                 </Box>
                                 <Box>
                                   <Typography variant="subtitle2" fontWeight={850} color="info.dark">
-                                    Official Offer Dispatched via Email
+                                    Offer sent
                                   </Typography>
                                   <Typography variant="caption" color="text.secondary">
                                     Delivered to <strong>{applicant.email || "candidate's email"}</strong>
@@ -3556,7 +3573,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                 {offer.startDateUtc && ` · Expected Joining: ${offer.startDateUtc}`}
                               </Typography>
                               <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.75, lineHeight: 1.5 }}>
-                                The formal offer letter was sent directly to the candidate's email inbox. The candidate reviews the terms and replies with their written confirmation or signed copy.
+                                The candidate can reply with their confirmation or signed offer.
                               </Typography>
                             </Box>
 
@@ -3668,7 +3685,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                   {/* Standard Company Presets */}
                                   <Box sx={{ p: 1.25, bgcolor: (t) => alpha(t.palette.text.primary, 0.02), borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
                                     <Typography variant="caption" fontWeight={750} color="text.secondary" sx={{ display: "block", mb: 0.75 }}>
-                                      Standard Company Payroll Components (Click to Add):
+                                      Add a standard component
                                     </Typography>
                                     <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap gap={0.75}>
                                       {standardPayrollComponentPresets.map((preset) => {
@@ -3745,7 +3762,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                             borderColor: "divider",
                                           }}
                                         >
-                                          <Box sx={{ flex: 2 }}>
+                                          <Box sx={{ flex: 2, minWidth: 0, width: "100%" }}>
                                             <Autocomplete
                                               freeSolo
                                               size="small"
@@ -3760,14 +3777,16 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                                   sx={fieldSx}
                                                   label={`Component ${index + 1} Name`}
                                                   placeholder="E.g. House Rent Allowance (HRA)"
+                                                  fullWidth
                                                 />
                                               )}
                                             />
                                           </Box>
-                                          <Box sx={{ flex: 1.5 }}>
+                                          <Box sx={{ flex: 1.5, minWidth: 0, width: "100%" }}>
                                             <AppTextField
                                               sx={fieldSx}
                                               label="Annual Amount"
+                                              fullWidth
                                               type="number"
                                               placeholder="0"
                                               value={item.value}
@@ -3849,7 +3868,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                         </Typography>
                                       </Box>
 
-                                      <Box sx={{ sm: { textAlign: "right" } }}>
+                                      <Box sx={{ textAlign: { xs: "left", sm: "right" } }}>
                                         <Typography variant="caption" color="primary.main" fontWeight={800} display="block">
                                           TOTAL ANNUAL CTC
                                         </Typography>
@@ -3866,29 +3885,6 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                               </AccordionDetails>
                             </Accordion>
 
-                            {/* Single Clean Primary Action Button */}
-                            <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ pt: 1 }}>
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                size="large"
-                                startIcon={<Send />}
-                                onClick={() => handleSendOffer("Sent")}
-                                disabled={busy || Boolean(offerValidation)}
-                                sx={{ flex: 2, textTransform: "none", fontWeight: 800, borderRadius: 2 }}
-                              >
-                                Send Offer to Candidate
-                              </Button>
-                              <Button
-                                variant="outlined"
-                                size="large"
-                                onClick={() => handleSendOffer("Draft")}
-                                disabled={busy}
-                                sx={{ flex: 1, textTransform: "none", fontWeight: 700, borderRadius: 2 }}
-                              >
-                                Save Draft
-                              </Button>
-                            </Stack>
                           </Stack>
                         </Box>
                       )}
@@ -3958,7 +3954,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                         <Stack spacing={2}>
                           <Box sx={{ p: 2, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "background.paper" }}>
                             <Typography variant="subtitle2" fontWeight={850} sx={{ mb: 1.5 }}>
-                              Candidate Details & Assigned Employee ID
+                              Employee details
                             </Typography>
                             <Stack spacing={1.75}>
                               <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
@@ -3988,7 +3984,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                               />
 
                               <Box>
-                                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.75 }}>
+                                <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" useFlexGap gap={1} sx={{ mb: 0.75 }}>
                                   <Typography variant="body2" fontWeight={750}>
                                     Assigned Employee ID *
                                   </Typography>
@@ -4004,13 +4000,15 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                 </Stack>
                                 <AppTextField
                                   sx={fieldSx}
+                                  label="Employee ID"
+                                  fullWidth
                                   placeholder={suggestedEmployeeId || "E.g. CD-0137"}
                                   value={handoff.employeeId}
                                   onChange={(e) => setHandoff({ ...handoff, employeeId: e.target.value })}
                                   required
                                 />
                                 <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
-                                  Official ID generated sequentially from company policy ({suggestedEmployeeId || "CD-####"}). Keep as-is or enter a custom ID.
+                                  Use the suggested ID or enter a custom one.
                                 </Typography>
                               </Box>
                             </Stack>
@@ -4018,7 +4016,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
 
                           {/* Preboarding Verification Checklist */}
                           <Box sx={{ p: 2, border: 1, borderColor: "divider", borderRadius: 2.5, bgcolor: "action.hover" }}>
-                            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" useFlexGap gap={1} sx={{ mb: 1 }}>
                               <Typography variant="subtitle2" fontWeight={800}>
                                 Preboarding Checklist
                               </Typography>
@@ -4028,6 +4026,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                                 </Typography>
                                 <AppSwitch
                                   checked={handoff.autoCompletePreboarding}
+                                  inputProps={{ "aria-label": "Auto-complete preboarding verification" }}
                                   onChange={(event) =>
                                     setHandoff({ ...handoff, autoCompletePreboarding: event.target.checked })
                                   }
@@ -4075,7 +4074,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                 direction={{ xs: "column-reverse", sm: "row" }}
                 spacing={1}
                 justifyContent="flex-end"
-                sx={{ flex: "0 0 auto", pt: 1.25, borderTop: 1, borderColor: "divider" }}
+                sx={{ flex: "0 0 auto", pt: 1.25, borderTop: 1, borderColor: "divider", "& .MuiButton-contained.Mui-disabled": { bgcolor: "action.disabledBackground", color: "text.disabled", boxShadow: "none" } }}
               >
                 {mode === "offer" ? (
                   <Stack
@@ -4093,7 +4092,7 @@ export const RecruitmentLifecycleDrawer = ({ open, applicant, onClose, onSaved }
                         {offer.currency} {offerComponentTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                       </Typography>
                     </Box>
-                    <Stack direction="row" spacing={1} sx={{ width: { xs: "100%", sm: "auto" }, justifyContent: "flex-end" }}>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ width: { xs: "100%", sm: "auto" }, justifyContent: "flex-end", "& > button": { flex: { xs: "1 1 auto", sm: "0 0 auto" } } }}>
                       <CustomisedButton
                         variant="outlined"
                         label="Close"

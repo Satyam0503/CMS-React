@@ -28,6 +28,9 @@ const PayRollManagement = lazy(
 const PayrollSettings = lazy(
   () => import("../modules/payrollsettings/PayrollSettings.tsx"),
 );
+const TaxDeclarationReviewQueue = lazy(
+  () => import("../modules/payroll/components/TaxDeclarationReviewQueue.tsx"),
+);
 const EmployeeLifecycleManagement = lazy(
   () => import("../modules/employees/EmployeeLifecycleManagement.tsx"),
 );
@@ -180,6 +183,16 @@ const PrivateRoutes = () => {
             <ProtectedRoute module={ModulesName.PayRoll}>
               <SuspensedView>
                 <PayRollManagement />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="taxdeclarations"
+          element={
+            <ProtectedRoute module={ModulesName.PayRoll} permission={Permission.View}>
+              <SuspensedView>
+                <TaxDeclarationReviewQueue />
               </SuspensedView>
             </ProtectedRoute>
           }

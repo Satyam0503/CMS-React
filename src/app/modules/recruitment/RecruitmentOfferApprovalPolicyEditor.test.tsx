@@ -167,8 +167,8 @@ describe("RecruitmentOfferApprovalPolicyEditor", () => {
     });
 
     expect(container.textContent).toContain("Offer Approval & Compensation Governance");
-    expect(container.textContent).toContain("Company-wide Policy");
-    expect(container.textContent).toContain("Vacancy-Specific Override");
+    expect(container.textContent).toContain("Company policy");
+    expect(container.textContent).toContain("Vacancy override");
     expect(container.textContent).toContain("Active Delegation");
     expect(container.textContent).toContain("Sarah Connor");
   });
@@ -184,9 +184,10 @@ describe("RecruitmentOfferApprovalPolicyEditor", () => {
       await Promise.resolve();
     });
 
-    expect(container.textContent).toContain("Active Governance Enforcement Rule");
+    expect(container.textContent).toContain("Policy summary");
+    expect(container.textContent).toContain("Approval trigger");
     expect(container.textContent).toContain("Sarah Connor");
-    expect(container.textContent).toContain("₹ 10,00,000");
+    expect(container.textContent).toContain("10,00,000");
   });
 
   it("switches to Vacancy-Specific Override mode and shows vacancy search input", async () => {
@@ -201,7 +202,7 @@ describe("RecruitmentOfferApprovalPolicyEditor", () => {
     });
 
     const vacancyChip = Array.from(container.querySelectorAll(".MuiChip-root")).find(
-      (el) => el.textContent?.includes("Vacancy-Specific Override")
+      (el) => el.textContent?.includes("Vacancy override")
     );
     expect(vacancyChip).toBeDefined();
 

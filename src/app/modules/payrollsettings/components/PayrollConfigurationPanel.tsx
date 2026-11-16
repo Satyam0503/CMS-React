@@ -140,6 +140,9 @@ type SalaryComponent = {
   calculationType: "FIXED" | "PERCENT_OF_GROSS" | "PERCENT_OF_COMPONENT";
   baseComponentCode?: string;
   isTaxable: boolean;
+  includeInPfWage?: boolean;
+  includeInEsiWage?: boolean;
+  includeInPtWage?: boolean;
   effectiveFrom: string;
   effectiveTo?: string | null;
   isActive: boolean;
@@ -223,6 +226,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
   const [componentCalculationType, setComponentCalculationType] = useState<SalaryComponent["calculationType"]>("FIXED");
   const [componentBaseCode, setComponentBaseCode] = useState("");
   const [componentTaxable, setComponentTaxable] = useState(true);
+  const [componentIncludeInPfWage, setComponentIncludeInPfWage] = useState(false);
+  const [componentIncludeInEsiWage, setComponentIncludeInEsiWage] = useState(false);
+  const [componentIncludeInPtWage, setComponentIncludeInPtWage] = useState(false);
   const [componentEffectiveFrom, setComponentEffectiveFrom] = useState(() => dayjs().format("YYYY-MM-DD"));
   const [componentEffectiveTo, setComponentEffectiveTo] = useState("");
   const [componentFilterText, setComponentFilterText] = useState("");
@@ -594,6 +600,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
           calculationType: componentCalculationType,
           baseComponentCode: componentBaseCode.trim().toUpperCase() || undefined,
           isTaxable: componentTaxable,
+          includeInPfWage: componentKind === "EARNING" && componentIncludeInPfWage,
+          includeInEsiWage: componentKind === "EARNING" && componentIncludeInEsiWage,
+          includeInPtWage: componentKind === "EARNING" && componentIncludeInPtWage,
           effectiveFrom: `${componentEffectiveFrom}T00:00:00`,
           effectiveTo: componentEffectiveTo ? `${componentEffectiveTo}T00:00:00` : undefined,
           isActive: true,
@@ -609,6 +618,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
         setComponentKind("EARNING");
         setComponentCalculationType("FIXED");
         setComponentTaxable(true);
+        setComponentIncludeInPfWage(false);
+        setComponentIncludeInEsiWage(false);
+        setComponentIncludeInPtWage(false);
         setComponentEffectiveFrom(dayjs().format("YYYY-MM-DD"));
         setComponentEffectiveTo("");
         await loadAll();
@@ -639,6 +651,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
           calculationType: component.calculationType,
           baseComponentCode: component.baseComponentCode,
           isTaxable: component.isTaxable,
+          includeInPfWage: component.includeInPfWage ?? false,
+          includeInEsiWage: component.includeInEsiWage ?? false,
+          includeInPtWage: component.includeInPtWage ?? false,
           effectiveFrom: `${effectiveFrom}T00:00:00`,
           effectiveTo: undefined,
           isActive,
@@ -672,11 +687,11 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
   };
 
   const standardComponentPresets = [
-    { code: "HRA", name: "House Rent Allowance", kind: "EARNING" as const, calculationType: "FIXED" as const, taxable: true },
-    { code: "SPECIAL_ALLOWANCE", name: "Special Allowance", kind: "EARNING" as const, calculationType: "FIXED" as const, taxable: true },
-    { code: "LTA", name: "Leave Travel Allowance", kind: "EARNING" as const, calculationType: "FIXED" as const, taxable: true },
-    { code: "BONUS", name: "Performance Bonus", kind: "EARNING" as const, calculationType: "FIXED" as const, taxable: true },
-    { code: "HEALTH_INSURANCE", name: "Health Insurance", kind: "DEDUCTION" as const, calculationType: "FIXED" as const, taxable: false },
+    { code: "HRA", name: "House Rent Allowance", kind: "EARNING" as const, calculationType: "FIXED" as const, taxable: true, pf: false, esi: true, pt: true },
+    { code: "SPECIAL_ALLOWANCE", name: "Special Allowance", kind: "EARNING" as const, calculationType: "FIXED" as const, taxable: true, pf: true, esi: true, pt: true },
+    { code: "LTA", name: "Leave Travel Allowance", kind: "EARNING" as const, calculationType: "FIXED" as const, taxable: true, pf: false, esi: false, pt: true },
+    { code: "BONUS", name: "Performance Bonus", kind: "EARNING" as const, calculationType: "FIXED" as const, taxable: true, pf: false, esi: true, pt: true },
+    { code: "HEALTH_INSURANCE", name: "Health Insurance", kind: "DEDUCTION" as const, calculationType: "FIXED" as const, taxable: false, pf: false, esi: false, pt: false },
   ];
 
   const [isSeedingStandard, setIsSeedingStandard] = useState(false);
@@ -708,6 +723,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
     kind: SalaryComponent["kind"];
     calculationType: SalaryComponent["calculationType"];
     taxable: boolean;
+    pf: boolean;
+    esi: boolean;
+    pt: boolean;
   }) => {
     setComponentId(undefined);
     setComponentVersion(0);
@@ -716,6 +734,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
     setComponentKind(preset.kind);
     setComponentCalculationType(preset.calculationType);
     setComponentTaxable(preset.taxable);
+    setComponentIncludeInPfWage(preset.pf);
+    setComponentIncludeInEsiWage(preset.esi);
+    setComponentIncludeInPtWage(preset.pt);
     setComponentBaseCode("");
     setComponentEffectiveFrom(dayjs().startOf("year").format("YYYY-MM-DD"));
     setComponentEffectiveTo("");
@@ -1977,7 +1998,15 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       size="small"
                       label="Kind"
                       value={componentKind}
-                      onChange={(e) => setComponentKind(e.target.value as SalaryComponent["kind"])}
+                      onChange={(e) => {
+                        const nextKind = e.target.value as SalaryComponent["kind"];
+                        setComponentKind(nextKind);
+                        if (nextKind === "DEDUCTION") {
+                          setComponentIncludeInPfWage(false);
+                          setComponentIncludeInEsiWage(false);
+                          setComponentIncludeInPtWage(false);
+                        }
+                      }}
                       helperText={componentKind === "EARNING" ? "Adds to monthly Gross Pay" : "Subtracts from salary"}
                     >
                       <MenuItem value="EARNING">Earning (+)</MenuItem>
@@ -2091,6 +2120,36 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                     />
                   </Grid>
 
+                  <Grid size={{ xs: 12 }}>
+                    <Box sx={{ p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
+                      <Typography variant="subtitle2" fontWeight={750}>Statutory wage classification</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Set company component treatment for applicable earnings. Confirm each mapping against current law and your payroll adviser; these settings do not override statutory rules.
+                      </Typography>
+                      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 1 }}>
+                        {([
+                          ["PF", componentIncludeInPfWage, setComponentIncludeInPfWage],
+                          ["ESI", componentIncludeInEsiWage, setComponentIncludeInEsiWage],
+                          ["Professional tax", componentIncludeInPtWage, setComponentIncludeInPtWage],
+                        ] as const).map(([label, checked, setChecked]) => (
+                          <FormControlLabel
+                            key={label}
+                            control={
+                              <AppCheckbox
+                                size="small"
+                                checked={componentKind === "EARNING" && checked}
+                                disabled={componentKind !== "EARNING"}
+                                onChange={(event) => setChecked(event.target.checked)}
+                                inputProps={{ "aria-label": `Include in ${label} wages` }}
+                              />
+                            }
+                            label={<Typography variant="body2" fontWeight={650}>Include in {label} wages</Typography>}
+                          />
+                        ))}
+                      </Stack>
+                    </Box>
+                  </Grid>
+
                   {/* Live Formula Preview Box */}
                   <Grid size={{ xs: 12 }}>
                     <Box
@@ -2173,6 +2232,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                           setComponentCode("");
                           setComponentName("");
                           setComponentBaseCode("");
+                          setComponentIncludeInPfWage(false);
+                          setComponentIncludeInEsiWage(false);
+                          setComponentIncludeInPtWage(false);
                           setComponentEffectiveTo("");
                         }}
                         sx={{ height: 38, px: 2, textTransform: "none", fontWeight: 700, borderRadius: "8px" }}
@@ -2285,6 +2347,7 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Kind</TableCell>
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Calculation</TableCell>
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Tax</TableCell>
+                    <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Statutory wage base</TableCell>
                     <TableCell sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Include in payroll</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase" }}>Action</TableCell>
                   </TableRow>
@@ -2313,6 +2376,11 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                       <TableCell>
                         <Chip size="small" variant="outlined" color={component.isTaxable ? "warning" : "default"} label={component.isTaxable ? "Taxable" : "Exempt"} sx={{ height: 22, borderRadius: "4px" }} />
                       </TableCell>
+                      <TableCell sx={{ color: "text.secondary", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                        {component.kind === "EARNING"
+                          ? `PF ${component.includeInPfWage ? "✓" : "—"} · ESI ${component.includeInEsiWage ? "✓" : "—"} · PT ${component.includeInPtWage ? "✓" : "—"}`
+                          : "Not applicable"}
+                      </TableCell>
                       <TableCell>
                         <AppCheckbox
                           size="small"
@@ -2336,6 +2404,9 @@ export function PayrollConfigurationPanel({ canEdit, canApprove, canApproveEmplo
                               setComponentCalculationType(component.calculationType);
                               setComponentBaseCode(component.baseComponentCode || "");
                               setComponentTaxable(component.isTaxable);
+                              setComponentIncludeInPfWage(component.includeInPfWage ?? false);
+                              setComponentIncludeInEsiWage(component.includeInEsiWage ?? false);
+                              setComponentIncludeInPtWage(component.includeInPtWage ?? false);
                               setComponentEffectiveFrom(dayjs(component.effectiveFrom).isAfter(dayjs(), "day") ? dayjs(component.effectiveFrom).format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD"));
                               setComponentEffectiveTo("");
                             }}

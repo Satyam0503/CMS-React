@@ -54,7 +54,7 @@ export default function RecruitmentFeedbackSlaCard() {
           : isDark
           ? "rgba(255, 255, 255, 0.08)"
           : "#E2E8F0",
-        borderRadius: "14px",
+        borderRadius: "12px",
         bgcolor: hasOverdue
           ? isDark
             ? "rgba(245, 158, 11, 0.05)"
@@ -62,7 +62,7 @@ export default function RecruitmentFeedbackSlaCard() {
           : isDark
           ? "rgba(30, 41, 59, 0.3)"
           : "background.paper",
-        boxShadow: isDark ? "0 2px 10px rgba(0,0,0,0.2)" : "0 1px 3px rgba(0,0,0,0.02)",
+        boxShadow: "none",
         minWidth: 0,
         maxWidth: "100%",
         boxSizing: "border-box",

@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { checkIsActive } from "../../../../helpers";
@@ -19,9 +19,22 @@ const SidebarMenuItem: FC<Props> = ({
 }) => {
   const { pathname } = useLocation();
   const isActive = checkIsActive(pathname, to);
+  const [isTooltipOpen, setTooltipOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isMiniSidebar) setTooltipOpen(false);
+  }, [isMiniSidebar]);
 
   return (
-    <Tooltip title={title} placement="right" arrow disableHoverListener={!isMiniSidebar}>
+    <Tooltip
+      title={title}
+      placement="right"
+      arrow
+      open={isMiniSidebar && isTooltipOpen}
+      onOpen={() => setTooltipOpen(true)}
+      onClose={() => setTooltipOpen(false)}
+      disableHoverListener={!isMiniSidebar}
+    >
       <ListItemButton
         component={Link}
         to={to}

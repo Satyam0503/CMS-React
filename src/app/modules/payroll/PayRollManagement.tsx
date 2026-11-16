@@ -48,6 +48,7 @@ import Refresh from "@mui/icons-material/Refresh";
 import { AddUpdateEmployeePayRoll } from "./AddUpdateEmployeePayRoll";
 
 import { useAppSelector } from "../../Redux/hooks";
+import { useNavigate } from "react-router-dom";
 import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../utils/common";
 import { UnauthorizedStay } from "../users/about/components/ProtectedRoute";
 import { ModulesName, Permission } from "../../../utils/enums";
@@ -64,6 +65,7 @@ import { useIsDark } from "../theme/useIsDark";
 const PayRollManagement = () => {
     const isDark = useIsDark();
     const { setPageTitle } = usePageData();
+    const navigate = useNavigate();
     const { formatMessage: i } = useIntl();
     const [search, setSearch] = useState<string>("");
     const [payMonth, setPayMonth] = useState<Dayjs | null>(dayjs().subtract(1, "month").startOf("day"));
@@ -449,6 +451,9 @@ const PayRollManagement = () => {
                                 sx={{ width: "100%", maxWidth: "none" }}
                             />
                         </Box>
+                        <Button variant="outlined" onClick={() => navigate("/taxdeclarations")} sx={{ minHeight: 40, flexShrink: 0 }}>
+                            Tax declarations
+                        </Button>
                     </Stack>
 
                     {/* Row 2: All Operations & Controls (Left: Filter + Upload + Sample + Add; Right: Calculate + Process Salary) */}

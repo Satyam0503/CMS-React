@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { FormikProps } from "formik";
+import dayjs from "dayjs";
 import { alpha, Box, Chip, DialogActions, Stack, Theme, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
@@ -37,7 +38,26 @@ export const AddUpdateEmployeeSalary = ({
   const policyRef = useRef<EmployeePayrollPenaltyPolicyHandle | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const isSalaryDirty = (): boolean => {
+    if (!formRef.current) return false;
+    const { values, initialValues } = formRef.current;
+    if (!values || !initialValues) return false;
+    const formatDt = (d?: unknown) => (d ? dayjs(d as string | Date).format("YYYY-MM-DD") : "");
+    return (
+      Number(values.basicPay ?? 0) !== Number(initialValues.basicPay ?? 0) ||
+      Number(values.hra ?? 0) !== Number(initialValues.hra ?? 0) ||
+      Number(values.lta ?? 0) !== Number(initialValues.lta ?? 0) ||
+      Number(values.otherAllowance ?? 0) !== Number(initialValues.otherAllowance ?? 0) ||
+      Number(values.bonus ?? 0) !== Number(initialValues.bonus ?? 0) ||
+      Number(values.healthInsurance ?? 0) !== Number(initialValues.healthInsurance ?? 0) ||
+      String(values.paymentFrequency ?? "") !== String(initialValues.paymentFrequency ?? "") ||
+      formatDt(values.effectiveFrom) !== formatDt(initialValues.effectiveFrom) ||
+      formatDt(values.effectiveTo) !== formatDt(initialValues.effectiveTo)
+    );
+  };
+
   const handleUserUpdate = async (success: boolean) => {
+    setLoading(false);
     if (success) {
       if (!await policyRef.current?.save()) {
         toast.error("Salary was saved, but the employee payroll policy could not be saved. Correct it and save again.");
@@ -47,12 +67,36 @@ export const AddUpdateEmployeeSalary = ({
       handleClose();
       handlePageRefresh();
     } else {
-      toast.error(i({ id: "ERROR.SOMETHING_WRONG" }));
+      if (policyRef.current?.isDirty()) {
+        toast.info("Salary structure could not be updated, but you can save the Attendance & Penalty Policy using the 'Save Policy' button.");
+      }
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setLoading(true);
+
+    const salaryChanged = isSalaryDirty();
+    const policyChanged = policyRef.current?.isDirty() ?? false;
+
+    // If salary components were NOT modified, do not attempt to re-save an immutable salary structure.
+    // Directly save the penalty policy instead.
+    if (!salaryChanged) {
+      const policySuccess = await policyRef.current?.save();
+      setLoading(false);
+      if (policySuccess) {
+        toast.success(
+          policyChanged
+            ? "Attendance & Penalty policy saved successfully."
+            : i({ id: "PAYROLL_SETTINGS.SALARY_SAVED" })
+        );
+        handleClose();
+        handlePageRefresh();
+      }
+      return;
+    }
+
+    // Salary WAS modified: submit salary structure (policy is saved on successful response)
     formRef.current?.handleSubmit();
   };
 
@@ -159,7 +203,11 @@ export const AddUpdateEmployeeSalary = ({
         defaultEffectiveFrom={defaultEffectiveFrom}
         canApprove={canApprove}
       />
-      <EmployeePayrollPenaltyPolicy ref={policyRef} employeeUserId={userId} />
+      <EmployeePayrollPenaltyPolicy
+        ref={policyRef}
+        employeeUserId={userId}
+        onPolicySaved={handlePageRefresh}
+      />
       <DialogActions sx={{ mt: 3, pt: 2, borderTop: "1px solid", borderColor: "divider", gap: 1 }}>
         <CustomisedButton
           label={i({ id: "BUTTON.CANCEL" })}

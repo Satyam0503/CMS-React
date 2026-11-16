@@ -5,7 +5,7 @@ import { PayrollRunsPanel } from "./PayrollRunsPanel";
 import * as payrollServices from "../services";
 
 vi.mock("../services", () => ({
-  approvePayrollRun: vi.fn(), calculatePayrollRun: vi.fn(), cancelPayrollRun: vi.fn(), createPayrollAdjustment: vi.fn(), createPaymentBatch: vi.fn(), createPayrollRun: vi.fn(),
+  approvePayrollRun: vi.fn(), calculatePayrollRun: vi.fn(), cancelPayrollRun: vi.fn(), createPayrollAdjustment: vi.fn(), createPayrollCorrectionRun: vi.fn(), createPaymentBatch: vi.fn(), createPayrollRun: vi.fn(),
   getPayrollRegister: vi.fn(), getPayrollRegisterCsv: vi.fn(), getPayrollReportSummary: vi.fn(), getPaymentBatch: vi.fn(), getPayrollRuns: vi.fn(),
   getPayrollAdjustments: vi.fn(), getPayrollAdjustmentComponents: vi.fn(), approvePayrollAdjustment: vi.fn(), rejectPayrollAdjustment: vi.fn(), getPayrollRunEmployees: vi.fn(), getPayrollRunReview: vi.fn(), processPayrollRun: vi.fn(), reconcilePaymentBatch: vi.fn(), recordPayrollRunReview: vi.fn(),
   submitPaymentBatch: vi.fn(), getPayrollStatutoryRegister: vi.fn(), getPayrollStatutoryRegisterCsv: vi.fn(),
@@ -41,6 +41,7 @@ describe("PayrollRunsPanel workflow", () => {
     vi.mocked(payrollServices.cancelPayrollRun).mockResolvedValue({ data: { success: true } } as never);
     vi.mocked(payrollServices.approvePayrollRun).mockResolvedValue({ data: { success: true } } as never);
     vi.mocked(payrollServices.processPayrollRun).mockResolvedValue({ data: { success: true } } as never);
+    vi.mocked(payrollServices.createPayrollCorrectionRun).mockResolvedValue({ data: { success: true } } as never);
   });
   afterEach(async () => {
     if (root) await act(async () => root?.unmount());
@@ -208,6 +209,26 @@ describe("PayrollRunsPanel workflow", () => {
     expect(payrollServices.getPayrollRunEmployees).toHaveBeenCalledWith("run-1");
     expect(document.body.textContent).toContain("Target payroll month");
     expect(document.body.textContent).toContain("Salary component");
+  });
+
+  it("creates a correction run from a paid run only after recording an audit reason", async () => {
+    vi.mocked(payrollServices.getPayrollRuns).mockResolvedValue({ data: [{ ...run, status: "PAID" }] } as never);
+    const container = await mount();
+    await vi.waitFor(() => expect(container.textContent).toContain("Create correction run"));
+    await act(async () => { Array.from(container.querySelectorAll("button")).find(button => button.textContent?.trim() === "Create correction run")?.click(); });
+    expect(document.body.textContent).toContain("The correction must be calculated, reviewed, approved, and processed");
+
+    const reason = document.body.querySelector<HTMLTextAreaElement>("textarea");
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
+      setter?.call(reason, "Approved retroactive earning");
+      reason?.dispatchEvent(new Event("input", { bubbles: true }));
+      reason?.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await act(async () => { Array.from(document.body.querySelectorAll("button")).find(button => button.textContent?.trim() === "Create draft")?.click(); });
+
+    await vi.waitFor(() => expect(payrollServices.createPayrollCorrectionRun).toHaveBeenCalledWith("run-1", "Approved retroactive earning"));
+    expect(payrollServices.getPayrollRuns).toHaveBeenCalled();
   });
 
   it("paginates adjustment history beyond the first page instead of hiding older requests", async () => {

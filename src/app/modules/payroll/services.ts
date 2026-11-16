@@ -18,6 +18,8 @@ import {
   EmployeePayrollAssignmentModel,
   EmployeeSalaryImportRowModel,
   EmployeeSalaryImportPreviewRowModel,
+  EmployeeTaxDeclarationModel,
+  SubmitTaxDeclarationPayload,
 } from "./models";
 
 type GetPayRollPayload = {
@@ -99,6 +101,30 @@ export const createPayrollRun = (payload: CreatePayrollRunPayload) =>
 
 export const getPayrollRuns = () =>
   getRequest<PayrollRunModel[]>("api/payroll/runs");
+
+export const getEmployeeTaxDeclaration = (employeeId: string, financialYear: string) =>
+  getRequest<ResponseData<EmployeeTaxDeclarationModel>>(
+    `api/payroll/tax-declarations/employee/${encodeURIComponent(employeeId)}/year/${encodeURIComponent(financialYear)}`,
+  );
+export const submitEmployeeTaxDeclaration = (employeeId: string, payload: SubmitTaxDeclarationPayload) =>
+  postRequest<SubmitTaxDeclarationPayload, ResponseData<EmployeeTaxDeclarationModel>>(
+    `api/payroll/tax-declarations/employee/${encodeURIComponent(employeeId)}/submit`, payload,
+  );
+export const getCompanyTaxDeclarations = (financialYear: string, status?: string) => {
+  const query = status ? `?status=${encodeURIComponent(status)}` : "";
+  return getRequest<ResponseData<EmployeeTaxDeclarationModel[]>>(
+    `api/payroll/tax-declarations/company/${encodeURIComponent(financialYear)}${query}`,
+  );
+};
+export const reviewEmployeeTaxDeclaration = (declarationId: string, payload: {
+  decision: "APPROVE" | "REJECT";
+  reviewRemarks?: string;
+  rejectionReason?: string;
+  approvedHraExemption?: number;
+  verifiedAttachmentIds?: string[];
+}) => postRequest<typeof payload, ResponseData<EmployeeTaxDeclarationModel>>(
+  `api/payroll/tax-declarations/${encodeURIComponent(declarationId)}/review`, payload,
+);
 import type { CreatePayrollRunPayload, PayrollAdjustmentComponentModel, PayrollAdjustmentModel, PayrollRegisterRowModel, PayrollReportQuery, PayrollReportSummaryModel, PayrollRunEmployeeModel, PayrollRunModel, PayrollRunReviewModel } from "./models";
 
 export const getPayrollAdjustments = () =>
@@ -123,8 +149,10 @@ export const processPayrollRun = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/runs/${runId}/process`, undefined);
 export const createPaymentBatch = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/payment-batches/from-run/${runId}`, undefined);
-export const createPayrollAdjustment = (payload: { originalPayrollRunId: string; employeeId: string; componentCode: string; targetPeriod: string; type: "ARREARS" | "CORRECTION" | "REVERSAL"; amount: number; reason: string }) =>
+export const createPayrollAdjustment = (payload: { originalPayrollRunId: string; employeeId: string; componentCode: string; targetPeriod: string; type: "ARREARS" | "CORRECTION"; amount: number; reason: string }) =>
   postRequest<typeof payload, ApiResponse>("api/payroll/adjustments", payload);
+export const createPayrollCorrectionRun = (runId: string, reason: string, payDate?: string) =>
+  postRequest<{ reason: string; payDate?: string }, ApiResponse>(`api/payroll/runs/${encodeURIComponent(runId)}/correction`, { reason, payDate });
 export type PayrollPaymentBatchModel = { id: string; payrollRunId: string; status: "DRAFT" | "SUBMITTED" | "RECONCILING" | "RECONCILED"; providerReference?: string | null; reconciliationNote?: string | null; employeeCount: number; totalNetAmount: number };
 export const getPaymentBatch = (runId: string) => getRequest<PayrollPaymentBatchModel>(`api/payroll/payment-batches/from-run/${runId}`);
 export const submitPaymentBatch = (batchId: string, providerReference: string) => postRequest<{ providerReference: string }, ApiResponse>(`api/payroll/payment-batches/${batchId}/submit`, { providerReference });

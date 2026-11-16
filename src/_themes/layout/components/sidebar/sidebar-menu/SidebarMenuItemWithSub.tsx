@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Collapse, List, ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
@@ -26,6 +26,11 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
   setCurrentMenuIndex,
   onExpandSidebar,
 }) => {
+  const [isTooltipOpen, setTooltipOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isMiniSidebar) setTooltipOpen(false);
+  }, [isMiniSidebar]);
 
   const handleMenuToggle = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -43,7 +48,15 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
 
   return (
     <>
-      <Tooltip title={title} placement="right" arrow disableHoverListener={!isMiniSidebar}>
+      <Tooltip
+        title={title}
+        placement="right"
+        arrow
+        open={isMiniSidebar && isTooltipOpen}
+        onOpen={() => setTooltipOpen(true)}
+        onClose={() => setTooltipOpen(false)}
+        disableHoverListener={!isMiniSidebar}
+      >
         <ListItemButton
           onClick={handleMenuToggle}
           selected={hasActiveChild}

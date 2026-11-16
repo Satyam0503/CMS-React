@@ -25,7 +25,7 @@ test.describe("Payroll Module @smoke", () => {
   });
 
   test("payroll data grid renders", async ({ page }) => {
-    const grid = page.locator('[role="grid"], .MuiDataGrid-root, table');
+    const grid = page.locator('[role="grid"], .MuiDataGrid-root, table').first();
     await expect(grid.first()).toBeVisible({ timeout: 15_000 });
   });
 

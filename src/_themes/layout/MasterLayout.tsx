@@ -32,7 +32,8 @@ const MasterLayout = () => {
   const isSmallScreen = useMediaQuery(
     theme.breakpoints.down(theme.breakpoints.values.md),
   );
-  const [isMiniSidebar, setMiniSidebar] = useState(false);
+  const isCompactDesktop = useMediaQuery(theme.breakpoints.between("md", "lg"));
+  const [isMiniSidebar, setMiniSidebar] = useState(isCompactDesktop);
   const [isSidebarHoverExpanded, setSidebarHoverExpanded] = useState(false);
   const isSidebarExpanded = !isMiniSidebar || isSidebarHoverExpanded;
   const sidebarState = isSmallScreen
@@ -60,6 +61,11 @@ const MasterLayout = () => {
   useEffect(() => {
     if (!isSmallScreen) setOpen(false);
   }, [isSmallScreen]);
+
+  useEffect(() => {
+    setMiniSidebar(isCompactDesktop);
+    setSidebarHoverExpanded(false);
+  }, [isCompactDesktop]);
 
   useEffect(() => {
     if (isSmallScreen) setOpen(false);

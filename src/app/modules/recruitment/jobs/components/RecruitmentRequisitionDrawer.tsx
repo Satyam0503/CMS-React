@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Alert, Button, Drawer, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { CustomisedDatePicker } from "../../../../shared/components";
@@ -21,6 +21,13 @@ export const RecruitmentRequisitionDrawer = ({ open, jobId, jobTitle, vacancies,
   const [status, setStatus] = useState<RecruitmentRequisitionCommand["status"]>("Draft");
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string }>();
+
+  useEffect(() => {
+    if (open) {
+      setHeadcount(String(Math.max(vacancies || 1, 1)));
+      setFeedback(undefined);
+    }
+  }, [open, vacancies]);
 
   const save = async () => {
     const count = Number(headcount);
@@ -55,23 +62,126 @@ export const RecruitmentRequisitionDrawer = ({ open, jobId, jobTitle, vacancies,
     } finally { setBusy(false); }
   };
 
-  return <Drawer anchor="right" open={open} onClose={onClose} aria-labelledby="requisition-drawer-title" PaperProps={{ sx: { width: { xs: "100%", sm: 420 }, p: { xs: 2, sm: 3 } } }}>
-    <Stack spacing={2}>
-      <Typography id="requisition-drawer-title" variant="h6" fontWeight={800}>Plan headcount</Typography>
-      <Typography variant="body2" color="text.secondary">Create a tenant-scoped requisition for {jobTitle}.</Typography>
-      <TextField label="Requested headcount" type="number" value={headcount} onChange={event => setHeadcount(event.target.value)} inputProps={{ min: 1, step: 1 }} required fullWidth />
-      <TextField label="Location" value={location} onChange={event => setLocation(event.target.value)} fullWidth />
-      <TextField select label="Employment type" value={employmentType} onChange={event => setEmploymentType(event.target.value)} fullWidth>{["Full-time", "Part-time", "Contract", "Internship", "Consultant"].map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}</TextField>
-      <TextField label="Hiring manager user ID" value={hiringManagerUserId} onChange={event => setHiringManagerUserId(event.target.value)} helperText="Optional; use the employee user ID." fullWidth />
-      <TextField label="Cost center" value={costCenter} onChange={event => setCostCenter(event.target.value)} fullWidth />
-      <CustomisedDatePicker label="Target start date" value={targetStartDateUtc ? dayjs(targetStartDateUtc) : null} minDate={dayjs().startOf("day")} setValue={(value) => setTargetStartDateUtc(value?.format("YYYY-MM-DD") ?? "")} />
-      <TextField label="Business justification" value={justification} onChange={event => setJustification(event.target.value)} multiline minRows={3} fullWidth />
-      <TextField label="Approval reference" helperText="Required before approval" value={approvalReference} onChange={event => setApprovalReference(event.target.value)} fullWidth />
-      <TextField select label="Status" value={status} onChange={event => setStatus(event.target.value as RecruitmentRequisitionCommand["status"])} fullWidth>
-        {["Draft", "PendingApproval", "Approved"].map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}
-      </TextField>
-      {feedback && <Alert severity={feedback.ok ? "success" : "error"}>{feedback.text}</Alert>}
-      <Stack direction="row" spacing={1} justifyContent="flex-end"><Button onClick={onClose} disabled={busy}>Close</Button><Button variant="contained" onClick={save} disabled={busy}>{busy ? "Saving…" : "Save"}</Button></Stack>
-    </Stack>
-  </Drawer>;
+  return (
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      aria-labelledby="requisition-drawer-title"
+      sx={{
+        zIndex: (theme) => theme.zIndex.modal + 100,
+        "& .MuiDrawer-paper": {
+          zIndex: (theme) => theme.zIndex.modal + 100,
+          width: { xs: "100%", sm: 420 },
+          p: { xs: 2, sm: 3 },
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+        },
+      }}
+      PaperProps={{
+        sx: {
+          width: { xs: "100%", sm: 420 },
+          p: { xs: 2, sm: 3 },
+          zIndex: (theme) => theme.zIndex.modal + 100,
+        },
+      }}
+      ModalProps={{
+        sx: {
+          zIndex: (theme) => theme.zIndex.modal + 100,
+        },
+      }}
+    >
+      <Stack spacing={2}>
+        <Typography id="requisition-drawer-title" variant="h6" fontWeight={800}>
+          Plan headcount
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Create a tenant-scoped requisition for {jobTitle}.
+        </Typography>
+        <TextField
+          label="Requested headcount"
+          type="number"
+          value={headcount}
+          onChange={(event) => setHeadcount(event.target.value)}
+          inputProps={{ min: 1, step: 1 }}
+          required
+          fullWidth
+        />
+        <TextField
+          label="Location"
+          value={location}
+          onChange={(event) => setLocation(event.target.value)}
+          fullWidth
+        />
+        <TextField
+          select
+          label="Employment type"
+          value={employmentType}
+          onChange={(event) => setEmploymentType(event.target.value)}
+          fullWidth
+        >
+          {["Full-time", "Part-time", "Contract", "Internship", "Consultant"].map((value) => (
+            <MenuItem key={value} value={value}>
+              {value}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          label="Hiring manager user ID"
+          value={hiringManagerUserId}
+          onChange={(event) => setHiringManagerUserId(event.target.value)}
+          helperText="Optional; use the employee user ID."
+          fullWidth
+        />
+        <TextField
+          label="Cost center"
+          value={costCenter}
+          onChange={(event) => setCostCenter(event.target.value)}
+          fullWidth
+        />
+        <CustomisedDatePicker
+          label="Target start date"
+          value={targetStartDateUtc ? dayjs(targetStartDateUtc) : null}
+          minDate={dayjs().startOf("day")}
+          setValue={(value) => setTargetStartDateUtc(value?.format("YYYY-MM-DD") ?? "")}
+        />
+        <TextField
+          label="Business justification"
+          value={justification}
+          onChange={(event) => setJustification(event.target.value)}
+          multiline
+          minRows={3}
+          fullWidth
+        />
+        <TextField
+          label="Approval reference"
+          helperText="Required before approval"
+          value={approvalReference}
+          onChange={(event) => setApprovalReference(event.target.value)}
+          fullWidth
+        />
+        <TextField
+          select
+          label="Status"
+          value={status}
+          onChange={(event) => setStatus(event.target.value as RecruitmentRequisitionCommand["status"])}
+          fullWidth
+        >
+          {["Draft", "PendingApproval", "Approved"].map((value) => (
+            <MenuItem key={value} value={value}>
+              {value}
+            </MenuItem>
+          ))}
+        </TextField>
+        {feedback && <Alert severity={feedback.ok ? "success" : "error"}>{feedback.text}</Alert>}
+        <Stack direction="row" spacing={1} justifyContent="flex-end">
+          <Button onClick={onClose} disabled={busy}>
+            Close
+          </Button>
+          <Button variant="contained" onClick={save} disabled={busy}>
+            {busy ? "Saving…" : "Save"}
+          </Button>
+        </Stack>
+      </Stack>
+    </Drawer>
+  );
 };

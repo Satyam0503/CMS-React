@@ -13,9 +13,26 @@ import {
   TIME_PERIOD_MAP,
 } from "../enums";
 
-const rawBaseUrl =
-  import.meta.env.VITE_BASEURL ?? import.meta.env.VITE_BASE_URL ?? "";
-export const BaseUrl = rawBaseUrl.trim().replace(/\/+$/, "");
+const configuredBaseUrl = (
+  import.meta.env.VITE_BASEURL || import.meta.env.VITE_BASE_URL || ""
+).trim();
+const runtimeApiFallbacks: Record<string, string> = {
+  
+  "depapp.codeji.in": "https://depapi.codeji.in",
+};
+const runtimeHost =
+  typeof window === "undefined" ? "" : window.location.hostname.toLowerCase();
+const fallbackBaseUrl = import.meta.env.DEV
+  ? "http://localhost:5036"
+  : runtimeApiFallbacks[runtimeHost] || "";
+
+export const BaseUrl = (configuredBaseUrl || fallbackBaseUrl).replace(/\/+$/, "");
+
+if (!BaseUrl && !import.meta.env.DEV) {
+  throw new Error(
+    "VITE_BASEURL is missing. Configure the API URL for this deployment before building the frontend."
+  );
+}
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";
 export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";

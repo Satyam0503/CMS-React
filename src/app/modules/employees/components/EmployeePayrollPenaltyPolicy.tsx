@@ -6,6 +6,7 @@ import { getRequest, postRequest } from "../../../../server/axios";
 import { ResponseData } from "../../../../utils/common_types";
 import { AppSwitch, AppTextField } from "../../../shared/components/ui";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
+import CustomisedButton from "../../../shared/components/C_Button";
 
 type EmployeePenaltyPolicy = {
   id?: string;
@@ -33,12 +34,23 @@ const initialPolicy = (): EmployeePenaltyPolicy => ({
 
 export type EmployeePayrollPenaltyPolicyHandle = {
   save: () => Promise<boolean>;
+  isDirty: () => boolean;
 };
 
+interface EmployeePayrollPenaltyPolicyProps {
+  employeeUserId: string;
+  onPolicySaved?: () => void;
+}
+
 /** HR/Admin-only employee payroll setting. The server derives the company from JWT. */
-export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPolicyHandle, { employeeUserId: string }>(({ employeeUserId }, ref) => {
+export const EmployeePayrollPenaltyPolicy = forwardRef<
+  EmployeePayrollPenaltyPolicyHandle,
+  EmployeePayrollPenaltyPolicyProps
+>(({ employeeUserId, onPolicySaved }, ref) => {
   const [policy, setPolicy] = useState<EmployeePenaltyPolicy>(initialPolicy);
+  const [initialLoadedPolicy, setInitialLoadedPolicy] = useState<EmployeePenaltyPolicy | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -48,7 +60,13 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
       );
       if (!data.success || !data.methodResult) throw new Error(data.message || "Unable to load the employee policy.");
       const item = data.methodResult;
-      setPolicy({ ...item, effectiveFrom: item.effectiveFrom.slice(0, 10), effectiveTo: item.effectiveTo?.slice(0, 10) });
+      const normalized = {
+        ...item,
+        effectiveFrom: item.effectiveFrom ? item.effectiveFrom.slice(0, 10) : dayjs().format("YYYY-MM-DD"),
+        effectiveTo: item.effectiveTo ? item.effectiveTo.slice(0, 10) : undefined,
+      };
+      setPolicy(normalized);
+      setInitialLoadedPolicy(normalized);
     } catch (error) {
       toast.error((error as Error).message || "Unable to load the employee payroll policy.");
     } finally {
@@ -57,6 +75,17 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
   };
 
   useEffect(() => { void load(); }, [employeeUserId]);
+
+  const isDirty = (): boolean => {
+    if (!initialLoadedPolicy) return false;
+    return (
+      Number(policy.combinedLhdEdMonthlyLimit) !== Number(initialLoadedPolicy.combinedLhdEdMonthlyLimit) ||
+      Boolean(policy.isEnabled) !== Boolean(initialLoadedPolicy.isEnabled) ||
+      policy.effectiveFrom !== initialLoadedPolicy.effectiveFrom ||
+      (policy.effectiveTo || "") !== (initialLoadedPolicy.effectiveTo || "") ||
+      policy.name !== initialLoadedPolicy.name
+    );
+  };
 
   const save = async (): Promise<boolean> => {
     if (loading) {
@@ -67,7 +96,7 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
       toast.error("Monthly limit must be a whole number from 0 to 31.");
       return false;
     }
-    setLoading(true);
+    setSaving(true);
     try {
       const { data } = await postRequest<EmployeePenaltyPolicy, { success: boolean; message?: string }>(
         `api/attendance/penalty/employees/${encodeURIComponent(employeeUserId)}/policy`,
@@ -80,11 +109,11 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
       toast.error((error as Error).message || "Unable to save the employee payroll policy.");
       return false;
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  useImperativeHandle(ref, () => ({ save }));
+  useImperativeHandle(ref, () => ({ save, isDirty }));
 
   return (
     <Stack
@@ -108,6 +137,18 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
             This policy applies only to this employee. Exceeded limits always require an audited HR/Admin review before payroll.
           </Typography>
         </div>
+        <CustomisedButton
+          label="Save Policy"
+          size="small"
+          loading={saving || loading}
+          handleClick={async () => {
+            const saved = await save();
+            if (saved) {
+              toast.success("Attendance & Penalty policy saved successfully.");
+              onPolicySaved?.();
+            }
+          }}
+        />
       </Stack>
       <Box
         aria-labelledby="employee-payroll-policy-title"
@@ -123,7 +164,7 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
         }}
       >
         <AppTextField
-          disabled={loading}
+          disabled={loading || saving}
           label="Combined LHD + ED monthly limit"
           type="number"
           inputProps={{ min: 0, max: 31, step: 1 }}
@@ -132,7 +173,7 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
           sx={{ "& .MuiOutlinedInput-root": { minHeight: 44, borderRadius: 2 } }}
         />
         <CustomisedDatePicker
-          disabled={loading}
+          disabled={loading || saving}
           label="Effective from"
           format="DD-MM-YYYY"
           value={policy.effectiveFrom ? dayjs(policy.effectiveFrom) : null}
@@ -160,7 +201,7 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
         >
           <AppSwitch
             size="small"
-            disabled={loading}
+            disabled={loading || saving}
             checked={policy.isEnabled}
             onChange={(event) => setPolicy({ ...policy, isEnabled: event.target.checked })}
             inputProps={{ "aria-label": "Enable employee payroll penalty policy" }}
