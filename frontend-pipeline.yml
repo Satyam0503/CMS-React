@@ -146,7 +146,9 @@ stages:
                   "VITE_CAPTCHA_SITE_KEY=$captchaKey",
                   "VITE_APP_I18N_CONFIG_KEY=$i18nKey"
                 )
-                Set-Content -Path $envFile -Value $envLines -Encoding UTF8 -Force
+                # No BOM: Windows PowerShell's -Encoding UTF8 adds one, and Vite 7+ then reads the first key as
+                # "﻿VITE_BASEURL", drops it, and the app calls its own host instead of the API.
+                [System.IO.File]::WriteAllLines($envFile, [string[]]$envLines, (New-Object System.Text.UTF8Encoding $false))
                 Write-Host "Wrote $envFile with VITE_BASEURL=$viteBase"
             env:
               APPSETTINGS_APIURL: $(AppSettings.APIUrl)
