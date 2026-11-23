@@ -1,6 +1,5 @@
 import { FC, ReactNode, useEffect, useState } from "react";
-import { useLocation } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { checkIsActive } from "../../../../helpers";
 import { ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
 

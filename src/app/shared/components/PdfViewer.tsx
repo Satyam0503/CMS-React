@@ -1,14 +1,15 @@
 import "../../../utils/promiseWithResolvers";
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { pdfjs } from "react-pdf";
 import { Document, Page } from "react-pdf";
 import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { CustomIconButton } from "./C_IconButton";
-import { ErrorOutline, NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { ErrorOutline, InsertDriveFileOutlined, NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { useIntl } from "react-intl";
+import { getBinaryRequest } from "../../../server/axios";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -20,6 +21,39 @@ export const PdfViewer: FC<Props> = ({ pdfUrl }) => {
   const [showButton, setShowButton] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [resolvedPdfUrl, setResolvedPdfUrl] = useState<string>(pdfUrl);
+  const [protectedResumeFailed, setProtectedResumeFailed] = useState(false);
+
+  useEffect(() => {
+    if (!pdfUrl) {
+      setResolvedPdfUrl("");
+      setProtectedResumeFailed(false);
+      return;
+    }
+    if (!pdfUrl.includes("/api/Applicants/Resume/")) {
+      setResolvedPdfUrl(pdfUrl);
+      return;
+    }
+    let active = true;
+    let objectUrl: string | null = null;
+    setProtectedResumeFailed(false);
+    setResolvedPdfUrl("");
+    getBinaryRequest(pdfUrl)
+      .then(({ data }) => {
+        if (!active) return;
+        objectUrl = URL.createObjectURL(data);
+        setResolvedPdfUrl(objectUrl);
+      })
+      .catch(() => {
+        if (!active) return;
+        setResolvedPdfUrl("");
+        setProtectedResumeFailed(true);
+      });
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [pdfUrl]);
 
   function handleDocumentLoadSuccess(pdfjs: DocumentCallback) {
     if (pdfjs.numPages > 1) {
@@ -76,15 +110,19 @@ export const PdfViewer: FC<Props> = ({ pdfUrl }) => {
       )
       }
       <Stack>
-        <Document
-          file={pdfUrl}
-          onLoadSuccess={handleDocumentLoadSuccess}
-          loading={<DocLoading />}
-          error={<DocLoadError />}
-          noData={<DocLoadError />}
-        >
-          <Page pageNumber={currentPage} className="pdf_viewer" />
-        </Document>
+        {!pdfUrl ? (
+          <DocEmptyState />
+        ) : resolvedPdfUrl ? (
+          <Document
+            file={resolvedPdfUrl}
+            onLoadSuccess={handleDocumentLoadSuccess}
+            loading={<DocLoading />}
+            error={<DocLoadError />}
+            noData={<DocLoadError />}
+          >
+            <Page pageNumber={currentPage} className="pdf_viewer" />
+          </Document>
+        ) : protectedResumeFailed ? <DocLoadError /> : <DocLoading />}
       </Stack>
     </Stack >
   );
@@ -98,6 +136,36 @@ const DocLoading = () => {
     </Box>
   )
 }
+
+
+const DocEmptyState = () => {
+  return (
+    <Box
+      sx={{
+        height: "360px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        bgcolor: "action.hover",
+        borderRadius: "12px",
+        p: 3,
+        border: "1px dashed",
+        borderColor: "divider",
+      }}
+    >
+      <Stack spacing={1.5} sx={{ alignItems: "center", textAlign: "center" }}>
+        <InsertDriveFileOutlined sx={{ fontSize: "3rem", color: "text.secondary", opacity: 0.6 }} />
+        <Typography variant="subtitle1" fontWeight={700} color="text.secondary">
+          No Resume Attached
+        </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ maxWidth: 280 }}>
+          This applicant record does not have a PDF resume document uploaded.
+        </Typography>
+      </Stack>
+    </Box>
+  );
+};
 
 
 const DocLoadError = () => {

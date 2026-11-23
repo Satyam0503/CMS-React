@@ -112,3 +112,28 @@ export interface AttendanceImportCommitResult {
   issues: AttendanceImportIssue[];
 }
 
+export interface BiometricPunchModel {
+  deviceId: string;
+  employeeId: string;
+  timestampUtc: string;
+  punchType?: "CHECK_IN" | "CHECK_OUT" | "AUTO" | string;
+  verifyMode?: "FINGERPRINT" | "FACE" | "CARD" | "PASSWORD" | string;
+  terminalIp?: string;
+}
+
+export interface BiometricSyncRequest {
+  deviceId: string;
+  deviceApiKey?: string;
+  punches: BiometricPunchModel[];
+}
+
+export interface BiometricSyncResult {
+  success: boolean;
+  message: string;
+  totalReceived: number;
+  processedCount: number;
+  duplicateCount: number;
+  unmatchedEmployeeCount: number;
+  errors: string[];
+}
+

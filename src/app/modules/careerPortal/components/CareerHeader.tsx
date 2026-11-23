@@ -1,6 +1,7 @@
 import {
   AutoAwesomeRounded,
   BookmarkBorderRounded,
+  FactCheckOutlined,
   NotificationsNoneRounded,
 } from "@mui/icons-material";
 import { Box, Container, Stack, Typography } from "@mui/material";
@@ -51,6 +52,9 @@ export const CareerHeader = () => (
         </Stack>
         <Stack direction="row" spacing={0.5} alignItems="center">
           <LightDarkMode sx={{ width: 36, height: 36, mr: 0.5 }} />
+          <Btn component={Link} to="/careers/application-status" color="inherit" startIcon={<FactCheckOutlined />} sx={{ minWidth: { xs: 40, sm: "auto" }, px: { xs: 1, sm: 1.5 } }}>
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Application status</Box>
+          </Btn>
           <Btn component={Link} to="/careers/saved" color="inherit" startIcon={<BookmarkBorderRounded />} sx={{ minWidth: { xs: 40, sm: "auto" }, px: { xs: 1, sm: 1.5 } }}>
             <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Saved jobs</Box>
           </Btn>

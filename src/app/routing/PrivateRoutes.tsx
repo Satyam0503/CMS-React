@@ -99,6 +99,8 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
+        <Route path="notice-board/*" element={<Navigate to="/noticeboard" replace />} />
+        <Route path="notice-board" element={<Navigate to="/noticeboard" replace />} />
         <Route
           path="companypolicy/*"
           element={
@@ -130,6 +132,11 @@ const PrivateRoutes = () => {
               </SuspensedView>
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="employees/org-chart"
+          element={<Navigate to="/employees?view=tree" replace />}
         />
 
         <Route
@@ -177,6 +184,8 @@ const PrivateRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="leaves/*" element={<Navigate to="/leavemanagement" replace />} />
+        <Route path="leaves" element={<Navigate to="/leavemanagement" replace />} />
         <Route
           path="payroll"
           element={

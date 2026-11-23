@@ -5,8 +5,6 @@ import {
   Autocomplete,
   Avatar,
   Box,
-  ButtonBase,
-  Card,
   Chip,
   CircularProgress,
   Divider,
@@ -35,8 +33,10 @@ import { getAllDepartments, getCompanyDetails, getJobTitles } from "../admin/adm
 import { getAllEmployees } from "../employees/employeeServices";
 import type { GetAllEmployeeResponseModel } from "../employees/models";
 import { DepartmentModel, JobTitleResponseModel } from "../admin/models";
-import { JobModal, RecruitmentOfferApprovalPolicy } from "./models";
+import { RecruitmentOfferApprovalPolicy } from "./models";
 import { useIsDark } from "../theme/useIsDark";
+import RecruitmentCapabilityNotice from "./RecruitmentCapabilityNotice";
+import { isRecruitmentFeatureDisabled, responseDataFromError } from "./recruitmentCapabilityUtils";
 
 const key = () => `${Date.now()}-${Math.random().toString(36).slice(2)}-offer-policy`;
 
@@ -122,6 +122,8 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
+  const [featureDisabled, setFeatureDisabled] = useState(false);
+  const [loadError, setLoadError] = useState<string>();
 
   // Fetch contextual reference data (employees, departments, job titles, vacancies, legal entity)
   useEffect(() => {
@@ -202,10 +204,21 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
   // Fetch the active policy (either company-wide default or vacancy-specific)
   const loadPolicy = useCallback(async (vacancyId?: string) => {
     setLoading(true);
+    setLoadError(undefined);
     try {
       const { data } = await getRecruitmentOfferApprovalPolicy(vacancyId);
+      if (!data.success && isRecruitmentFeatureDisabled(data)) {
+        setFeatureDisabled(true);
+        return;
+      }
+      if (!data.success) {
+        setFeatureDisabled(false);
+        setLoadError(data.message || "The offer approval policy could not be loaded.");
+        return;
+      }
       const policy = data.methodResult;
       if (data.success && policy) {
+        setFeatureDisabled(false);
         setLoadedPolicy(policy);
         setCurrency(policy.currency || "INR");
         setLegalEntityId(policy.legalEntityId ?? "");
@@ -216,6 +229,7 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
         setDelegatedApproverUserId(policy.delegatedApproverUserId ?? "");
         setDelegationExpiresAtUtc(policy.delegationExpiresAtUtc ? policy.delegationExpiresAtUtc.slice(0, 16) : "");
       } else {
+        setFeatureDisabled(false);
         setLoadedPolicy(null);
         setCurrency("INR");
         setLegalEntityId("");
@@ -226,8 +240,14 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
         setDelegatedApproverUserId("");
         setDelegationExpiresAtUtc("");
       }
-    } catch {
-      toast.info("Using system governance defaults.");
+    } catch (error) {
+      const response = responseDataFromError(error) as { message?: string } | undefined;
+      if (isRecruitmentFeatureDisabled(response)) {
+        setFeatureDisabled(true);
+      } else {
+        setFeatureDisabled(false);
+        setLoadError(response?.message || (error instanceof Error ? error.message : "") || "The offer approval policy could not be loaded. Check your connection and try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -313,6 +333,10 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
         expectedVersion: loadedPolicy?.version,
       });
 
+      if (!data.success && isRecruitmentFeatureDisabled(data)) {
+        setFeatureDisabled(true);
+        return;
+      }
       if (!data.success) throw new Error(data.message || "Unable to save offer policy.");
       toast.success(
         vacancyIdParam
@@ -321,7 +345,11 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
       );
       void loadPolicy(vacancyIdParam || undefined);
     } catch (error) {
-      toast.error((error as Error).message || "Unable to save offer policy.");
+      if (isRecruitmentFeatureDisabled(responseDataFromError(error))) {
+        setFeatureDisabled(true);
+      } else {
+        toast.error((error as Error).message || "Unable to save offer policy.");
+      }
     } finally {
       setSaving(false);
     }
@@ -379,6 +407,19 @@ export default function RecruitmentOfferApprovalPolicyEditor() {
     const match = departments.find((d) => d.departmentId === departmentId);
     return match ? match.name : departmentId;
   }, [departmentId, departments]);
+
+  if (featureDisabled || loadError) {
+    return (
+      <RecruitmentCapabilityNotice
+        feature="Offer approval policy"
+        settingsArea="Stage gates → Offer approval sign-off"
+        disabled={featureDisabled}
+        errorMessage={loadError}
+        onRetry={() => void loadPolicy(scopeMode === "VACANCY" ? selectedVacancy?.jobId : undefined)}
+        retrying={loading}
+      />
+    );
+  }
 
   return (
     <Box

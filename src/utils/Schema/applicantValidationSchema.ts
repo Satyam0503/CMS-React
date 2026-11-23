@@ -1,5 +1,6 @@
 import * as Yup from "yup";
 import { Regex } from "../constant/Constant";
+import { isValidCandidatePhone } from "../validation/candidatePhone";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -15,7 +16,7 @@ export const applicantValidationSchema = Yup.object().shape({
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
   state: Yup.string().required("APPLICATION.SELECT_STATE"),
   phone: Yup.string()
-    .matches(Regex.Phone, "VALIDATION_ERR.INVALID_PHONE")
+    .test("candidate-phone", "VALIDATION_ERR.INVALID_PHONE", isValidCandidatePhone)
     .required("VALIDATION_ERR.REQUIRED_TYPE"),
   experience: Yup.number().min(0).required("VALIDATION_ERR.REQUIRED_TYPE"),
   vacancyId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
@@ -48,7 +49,7 @@ export const editApplicantValidationSchema = Yup.object().shape({
     .required("VALIDATION_ERR.EMAIL_REQ")
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
   phone: Yup.string()
-    .matches(Regex.Phone, "VALIDATION_ERR.REQUIRED_TYPE")
+    .test("candidate-phone", "VALIDATION_ERR.INVALID_PHONE", isValidCandidatePhone)
     .required("VALIDATION_ERR.INVALID_PHONE"),
   state: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   experienceInMonths: Yup.number()

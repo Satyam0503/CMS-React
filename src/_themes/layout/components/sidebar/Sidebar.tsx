@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { Avatar, Box, ButtonBase, Drawer, Stack, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
-import { Close, KeyboardDoubleArrowLeft } from "@mui/icons-material";
+import { Close, KeyboardDoubleArrowLeft, PushPinOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../../app/Redux/hooks";
 import { DEFAULT_COMPANY_LOGO } from "../../../../utils/constant/Constant";
 
@@ -23,13 +23,18 @@ const Sidebar: FC<Props> = ({
   setHoverExpanded,
 }) => {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [openIndex, setOpenIndex] = useState<number | null>(null); // Track the open item index
   const companyLogo = useAppSelector((state) => state.user.userData?.companyLogo);
 
   const handleSideBarToggle = () => {
-    setMiniSidebar(!isMiniSidebar);
-    if (openIndex) {
+    if (isMiniSidebar) {
+      setMiniSidebar(false);
+      setHoverExpanded(false);
+    } else {
+      setMiniSidebar(true);
+    }
+    if (openIndex !== null) {
       setOpenIndex(null);
     }
   };
@@ -71,23 +76,23 @@ const Sidebar: FC<Props> = ({
                   zIndex: 1300,
                 }
               : {
-                  top: "calc(var(--app-header-height) + 14px) !important",
-                  bottom: "16px !important",
-                  left: "16px !important",
+                  top: "0 !important",
+                  bottom: "0 !important",
+                  left: "0 !important",
                   marginTop: "0 !important",
                   marginBottom: "0 !important",
-                  height: "calc(100dvh - var(--app-header-height) - 30px) !important",
-                  maxHeight: "calc(100dvh - var(--app-header-height) - 30px) !important",
+                  height: "100dvh !important",
+                  maxHeight: "100dvh !important",
                   width: "var(--sidebar-current-width) !important",
-                  borderRadius: "38px !important",
-                  border: "1px solid",
-                  borderColor: "rgba(255, 255, 255, 0.88)",
+                  borderRadius: "0 !important",
+                  border: "none !important",
+                  borderRight: "1px solid",
+                  borderColor: "divider",
                   transform: "none !important",
-                  boxShadow:
-                    "0 10px 30px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important",
+                  boxShadow: "none !important",
                   zIndex: 1100,
                   overflow: "hidden",
-                  transition: "width 0.28s cubic-bezier(.2, .8, .2, 1) !important",
+                  transition: "width var(--sidebar-transition), box-shadow var(--sidebar-transition) !important",
                   "&:hover": {
                     transform: "none !important",
                   },
@@ -98,8 +103,9 @@ const Sidebar: FC<Props> = ({
       }}
       onClose={handleClose}
       className="sidebar"
-      data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar && !isHoverExpanded ? "true" : "false"}
+      data-sidebar-mini={isSmallScreen || !isMiniSidebar || isHoverExpanded ? "false" : "true"}
       data-sidebar-hover-expanded={!isSmallScreen && isHoverExpanded ? "true" : "false"}
+      data-sidebar-rail={!isSmallScreen ? "true" : "false"}
       data-sidebar-style={theme.appStyle}
       onMouseEnter={() => {
         if (!isSmallScreen && isMiniSidebar) setHoverExpanded(true);
@@ -120,7 +126,8 @@ const Sidebar: FC<Props> = ({
           flexDirection: "column",
           justifyContent: "space-between",
           px: isMiniSidebar && !isHoverExpanded ? 0.75 : 1.25,
-          pt: isSmallScreen ? 1.5 : 2.5,
+          transition: "padding var(--sidebar-transition)",
+          pt: isSmallScreen ? 1.5 : 1.25,
           pb: isSmallScreen ? 1.5 : 1.5,
           gap: 1,
           overflow: "hidden",
@@ -131,8 +138,8 @@ const Sidebar: FC<Props> = ({
           <Stack
             direction="row"
             alignItems="center"
-            justifyContent="space-between"
-            sx={{ px: 1, pb: 1.5, pt: 0.5, borderBottom: "1px solid", borderColor: "divider" }}
+            justifyContent="center"
+            sx={{ position: "relative", px: 1, pb: 1.5, pt: 0.5, borderBottom: "1px solid", borderColor: "divider" }}
           >
             <Avatar
               variant="square"
@@ -145,7 +152,7 @@ const Sidebar: FC<Props> = ({
                 height: 34,
                 "& .MuiAvatar-img": {
                   objectFit: "contain",
-                  objectPosition: "left center",
+                objectPosition: "center",
                 },
               }}
             />
@@ -158,6 +165,10 @@ const Sidebar: FC<Props> = ({
               sx={{
                 width: 34,
                 height: 34,
+                position: "absolute",
+                right: 8,
+                top: "50%",
+                transform: "translateY(-50%)",
                 borderRadius: 1.5,
                 color: "text.secondary",
                 "&:hover": { bgcolor: "action.hover", color: "text.primary" },
@@ -168,13 +179,15 @@ const Sidebar: FC<Props> = ({
           </Stack>
         )}
 
-        {!isSmallScreen && theme.appStyle === "violet" && (
-          <Box className="sidebar-brand violet-sidebar-brand">
+        {!isSmallScreen && (
+          <Box
+            className={`sidebar-brand violet-sidebar-brand ${isMiniSidebar && !isHoverExpanded ? "sidebar-brand--compact" : "sidebar-brand--wide"} ${companyLogo ? "" : "sidebar-brand--default"}`}
+          >
             <Box
               component="img"
               alt="Company Logo"
               src={companyLogo || DEFAULT_COMPANY_LOGO}
-              className={companyLogo ? "violet-sidebar-brand-logo has-tile" : "violet-sidebar-brand-logo"}
+              className={`violet-sidebar-brand-logo sidebar-brand-logo ${companyLogo && theme.appStyle === "violet" ? "has-tile" : ""}`}
             />
           </Box>
         )}
@@ -203,12 +216,12 @@ const Sidebar: FC<Props> = ({
             }}
           >
             <Tooltip
-              title={isMiniSidebar && !isHoverExpanded ? "Expand sidebar" : "Collapse sidebar"}
+              title={isMiniSidebar ? (isHoverExpanded ? "Keep sidebar open" : "Expand sidebar") : "Collapse sidebar"}
               placement="right"
               arrow
             >
               <ButtonBase
-                aria-label={isMiniSidebar && !isHoverExpanded ? "Expand sidebar" : "Collapse sidebar"}
+                aria-label={isMiniSidebar ? (isHoverExpanded ? "Keep sidebar open" : "Expand sidebar") : "Collapse sidebar"}
                 aria-expanded={!isMiniSidebar || isHoverExpanded}
                 className="sidebar-edge-toggle"
                 onClick={(event) => {
@@ -217,13 +230,17 @@ const Sidebar: FC<Props> = ({
                 }}
               >
                 <Box component="span" className="sidebar-edge-toggle-icon">
-                  <KeyboardDoubleArrowLeft
-                    sx={{
-                      fontSize: 18,
-                      transition: "transform 0.28s ease",
-                      transform: isMiniSidebar && !isHoverExpanded ? "rotate(180deg)" : "none",
-                    }}
-                  />
+                  {isMiniSidebar && isHoverExpanded ? (
+                    <PushPinOutlined sx={{ fontSize: 18 }} />
+                  ) : (
+                    <KeyboardDoubleArrowLeft
+                      sx={{
+                        fontSize: 18,
+                        transition: "transform 0.28s ease",
+                        transform: isMiniSidebar ? "rotate(180deg)" : "none",
+                      }}
+                    />
+                  )}
                 </Box>
               </ButtonBase>
             </Tooltip>

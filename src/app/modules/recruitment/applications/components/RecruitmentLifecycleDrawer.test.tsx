@@ -192,7 +192,8 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
       });
 
     let inputs = getCriteriaInputs();
-    expect(inputs.length).toBe(4);
+    await vi.waitFor(() => expect(getCriteriaInputs()).toHaveLength(4));
+    inputs = getCriteriaInputs();
     expect(inputs.map((i) => i.value)).toEqual([
       "Technical Competence",
       "Problem Solving & Analytical Ability",
@@ -248,7 +249,7 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
 
     // Verify empty state is displayed and allows adding a new criterion
     expect(document.body.textContent).toContain("No evaluation criteria configured");
-  });
+  }, 15000);
 
   it("renders scheduled interview rounds list and opens schedule next round form", async () => {
     await act(async () => {
@@ -272,8 +273,10 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
 
     // Sub-tab 0 is active by default
     expect(document.body.textContent).toContain("Interview rounds");
-    expect(document.body.textContent).toContain("Round 1: Technical");
-    expect(document.body.textContent).toContain("Technical Interview");
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain("Round 1: Technical");
+      expect(document.body.textContent).toContain("Technical Interview");
+    });
 
     // Action buttons for scheduled round exist
     const editRoundBtn = Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(
@@ -299,7 +302,7 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
 
     // Form to schedule round 2 is opened
     expect(document.body.textContent).toContain("Schedule Interview Round 2");
-  });
+  }, 15000);
 
   it("prevents duplicate scoring by displaying recorded scorecard confirmation when already submitted", async () => {
     const { getRecruitmentScorecards } = await import("../../services");

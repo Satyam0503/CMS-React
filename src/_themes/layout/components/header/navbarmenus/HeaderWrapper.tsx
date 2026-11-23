@@ -21,34 +21,49 @@ type Props = {
 
 export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const isCompactScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const companyLogo = useAppSelector((state) => state.user.userData?.companyLogo);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  // Violet puts the brand in the full-height sidebar and the search where the logo was.
-  const searchOnLeft = theme.appStyle === "violet" && !isSmallScreen;
-
   return (
     <Stack
       sx={{
         backgroundColor: 'background.header',
+        width: { xs: "100%", md: "calc(100% - var(--sidebar-current-width))" },
+        ml: { xs: 0, md: "var(--sidebar-current-width)" },
+        transition: "width var(--sidebar-transition), margin-left var(--sidebar-transition)",
         height: "var(--app-header-height)",
         minHeight: "var(--app-header-height)",
         borderBottom: "1px solid",
         borderColor: "divider",
-        px: { xs: 1, sm: 3, md: 4 },
-        gap: { xs: 0.5, sm: 1 },
+        px: { xs: 1, sm: 2.5, md: 3.5 },
+        gap: { xs: 0.5, sm: 1.25 },
+        flexShrink: 0,
       }}
       data-sidebar-state={sidebarState}
       className="app-header flex-row align-items-center justify-content-between position-relative z-3"
     >
-      <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }} sx={{ minWidth: 0, flexShrink: 1 }}>
+      <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.25 }} sx={{ minWidth: 0, flex: "1 1 auto" }}>
         {isSmallScreen && (
-          <AppIconButton aria-label="Open navigation menu" sx={{ border: 0, width: { xs: 40, sm: "auto" }, minWidth: { xs: 40, sm: 0 }, height: { xs: 40, sm: "auto" }, p: { xs: 0.75, sm: 1 }, borderRadius: 2, "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 } }} onClick={openSideBar}>
-            <MenuOutlined sx={{ fontSize: { xs: 26, sm: 32 } }} />
+          <AppIconButton
+            aria-label="Open navigation menu"
+            sx={{
+              border: 0,
+              width: 38,
+              minWidth: 38,
+              height: 38,
+              p: 0.75,
+              borderRadius: 2,
+              color: "text.secondary",
+              "&:hover": { bgcolor: "action.hover", color: "primary.main" },
+              "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 },
+            }}
+            onClick={openSideBar}
+          >
+            <MenuOutlined sx={{ fontSize: 22 }} />
           </AppIconButton>
         )}
-        {searchOnLeft ? (
+        {!isSmallScreen ? (
           <EmployeeSearchInput sx={{ width: { md: 360, lg: 460 } }} />
         ) : (
           <Avatar
@@ -60,8 +75,8 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
               backgroundColor: "transparent",
               width: "auto",
               minWidth: 0,
-              maxWidth: { xs: 94, sm: 160 },
-              height: { xs: 34, sm: 38 },
+              maxWidth: { xs: 78, sm: 140, md: 160 },
+              height: { xs: 32, sm: 36 },
               "& .MuiAvatar-img": {
                 objectFit: "contain",
                 objectPosition: "left center",
@@ -70,14 +85,25 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
           />
         )}
       </Stack>
-      <Stack direction="row" alignItems="center" sx={{ flexGrow: 0, flexShrink: 0, gap: { xs: 0.25, sm: 1 } }}>
-        {searchOnLeft ? null : isCompactScreen ? (
-          <AppIconButton aria-label="Search employees" sx={{ border: 0, width: 32, minWidth: 32, height: 32, p: 0.5 }} onClick={() => setIsMobileSearchOpen(true)}>
-            <Search />
+      <Stack direction="row" alignItems="center" sx={{ flex: "0 0 auto", gap: { xs: 0.25, sm: 0.75, md: 1.5 } }}>
+        {isCompactScreen ? (
+          <AppIconButton
+            aria-label="Search employees"
+            sx={{
+              border: 0,
+              width: 36,
+              minWidth: 36,
+              height: 36,
+              p: 0.5,
+              borderRadius: 2,
+              color: "text.secondary",
+              "&:hover": { bgcolor: "action.hover", color: "primary.main" },
+            }}
+            onClick={() => setIsMobileSearchOpen(true)}
+          >
+            <Search sx={{ fontSize: 20 }} />
           </AppIconButton>
-        ) : (
-          <EmployeeSearchInput />
-        )}
+        ) : null}
         <Navbar />
       </Stack>
       {isCompactScreen && isMobileSearchOpen && (
@@ -91,11 +117,31 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
             gap: 0.5,
             px: 0.5,
             bgcolor: "background.header",
+            borderRadius: 2.5,
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: 3,
           }}
         >
-          <EmployeeSearchInput autoFocus sx={{ minWidth: 0, width: "100%", flex: 1 }} />
-          <AppIconButton aria-label="Close employee search" sx={{ border: 0, flex: "0 0 auto" }} onClick={() => setIsMobileSearchOpen(false)}>
-            <Close />
+          <EmployeeSearchInput
+            autoFocus
+            sx={{
+              minWidth: 0,
+              width: "100%",
+              flex: 1,
+              "& .MuiOutlinedInput-root": {
+                minHeight: 40,
+                borderRadius: 2,
+                bgcolor: "background.default",
+              },
+            }}
+          />
+          <AppIconButton
+            aria-label="Close employee search"
+            sx={{ border: 0, width: 36, height: 36, flex: "0 0 auto", borderRadius: 2 }}
+            onClick={() => setIsMobileSearchOpen(false)}
+          >
+            <Close sx={{ fontSize: 20 }} />
           </AppIconButton>
         </Box>
       )}

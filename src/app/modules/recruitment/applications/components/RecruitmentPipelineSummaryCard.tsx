@@ -198,6 +198,35 @@ export default function RecruitmentPipelineSummaryCard({
         ) : (
           <Alert severity="info">Pipeline summary is not available yet.</Alert>
         )}
+        {analytics && Object.keys(analytics.byCandidateReportedSource ?? {}).length > 0 && (() => {
+          const sources = Object.entries(analytics.byCandidateReportedSource ?? {}).sort((left, right) => right[1] - left[1]);
+          const sourceTotal = sources.reduce((sum, [, count]) => sum + count, 0);
+          return (
+            <>
+              <Divider />
+              <Stack spacing={1}>
+                <Box>
+                  <Typography variant="subtitle2" fontWeight={800}>Candidate-reported sources</Typography>
+                  <Typography variant="caption" color="text.secondary">Candidates’ answers; these are self-reported and may not reflect verified campaign attribution.</Typography>
+                </Box>
+                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" }, gap: 1.25 }}>
+                  {sources.map(([source, count]) => {
+                    const share = sourceTotal > 0 ? Math.round((count / sourceTotal) * 100) : 0;
+                    return (
+                      <Box key={source} sx={{ p: 1.25, border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
+                        <Stack direction="row" justifyContent="space-between" alignItems="baseline" spacing={1} sx={{ mb: 0.75 }}>
+                          <Typography variant="body2" fontWeight={700} noWrap title={source}>{source}</Typography>
+                          <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>{count} · {share}%</Typography>
+                        </Stack>
+                        <LinearProgress variant="determinate" value={share} aria-label={`${source}: ${count} candidates, ${share}%`} sx={{ height: 5, borderRadius: 99 }} />
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Stack>
+            </>
+          );
+        })()}
       </Stack>
     </Card>
   );

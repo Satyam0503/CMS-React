@@ -10,7 +10,7 @@ import {
   approvePayrollRun, calculatePayrollRun, cancelPayrollRun, createPayrollAdjustment, createPayrollCorrectionRun, createPaymentBatch, createPayrollRun,
   getPayrollRegister, getPayrollRegisterCsv, getPayrollReportSummary, getPaymentBatch, getPayrollRuns,
   getPayrollAdjustments, getPayrollAdjustmentComponents, getPayrollRunEmployees, getPayrollRunReview, processPayrollRun, reconcilePaymentBatch, recordPayrollRunReview, approvePayrollAdjustment, rejectPayrollAdjustment,
-  submitPaymentBatch, getPayrollStatutoryRegister, getPayrollStatutoryRegisterCsv, type PayrollPaymentBatchModel,
+  submitPaymentBatch, getPayrollStatutoryRegister, getPayrollStatutoryRegisterCsv, exportPaymentBatchCsv, getEpfoEcrText, getEsicReturnCsv, getForm16Csv, type PayrollPaymentBatchModel,
 } from "../services";
 import { PayrollAdjustmentComponentModel, PayrollAdjustmentModel, PayrollRegisterRowModel, PayrollReportQuery, PayrollReportSummaryModel, PayrollRunEmployeeModel, PayrollRunModel, PayrollRunReviewModel, PayrollStatutoryRegisterRowModel } from "../models";
 import { getAllEmployees } from "../../employees/employeeServices";
@@ -150,6 +150,52 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
       const link = document.createElement("a"); link.href = url; link.download = "payroll-register.csv"; link.click();
       URL.revokeObjectURL(url);
     } catch { setError("Payroll CSV export could not be downloaded."); }
+    finally { setBusy(""); }
+  };
+
+  const downloadPaymentBatch = async (batchId: string) => {
+    setBusy(`batch-export-${batchId}`); setError("");
+    try {
+      const response = await exportPaymentBatchCsv(batchId);
+      const url = URL.createObjectURL(response.data);
+      const link = document.createElement("a"); link.href = url; link.download = `payment-batch-${batchId}.csv`; link.click();
+      URL.revokeObjectURL(url);
+    } catch { setError("Payment batch CSV could not be downloaded."); }
+    finally { setBusy(""); }
+  };
+
+  const downloadEpfoEcr = async () => {
+    setBusy("epfo-export"); setError("");
+    try {
+      const response = await getEpfoEcrText(reportQuery());
+      const url = URL.createObjectURL(response.data);
+      const link = document.createElement("a"); link.href = url; link.download = "epfo-ecr.txt"; link.click();
+      URL.revokeObjectURL(url);
+    } catch { setError("EPFO ECR text export could not be downloaded."); }
+    finally { setBusy(""); }
+  };
+
+  const downloadEsicReturn = async () => {
+    setBusy("esic-export"); setError("");
+    try {
+      const response = await getEsicReturnCsv(reportQuery());
+      const url = URL.createObjectURL(response.data);
+      const link = document.createElement("a"); link.href = url; link.download = "esic-monthly-return.csv"; link.click();
+      URL.revokeObjectURL(url);
+    } catch { setError("ESIC return CSV could not be downloaded."); }
+    finally { setBusy(""); }
+  };
+
+  const downloadForm16Csv = async () => {
+    setBusy("form16-export"); setError("");
+    try {
+      const startYear = reportFrom ? (new Date(reportFrom).getMonth() >= 3 ? new Date(reportFrom).getFullYear() : new Date(reportFrom).getFullYear() - 1) : (new Date().getMonth() >= 3 ? new Date().getFullYear() : new Date().getFullYear() - 1);
+      const fy = `${startYear}-${String(startYear + 1).slice(-2)}`;
+      const response = await getForm16Csv(fy);
+      const url = URL.createObjectURL(response.data);
+      const link = document.createElement("a"); link.href = url; link.download = `form16-part-b-${fy}.csv`; link.click();
+      URL.revokeObjectURL(url);
+    } catch { setError("Form 16 Part B export could not be downloaded."); }
     finally { setBusy(""); }
   };
 
@@ -332,6 +378,8 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
       {(run.status === "CALCULATED" || run.status === "BLOCKED") && reviews[run.id] && !reviews[run.id]?.canApprove && <Chip size="small" color="warning" label={`Resolve ${reviews[run.id]?.blockedCount ?? 0} blocked / incomplete rows`} />}
       {canEdit && run.status === "APPROVED" && <Button size="small" disabled={busy === run.id} onClick={() => void process(run.id)}>Process</Button>}
       {canEdit && run.status === "PROCESSED" && !run.legacyPayrollRowsSynchronizedAtUtc && <Button size="small" color="warning" disabled={busy === run.id} onClick={() => void process(run.id)}>Retry payroll sync</Button>}
+      {canEdit && run.status === "PROCESSED" && !batch && <Button size="small" disabled={busy === run.id} onClick={() => void payment(run.id)}>Create payment batch</Button>}
+      {batch && <Button size="small" variant="outlined" disabled={busy === `batch-export-${batch.id}`} onClick={() => void downloadPaymentBatch(batch.id)}>Export bank CSV</Button>}
       {canEdit && batch?.status === "DRAFT" && <Button size="small" disabled={busy === batch.id} onClick={() => { setProviderReference(""); setBatchToSubmit(batch); }}>Submit payment</Button>}
       {canEdit && (batch?.status === "SUBMITTED" || batch?.status === "RECONCILING") && <Button size="small" disabled={busy === batch.id} onClick={() => { setReconciliationNote(batch.reconciliationNote ?? ""); setReconciliationConfirmed(false); setBatchToReconcile(batch); }}>{batch.status === "RECONCILING" ? "Resume reconciliation" : "Reconcile payment"}</Button>}
       {canEdit && (run.status === "PAID" || run.status === "CLOSED") && <Button size="small" disabled={busy === run.id || adjustmentEmployeesLoading} onClick={() => void openAdjustment(run)}>Adjustment</Button>}
@@ -492,7 +540,12 @@ export function PayrollRunsPanel({ canEdit, canApprove, canCreate, canSelectEmpl
         </TableBody></Table></TableContainer>
         <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between" spacing={1} sx={{ pt: 1 }}>
           <Typography variant="subtitle2">Statutory register · immutable run snapshots</Typography>
-          <Button size="small" variant="outlined" onClick={() => void downloadStatutoryReport()} disabled={busy === "statutory-export"}>Export statutory CSV</Button>
+          <Stack direction="row" spacing={1} flexWrap="wrap">
+            <Button size="small" variant="outlined" onClick={() => void downloadStatutoryReport()} disabled={busy === "statutory-export"}>Export statutory CSV</Button>
+            <Button size="small" variant="outlined" onClick={() => void downloadEpfoEcr()} disabled={busy === "epfo-export"}>Export EPFO ECR</Button>
+            <Button size="small" variant="outlined" onClick={() => void downloadEsicReturn()} disabled={busy === "esic-export"}>Export ESIC return</Button>
+            <Button size="small" variant="outlined" onClick={() => void downloadForm16Csv()} disabled={busy === "form16-export"}>Export Form 16 Part B</Button>
+          </Stack>
         </Stack>
         <TableContainer sx={{ overflowX: "auto" }}><Table size="small" aria-label="Payroll statutory register" sx={{ minWidth: 980 }}><TableHead><TableRow><TableCell>Period</TableCell><TableCell>Employee</TableCell><TableCell>Profile</TableCell><TableCell align="right">Employee EPF</TableCell><TableCell align="right">Employer EPF</TableCell><TableCell align="right">Employee ESIC</TableCell><TableCell align="right">Employer ESIC</TableCell><TableCell align="right">TDS</TableCell><TableCell align="right">Professional tax</TableCell></TableRow></TableHead><TableBody>
           {statutoryRows.slice(0, 50).map((row) => <TableRow key={`statutory-${row.runId}-${row.employeeId}`}><TableCell>{row.periodStart.slice(0, 7)}</TableCell><TableCell>{row.employeeId}</TableCell><TableCell>{row.policyProfileId ? `${row.policyProfileId} v${row.policyProfileVersion}` : "Legacy/default"}</TableCell><TableCell align="right">{row.employeeEpf.toLocaleString()}</TableCell><TableCell align="right">{row.employerEpf.toLocaleString()}</TableCell><TableCell align="right">{row.employeeEsic.toLocaleString()}</TableCell><TableCell align="right">{row.employerEsic.toLocaleString()}</TableCell><TableCell align="right">{row.incomeTax.toLocaleString()}</TableCell><TableCell align="right">{row.professionalTax.toLocaleString()}</TableCell></TableRow>)}

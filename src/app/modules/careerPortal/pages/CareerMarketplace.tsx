@@ -7,7 +7,6 @@ import {
   TuneRounded,
 } from "@mui/icons-material";
 import {
-  Alert,
   Autocomplete,
   Box,
   Chip,
@@ -25,7 +24,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
@@ -35,7 +34,7 @@ import { SubscribeModal } from "../components/SubscribeModal";
 import { discoverJobs, getCompanies, getCompanyProfile, getJobLocations, getVisitorPreferences, trackCareerEvent } from "../services/careerPortalService";
 import { getCareerSession, getCareerVisitorToken } from "../hooks/useCareerVisitor";
 import { PublicCompanyProfile } from "../types/careerPortalTypes";
-import { buildCareerSearchParams, CareerSearchFilters } from "../utils/careerSearch";
+import { buildCareerSearchParams, careerSearchErrorMessage, CareerSearchFilters, countActiveCareerFilters, shouldOfferCareerAlerts } from "../utils/careerSearch";
 import { Alrt, Btn, Txt } from "../../../shared/components/ui";
 import { CircularLoader } from "../../../shared/components";
 import { CompanyLogo } from "../components/CompanyLogo";
@@ -114,8 +113,8 @@ export const CareerMarketplace = () => {
   // readable job cards side by side.
   const desktop = useMediaQuery(theme.breakpoints.up("lg"));
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filters, setFilters] = useState(defaults);
+  const [appliedQuery, setAppliedQuery] = useState({ search: "", filters: defaults });
   const [page, setPage] = useState(1);
   const [jobs, setJobs] = useState<PublicJobSummary[]>([]);
   const [total, setTotal] = useState(0);
@@ -128,14 +127,20 @@ export const CareerMarketplace = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
   const [drawer, setDrawer] = useState(false);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const validCode = !companyCode || /^\d{6}$/.test(companyCode);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setDebouncedSearch(search.trim()), 350);
+    const timer = window.setTimeout(() => {
+      const nextSearch = search.trim();
+      setAppliedQuery((current) => current.search === nextSearch && current.filters === filters
+        ? current
+        : { search: nextSearch, filters });
+    }, 350);
     return () => window.clearTimeout(timer);
-  }, [search]);
+  }, [search, filters]);
 
   useEffect(() => {
     if (!companyCode || !validCode) { setProfile(null); return; }
@@ -164,50 +169,53 @@ export const CareerMarketplace = () => {
     let active = true;
     setLoading(true);
     setError("");
-    const params = buildCareerSearchParams(debouncedSearch, page, filters);
+    const params = buildCareerSearchParams(appliedQuery.search, page, appliedQuery.filters);
     discoverJobs(companyCode, params)
       .then(({ data }) => {
         if (!active) return;
         if (!data.success) throw new Error(data.message || "Jobs could not be loaded.");
         setJobs(data.methodResults ?? []);
         setTotal(data.totalRecords ?? 0);
-        if (debouncedSearch || activeFilters > 0)
+        const hasAppliedFilters = countActiveCareerFilters(appliedQuery.filters) > 0;
+        if (appliedQuery.search || hasAppliedFilters)
           trackCareerEvent(
-            debouncedSearch ? "SearchPerformed" : "FilterApplied",
+            appliedQuery.search ? "SearchPerformed" : "FilterApplied",
             getCareerVisitorToken(),
             undefined,
             companyCode,
           );
       })
-      .catch((reason) => active && setError(reason?.response?.data?.message || reason.message || "Jobs could not be loaded."))
+      .catch((reason) => {
+        if (!active) return;
+        setJobs([]);
+        setTotal(0);
+        setError(careerSearchErrorMessage(reason));
+      })
       .finally(() => active && setLoading(false));
     return () => { active = false; };
-  }, [companyCode, debouncedSearch, filters, page, validCode]);
+  }, [companyCode, appliedQuery, page, retryCount, validCode]);
 
-  useEffect(() => setPage(1), [debouncedSearch, filters]);
+  useEffect(() => setPage(1), [search, filters]);
   useEffect(() => {
-    if (sessionStorage.getItem("career_subscribe_seen") || getCareerSession()) return;
-    let timer = 0;
+    if (!shouldOfferCareerAlerts({
+      loading,
+      hasSearchError: Boolean(error),
+      alreadySeen: Boolean(sessionStorage.getItem("career_subscribe_seen")),
+      hasCandidateSession: Boolean(getCareerSession()),
+    })) return;
     let active = true;
     getVisitorPreferences(getCareerVisitorToken())
       .then(({ data }) => {
         if (!active || data.methodResult?.suppressSubscribePopup) return;
-        timer = window.setTimeout(() => {
-          setSubscribeOpen(true);
-          sessionStorage.setItem("career_subscribe_seen", "1");
-        }, 12000);
+        sessionStorage.setItem("career_subscribe_seen", "1");
       })
-      .catch(() => {
-        if (!active) return;
-        timer = window.setTimeout(() => setSubscribeOpen(true), 12000);
-      });
-    return () => { active = false; if (timer) window.clearTimeout(timer); };
-  }, []);
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, [loading, error]);
 
-  const activeFilters = useMemo(
-    () => Object.values(filters).filter((x) => x !== "" && x !== false && x !== "relevance").length,
-    [filters],
-  );
+  const activeFilters = countActiveCareerFilters(filters);
+  const allVisibleRolesPaused = !loading && !error && jobs.length > 0 && jobs.every((job) => !job.canApply);
+  const visiblePauseReason = jobs.find((job) => !job.canApply)?.applicationClosedReason?.trim();
   const companyName = profile?.displayName || jobs[0]?.companyName;
   useEffect(() => { document.title = companyName ? `${companyName} Careers` : "Careers"; }, [companyName]);
 
@@ -222,8 +230,8 @@ export const CareerMarketplace = () => {
               position: "relative",
               overflow: "hidden",
               borderRadius: { xs: 4, md: 6 },
-              p: { xs: 3, sm: 5, md: 7 },
-              minHeight: { xs: 270, sm: 320, md: 360 },
+              p: { xs: 3, sm: 4, md: 5 },
+              minHeight: { xs: 250, sm: 295, md: 320 },
               display: "flex",
               alignItems: "center",
               color: "#fff",
@@ -235,13 +243,13 @@ export const CareerMarketplace = () => {
           >
             <Box sx={{ position: "relative", zIndex: 1, maxWidth: 800 }}>
               <Chip icon={companyCode ? <BusinessRounded /> : <AutoAwesomeRounded />} label={companyCode ? "COMPANY CAREERS" : "CURATED OPPORTUNITIES"} sx={{ bgcolor: "rgba(255,255,255,.16)", color: "#fff", border: "1px solid rgba(255,255,255,.24)", fontWeight: 800 }} />
-              <Typography variant="h1" sx={{ mt: 2.5, color: "#fff !important", textShadow: "0 3px 18px rgba(0,0,0,.32)", fontWeight: 900, letterSpacing: "-.055em", lineHeight: 1.02, fontSize: { xs: "2.65rem", sm: "3.5rem", md: "4.8rem" } }}>
+              <Typography variant="h1" sx={{ mt: 2, color: "#fff !important", textShadow: "0 3px 18px rgba(0,0,0,.32)", fontWeight: 900, letterSpacing: "-.055em", lineHeight: 1.02, fontSize: { xs: "2.4rem", sm: "3.25rem", md: "4.15rem" } }}>
                 {companyCode ? `Build what’s next with ${companyName || "us"}.` : "Find work worth showing up for."}
               </Typography>
-              <Typography sx={{ mt: 2, maxWidth: 680, color: "rgba(255,255,255,.90)", textShadow: "0 2px 12px rgba(0,0,0,.20)", fontSize: { md: "1.12rem" }, lineHeight: 1.75 }}>
+              <Typography sx={{ mt: 1.5, maxWidth: 680, color: "rgba(255,255,255,.90)", textShadow: "0 2px 12px rgba(0,0,0,.20)", fontSize: { md: "1.05rem" }, lineHeight: 1.65 }}>
                 {profile?.shortDescription || "Search ambitious teams, useful work, and roles designed around where you want your career to go."}
               </Typography>
-              <Btn onClick={() => setSubscribeOpen(true)} color="inherit" sx={{ mt: 3, color: "primary.dark", bgcolor: "#fff", "&:hover": { bgcolor: "grey.100" } }}>
+              <Btn onClick={() => setSubscribeOpen(true)} color="inherit" sx={{ mt: 2.25, color: "primary.dark", bgcolor: "#fff", "&:hover": { bgcolor: "grey.100" } }}>
                 Get matching jobs
               </Btn>
             </Box>
@@ -249,8 +257,8 @@ export const CareerMarketplace = () => {
 
           <Paper sx={{ mx: { xs: 0, sm: 2, md: 5 }, mt: { xs: 2, md: -3.5 }, position: "relative", zIndex: 2, p: { xs: 1, sm: 1.25 }, borderRadius: 4, border: "1px solid", borderColor: "divider", boxShadow: "0 18px 50px color-mix(in srgb, var(--mui-palette-common-black) 10%, transparent)" }}>
             <Stack direction={{ xs: "column", sm: "row" }} gap={1}>
-              <Txt fullWidth value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Job title, skill, company, or keyword" InputProps={{ startAdornment: <InputAdornment position="start"><SearchRounded /></InputAdornment> }} sx={{ "& fieldset": { border: 0 } }} />
-              <Txt select value={filters.sort} onChange={(e) => setFilters((x) => ({ ...x, sort: e.target.value }))} sx={{ minWidth: { sm: 190 }, "& fieldset": { border: 0 } }}>
+              <Txt fullWidth value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Job title, skill, company, or keyword" inputProps={{ "aria-label": "Search jobs by title, skill, company, or keyword" }} InputProps={{ startAdornment: <InputAdornment position="start"><SearchRounded /></InputAdornment> }} sx={{ "& fieldset": { border: 0 } }} />
+              <Txt select value={filters.sort} onChange={(e) => setFilters((x) => ({ ...x, sort: e.target.value }))} inputProps={{ "aria-label": "Sort job results" }} sx={{ minWidth: { sm: 190 }, "& fieldset": { border: 0 } }}>
                 <MenuItem value="relevance">Most relevant</MenuItem><MenuItem value="newest">Newest first</MenuItem><MenuItem value="oldest">Oldest first</MenuItem><MenuItem value="deadline">Deadline soon</MenuItem><MenuItem value="salary-high">Salary: high to low</MenuItem><MenuItem value="salary-low">Salary: low to high</MenuItem><MenuItem value="most-saved">Most saved</MenuItem><MenuItem value="most-viewed">Most viewed</MenuItem>
               </Txt>
               {!desktop && <Btn variant="outlined" startIcon={<FilterListRounded />} onClick={() => setDrawer(true)} sx={{ minHeight: 46, whiteSpace: "nowrap" }}>Filters {activeFilters ? `(${activeFilters})` : ""}</Btn>}
@@ -289,15 +297,23 @@ export const CareerMarketplace = () => {
                 <FilterContent filters={filters} setFilters={setFilters} reset={() => setFilters(defaults)} locations={locations} />
               </Paper>
             )}
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Box role="region" aria-labelledby="career-results-heading" aria-busy={loading} sx={{ flex: 1, minWidth: 0 }}>
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "end" }} gap={1} sx={{ mb: 2.5 }}>
                 <Box>
-                  <Typography variant="h4" fontWeight={900} letterSpacing="-.035em">Open opportunities</Typography>
-                  <Typography color="text.secondary" sx={{ mt: 0.5 }}>{loading ? "Searching..." : `${total} role${total === 1 ? "" : "s"} found`}</Typography>
+                  <Typography id="career-results-heading" variant="h4" fontWeight={900} letterSpacing="-.035em">{allVisibleRolesPaused ? "Current opportunities" : "Open opportunities"}</Typography>
+                  <Typography color="text.secondary" aria-live="polite" aria-atomic="true" sx={{ mt: 0.5 }}>{loading ? "Searching..." : error ? "Jobs temporarily unavailable" : `${total} role${total === 1 ? "" : "s"} found`}</Typography>
                 </Box>
                 {activeFilters > 0 && <Chip label={`${activeFilters} active filter${activeFilters === 1 ? "" : "s"}`} onDelete={() => setFilters(defaults)} />}
               </Stack>
-              {error && <Alrt severity="error" sx={{ mb: 2.5, borderRadius: 3 }}>{error}</Alrt>}
+              {allVisibleRolesPaused && <Alrt severity="info" sx={{ mb: 2.5, borderRadius: 3 }}>
+                {visiblePauseReason || "Applications are paused for these roles right now."} You can still review role details and set a job alert for when hiring reopens.
+              </Alrt>}
+              {error && <Alrt severity="error" role="alert" sx={{ mb: 2.5, borderRadius: 3 }}>
+                <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} justifyContent="space-between" gap={1.5}>
+                  <Typography variant="body2">{error}</Typography>
+                  <Btn size="small" color="inherit" onClick={() => setRetryCount((count) => count + 1)} sx={{ alignSelf: { xs: "flex-start", sm: "center" }, whiteSpace: "nowrap" }}>Try again</Btn>
+                </Stack>
+              </Alrt>}
               {loading ? <Box sx={{ minHeight: 360 }}><CircularLoader /></Box> : (
                 <Stack spacing={2}>
                   {jobs.map((job) => (
@@ -330,7 +346,7 @@ export const CareerMarketplace = () => {
                 <Paper sx={{ flex: 1.5, p: { xs: 3, md: 4 }, borderRadius: 4, border: "1px solid", borderColor: "divider" }}>
                   {profile.aboutCompanyHtml ? <Box dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(profile.aboutCompanyHtml) }} sx={{ color: "text.secondary", lineHeight: 1.8, "& h1,& h2,& h3": { color: "text.primary" } }} /> : <Typography color="text.secondary">{profile.shortDescription}</Typography>}
                   <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 3 }}>
-                    {profile.industry && <Chip label={profile.industry} />}
+                    {profile.industry && <Chip label={profile.industry.replace(/&amp;/g, "&")} />}
                     {profile.companySize && <Chip label={`${profile.companySize} people`} />}
                     {profile.foundedYear && <Chip label={`Founded ${profile.foundedYear}`} />}
                     {profile.headquarters && <Chip label={profile.headquarters} />}
@@ -345,7 +361,7 @@ export const CareerMarketplace = () => {
           )}
         </Container>
       </Box>
-      <Drawer anchor="bottom" open={drawer} onClose={() => setDrawer(false)} PaperProps={{ sx: { borderRadius: "28px 28px 0 0", p: { xs: 2, sm: 3 }, maxHeight: "88vh", overflowY: "auto" } }}>
+      <Drawer anchor="bottom" open={drawer} onClose={() => setDrawer(false)} PaperProps={{ role: "dialog", "aria-label": "Job filters", sx: { borderRadius: "28px 28px 0 0", p: { xs: 2, sm: 3 }, maxHeight: "88vh", overflowY: "auto" } }}>
         <FilterContent filters={filters} setFilters={setFilters} reset={() => setFilters(defaults)} locations={locations} />
         <Btn variant="contained" onClick={() => setDrawer(false)} sx={{ mt: 3 }}>Show {total} jobs</Btn>
       </Drawer>

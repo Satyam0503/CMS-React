@@ -99,6 +99,11 @@ export type EmployeeLeaveTypeBalance = {
   halfDayAllowed: boolean;
   weekendInclusive: boolean;
   holidayInclusive: boolean;
+  enableSandwichRules?: boolean;
+  includeWeekendsInSandwich?: boolean;
+  includeHolidaysInSandwich?: boolean;
+  enableCompOffEarning?: boolean;
+  compOffValidityDays?: number;
   attendanceStatusCode?: string | null;
   fullDayAttendanceStatusCode?: string | null;
   halfDayAttendanceStatusCode?: string | null;
@@ -140,6 +145,11 @@ export type LeavePolicyModel = {
   halfDayAllowed: boolean;
   weekendInclusive: boolean;
   holidayInclusive: boolean;
+  enableSandwichRules?: boolean;
+  includeWeekendsInSandwich?: boolean;
+  includeHolidaysInSandwich?: boolean;
+  enableCompOffEarning?: boolean;
+  compOffValidityDays?: number;
   attendanceStatusCode?: string | null;
   fullDayAttendanceStatusCode?: string | null;
   halfDayAttendanceStatusCode?: string | null;
@@ -229,3 +239,38 @@ export type GetLeaveRequestsSummary = ResponseData<LeaveRequestSummary>;
 
 export type GetEmployeeLeaveBalanceResponse =
   ResponseData<EmployeeLeaveTypeBalance>;
+
+export interface CompOffCreditRequestDto {
+  workedDate: string;
+  hoursWorked: number;
+  creditDays: number;
+  reason: string;
+}
+
+export interface ReviewCompOffCreditDto {
+  requestId: string;
+  isApproved: boolean;
+  reviewRemarks?: string;
+}
+
+export interface CompOffCreditResponseDto {
+  id: string;
+  userId: string;
+  employeeName: string;
+  workedDate: string;
+  hoursWorked: number;
+  creditDays: number;
+  reason: string;
+  status: string;
+  reviewedBy?: string;
+  reviewedAtUtc?: string;
+  reviewRemarks?: string;
+  expiresAtUtc: string;
+  createdDate?: string;
+}
+
+export interface SandwichEvaluationResult {
+  leaveDates: string[];
+  sandwichedDaysCount: number;
+  isSandwichApplied: boolean;
+}

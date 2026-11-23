@@ -602,7 +602,7 @@ const PayRollManagement = () => {
                                                 isGenerating ? (
                                                     <CircularProgress size={16} color="inherit" />
                                                 ) : payrollRows.length === 0 ? (
-                                                    <AutoAwesome fontSize="small" />
+                                                    <CalculateOutlined fontSize="small" />
                                                 ) : uncalculatedRows.length > 0 ? (
                                                     <CalculateOutlined fontSize="small" />
                                                 ) : (

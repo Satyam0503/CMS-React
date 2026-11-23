@@ -240,5 +240,44 @@ describe("RecruitmentOfferApprovalPolicyEditor", () => {
     expect(payload.requireApprovalReference).toBe(true);
     expect(payload.delegatedApproverUserId).toBe("usr-42");
   });
+
+  it("explains when offer approval policies are disabled and prevents editing", async () => {
+    mockGetOfferPolicy.mockResolvedValueOnce({
+      data: {
+        success: false,
+        errorCode: "REC_FEATURE_DISABLED",
+        message: "Offer approval policies is not enabled for this company.",
+      },
+    });
+    const { root, container } = renderComponent();
+
+    await act(async () => {
+      root.render(<RecruitmentOfferApprovalPolicyEditor />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(container.textContent).toContain("Offer approval policy is turned off for this company");
+    expect(container.textContent).toContain("Recruitment Settings");
+    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.includes("Save policy"))).toBe(false);
+    expect(container.textContent).toContain("Check again");
+  });
+
+  it("does not present default approval settings as loaded when the API is unavailable", async () => {
+    mockGetOfferPolicy.mockRejectedValueOnce(new Error("Policy service unavailable"));
+    const { root, container } = renderComponent();
+
+    await act(async () => {
+      root.render(<RecruitmentOfferApprovalPolicyEditor />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(container.textContent).toContain("Offer approval policy is unavailable");
+    expect(container.textContent).toContain("Policy service unavailable");
+    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.includes("Save policy"))).toBe(false);
+  });
 });
 

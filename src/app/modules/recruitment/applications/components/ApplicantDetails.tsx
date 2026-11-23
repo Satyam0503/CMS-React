@@ -101,6 +101,7 @@ export const ApplicantDetails = () => {
   const canEditApplicant = currentUser?.roleType === Roles.Administrator || hasModuleFeaturePermission(ModulesName.Applications, Permission.Edit, userPermissions);
 
   useEffect(() => {
+    setLoading(true);
     getApplicantById(applicantId)
       .then(({ data }) => {
         if (data.success && data.statusCode === 200) {
@@ -115,6 +116,9 @@ export const ApplicantDetails = () => {
       .catch((error) => {
         console.error(error);
         navigate("/error", { replace: true });
+      })
+      .finally(() => {
+        setLoading(false);
       });
     getRecruitmentOfferByApplicant(applicantId)
       .then(({ data }) => {
@@ -396,6 +400,14 @@ export const ApplicantDetails = () => {
                       whiteSpace: "nowrap",
                     }}
                   />
+                  {applicant.candidateReportedSource && <Tooltip title={["Candidate-reported source.", applicant.attributionSource && `Campaign source: ${applicant.attributionSource}`, applicant.attributionMedium && `Medium: ${applicant.attributionMedium}`, applicant.attributionCampaign && `Campaign: ${applicant.attributionCampaign}`, applicant.referrerHost && `Referrer: ${applicant.referrerHost}`].filter(Boolean).join(" · ")}>
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={`Source: ${applicant.candidateReportedSource}${applicant.candidateReportedSourceDetail ? ` · ${applicant.candidateReportedSourceDetail}` : ""}`}
+                      sx={{ fontWeight: 700, fontSize: "0.74rem", height: 26, borderRadius: 2, maxWidth: { xs: "100%", sm: 360 } }}
+                    />
+                  </Tooltip>}
                   {applicant.finalInterviewScore != null && applicant.finalInterviewScore > 0 && (
                     <Chip
                       size="small"

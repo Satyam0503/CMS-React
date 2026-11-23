@@ -10,6 +10,7 @@
   "MODULES": {
     "DASHBOARD": "ダッシュボード",
     "EMPLOYEES": "従業員",
+    "EMPLOYEE_MANAGEMENT": "従業員管理",
     "ATTENDANCE": "出席管理",
     "LEAVE_MANAGEMENT": "休暇管理",
     "MY_PROFILE": "マイプロフィール",
@@ -28,7 +29,8 @@
     "POLICIES": "せいさく",
     "PAYROLL_SETTINGS": "給与設定",
     "LIFECYCLE_MANAGEMENT": "ライフサイクル管理",
-    "CAREER_PROFILE": "採用プロフィール"
+    "CAREER_PROFILE": "採用プロフィール",
+    "ORG_CHART": "組織図"
   },
   "GENDER": {
     "MALE": "男性",
@@ -1060,7 +1062,13 @@
     "SUBTITLE": "Here's what's happening in your organization today.",
     "SUBTITLE_SELF": "Here's what's coming up for you.",
     "VIEW_ALL": "View All",
-    "LOAD_ERROR": "Couldn't load this section. Try refreshing the page.",
+    "LOAD_ERROR": "このセクションを読み込めませんでした。",
+    "RETRY": "再試行",
+    "RETRYING": "再試行中…",
+    "UNAVAILABLE": "利用できません",
+    "AS_OF_DATE": "ダッシュボードのデータ日: {date}",
+    "GENERATED_AT": "レポート生成日時: {time} ({timeZone})",
+    "SOURCE_FRESHNESS_UNAVAILABLE": "このレポートにはデータソースの更新時刻が含まれていません。",
     "KPI": {
       "TOTAL_EMPLOYEES": "Total Employees",
       "PRESENT_TODAY": "Present Today",
@@ -1082,9 +1090,11 @@
     },
     "TREND": {
       "TITLE": "Employee Trend",
-      "RANGE": "Last 6 Months",
+      "RANGE": "Last 12 Months",
+      "PARTIAL_MONTH": "Current month is partial through {date}.",
       "EMPTY": "Headcount history will appear here after the first month.",
-      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}."
+      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}.",
+      "ACCESSIBLE_SUMMARY": "Monthly employee headcount: {points}.{partialMonthNotice}"
     },
     "DEPARTMENTS": {
       "TITLE": "Department Overview",
@@ -1124,6 +1134,37 @@
       "HOLIDAY": "Holiday",
       "EVENT": "Event",
       "TODAY": "Today"
+    },
+    "MOVEMENT": {
+      "TITLE": "従業員の異動",
+      "RANGE": "過去12か月",
+      "PARTIAL": "当月は{date}時点の途中集計です。",
+      "EMPTY": "従業員の異動データを利用できません。",
+      "SUMMARY": "月別の従業員異動: {points}.{partialNote}",
+      "HIRES": "入社",
+      "EXITS": "退職",
+      "NET": "純増減",
+      "MONTH": "月",
+      "DATA_TABLE": "データ表を表示",
+      "TABLE_CAPTION": "月別の従業員異動データ"
+    },
+    "LEAVE_COHORT": {
+      "TITLE": "申請月別の休暇申請",
+      "RANGE": "過去12か月",
+      "PARTIAL": "当月の申請は{date}時点の途中集計です。",
+      "DEFINITION": "申請月ごとに集計しています。ステータスは各申請の現在の状態で、後から変わる場合があります。",
+      "EMPTY": "休暇申請データを利用できません。",
+      "PENDING": "申請中",
+      "APPROVED": "承認済み",
+      "REJECTED": "却下",
+      "WITHDRAWN": "取り下げ",
+      "OTHER": "その他",
+      "SUMMARY": "申請月と現在のステータス別の休暇申請: {points}.{partialNote}",
+      "REQUESTS": "件",
+      "MONTH": "月",
+      "TOTAL": "申請合計",
+      "DATA_TABLE": "データ表を表示",
+      "TABLE_CAPTION": "申請月と現在のステータス別の休暇申請"
     }
   }
 }

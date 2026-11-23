@@ -5,11 +5,9 @@ import {
   Chip,
   Divider,
   Grid,
-  MenuItem,
   Stack,
   Tab,
   Tabs,
-  Tooltip,
   Typography,
   alpha,
   useTheme,
@@ -23,7 +21,6 @@ import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
 import MarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 import TuneRounded from "@mui/icons-material/TuneRounded";
 import BusinessOutlined from "@mui/icons-material/BusinessOutlined";
-import PublicOutlined from "@mui/icons-material/PublicOutlined";
 import AccessTimeOutlined from "@mui/icons-material/AccessTimeOutlined";
 import RuleOutlined from "@mui/icons-material/RuleOutlined";
 import AssignmentTurnedInOutlined from "@mui/icons-material/AssignmentTurnedInOutlined";
@@ -33,7 +30,7 @@ import FiberManualRecordRounded from "@mui/icons-material/FiberManualRecordRound
 import CheckRounded from "@mui/icons-material/CheckRounded";
 import EditNoteOutlined from "@mui/icons-material/EditNoteOutlined";
 import ErrorOutlineOutlined from "@mui/icons-material/ErrorOutlineOutlined";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { getRecruitmentEnterpriseConfig, upsertRecruitmentEnterpriseConfig } from "./services";
 import { RecruitmentEnterpriseConfig, RecruitmentEnterpriseConfigCommand } from "./models";
@@ -44,6 +41,7 @@ import { useIsDark } from "../theme/useIsDark";
 
 import RecruitmentInterviewPlanEditor from "./RecruitmentInterviewPlanEditor";
 import RecruitmentFeedbackSlaCard from "./RecruitmentFeedbackSlaCard";
+import RecruitmentStageSlaCard from "./RecruitmentStageSlaCard";
 import RecruitmentOfferApprovalPolicyEditor from "./RecruitmentOfferApprovalPolicyEditor";
 import { RecruitmentModeCard, RecruitmentPipeline, ScrollReveal } from "./RecruitmentSettingsPresentation";
 import TextEditor from "../../shared/components/TextEditor";
@@ -84,6 +82,7 @@ const defaults: RecruitmentEnterpriseConfig = {
   allowMultiVacancyApplications: true,
   allowJobWorkflowCustomization: false,
   screeningCriteria: ["Relevant experience", "Required skills", "Communication"],
+  candidateSourceOptions: ["Career site", "Employee referral", "Job board", "Social media", "Search engine", "Recruitment agency", "Event", "Other", "Prefer not to say"],
   screeningPassScore: 60,
   preboardingChecklist: ["candidate-details", "documents", "verification"],
   defaultTimezone: "UTC",
@@ -93,9 +92,11 @@ const defaults: RecruitmentEnterpriseConfig = {
   compensationCurrency: "INR",
   compensationComponents: {},
   defaultCandidateRetentionDays: 730,
+  candidatePrivacyNoticeText: "",
+  candidatePrivacyNoticeVersion: "",
   offerLetterSubjectTemplate: "Formal Offer of Employment: [JobTitle] - [CandidateName]",
   offerLetterBodyTemplate:
-    "<p>Dear [CandidateName],</p><p>We are pleased to extend this formal offer of employment for the position of <strong>[JobTitle]</strong>.</p><p><strong>Compensation (Total CTC):</strong> [Currency] [TotalCtc]</p><p>Please review the terms of this offer. To confirm your acceptance, kindly reply directly to this email with your written confirmation and signed offer letter.</p><p>Sincerely,<br/><strong>Human Resources & Talent Acquisition</strong></p>",
+    "<p>Dear [CandidateName],</p><p>We are pleased to extend this formal offer of employment for the position of <strong>[JobTitle]</strong>.</p><p><strong>Compensation (Total CTC):</strong> [Currency] [TotalCtc]</p><p>Please review the terms and submit your response using the secure candidate link in this email.</p><p>Sincerely,<br/><strong>Human Resources & Talent Acquisition</strong></p>",
 };
 
 const idempotencyKey = () => `${Date.now()}-${Math.random().toString(36).slice(2)}-recruitment-settings`;
@@ -127,6 +128,8 @@ const modes: Record<
     ],
     flow: ["Apply", "Review", "Interview (Optional)", "Fast Offer", "Hire"],
     preset: {
+      enableSla: false,
+      enableAutomation: false,
       applicationReview: true,
       hiringManagerReview: false,
       interviewRounds: false,
@@ -136,6 +139,10 @@ const modes: Record<
       offerNegotiation: false,
       candidateEmailActions: true,
       requisitions: false,
+      slaTracking: false,
+      automation: false,
+      internalMobility: false,
+      rehireLinks: false,
       autoAdvanceOnScreening: true,
       requireInterviewBeforeDecision: false,
       requirePreboardingBeforeHandoff: false,
@@ -157,6 +164,8 @@ const modes: Record<
     ],
     flow: ["Apply", "Screen", "Interview + Scorecards", "Approve Offer", "Preboard + Hire"],
     preset: {
+      enableSla: false,
+      enableAutomation: false,
       applicationReview: true,
       hiringManagerReview: true,
       interviewRounds: true,
@@ -166,6 +175,10 @@ const modes: Record<
       offerNegotiation: false,
       candidateEmailActions: true,
       requisitions: false,
+      slaTracking: false,
+      automation: false,
+      internalMobility: false,
+      rehireLinks: false,
       autoAdvanceOnScreening: true,
       requireInterviewBeforeDecision: true,
       requirePreboardingBeforeHandoff: true,
@@ -187,6 +200,8 @@ const modes: Record<
     ],
     flow: ["Requisition", "Screen", "Panel + Debrief", "Approve + Negotiate", "Preboard + Audit"],
     preset: {
+      enableSla: true,
+      enableAutomation: true,
       applicationReview: true,
       hiringManagerReview: true,
       interviewRounds: true,
@@ -196,6 +211,8 @@ const modes: Record<
       offerNegotiation: true,
       candidateEmailActions: true,
       requisitions: true,
+      slaTracking: true,
+      automation: true,
       internalMobility: true,
       rehireLinks: true,
       autoAdvanceOnScreening: true,
@@ -247,8 +264,6 @@ const capabilityGroups: Array<{
     description: "Enable additional controls for multi-entity or distributed teams.",
     fields: [
       { key: "requisitions", label: "Requisitions and head-count approvals", help: "Requires an approved requisition before publishing job openings." },
-      { key: "slaTracking", label: "Stage SLA tracking", help: "Monitors time spent in each pipeline stage with aging indicators." },
-      { key: "automation", label: "Workflow automation", help: "Dispatches automated reminders, interviewer alerts, and updates." },
       { key: "internalMobility", label: "Internal mobility", help: "Links internal employee applicants to active recruitment requisitions." },
       { key: "rehireLinks", label: "Rehire candidate links", help: "Detects former employees and links past performance records." },
     ],
@@ -264,11 +279,13 @@ export default function RecruitmentSettings() {
   const [config, setConfig] = useState<RecruitmentEnterpriseConfig>(defaults);
   const [locationsText, setLocationsText] = useState("");
   const [criteriaText, setCriteriaText] = useState("Relevant experience, Required skills, Communication");
+  const [candidateSourceOptionsText, setCandidateSourceOptionsText] = useState((defaults.candidateSourceOptions ?? []).join(", "));
   const [checklistText, setChecklistText] = useState("candidate-details, documents, verification");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadFailed, setLoadFailed] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const pendingConfigCommand = useRef<{ fingerprint: string; key: string } | null>(null);
 
   const selectedMode = modes[config.recruitmentMode] || modes.Simple;
   const selectedModeAccentColor = theme.palette[selectedMode.accentPalette].main;
@@ -305,9 +322,16 @@ export default function RecruitmentSettings() {
       const { data } = await getRecruitmentEnterpriseConfig();
       if (!data.success) throw new Error(data.message || "Unable to load recruitment settings.");
       const merged = { ...defaults, ...(data.methodResult ?? {}) };
+      const slaEnabled = Boolean(merged.slaTracking || merged.enableSla);
+      const automationEnabled = Boolean(merged.automation || merged.enableAutomation);
+      merged.slaTracking = slaEnabled;
+      merged.enableSla = slaEnabled;
+      merged.automation = automationEnabled;
+      merged.enableAutomation = automationEnabled;
       setConfig(merged);
       setLocationsText((merged.locations ?? []).join(", "));
       setCriteriaText((merged.screeningCriteria ?? defaults.screeningCriteria ?? []).join(", "));
+      setCandidateSourceOptionsText((merged.candidateSourceOptions ?? defaults.candidateSourceOptions ?? []).join(", "));
       setChecklistText((merged.preboardingChecklist ?? defaults.preboardingChecklist ?? []).join(", "));
       setHasUnsavedChanges(false);
     } catch (error) {
@@ -353,13 +377,21 @@ export default function RecruitmentSettings() {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean);
+      const parsedCandidateSourceOptions = candidateSourceOptionsText
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .filter((item, index, all) => all.findIndex((candidate) => candidate.toLocaleLowerCase() === item.toLocaleLowerCase()) === index);
+      if (!resetToDefaults && (parsedCandidateSourceOptions.length < 1 || parsedCandidateSourceOptions.length > 20 || parsedCandidateSourceOptions.some((item) => item.length > 60))) {
+        throw new Error("Enter 1 to 20 candidate source labels, each 60 characters or fewer.");
+      }
 
       const retentionDays = Number(config.defaultCandidateRetentionDays ?? 730);
       if (!Number.isInteger(retentionDays) || retentionDays < 30 || retentionDays > 3650) {
         throw new Error("Candidate retention must be a whole number between 30 and 3650 days.");
       }
 
-      const payload: RecruitmentEnterpriseConfigCommand = {
+      const payloadValues: Omit<RecruitmentEnterpriseConfigCommand, "idempotencyKey"> = {
         locations: resetToDefaults ? [] : parsedLocations,
         recruitmentMode: resetToDefaults ? "Simple" : config.recruitmentMode,
         enableSla: resetToDefaults ? false : config.enableSla,
@@ -383,19 +415,26 @@ export default function RecruitmentSettings() {
         allowMultiVacancyApplications: resetToDefaults ? true : config.allowMultiVacancyApplications,
         allowJobWorkflowCustomization: resetToDefaults ? false : Boolean(config.allowJobWorkflowCustomization),
         screeningCriteria: resetToDefaults ? defaults.screeningCriteria : parsedCriteria,
+        candidateSourceOptions: resetToDefaults ? defaults.candidateSourceOptions : parsedCandidateSourceOptions,
         screeningPassScore: resetToDefaults ? 60 : Number(config.screeningPassScore ?? 60),
         preboardingChecklist: resetToDefaults ? defaults.preboardingChecklist : parsedChecklist,
         compensationSchemeName: resetToDefaults ? "Standard" : config.compensationSchemeName,
         compensationCurrency: resetToDefaults ? "INR" : config.compensationCurrency,
         defaultTimezone: resetToDefaults ? "UTC" : config.defaultTimezone?.trim() || "UTC",
         defaultCandidateRetentionDays: resetToDefaults ? 730 : retentionDays,
+        candidatePrivacyNoticeText: resetToDefaults ? "" : config.candidatePrivacyNoticeText?.trim() || "",
+        candidatePrivacyNoticeVersion: resetToDefaults ? "" : config.candidatePrivacyNoticeVersion?.trim() || "",
         offerLetterSubjectTemplate: resetToDefaults
           ? defaults.offerLetterSubjectTemplate
           : config.offerLetterSubjectTemplate,
         offerLetterBodyTemplate: resetToDefaults ? defaults.offerLetterBodyTemplate : config.offerLetterBodyTemplate,
         resetToDefaults,
-        idempotencyKey: idempotencyKey(),
       };
+      const fingerprint = JSON.stringify(payloadValues);
+      const pending = pendingConfigCommand.current;
+      const key = pending?.fingerprint === fingerprint ? pending.key : idempotencyKey();
+      pendingConfigCommand.current = { fingerprint, key };
+      const payload: RecruitmentEnterpriseConfigCommand = { ...payloadValues, idempotencyKey: key };
       const { data } = await upsertRecruitmentEnterpriseConfig(payload);
       if (!data.success) throw new Error(data.message || "Unable to save recruitment settings.");
       toast.success(resetToDefaults ? "Recruitment defaults restored." : "Recruitment settings saved.");
@@ -409,7 +448,17 @@ export default function RecruitmentSettings() {
 
   const update = <K extends keyof RecruitmentEnterpriseConfig>(field: K, value: RecruitmentEnterpriseConfig[K]) => {
     setHasUnsavedChanges(true);
-    setConfig((current) => ({ ...current, [field]: value }));
+    setConfig((current) => {
+      if (field === "enableSla" || field === "slaTracking") {
+        const enabled = Boolean(value);
+        return { ...current, enableSla: enabled, slaTracking: enabled };
+      }
+      if (field === "enableAutomation" || field === "automation") {
+        const enabled = Boolean(value);
+        return { ...current, enableAutomation: enabled, automation: enabled };
+      }
+      return { ...current, [field]: value };
+    });
   };
 
   const updateText = (setter: (value: string) => void, value: string) => {
@@ -811,10 +860,10 @@ export default function RecruitmentSettings() {
                   >
                     <Box minWidth={0} sx={{ flex: 1 }}>
                       <Typography variant="body2" fontWeight={800} sx={{ fontSize: "0.88rem" }}>
-                        SLA and stage aging alerts
+                        Interview feedback deadlines
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.76rem", lineHeight: 1.45, mt: 0.25 }}>
-                        Alert recruiters when applications remain in a stage beyond configured threshold.
+                        Track interview rounds with overdue interviewer scorecards.
                       </Typography>
                     </Box>
                     <AppSwitch
@@ -846,10 +895,10 @@ export default function RecruitmentSettings() {
                   >
                     <Box minWidth={0} sx={{ flex: 1 }}>
                       <Typography variant="body2" fontWeight={800} sx={{ fontSize: "0.88rem" }}>
-                        Recruitment automation queue
+                        Interviewer scorecard reminder emails
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.76rem", lineHeight: 1.45, mt: 0.25 }}>
-                        Automatically queue candidate reminders and approval notifications.
+                        Allow recruiters to queue follow-up emails for interviewers with outstanding scorecards.
                       </Typography>
                     </Box>
                     <AppSwitch
@@ -1259,7 +1308,7 @@ export default function RecruitmentSettings() {
                         disabled={loading || saving}
                         onChange={(e) => update("defaultCandidateRetentionDays", Number(e.target.value))}
                         inputProps={{ min: 30, max: 3650, step: 1 }}
-                        helperText="GDPR/privacy retention window (30–3650 days)."
+                        helperText="Candidate record retention period (30–3650 days). Align it with your approved policy."
                         fullWidth
                       />
                     </Box>
@@ -1280,6 +1329,56 @@ export default function RecruitmentSettings() {
                   </Box>
                 </Grid>
               </Grid>
+              </ScrollReveal>
+
+              <ScrollReveal delay={80}>
+                <Box sx={{ mt: 2.5, p: { xs: 2, md: 2.5 }, borderRadius: 2.5, border: "1px solid", borderColor: isDark ? "rgba(255,255,255,.1)" : "#E2E8F0", bgcolor: isDark ? "rgba(15,23,42,.25)" : "#F8FAFC" }}>
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                    <ShieldOutlined color="primary" />
+                    <Typography variant="subtitle1" fontWeight={800}>Candidate privacy notice</Typography>
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Candidates must acknowledge this company notice before submitting an application. Use your approved privacy wording. Increment the version whenever the notice changes; new applications are paused until both fields are configured.
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, md: 8 }}>
+                      <AppTextField
+                        label="Privacy notice text"
+                        value={config.candidatePrivacyNoticeText ?? ""}
+                        disabled={loading || saving}
+                        onChange={(e) => update("candidatePrivacyNoticeText", e.target.value)}
+                        multiline
+                        minRows={5}
+                        maxRows={10}
+                        inputProps={{ maxLength: 8000 }}
+                        helperText={`${(config.candidatePrivacyNoticeText ?? "").length}/8000 characters. Plain text is shown to applicants.`}
+                        fullWidth
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 4 }}>
+                      <AppTextField
+                        label="Notice version"
+                        value={config.candidatePrivacyNoticeVersion ?? ""}
+                        disabled={loading || saving}
+                        onChange={(e) => update("candidatePrivacyNoticeVersion", e.target.value)}
+                        inputProps={{ maxLength: 40, pattern: "[A-Za-z0-9._-]+" }}
+                        helperText="For example: 2026-11 or policy-3. Use a new version when the text changes."
+                        fullWidth
+                      />
+                    </Grid>
+                  </Grid>
+                  <AppTextField
+                    label="Candidate source choices"
+                    value={candidateSourceOptionsText}
+                    disabled={loading || saving}
+                    onChange={(e) => updateText(setCandidateSourceOptionsText, e.target.value)}
+                    placeholder="Career site, Employee referral, Job board"
+                    helperText="Comma-separated choices shown on the public application form. Keep labels short; up to 20 choices."
+                    inputProps={{ maxLength: 1400 }}
+                    fullWidth
+                    sx={{ mt: 2 }}
+                  />
+                </Box>
               </ScrollReveal>
 
               <Divider sx={{ my: 2.5 }} />
@@ -1418,6 +1517,9 @@ export default function RecruitmentSettings() {
             <ScrollReveal delay={80}>
               <RecruitmentFeedbackSlaCard />
             </ScrollReveal>
+            <ScrollReveal delay={120}>
+              <RecruitmentStageSlaCard />
+            </ScrollReveal>
           </Stack>
         </Box>
 
@@ -1541,7 +1643,7 @@ export default function RecruitmentSettings() {
                         { token: "[TotalCtc]", label: "[TotalCtc]", desc: "Total Offered Cost to Company" },
                       ]}
                       onResetDefault={() => {
-                        const defaultTemplate = `<p>Dear [CandidateName],</p><p>We are pleased to extend this formal offer of employment for the position of <strong>[JobTitle]</strong>.</p><p><strong>Compensation (Total CTC):</strong> [Currency] [TotalCtc]</p><p>Please review the terms of this offer. To confirm your acceptance, kindly reply directly to this email with your written confirmation and signed offer letter.</p><p>Sincerely,<br/><strong>Human Resources &amp; Talent Acquisition</strong></p>`;
+                        const defaultTemplate = `<p>Dear [CandidateName],</p><p>We are pleased to extend this formal offer of employment for the position of <strong>[JobTitle]</strong>.</p><p><strong>Compensation (Total CTC):</strong> [Currency] [TotalCtc]</p><p>Please review the terms and submit your response using the secure candidate link in this email.</p><p>Sincerely,<br/><strong>Human Resources &amp; Talent Acquisition</strong></p>`;
                         update("offerLetterBodyTemplate", defaultTemplate);
                         toast.info("Restored standard offer letter template");
                       }}
@@ -1639,7 +1741,7 @@ export default function RecruitmentSettings() {
                       }}
                     >
                       <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.75rem", lineHeight: 1.5 }}>
-                        Sent from HRMS. Candidates reply by email with acceptance or a signed offer letter.
+                        Sent from HRMS. Candidates submit their response through the secure offer link in the email.
                       </Typography>
                     </Box>
                   </Box>

@@ -1,7 +1,7 @@
 import { Box, Card, Skeleton, Stack, Typography, alpha } from "@mui/material";
 import { ReactNode } from "react";
 import { useIntl } from "react-intl";
-import { Link } from "react-router-dom";
+import { Link, useInRouterContext } from "react-router-dom";
 
 export type TileColor = "primary" | "secondary" | "success" | "warning" | "error" | "info";
 
@@ -53,6 +53,18 @@ export const IconTile = ({ color, children, size = 44 }: { color: TileColor; chi
 
 export const ViewAllLink = ({ to }: { to: string }) => {
   const { formatMessage: i } = useIntl();
+  const inRouter = useInRouterContext();
+  if (!inRouter) {
+    return (
+      <Typography
+        component="a"
+        href={to}
+        sx={{ fontSize: "0.875rem", fontWeight: 600, color: "primary.main", textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+      >
+        {i({ id: "DASHBOARD.VIEW_ALL" })}
+      </Typography>
+    );
+  }
   return (
     <Typography
       component={Link}
@@ -74,7 +86,7 @@ export const CardMessage = ({ children }: { children: ReactNode }) => (
 
 export const LoadError = () => {
   const { formatMessage: i } = useIntl();
-  return <CardMessage>{i({ id: "DASHBOARD.LOAD_ERROR" })}</CardMessage>;
+  return <CardMessage><span role="alert">{i({ id: "DASHBOARD.LOAD_ERROR" })}</span></CardMessage>;
 };
 
 export const ListSkeleton = ({ rows = 3 }: { rows?: number }) => (

@@ -2,6 +2,7 @@ import { Alert, Button, Card, CircularProgress, Stack, Typography } from "@mui/m
 import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { getAllModulesInfo, updateModuleAccess } from "../../adminservices";
 import { ModulesInfoModel } from "../../models";
@@ -9,6 +10,7 @@ import Grid from "@mui/material/Grid";
 
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
+import { queryKeys } from "../../../../query/queryKeys";
 
 import { modules_description } from "../../../../../utils/constant/Constant";
 import {
@@ -37,7 +39,16 @@ type ActionType = "SINGLE" | "PAYROLL" | "RECRUITMENT";
 export const ApplicationModules: FC = () => {
   const { formatMessage } = useIntl();
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const user = useAppSelector((state) => state.user.userData)!;
+
+  const invalidateDashboardQueries = () => {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.overview });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.upcomingEvents });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.upcomingCelebrations });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.notifications });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.departments });
+  };
 
   const [payrollModules, setPayrollModules] = useState<ModulesInfoModel[]>([]);
   const [recruitmentModules, setRecruitmentModules] = useState<
@@ -93,6 +104,7 @@ export const ApplicationModules: FC = () => {
             modulePermission: [...methodResult],
           }),
         );
+        invalidateDashboardQueries();
         setRefresh((prev) => !prev);
       }
     } catch {
@@ -139,6 +151,7 @@ export const ApplicationModules: FC = () => {
             modulePermission: [...latestPermissions],
           })
         );
+        invalidateDashboardQueries();
       }
 
       setRefresh((prev) => !prev);

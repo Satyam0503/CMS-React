@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { Alert, Button, Drawer, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Drawer, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { CustomisedDatePicker } from "../../../../shared/components";
 import { RecruitmentRequisitionCommand } from "../../models";
-import { upsertRecruitmentRequisition } from "../../services";
+import { getRecruitmentRequisition, upsertRecruitmentRequisition } from "../../services";
+import { getReportingChain } from "../../../employees/orgChart/orgChartService";
+import { OrgChartNode } from "../../../employees/orgChart/orgChartModel";
 
 type Props = { open: boolean; jobId: string; jobTitle: string; vacancies: number; onClose: () => void };
 
 const key = () => `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 export const RecruitmentRequisitionDrawer = ({ open, jobId, jobTitle, vacancies, onClose }: Props) => {
+  const [requisitionId, setRequisitionId] = useState<string>("");
+  const [expectedVersion, setExpectedVersion] = useState<number | undefined>();
   const [headcount, setHeadcount] = useState(String(Math.max(vacancies || 1, 1)));
   const [location, setLocation] = useState("");
   const [employmentType, setEmploymentType] = useState("Full-time");
@@ -21,13 +25,57 @@ export const RecruitmentRequisitionDrawer = ({ open, jobId, jobTitle, vacancies,
   const [status, setStatus] = useState<RecruitmentRequisitionCommand["status"]>("Draft");
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string }>();
+  const [approverChain, setApproverChain] = useState<OrgChartNode[]>([]);
 
   useEffect(() => {
+    let active = true;
+    if (hiringManagerUserId.trim()) {
+      Promise.resolve(getReportingChain(hiringManagerUserId.trim()))
+        .then((chain) => {
+          if (active && Array.isArray(chain)) setApproverChain(chain);
+        })
+        .catch(() => {
+          if (active) setApproverChain([]);
+        });
+    } else {
+      setApproverChain([]);
+    }
+    return () => {
+      active = false;
+    };
+  }, [hiringManagerUserId]);
+
+  useEffect(() => {
+    let active = true;
     if (open) {
       setHeadcount(String(Math.max(vacancies || 1, 1)));
       setFeedback(undefined);
+      if (jobId && typeof getRecruitmentRequisition === "function") {
+        getRecruitmentRequisition(jobId)
+          .then((res) => {
+            if (!active) return;
+            const req = res?.data?.methodResult;
+            if (req) {
+              setRequisitionId(req.requisitionId || "");
+              setExpectedVersion(req.version);
+              if (req.headcount) setHeadcount(String(req.headcount));
+              if (req.location) setLocation(req.location);
+              if (req.employmentType) setEmploymentType(req.employmentType);
+              if (req.hiringManagerUserId) setHiringManagerUserId(req.hiringManagerUserId);
+              if (req.costCenter) setCostCenter(req.costCenter);
+              if (req.targetStartDateUtc) setTargetStartDateUtc(req.targetStartDateUtc.split("T")[0]);
+              if (req.justification) setJustification(req.justification);
+              if (req.approvalReference) setApprovalReference(req.approvalReference);
+              if (req.status) setStatus(req.status);
+            }
+          })
+          .catch(() => {});
+      }
     }
-  }, [open, vacancies]);
+    return () => {
+      active = false;
+    };
+  }, [open, jobId, vacancies]);
 
   const save = async () => {
     const count = Number(headcount);
@@ -39,6 +87,8 @@ export const RecruitmentRequisitionDrawer = ({ open, jobId, jobTitle, vacancies,
     setBusy(true); setFeedback(undefined);
     try {
       const response = await upsertRecruitmentRequisition({
+        requisitionId: requisitionId || undefined,
+        expectedVersion: expectedVersion || undefined,
         vacancyId: jobId,
         positionTitle: jobTitle,
         location: location.trim() || null,
@@ -55,6 +105,10 @@ export const RecruitmentRequisitionDrawer = ({ open, jobId, jobTitle, vacancies,
       if (!response.data.success) {
         const code = response.data.errorCode ? `${response.data.errorCode}: ` : "";
         throw new Error(`${code}${response.data.message ?? "Unable to save requisition."}`);
+      }
+      if (response.data.methodResult) {
+        setRequisitionId(response.data.methodResult);
+        setExpectedVersion((v) => (v ? v + 1 : 2));
       }
       setFeedback({ ok: true, text: "Headcount request saved." });
     } catch (error) {
@@ -132,6 +186,30 @@ export const RecruitmentRequisitionDrawer = ({ open, jobId, jobTitle, vacancies,
           helperText="Optional; use the employee user ID."
           fullWidth
         />
+        {approverChain.length > 0 && (
+          <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: "action.hover", border: "1px solid", borderColor: "divider" }}>
+            <Typography variant="caption" fontWeight={700} color="primary" sx={{ display: "block", mb: 0.75 }}>
+              Org-Chart Approval Hierarchy ({approverChain.length} levels detected):
+            </Typography>
+            <Stack spacing={0.75}>
+              {approverChain.map((node, idx) => (
+                <Stack key={node.userId} direction="row" spacing={1} alignItems="center" justifyContent="space-between">
+                  <Typography variant="caption" noWrap>
+                    Level {idx + 1}: <strong>{node.fullName}</strong> ({node.jobRoleTitle})
+                  </Typography>
+                  <Button
+                    size="small"
+                    variant="text"
+                    onClick={() => setApprovalReference(`REQ-APPV-${node.employeeId || node.userId}-${dayjs().format("YYYYMM")}`)}
+                    sx={{ fontSize: "0.7rem", py: 0, textTransform: "none" }}
+                  >
+                    Set as Approver
+                  </Button>
+                </Stack>
+              ))}
+            </Stack>
+          </Box>
+        )}
         <TextField
           label="Cost center"
           value={costCenter}

@@ -37,6 +37,9 @@ export type PublicJobSummary = {
 
 export type PublicJobDetails = PublicJobSummary & {
   description: string;
+  candidatePrivacyNoticeText?: string | null;
+  candidatePrivacyNoticeVersion?: string | null;
+  candidateSourceOptions?: string[];
   functionalArea?: string | null;
   responsibilities?: string[];
   requiredSkills?: string[];
@@ -54,6 +57,7 @@ export type PublicJobDetails = PublicJobSummary & {
 };
 
 export type PublicJobApplicationPayload = {
+  idempotencyKey: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -66,6 +70,16 @@ export type PublicJobApplicationPayload = {
   linkedInUrl?: string;
   portfolioUrl?: string;
   coverLetter?: string;
+  candidateReportedSource?: string;
+  candidateReportedSourceDetail?: string;
+  attributionSource?: string;
+  attributionMedium?: string;
+  attributionCampaign?: string;
+  attributionContent?: string;
+  attributionTerm?: string;
+  referrerHost?: string;
+  privacyAcknowledged: boolean;
+  privacyNoticeVersion: string;
 };
 
 export type PublicJobApplicationResponse = {
@@ -74,4 +88,11 @@ export type PublicJobApplicationResponse = {
   tokenExpiresAt: string;
   jobTitle: string;
   companyName: string;
+};
+
+export type PublicApplicationStatus = {
+  status: string;
+  jobTitle: string;
+  companyName: string;
+  lastUpdatedAtUtc?: string | null;
 };

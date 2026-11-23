@@ -1,4 +1,4 @@
-import { Box, Skeleton, alpha, useColorScheme, useTheme } from "@mui/material";
+import { Box, Skeleton, Typography, alpha, useColorScheme, useTheme } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import dayjs from "dayjs";
 import { useIntl } from "react-intl";
@@ -7,55 +7,65 @@ import { getChartPalette } from "../../theme/themePalettes";
 import { CardMessage, DashboardCard, LoadError } from "./DashboardCard";
 import { RangeLabel } from "./AttendanceOverviewCard";
 
-type Props = { trend: HeadcountPoint[] | undefined; loading: boolean; error: boolean };
+type Props = { trend: HeadcountPoint[] | undefined; asOfDate?: string | null; loading: boolean; error: boolean };
 
-export const EmployeeTrendCard = ({ trend, loading, error }: Props) => {
-  const { formatMessage: i } = useIntl();
+export const EmployeeTrendCard = ({ trend, asOfDate, loading, error }: Props) => {
+  const { formatMessage: i, locale } = useIntl();
   const { mode, systemMode } = useColorScheme();
   const { appStyle } = useTheme();
   const color = getChartPalette(mode, systemMode, appStyle)[0];
   const points = trend ?? [];
   const labels = points.map((p) => dayjs(`${p.month}-01`).format("MMM"));
   const counts = points.map((p) => p.count);
+  const asOfDateValue = asOfDate && /^\d{4}-\d{2}-\d{2}$/.test(asOfDate) ? new Date(`${asOfDate}T00:00:00Z`) : null;
+  const validAsOfDate = asOfDateValue && !Number.isNaN(asOfDateValue.getTime()) && asOfDateValue.toISOString().slice(0, 10) === asOfDate;
+  const currentMonth = validAsOfDate ? asOfDate!.slice(0, 7) : null;
+  const currentMonthIsPartial = currentMonth != null && points.at(-1)?.month === currentMonth;
+  const partialMonthNotice = currentMonthIsPartial
+    ? i(
+        { id: "DASHBOARD.TREND.PARTIAL_MONTH", defaultMessage: "Current month is partial through {date}." },
+        { date: new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" }).format(asOfDateValue!) },
+      )
+    : "";
 
   const body = () => {
     if (loading) return <Skeleton variant="rounded" height={220} />;
     if (error) return <LoadError />;
     if (points.length < 2) return <CardMessage>{i({ id: "DASHBOARD.TREND.EMPTY" })}</CardMessage>;
 
-    const first = points[0];
-    const last = points[points.length - 1];
     const summary = i(
-      { id: "DASHBOARD.TREND.SUMMARY" },
+      { id: "DASHBOARD.TREND.ACCESSIBLE_SUMMARY", defaultMessage: "Monthly employee headcount: {points}.{partialMonthNotice}" },
       {
-        from: first.count,
-        fromMonth: dayjs(`${first.month}-01`).format("MMMM YYYY"),
-        to: last.count,
-        toMonth: dayjs(`${last.month}-01`).format("MMMM YYYY"),
+        points: points
+          .map((point) => `${dayjs(`${point.month}-01`).format("MMMM YYYY")}: ${point.count.toLocaleString()}`)
+          .join("; "),
+        partialMonthNotice: partialMonthNotice ? ` ${partialMonthNotice}` : "",
       },
     );
     const min = Math.min(...counts);
     const max = Math.max(...counts);
     const pad = Math.max(2, Math.ceil((max - min) * 0.2));
-
     return (
-      <Box role="img" aria-label={summary}>
-        <LineChart
-          height={230}
-          hideLegend
-          margin={{ left: 0, right: 12, top: 12, bottom: 0 }}
-          grid={{ horizontal: true }}
-          xAxis={[{ scaleType: "point", data: labels, disableLine: true, disableTicks: true }]}
-          yAxis={[{ min: Math.max(0, min - pad), max: max + pad, disableLine: true, disableTicks: true, width: 40, tickNumber: 5 }]}
-          series={[{ data: counts, area: true, color, showMark: true, curve: "linear", valueFormatter: (v) => (v == null ? "" : v.toLocaleString()) }]}
-          sx={{
-            "& .MuiAreaElement-root": { fill: alpha(color, 0.16) },
-            "& .MuiLineElement-root": { strokeWidth: 3 },
-            "& .MuiMarkElement-root": { fill: "var(--mui-palette-background-paper)", strokeWidth: 2.5 },
-            "& .MuiChartsGrid-line": { strokeDasharray: "4 4", stroke: "var(--mui-palette-divider)" },
-          }}
-        />
-      </Box>
+      <>
+        <Box role="img" aria-label={summary}>
+          <LineChart
+            height={230}
+            hideLegend
+            margin={{ left: 0, right: 12, top: 12, bottom: 0 }}
+            grid={{ horizontal: true }}
+            xAxis={[{ scaleType: "point", data: labels, disableLine: true, disableTicks: true }]}
+            yAxis={[{ min: Math.max(0, min - pad), max: max + pad, disableLine: true, disableTicks: true, width: 40, tickNumber: 5 }]}
+            series={[{ data: counts, area: true, color, showMark: true, curve: "linear", valueFormatter: (v) => (v == null ? "" : v.toLocaleString()) }]}
+            sx={{
+              "& .MuiAreaElement-root": { fill: alpha(color, 0.16) },
+              "& .MuiLineElement-root": { strokeWidth: 3 },
+              "& .MuiMarkElement-root": { fill: "var(--mui-palette-background-paper)", strokeWidth: 2.5 },
+              "& .MuiChartsGrid-line": { strokeDasharray: "4 4", stroke: "var(--mui-palette-divider)" },
+            }}
+          />
+        </Box>
+        {partialMonthNotice && <Typography role="note" variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>{partialMonthNotice}</Typography>}
+      </>
     );
   };
 

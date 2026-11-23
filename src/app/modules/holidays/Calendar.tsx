@@ -128,8 +128,11 @@ export default function Calendar() {
     }, [selectedDate?.year(), isRefresh, category, isHrOrAdmin, userData?.userId]);
 
     useEffect(() => {
-        setPageTitle(i({ id: "PAGE.CALENDAR" }))
-    }, [])
+        setPageTitle(i({ id: "PAGE.CALENDAR" }));
+        return () => {
+            setPageTitle("");
+        };
+    }, [setPageTitle]);
 
     return (
         <>

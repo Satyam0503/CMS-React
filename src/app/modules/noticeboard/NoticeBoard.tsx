@@ -243,13 +243,14 @@ export const NoticeBoard = () => {
             </Badge>
             {
               hasAddPermission &&
-              <CustomIconButton
-                ariaLabel={formatMessage({ id: "TOOLTIP.POST_NOTICE" })}
-                tooltip={formatMessage({ id: "TOOLTIP.POST_NOTICE" })}
-                icon={<Add />}
-                handleClick={() => setModalOpen(true)}
-                toolbar
-              />
+              <AppButton
+                variant="contained"
+                startIcon={<Add />}
+                onClick={() => setModalOpen(true)}
+                sx={{ height: 40, px: 2, fontSize: "0.82rem", fontWeight: 600, textTransform: "none" }}
+              >
+                {formatMessage({ id: "NOTICE.TITLES.POST_NOTICE", defaultMessage: "Post Notice" })}
+              </AppButton>
             }
           </Stack>
         </Box>
@@ -271,7 +272,7 @@ export const NoticeBoard = () => {
         >
           {loading ? (
             <Box sx={{ color: "text.secondary", py: 4, textAlign: "center" }}>
-              Loading notices…
+              Loading notices...
             </Box>
           ) : NoticeList.length === 0 ? (
             <Box sx={{ color: "text.secondary", py: 4, textAlign: "center" }}>
@@ -284,7 +285,7 @@ export const NoticeBoard = () => {
               const designation = typeof notice.userDesignation === "string"
                 ? notice.userDesignation
                 : notice.userDesignation && typeof notice.userDesignation === "object"
-                  ? Object.values(notice.userDesignation).filter(Boolean).join(" · ")
+                  ? Object.values(notice.userDesignation).filter(Boolean).join(" • ")
                   : "Notice";
               return (
                 <Card

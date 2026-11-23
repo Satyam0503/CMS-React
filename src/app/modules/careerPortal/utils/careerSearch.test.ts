@@ -5,7 +5,7 @@ import {
   getCareerVisitorToken,
   setCareerSession,
 } from "../hooks/useCareerVisitor";
-import { buildCareerSearchParams, CareerSearchFilters } from "./careerSearch";
+import { buildCareerSearchParams, careerSearchErrorMessage, CareerSearchFilters, countActiveCareerFilters, shouldOfferCareerAlerts } from "./careerSearch";
 
 const filters: CareerSearchFilters = {
   location: "Pune",
@@ -19,7 +19,7 @@ const filters: CareerSearchFilters = {
   featured: true,
   urgentHiring: false,
   walkIn: false,
-  sort: "newest",
+  sort: "relevance",
 };
 
 describe("career portal browser state", () => {
@@ -40,6 +40,12 @@ describe("career portal browser state", () => {
 });
 
 describe("career search query", () => {
+  it("counts role filters but not result sorting as active filters", () => {
+    expect(countActiveCareerFilters({ ...filters, sort: "newest", location: "", workplaceType: "", experienceMin: "", industry: "", skills: "", featured: false })).toBe(0);
+    expect(countActiveCareerFilters({ ...filters, location: "", workplaceType: "", experienceMin: "", industry: "", skills: "", featured: false, sort: "salary-high" })).toBe(0);
+    expect(countActiveCareerFilters({ ...filters, sort: "newest" })).toBe(6);
+  });
+
   it("keeps active filters, paging, and omits inactive values", () => {
     const params = buildCareerSearchParams("  engineer  ", 0, filters);
     expect(params).toMatchObject({
@@ -49,8 +55,24 @@ describe("career search query", () => {
       location: "Pune",
       featured: true,
       skills: "React,TypeScript",
+      sort: "relevance",
     });
     expect(params).not.toHaveProperty("urgentHiring");
     expect(params).not.toHaveProperty("employmentType");
+  });
+
+  it("explains network outages in candidate language and supports server messages", () => {
+    expect(careerSearchErrorMessage({ message: "Network Error" })).toContain("Check your connection");
+    expect(careerSearchErrorMessage({ message: "Request failed with status code 500", response: { status: 500 } }))
+      .toBe("We couldn’t load job results right now. Please try again.");
+    expect(careerSearchErrorMessage({ response: { data: { message: "Career site is paused." } } }))
+      .toBe("Career site is paused.");
+    expect(careerSearchErrorMessage({})).toBe("Jobs could not be loaded. Please try again.");
+  });
+
+  it("does not show job-alert signup while a job search is loading or unavailable", () => {
+    expect(shouldOfferCareerAlerts({ loading: true, hasSearchError: false, alreadySeen: false, hasCandidateSession: false })).toBe(false);
+    expect(shouldOfferCareerAlerts({ loading: false, hasSearchError: true, alreadySeen: false, hasCandidateSession: false })).toBe(false);
+    expect(shouldOfferCareerAlerts({ loading: false, hasSearchError: false, alreadySeen: false, hasCandidateSession: false })).toBe(true);
   });
 });

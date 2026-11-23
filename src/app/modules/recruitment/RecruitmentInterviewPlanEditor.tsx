@@ -1,17 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Alert,
   Autocomplete,
   Box,
   ButtonBase,
-  Card,
   Chip,
-  Divider,
   Grid,
-  IconButton,
   InputAdornment,
   LinearProgress,
   MenuItem,
@@ -27,16 +21,15 @@ import EventNoteOutlined from "@mui/icons-material/EventNoteOutlined";
 import AddRounded from "@mui/icons-material/AddRounded";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
 import SearchRounded from "@mui/icons-material/SearchRounded";
-import ExpandMoreRounded from "@mui/icons-material/ExpandMoreRounded";
 import TuneRounded from "@mui/icons-material/TuneRounded";
 import PsychologyRounded from "@mui/icons-material/PsychologyRounded";
 import LayersRounded from "@mui/icons-material/LayersRounded";
-import CheckCircleOutlineRounded from "@mui/icons-material/CheckCircleOutlineRounded";
 import { AppButton, AppSwitch, AppTextField } from "../../shared/components/ui";
 import { toast } from "react-toastify";
 import { getAllJobVacancies, getRecruitmentInterviewPlan, upsertRecruitmentInterviewPlan } from "./services";
+import RecruitmentCapabilityNotice from "./RecruitmentCapabilityNotice";
+import { isRecruitmentFeatureDisabled, responseDataFromError } from "./recruitmentCapabilityUtils";
 import {
-  JobModal,
   RecruitmentCompetencyConfig,
   RecruitmentInterviewPlanStageCommand,
   RecruitmentRatingScaleConfig,
@@ -102,6 +95,8 @@ export default function RecruitmentInterviewPlanEditor() {
   const [vacancies, setVacancies] = useState<VacancyOption[]>([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [featureDisabled, setFeatureDisabled] = useState(false);
+  const [loadError, setLoadError] = useState<string>();
 
   // Fetch active vacancies for the search bar
   useEffect(() => {
@@ -123,8 +118,19 @@ export default function RecruitmentInterviewPlanEditor() {
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoadError(undefined);
     try {
       const { data } = await getRecruitmentInterviewPlan(vacancyId.trim() || undefined);
+      if (!data.success && isRecruitmentFeatureDisabled(data)) {
+        setFeatureDisabled(true);
+        return;
+      }
+      if (!data.success) {
+        setFeatureDisabled(false);
+        setLoadError(data.message || "The interview plan could not be loaded.");
+        return;
+      }
+      setFeatureDisabled(false);
       if (data.success && data.methodResult) {
         const plan = data.methodResult;
         if (plan.stages?.length) {
@@ -175,8 +181,14 @@ export default function RecruitmentInterviewPlanEditor() {
         setRatingScale(defaultRatingScale);
         setCompetencies(initialCompetencies);
       }
-    } catch {
-      toast.info("Using system interview-plan defaults.");
+    } catch (error) {
+      const response = responseDataFromError(error) as { message?: string } | undefined;
+      if (isRecruitmentFeatureDisabled(response)) {
+        setFeatureDisabled(true);
+      } else {
+        setFeatureDisabled(false);
+        setLoadError(response?.message || (error instanceof Error ? error.message : "") || "The interview plan could not be loaded. Check your connection and try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -325,11 +337,19 @@ export default function RecruitmentInterviewPlanEditor() {
         isDefault: !scopedVacancy,
         stages,
         ratingScale,
-        competencies: competencies.map(({ _clientId, ...rest }) => rest),
+        competencies: competencies.map((competency) => {
+          const persisted = { ...competency };
+          delete persisted._clientId;
+          return persisted;
+        }),
         hiringTargetScore,
         missingScorePolicy,
         idempotencyKey: key(),
       });
+      if (!data.success && isRecruitmentFeatureDisabled(data)) {
+        setFeatureDisabled(true);
+        return;
+      }
       if (!data.success) throw new Error(data.message || "Unable to save interview plan.");
       toast.success(scopedVacancy ? "Vacancy interview plan saved." : "Default interview plan saved.");
     } catch (error) {
@@ -338,6 +358,19 @@ export default function RecruitmentInterviewPlanEditor() {
       setSaving(false);
     }
   };
+
+  if (featureDisabled || loadError) {
+    return (
+      <RecruitmentCapabilityNotice
+        feature="Interview scorecard planning"
+        settingsArea="Stage gates → Structured scorecards"
+        disabled={featureDisabled}
+        errorMessage={loadError}
+        onRetry={() => void load()}
+        retrying={loading}
+      />
+    );
+  }
 
   return (
     <Box

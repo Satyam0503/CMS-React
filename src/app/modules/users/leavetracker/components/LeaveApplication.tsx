@@ -303,7 +303,7 @@ export const LeaveApplication = (props: Props) => {
   ];
 
   //Gets the dates between two dates
-  const getDatesBetween = (startDate: Dayjs, endDate: Dayjs) => {
+  const getDatesBetween = (startDate?: Dayjs | null, endDate?: Dayjs | null) => {
     const dates: Dayjs[] = [];
 
     if (startDate && endDate) {
@@ -362,6 +362,16 @@ export const LeaveApplication = (props: Props) => {
 
       if ((!selectedLeave.weekendInclusive && weekend) ||
         (!selectedLeave.holidayInclusive && holiday)) {
+        if (selectedLeave.enableSandwichRules) {
+          const hasWorkingBefore = days.some(x => x.isBefore(d) && !checkIfWeekend(x) && !checkIfHoliday(x));
+          const hasWorkingAfter = days.some(x => x.isAfter(d) && !checkIfWeekend(x) && !checkIfHoliday(x));
+          if (hasWorkingBefore && hasWorkingAfter) {
+            if ((weekend && selectedLeave.includeWeekendsInSandwich) || (holiday && selectedLeave.includeHolidaysInSandwich)) {
+              total += 1;
+              return;
+            }
+          }
+        }
         return;
       }
       total += 1;
@@ -831,14 +841,26 @@ export const LeaveApplication = (props: Props) => {
                     }}
                   >
                     <>
-                      {!values.isHalfDay ? (
-                        getDatesBetween(values?.startDate, values?.endDate).map(
+                      {!values.isHalfDay && values.startDate && values.endDate ? (
+                        getDatesBetween(values.startDate, values.endDate).map(
                           (leave, index) => {
                             const isWeekend = checkIfWeekend(leave);
                             const isHoliday = checkIfHoliday(leave);
                             const selectedPolicy = selectableLeaveTypes.find(lb => lb.leavePolicyId === values.leavePolicyId);
 
-                            const label = (!selectedPolicy?.weekendInclusive && isWeekend) ? "LEAVE.TITLES.LEAVE_WEEKEND" : (!selectedPolicy?.holidayInclusive && isHoliday) ? "LEAVE.TITLES.LEAVE_HOLIDAY" : "LEAVE.TITLES.LEAVE_FULL_DAY";
+                            const allDays = getDatesBetween(values.startDate, values.endDate);
+                            const hasWorkingBefore = allDays.some(x => x.isBefore(leave) && !checkIfWeekend(x) && !checkIfHoliday(x));
+                            const hasWorkingAfter = allDays.some(x => x.isAfter(leave) && !checkIfWeekend(x) && !checkIfHoliday(x));
+                            const isSandwiched = !values.isHalfDay && Boolean(selectedPolicy?.enableSandwichRules) && hasWorkingBefore && hasWorkingAfter &&
+                              Boolean((isWeekend && selectedPolicy?.includeWeekendsInSandwich) || (isHoliday && selectedPolicy?.includeHolidaysInSandwich));
+
+                            const label = isSandwiched
+                              ? "Sandwich Leave"
+                              : (!selectedPolicy?.weekendInclusive && isWeekend)
+                              ? i({ id: "LEAVE.TITLES.LEAVE_WEEKEND" })
+                              : (!selectedPolicy?.holidayInclusive && isHoliday)
+                              ? i({ id: "LEAVE.TITLES.LEAVE_HOLIDAY" })
+                              : i({ id: "LEAVE.TITLES.LEAVE_FULL_DAY" });
                             return (
                               <Stack
                                 direction="row"
@@ -849,20 +871,17 @@ export const LeaveApplication = (props: Props) => {
                                   padding: "8px 12px",
                                   fontSize: "12px",
                                   borderBottom: "1px solid lightgray",
+                                  ...(isSandwiched ? { bgcolor: "warning.lighter", borderRadius: 1 } : {}),
                                 }}
                               >
                                 {dayjs(leave).format("DD-MM-YYYY")}
                                 <Box component="div">
                                   <Chip
                                     size="small"
-                                    variant="outlined"
-                                    // label={
-                                    //   i({ id: isWeekend ? "LEAVE.TITLES.LEAVE_WEEKEND" : isHoliday ? "LEAVE.TITLES.LEAVE_HOLIDAY" : "LEAVE.TITLES.LEAVE_FULL_DAY" })
-                                    // }
-                                    label={
-                                      i({ id: label })
-                                    }
-                                    sx={{ width: "80px" }}
+                                    color={isSandwiched ? "warning" : "default"}
+                                    variant={isSandwiched ? "filled" : "outlined"}
+                                    label={label}
+                                    sx={{ minWidth: "80px", fontWeight: isSandwiched ? 700 : 500 }}
                                   />
                                 </Box>
                               </Stack>

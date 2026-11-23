@@ -121,11 +121,17 @@ export const reviewEmployeeTaxDeclaration = (declarationId: string, payload: {
   reviewRemarks?: string;
   rejectionReason?: string;
   approvedHraExemption?: number;
+  approvedSection80C?: number;
+  approvedSection80Ccd1B?: number;
+  approvedSection80D?: number;
+  approvedSection24HomeLoanInterest?: number;
+  approvedSection80E?: number;
+  approvedOtherDeductions?: number;
   verifiedAttachmentIds?: string[];
 }) => postRequest<typeof payload, ResponseData<EmployeeTaxDeclarationModel>>(
   `api/payroll/tax-declarations/${encodeURIComponent(declarationId)}/review`, payload,
 );
-import type { CreatePayrollRunPayload, PayrollAdjustmentComponentModel, PayrollAdjustmentModel, PayrollRegisterRowModel, PayrollReportQuery, PayrollReportSummaryModel, PayrollRunEmployeeModel, PayrollRunModel, PayrollRunReviewModel } from "./models";
+import type { CreatePayrollRunPayload, Form16CertificateModel, PayrollAdjustmentComponentModel, PayrollAdjustmentModel, PayrollRegisterRowModel, PayrollReportQuery, PayrollReportSummaryModel, PayrollRunEmployeeModel, PayrollRunModel, PayrollRunReviewModel } from "./models";
 
 export const getPayrollAdjustments = () =>
   getRequest<ResponseData<PayrollAdjustmentModel[]>>("api/payroll/adjustments");
@@ -158,6 +164,9 @@ export const getPaymentBatch = (runId: string) => getRequest<PayrollPaymentBatch
 export const submitPaymentBatch = (batchId: string, providerReference: string) => postRequest<{ providerReference: string }, ApiResponse>(`api/payroll/payment-batches/${batchId}/submit`, { providerReference });
 export const reconcilePaymentBatch = (batchId: string, note: string, paymentConfirmed: boolean) => postRequest<{ note: string; paymentConfirmed: boolean }, ApiResponse>(`api/payroll/payment-batches/${batchId}/reconcile`, { note, paymentConfirmed });
 
+
+export const exportPaymentBatchCsv = (batchId: string) =>
+  getBlobRequest(`api/payroll/payment-batches/${encodeURIComponent(batchId)}/export-csv`);
 
 export const calculatePayrollRun = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/runs/${runId}/calculate`, undefined);
@@ -193,6 +202,16 @@ export const getPayrollStatutoryRegister = (query: PayrollReportQuery) =>
   getRequest<ResponseData<PayrollStatutoryRegisterRowModel[]>>(`api/payroll/reports/statutory/register?${payrollReportQuery(query)}`);
 export const getPayrollStatutoryRegisterCsv = (query: PayrollReportQuery) =>
   getBlobRequest(`api/payroll/reports/statutory/register.csv?${payrollReportQuery(query)}`);
+export const getEpfoEcrText = (query: PayrollReportQuery) =>
+  getBlobRequest(`api/payroll/reports/statutory/epfo-ecr.txt?${payrollReportQuery(query)}`);
+export const getEsicReturnCsv = (query: PayrollReportQuery) =>
+  getBlobRequest(`api/payroll/reports/statutory/esic-return.csv?${payrollReportQuery(query)}`);
+export const getForm16Certificates = (financialYear: string, employeeId?: string) => {
+  const query = employeeId ? `?financialYear=${encodeURIComponent(financialYear)}&employeeId=${encodeURIComponent(employeeId)}` : `?financialYear=${encodeURIComponent(financialYear)}`;
+  return getRequest<ResponseData<Form16CertificateModel[]>>(`api/payroll/reports/form16${query}`);
+};
+export const getForm16Csv = (financialYear: string) =>
+  getBlobRequest(`api/payroll/reports/form16/export.csv?financialYear=${encodeURIComponent(financialYear)}`);
 export const getEmployeeSalaryHistory = (employeeId: string) =>
   getRequest<EmployeeSalaryStructureModel[]>(`api/payroll/configuration/employee-salaries/${encodeURIComponent(employeeId)}`);
 export const getPendingEmployeeSalaryStructures = () =>

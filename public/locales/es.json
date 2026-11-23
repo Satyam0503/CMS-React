@@ -10,6 +10,7 @@
   "MODULES": {
     "DASHBOARD": "Panel de Control",
     "EMPLOYEES": "Empleados",
+    "EMPLOYEE_MANAGEMENT": "Gestión de Empleados",
     "ATTENDANCE": "Asistencia",
     "ATTENDANCE_SETTINGS": "Configuración de asistencia",
     "LEAVE_MANAGEMENT": "Gestión de Permisos",
@@ -29,7 +30,8 @@
     "POLICIES": "Políticas",
     "PAYROLL_SETTINGS": "Configuración de nómina",
     "LIFECYCLE_MANAGEMENT": "Gestión del ciclo de vida",
-    "CAREER_PROFILE": "Perfil profesional"
+    "CAREER_PROFILE": "Perfil profesional",
+    "ORG_CHART": "Organigrama"
   },
   "GENDER": {
     "MALE": "Masculino",
@@ -1060,7 +1062,13 @@
     "SUBTITLE": "Here's what's happening in your organization today.",
     "SUBTITLE_SELF": "Here's what's coming up for you.",
     "VIEW_ALL": "View All",
-    "LOAD_ERROR": "Couldn't load this section. Try refreshing the page.",
+    "LOAD_ERROR": "No se pudo cargar esta sección.",
+    "RETRY": "Reintentar",
+    "RETRYING": "Reintentando…",
+    "UNAVAILABLE": "No disponible",
+    "AS_OF_DATE": "Datos del panel al {date}",
+    "GENERATED_AT": "Informe generado {time} ({timeZone})",
+    "SOURCE_FRESHNESS_UNAVAILABLE": "Este informe no incluye las horas de actualización de las fuentes.",
     "KPI": {
       "TOTAL_EMPLOYEES": "Total Employees",
       "PRESENT_TODAY": "Present Today",
@@ -1082,9 +1090,11 @@
     },
     "TREND": {
       "TITLE": "Employee Trend",
-      "RANGE": "Last 6 Months",
+      "RANGE": "Last 12 Months",
+      "PARTIAL_MONTH": "Current month is partial through {date}.",
       "EMPTY": "Headcount history will appear here after the first month.",
-      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}."
+      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}.",
+      "ACCESSIBLE_SUMMARY": "Monthly employee headcount: {points}.{partialMonthNotice}"
     },
     "DEPARTMENTS": {
       "TITLE": "Department Overview",
@@ -1124,6 +1134,37 @@
       "HOLIDAY": "Holiday",
       "EVENT": "Event",
       "TODAY": "Today"
+    },
+    "MOVEMENT": {
+      "TITLE": "Movimiento de personal",
+      "RANGE": "Últimos 12 meses",
+      "PARTIAL": "El mes actual está incompleto hasta el {date}.",
+      "EMPTY": "Los datos de movimiento de personal no están disponibles.",
+      "SUMMARY": "Movimiento mensual de personal: {points}.{partialNote}",
+      "HIRES": "Contrataciones",
+      "EXITS": "Bajas",
+      "NET": "Balance",
+      "MONTH": "Mes",
+      "DATA_TABLE": "Ver tabla de datos",
+      "TABLE_CAPTION": "Datos mensuales del movimiento de personal"
+    },
+    "LEAVE_COHORT": {
+      "TITLE": "Solicitudes de permiso por mes de envío",
+      "RANGE": "Últimos 12 meses",
+      "PARTIAL": "El mes actual de envío está incompleto hasta el {date}.",
+      "DEFINITION": "Agrupadas por mes de envío; los estados muestran el estado actual de cada solicitud y pueden cambiar.",
+      "EMPTY": "Los datos de solicitudes de permiso no están disponibles.",
+      "PENDING": "Pendiente",
+      "APPROVED": "Aprobada",
+      "REJECTED": "Rechazada",
+      "WITHDRAWN": "Retirada",
+      "OTHER": "Otro estado",
+      "SUMMARY": "Solicitudes de permiso por mes de envío y estado actual: {points}.{partialNote}",
+      "REQUESTS": "solicitudes",
+      "MONTH": "Mes",
+      "TOTAL": "Solicitudes totales",
+      "DATA_TABLE": "Ver tabla de datos",
+      "TABLE_CAPTION": "Solicitudes de permiso por mes de envío y estado actual"
     }
   }
 }

@@ -5,14 +5,18 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Chip,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
+  FormControlLabel,
   Grid,
   MenuItem,
+  Paper,
   Stack,
   TextField,
   Typography,
@@ -46,6 +50,14 @@ export default function TaxDeclarationReviewQueue() {
   const [rejectionReason, setRejectionReason] = useState("");
   const [reviewRemarks, setReviewRemarks] = useState("");
   const [approvedHraExemption, setApprovedHraExemption] = useState("0");
+  const [approved80C, setApproved80C] = useState("0");
+  const [approved80Ccd1B, setApproved80Ccd1B] = useState("0");
+  const [approved80D, setApproved80D] = useState("0");
+  const [approvedSection24, setApprovedSection24] = useState("0");
+  const [approved80E, setApproved80E] = useState("0");
+  const [approvedOther, setApprovedOther] = useState("0");
+  const [verifiedAttachmentIds, setVerifiedAttachmentIds] = useState<string[]>([]);
+  const [previewAttachmentIndex, setPreviewAttachmentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -73,12 +85,41 @@ export default function TaxDeclarationReviewQueue() {
 
   useEffect(() => { void load(); }, [load]);
 
+  const openReviewModal = (item: EmployeeTaxDeclarationModel) => {
+    setSelected(item);
+    setRejectionReason("");
+    setReviewRemarks("");
+    setApprovedHraExemption(String(item.approvedHraExemption || item.declaredHraRentPaid || 0));
+    setApproved80C(String(item.approvedSection80C || item.declaredSection80C || 0));
+    setApproved80Ccd1B(String(item.approvedSection80Ccd1B || item.declaredSection80Ccd1B || 0));
+    setApproved80D(String(item.approvedSection80D || item.declaredSection80D || 0));
+    setApprovedSection24(String(item.approvedSection24HomeLoanInterest || item.declaredSection24HomeLoanInterest || 0));
+    setApproved80E(String(item.approvedSection80E || item.declaredSection80E || 0));
+    setApprovedOther(String(item.approvedOtherDeductions || item.declaredOtherDeductions || 0));
+    setVerifiedAttachmentIds(item.proofAttachments?.filter((p) => p.isVerified).map((p) => p.id) ?? []);
+    setPreviewAttachmentIndex(0);
+  };
+
   const close = () => {
     if (busy) return;
     setSelected(null);
     setRejectionReason("");
     setReviewRemarks("");
     setApprovedHraExemption("0");
+    setApproved80C("0");
+    setApproved80Ccd1B("0");
+    setApproved80D("0");
+    setApprovedSection24("0");
+    setApproved80E("0");
+    setApprovedOther("0");
+    setVerifiedAttachmentIds([]);
+    setPreviewAttachmentIndex(0);
+  };
+
+  const toggleAttachmentVerification = (id: string) => {
+    setVerifiedAttachmentIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
   };
 
   const review = async (decision: "APPROVE" | "REJECT") => {
@@ -91,11 +132,25 @@ export default function TaxDeclarationReviewQueue() {
       toast.error("Add a reason before returning this declaration.");
       return;
     }
+
     const hraAmount = Number(approvedHraExemption);
     if (!Number.isFinite(hraAmount) || hraAmount < 0 || hraAmount > selected.declaredHraRentPaid) {
       toast.error("HRA exemption must be between zero and the employee's declared rent.");
       return;
     }
+
+    const val80C = Number(approved80C);
+    const val80Ccd = Number(approved80Ccd1B);
+    const val80D = Number(approved80D);
+    const valSec24 = Number(approvedSection24);
+    const val80E = Number(approved80E);
+    const valOther = Number(approvedOther);
+
+    if ([val80C, val80Ccd, val80D, valSec24, val80E, valOther].some((n) => !Number.isFinite(n) || n < 0)) {
+      toast.error("Approved amounts cannot be negative.");
+      return;
+    }
+
     setBusy(true);
     try {
       const { data } = await reviewEmployeeTaxDeclaration(selected.id, {
@@ -103,6 +158,13 @@ export default function TaxDeclarationReviewQueue() {
         reviewRemarks: reviewRemarks.trim() || undefined,
         rejectionReason: decision === "REJECT" ? rejectionReason.trim() : undefined,
         approvedHraExemption: decision === "APPROVE" ? hraAmount : undefined,
+        approvedSection80C: decision === "APPROVE" ? val80C : undefined,
+        approvedSection80Ccd1B: decision === "APPROVE" ? val80Ccd : undefined,
+        approvedSection80D: decision === "APPROVE" ? val80D : undefined,
+        approvedSection24HomeLoanInterest: decision === "APPROVE" ? valSec24 : undefined,
+        approvedSection80E: decision === "APPROVE" ? val80E : undefined,
+        approvedOtherDeductions: decision === "APPROVE" ? valOther : undefined,
+        verifiedAttachmentIds: decision === "APPROVE" ? verifiedAttachmentIds : undefined,
       });
       if (!data.success) throw new Error(data.message || "Review could not be saved.");
       toast.success(decision === "APPROVE" ? "Declaration approved." : "Declaration returned to the employee.");
@@ -126,7 +188,7 @@ export default function TaxDeclarationReviewQueue() {
             </Box>
             <Stack direction="row" alignItems="center" gap={1}>
               <Chip size="small" label={`Version ${item.version}`} variant="outlined" />
-              <Button variant="outlined" onClick={() => setSelected(item)}>Review</Button>
+              <Button variant="outlined" onClick={() => openReviewModal(item)}>Review</Button>
             </Stack>
           </Stack>
           <Grid container spacing={1}>
@@ -161,26 +223,294 @@ export default function TaxDeclarationReviewQueue() {
         {loading ? <Stack alignItems="center" py={5}><CircularProgress /></Stack> : declarations.length ? declarations.map(detail) : !error ? <Alert severity="success">There are no submitted declarations for {financialYear}.</Alert> : null}
       </Stack>
 
-      <Dialog open={Boolean(selected)} onClose={close} fullWidth maxWidth="md" slotProps={{ paper: { sx: { minWidth: { xs: "calc(100vw - 32px)", sm: "auto" } } } }}>
-        <DialogTitle>Review tax declaration · {selected?.employeeId}</DialogTitle>
-        <DialogContent>
-          {selected && <Stack spacing={2} sx={{ pt: 1 }}>
-            <Alert severity="warning">Declarations are employee-provided. Review submitted evidence and company policy before approval. Current payroll estimates are not filing-ready statutory calculations.</Alert>
-            <Grid container spacing={1.5}>
-              <Grid size={{ xs: 12, sm: 6 }}><Typography>Tax regime: {selected.regime}</Typography></Grid>
-              <Grid size={{ xs: 12, sm: 6 }}><Typography>Previous employer salary / TDS: {money(selected.previousEmployerGrossSalary)} / {money(selected.previousEmployerTds)}</Typography></Grid>
-              <Grid size={{ xs: 12, sm: 6 }}><Typography>Other income: {money(selected.otherIncomeSavingsInterest + selected.otherIncomeOther)}</Typography></Grid>
-              <Grid size={{ xs: 12, sm: 6 }}><Typography>80C / 80CCD(1B): {money(selected.declaredSection80C)} / {money(selected.declaredSection80Ccd1B)}</Typography></Grid>
-              <Grid size={{ xs: 12, sm: 6 }}><Typography>80D / Section 24: {money(selected.declaredSection80D)} / {money(selected.declaredSection24HomeLoanInterest)}</Typography></Grid>
-              <Grid size={{ xs: 12, sm: 6 }}><Typography>80E / other deductions: {money(selected.declaredSection80E)} / {money(selected.declaredOtherDeductions)}</Typography></Grid>
-              <Grid size={{ xs: 12, sm: 6 }}><Typography>Rent / landlord PAN: {money(selected.declaredHraRentPaid)} / {selected.landlordPan || "Not provided"}</Typography></Grid>
-            </Grid>
-            {selected.proofAttachments?.map((proof) => <Typography key={proof.id} variant="body2">{proof.section}: {proof.documentName} · {money(proof.amount)} · {proof.isVerified ? "verified" : "not verified"}</Typography>)}
-            {selected.submittedBy === currentUserId && <Alert severity="error">You submitted this declaration and cannot review it.</Alert>}
-            <TextField label="Approved HRA exemption" type="number" value={approvedHraExemption} onChange={(event) => setApprovedHraExemption(event.target.value)} inputProps={{ min: 0, max: selected.declaredHraRentPaid, step: "0.01" }} helperText="Other approved amounts are capped by the employee's declared claims and current rule ceilings." />
-            <TextField label="Review remarks" value={reviewRemarks} onChange={(event) => setReviewRemarks(event.target.value)} multiline minRows={2} inputProps={{ maxLength: 1000 }} />
-            <TextField label="Return reason" value={rejectionReason} onChange={(event) => setRejectionReason(event.target.value)} multiline minRows={2} required inputProps={{ maxLength: 1000 }} />
-          </Stack>}
+      <Dialog open={Boolean(selected)} onClose={close} fullWidth maxWidth="lg" slotProps={{ paper: { sx: { minWidth: { xs: "calc(100vw - 32px)", sm: "auto" } } } }}>
+        <DialogTitle>
+          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} gap={1}>
+            <Typography variant="h6" fontWeight={700}>Review tax declaration · {selected?.employeeId}</Typography>
+            <Chip size="small" label={`FY ${selected?.financialYear} · ${selected?.regime === "OLD_REGIME" ? "Old Regime" : "New Regime (115BAC)"}`} color={selected?.regime === "OLD_REGIME" ? "primary" : "secondary"} />
+          </Stack>
+        </DialogTitle>
+        <DialogContent dividers>
+          {selected && (
+            <Stack spacing={2.5}>
+              <Alert severity="warning">
+                Declarations are employee-provided. Review submitted evidence and statutory caps before approval. Current payroll estimates are not filing-ready statutory calculations.
+              </Alert>
+              {selected.submittedBy === currentUserId && (
+                <Alert severity="error">You submitted this declaration and cannot review it.</Alert>
+              )}
+              {selected.regime === "NEW_115BAC" && (
+                <Alert severity="info">
+                  Under Section 115BAC (New Regime), deductions under Chapter VI-A (80C, 80D, etc.) and HRA exemption are not allowable. Approved amounts will be recorded as ₹0 by law.
+                </Alert>
+              )}
+
+              <Grid container spacing={2.5}>
+                {/* Left side: Split-Screen Proof Verification & Preview */}
+                <Grid size={{ xs: 12, md: 5 }}>
+                  <Paper variant="outlined" sx={{ p: 2, height: "100%", display: "flex", flexDirection: "column", gap: 1.5 }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography variant="subtitle1" fontWeight={700}>
+                        Proof documents ({selected.proofAttachments?.length || 0})
+                      </Typography>
+                      <Chip
+                        size="small"
+                        color={verifiedAttachmentIds.length === (selected.proofAttachments?.length || 0) && verifiedAttachmentIds.length > 0 ? "success" : "default"}
+                        label={`${verifiedAttachmentIds.length} / ${selected.proofAttachments?.length || 0} verified`}
+                      />
+                    </Stack>
+                    <Divider />
+                    {(!selected.proofAttachments || selected.proofAttachments.length === 0) ? (
+                      <Alert severity="info">No proof documents were attached to this tax declaration.</Alert>
+                    ) : (
+                      <>
+                        <Stack spacing={1} sx={{ maxHeight: 220, overflowY: "auto", pr: 0.5 }}>
+                          {selected.proofAttachments.map((proof, idx) => {
+                            const isVerified = verifiedAttachmentIds.includes(proof.id);
+                            const isSelected = previewAttachmentIndex === idx;
+                            return (
+                              <Paper
+                                key={proof.id}
+                                variant="outlined"
+                                onClick={() => setPreviewAttachmentIndex(idx)}
+                                sx={{
+                                  p: 1.25,
+                                  cursor: "pointer",
+                                  bgcolor: isSelected ? "action.selected" : "background.paper",
+                                  borderColor: isSelected ? "primary.main" : "divider",
+                                }}
+                              >
+                                <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
+                                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                                    <Typography variant="body2" fontWeight={600} noWrap>
+                                      {proof.documentName || "Document"}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                      {proof.section} · {money(proof.amount)}
+                                    </Typography>
+                                  </Box>
+                                  <FormControlLabel
+                                    control={
+                                      <Checkbox
+                                        size="small"
+                                        checked={isVerified}
+                                        onChange={(e) => {
+                                          e.stopPropagation();
+                                          toggleAttachmentVerification(proof.id);
+                                        }}
+                                      />
+                                    }
+                                    label={<Typography variant="caption">{isVerified ? "Verified" : "Verify"}</Typography>}
+                                    sx={{ m: 0 }}
+                                  />
+                                </Stack>
+                              </Paper>
+                            );
+                          })}
+                        </Stack>
+
+                        {selected.proofAttachments[previewAttachmentIndex] && (
+                          <Box sx={{ mt: 1, border: 1, borderColor: "divider", borderRadius: 1, p: 1.5, flex: 1, minHeight: 180, display: "flex", flexDirection: "column", bgcolor: "background.default" }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                              <Typography variant="caption" fontWeight={600} noWrap>
+                                Preview: {selected.proofAttachments[previewAttachmentIndex].documentName}
+                              </Typography>
+                              {selected.proofAttachments[previewAttachmentIndex].documentUrl && (
+                                <Button
+                                  size="small"
+                                  variant="text"
+                                  href={selected.proofAttachments[previewAttachmentIndex].documentUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  Open
+                                </Button>
+                              )}
+                            </Stack>
+                            <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "action.hover", borderRadius: 1, minHeight: 140 }}>
+                              {selected.proofAttachments[previewAttachmentIndex].documentUrl ? (
+                                <iframe
+                                  src={selected.proofAttachments[previewAttachmentIndex].documentUrl}
+                                  title="Document preview"
+                                  style={{ width: "100%", height: "200px", border: "none" }}
+                                />
+                              ) : (
+                                <Typography variant="caption" color="text.secondary">
+                                  No preview URL available.
+                                </Typography>
+                              )}
+                            </Box>
+                          </Box>
+                        )}
+                      </>
+                    )}
+                  </Paper>
+                </Grid>
+
+                {/* Right side: Itemized Approved Amounts & Remarks */}
+                <Grid size={{ xs: 12, md: 7 }}>
+                  <Stack spacing={2}>
+                    <Paper variant="outlined" sx={{ p: 1.5 }}>
+                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                        Reported income from other sources & previous employer
+                      </Typography>
+                      <Grid container spacing={1}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Typography variant="body2">Previous salary: {money(selected.previousEmployerGrossSalary)}</Typography>
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Typography variant="body2">Previous TDS: {money(selected.previousEmployerTds)}</Typography>
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Typography variant="body2">Savings interest: {money(selected.otherIncomeSavingsInterest)}</Typography>
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Typography variant="body2">Other income: {money(selected.otherIncomeOther)}</Typography>
+                        </Grid>
+                      </Grid>
+                    </Paper>
+
+                    <Typography variant="subtitle2" fontWeight={700}>
+                      Itemized deduction approvals
+                    </Typography>
+
+                    <Grid container spacing={1.5}>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Approved Section 80C"
+                          type="number"
+                          value={approved80C}
+                          onChange={(e) => setApproved80C(e.target.value)}
+                          helperText={`Declared: ${money(selected.declaredSection80C)} · Max: ₹1,50,000`}
+                          inputProps={{ min: 0, max: Math.min(150000, selected.declaredSection80C), step: "1" }}
+                          disabled={selected.regime === "NEW_115BAC"}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Approved Section 80CCD(1B)"
+                          type="number"
+                          value={approved80Ccd1B}
+                          onChange={(e) => setApproved80Ccd1B(e.target.value)}
+                          helperText={`Declared: ${money(selected.declaredSection80Ccd1B)} · Max: ₹50,000`}
+                          inputProps={{ min: 0, max: Math.min(50000, selected.declaredSection80Ccd1B), step: "1" }}
+                          disabled={selected.regime === "NEW_115BAC"}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Approved Section 80D"
+                          type="number"
+                          value={approved80D}
+                          onChange={(e) => setApproved80D(e.target.value)}
+                          helperText={`Declared: ${money(selected.declaredSection80D)} · Max: ₹1,00,000`}
+                          inputProps={{ min: 0, max: Math.min(100000, selected.declaredSection80D), step: "1" }}
+                          disabled={selected.regime === "NEW_115BAC"}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Approved Section 24 (Home Loan)"
+                          type="number"
+                          value={approvedSection24}
+                          onChange={(e) => setApprovedSection24(e.target.value)}
+                          helperText={`Declared: ${money(selected.declaredSection24HomeLoanInterest)} · Max: ₹2,00,000`}
+                          inputProps={{ min: 0, max: Math.min(200000, selected.declaredSection24HomeLoanInterest), step: "1" }}
+                          disabled={selected.regime === "NEW_115BAC"}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Approved HRA exemption"
+                          type="number"
+                          value={approvedHraExemption}
+                          onChange={(event) => setApprovedHraExemption(event.target.value)}
+                          inputProps={{ min: 0, max: selected.declaredHraRentPaid, step: "1" }}
+                          helperText={`Declared rent: ${money(selected.declaredHraRentPaid)} · Landlord PAN: ${selected.landlordPan || "None"}`}
+                          disabled={selected.regime === "NEW_115BAC"}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Approved Section 80E"
+                          type="number"
+                          value={approved80E}
+                          onChange={(e) => setApproved80E(e.target.value)}
+                          helperText={`Declared: ${money(selected.declaredSection80E)}`}
+                          inputProps={{ min: 0, max: selected.declaredSection80E, step: "1" }}
+                          disabled={selected.regime === "NEW_115BAC"}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 12 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Approved other deductions"
+                          type="number"
+                          value={approvedOther}
+                          onChange={(e) => setApprovedOther(e.target.value)}
+                          helperText={`Declared: ${money(selected.declaredOtherDeductions)}`}
+                          inputProps={{ min: 0, max: selected.declaredOtherDeductions, step: "1" }}
+                          disabled={selected.regime === "NEW_115BAC"}
+                        />
+                      </Grid>
+                    </Grid>
+
+                    <Paper variant="outlined" sx={{ p: 1.5, bgcolor: "action.hover" }}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Typography variant="body2" fontWeight={600}>Total approved deductions:</Typography>
+                        <Typography variant="subtitle1" fontWeight={700} color="primary.main">
+                          {money(
+                            (selected.regime === "NEW_115BAC" ? 0 : (
+                              (Number(approved80C) || 0) +
+                              (Number(approved80Ccd1B) || 0) +
+                              (Number(approved80D) || 0) +
+                              (Number(approvedSection24) || 0) +
+                              (Number(approvedHraExemption) || 0) +
+                              (Number(approved80E) || 0) +
+                              (Number(approvedOther) || 0)
+                            ))
+                          )}
+                        </Typography>
+                      </Stack>
+                    </Paper>
+
+                    <TextField
+                      label="Review remarks"
+                      value={reviewRemarks}
+                      onChange={(event) => setReviewRemarks(event.target.value)}
+                      multiline
+                      minRows={2}
+                      inputProps={{ maxLength: 1000 }}
+                      placeholder="Optional notes for payroll audit record"
+                    />
+                    <TextField
+                      label="Return reason"
+                      value={rejectionReason}
+                      onChange={(event) => setRejectionReason(event.target.value)}
+                      multiline
+                      minRows={2}
+                      required
+                      inputProps={{ maxLength: 1000 }}
+                      placeholder="Required only if returning declaration to employee for changes"
+                    />
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Stack>
+          )}
         </DialogContent>
         <DialogActions sx={{ flexWrap: "wrap", gap: 1, px: 3, pb: 2 }}>
           <Button variant="outlined" onClick={close} disabled={busy}>Close</Button>

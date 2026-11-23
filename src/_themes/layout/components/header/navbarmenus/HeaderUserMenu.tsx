@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { DEFAULT_USER_AVATAR } from "../../../../../utils/constant/Constant";
 import { Languages } from "./Languages";
+import { AppStylePicker } from "./AppStylePicker";
 
 export default function HeaderUserMenu() {
   const intl = useIntl();
@@ -104,9 +105,10 @@ export default function HeaderUserMenu() {
             sx: {
               width: { xs: "calc(100vw - 24px)", sm: isMobile ? 360 : 310 },
               maxWidth: isMobile ? 380 : 310,
+              maxHeight: "calc(100dvh - 24px)",
               mt: 1,
               borderRadius: 4,
-              overflow: "hidden",
+              overflowY: "auto",
               border: "1px solid",
               borderColor: "divider",
               backgroundImage: "none",
@@ -140,7 +142,28 @@ export default function HeaderUserMenu() {
         </Box>
 
         {isMobile && <Divider />}
-        {isMobile && <Box sx={{ p: 2 }}>
+        {isMobile && <Box sx={{ px: 2, pt: 1.5, pb: 1.75 }}>
+          <Typography variant="overline" color="text.secondary" sx={{ display: "block", mb: 0.75, fontWeight: 700, letterSpacing: 0.7 }}>
+            Appearance
+          </Typography>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ minHeight: 42, mb: 1.25 }}>
+            <Box>
+              <Typography variant="body2" fontWeight={600}>Workspace style</Typography>
+              <Typography variant="caption" color="text.secondary">Choose a visual theme</Typography>
+            </Box>
+            <AppStylePicker
+              sx={{
+                width: 36,
+                height: 36,
+                minWidth: 36,
+                borderRadius: 2,
+                color: "text.secondary",
+                bgcolor: "action.hover",
+                "&:hover": { color: "primary.main", bgcolor: "action.selected" },
+                "& .MuiSvgIcon-root": { fontSize: 20 },
+              }}
+            />
+          </Stack>
           <Stack direction="row" role="group" aria-label="Color mode" sx={{ p: .5, bgcolor: "background.default", borderRadius: 2.5, border: "1px solid", borderColor: "divider" }}>
             {([
               { value: "light", label: "Light", icon: <LightModeOutlined fontSize="small" /> },

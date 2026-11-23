@@ -181,14 +181,15 @@ export default function CalendarSidebar(props: Props) {
                 hasAddPermission &&
                 <AppButton variant="contained"
                     sx={{
-                        width: 1,
+                        alignSelf: "flex-start",
                         fontSize: 14,
-                        minHeight: 44,
+                        minHeight: 40,
+                        px: 3,
                     }}
                     onClick={() => setOpen(true)}
                 >
+                    <AddIcon sx={{ mr: 0.5, fontSize: 18 }} />
                     {i({ id: "BUTTON.ADD" })}
-                    <AddIcon />
                 </AppButton>
             }
 

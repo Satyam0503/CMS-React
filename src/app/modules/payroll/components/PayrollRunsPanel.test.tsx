@@ -9,6 +9,7 @@ vi.mock("../services", () => ({
   getPayrollRegister: vi.fn(), getPayrollRegisterCsv: vi.fn(), getPayrollReportSummary: vi.fn(), getPaymentBatch: vi.fn(), getPayrollRuns: vi.fn(),
   getPayrollAdjustments: vi.fn(), getPayrollAdjustmentComponents: vi.fn(), approvePayrollAdjustment: vi.fn(), rejectPayrollAdjustment: vi.fn(), getPayrollRunEmployees: vi.fn(), getPayrollRunReview: vi.fn(), processPayrollRun: vi.fn(), reconcilePaymentBatch: vi.fn(), recordPayrollRunReview: vi.fn(),
   submitPaymentBatch: vi.fn(), getPayrollStatutoryRegister: vi.fn(), getPayrollStatutoryRegisterCsv: vi.fn(),
+  exportPaymentBatchCsv: vi.fn(), getEpfoEcrText: vi.fn(), getEsicReturnCsv: vi.fn(), getForm16Csv: vi.fn(),
 }));
 vi.mock("../../employees/employeeServices", () => ({ getAllEmployees: vi.fn() }));
 
@@ -389,5 +390,40 @@ describe("PayrollRunsPanel workflow", () => {
     expect(panels[1].hidden).toBe(false);
     await act(async () => { tabs[2].click(); });
     expect(panels[2].hidden).toBe(false);
+  });
+
+  it("exposes EPFO ECR, ESIC return, and Form 16 Part B export controls on the reports tab", async () => {
+    const fakeBlob = new Blob(["dummy"], { type: "text/plain" });
+    vi.mocked(payrollServices.getEpfoEcrText).mockResolvedValue({ data: fakeBlob } as never);
+    vi.mocked(payrollServices.getEsicReturnCsv).mockResolvedValue({ data: fakeBlob } as never);
+    vi.mocked(payrollServices.getForm16Csv).mockResolvedValue({ data: fakeBlob } as never);
+    const origCreate = URL.createObjectURL;
+    const origRevoke = URL.revokeObjectURL;
+    URL.createObjectURL = vi.fn(() => "blob:fake");
+    URL.revokeObjectURL = vi.fn();
+
+    const container = await mount();
+    const tabs = Array.from(container.querySelectorAll('[role="tab"]')) as HTMLButtonElement[];
+    await act(async () => { tabs[2].click(); });
+
+    const epfoButton = Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes("Export EPFO ECR"));
+    const esicButton = Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes("Export ESIC return"));
+    const form16Button = Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes("Export Form 16 Part B"));
+
+    expect(epfoButton).toBeTruthy();
+    expect(esicButton).toBeTruthy();
+    expect(form16Button).toBeTruthy();
+
+    await act(async () => { epfoButton?.click(); });
+    expect(payrollServices.getEpfoEcrText).toHaveBeenCalled();
+
+    await act(async () => { esicButton?.click(); });
+    expect(payrollServices.getEsicReturnCsv).toHaveBeenCalled();
+
+    await act(async () => { form16Button?.click(); });
+    expect(payrollServices.getForm16Csv).toHaveBeenCalled();
+
+    URL.createObjectURL = origCreate;
+    URL.revokeObjectURL = origRevoke;
   });
 });

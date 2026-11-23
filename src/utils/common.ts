@@ -1,4 +1,9 @@
 import dayjs, { Dayjs } from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+dayjs.extend(relativeTime);
+dayjs.extend(localizedFormat);
 import DOMPurify from "dompurify";
 import {
   AppLanguageProps,
@@ -545,8 +550,7 @@ export const filterSideBarTabs = (
           p.startsWith("PayRoll.") ||
           p.startsWith("Leave_Management.") ||
           p.startsWith("Attendance.") ||
-          p.startsWith("Payroll_Settings.") ||
-          p.startsWith(`${ModulesName.Employees}.`)
+          p.startsWith("Payroll_Settings.")
       )
     ) {
       return null;
@@ -567,11 +571,20 @@ export const filterSideBarTabs = (
 
     if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) => {
-        // Lifecycle Management under PayRoll requires Employees.Edit
+        // Lifecycle Management requires Employees.Edit
         if (subTab.route === "/lifecycle-management") {
           return hasModuleFeaturePermission(
             ModulesName.Employees,
             Permission.Edit,
+            userModulePermission
+          );
+        }
+
+        // Org Chart requires Employees.View
+        if (subTab.route === "/employees/org-chart") {
+          return hasModuleFeaturePermission(
+            ModulesName.Employees,
+            Permission.View,
             userModulePermission
           );
         }

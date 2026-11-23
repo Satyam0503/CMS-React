@@ -71,4 +71,47 @@ describe("TaxDeclarationReviewQueue", () => {
     expect(container.textContent).toContain("Only HR, HR Executive, and administrators");
     expect(mocks.load).not.toHaveBeenCalled();
   });
+
+  it("handles proof attachment verification and itemized deduction approvals", async () => {
+    const itemWithProof = {
+      ...item,
+      id: "declaration-2",
+      proofAttachments: [
+        { id: "proof-1", section: "Section80C", documentName: "lic_receipt.pdf", documentUrl: "https://example.com/lic.pdf", amount: 50000, isVerified: false },
+        { id: "proof-2", section: "HRA", documentName: "rent_agreement.pdf", documentUrl: "https://example.com/rent.pdf", amount: 120000, isVerified: true },
+      ],
+    };
+    mocks.load.mockResolvedValue({ data: { success: true, methodResult: [itemWithProof] } });
+    await act(async () => root.render(<TaxDeclarationReviewQueue />));
+    await vi.waitFor(() => expect(container.textContent).toContain("EMP-10"));
+
+    await act(async () => {
+      Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Review")?.click();
+    });
+
+    expect(document.body.textContent).toContain("Proof documents (2)");
+    expect(document.body.textContent).toContain("lic_receipt.pdf");
+    expect(document.body.textContent).toContain("rent_agreement.pdf");
+    expect(document.body.textContent).toContain("Total approved deductions:");
+
+    // Verify proof-1 checkbox can be toggled
+    const checkboxes = Array.from(document.body.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'));
+    expect(checkboxes.length).toBeGreaterThanOrEqual(2);
+    await act(async () => {
+      checkboxes[0].click();
+    });
+
+    await act(async () => {
+      Array.from(document.body.querySelectorAll("button")).find((button) => button.textContent === "Approve declaration")?.click();
+    });
+
+    await vi.waitFor(() => {
+      expect(mocks.review).toHaveBeenCalledWith("declaration-2", expect.objectContaining({
+        decision: "APPROVE",
+        approvedSection80C: 80000,
+        approvedHraExemption: 120000,
+        verifiedAttachmentIds: expect.arrayContaining(["proof-1", "proof-2"]),
+      }));
+    });
+  });
 });

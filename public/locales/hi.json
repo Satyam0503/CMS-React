@@ -11,6 +11,7 @@
   "MODULES": {
     "DASHBOARD": "डैशबोर्ड",
     "EMPLOYEES": "कर्मचारी",
+    "EMPLOYEE_MANAGEMENT": "कर्मचारी प्रबंधन",
     "ATTENDANCE": "उपस्थिति",
     "ATTENDANCE_SETTINGS": "उपस्थिति सेटिंग्स",
     "LEAVE_MANAGEMENT": "अवकाश प्रबंधन",
@@ -33,7 +34,8 @@
     "LIFECYCLE_MANAGEMENT": "कर्मचारी जीवनचक्र",
     "CAREER_PROFILE": "करियर प्रोफ़ाइल",
     "WORK_FROM_HOME": "वर्क फ्रॉम होम (घर से कार्य)",
-    "OFFBOARDING": "ऑफबोर्डिंग (सेवामुक्ति)"
+    "OFFBOARDING": "ऑफबोर्डिंग (सेवामुक्ति)",
+    "ORG_CHART": "संगठन चार्ट"
   },
   "GENDER": {
     "MALE": "पुरुष",
@@ -1119,7 +1121,8 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "नौकरी पोस्ट करने से लेकर चयन तक की संपूर्ण भर्ती प्रक्रिया का प्रबंधन करता है।",
     "CAREER_PROFILE": "करियर प्रोफ़ाइल",
     "WORK_FROM_HOME": "वर्क फ्रॉम होम (घर से कार्य)",
-    "OFFBOARDING": "ऑफबोर्डिंग (सेवामुक्ति)"
+    "OFFBOARDING": "ऑफबोर्डिंग (सेवामुक्ति)",
+    "ORG_CHART": "संगठन चार्ट"
   },
   "OFFBOARDING": {
     "ACTION_BUTTON": "कर्मचारी सेवामुक्ति (Offboard)",

@@ -28,6 +28,8 @@ const PageData = () => {
     []
   );
 
+  const isOrgChart = location.pathname.startsWith("/employees/org-chart");
+
   return (
     <Stack
       direction="row"
@@ -38,7 +40,11 @@ const PageData = () => {
       justifyContent="space-between"
       sx={{ minWidth: 0, width: "100%" }}
     >
-      {pageTitle && <Typography variant="h4" className="fw-bold" sx={{ minWidth: 0, flex: "0 1 auto" }}>{pageTitle}</Typography>}
+      {!isOrgChart && pageTitle && (
+        <Typography variant="h4" className="fw-bold" sx={{ minWidth: 0, flex: "0 1 auto" }}>
+          {pageTitle}
+        </Typography>
+      )}
       <Stack
         direction="row"
         spacing={{ xs: 0.75, sm: 2 }}

@@ -1,7 +1,7 @@
 import React, { act } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import TaxDeclarationSelfService from "./TaxDeclarationSelfService";
+import TaxDeclarationSelfService, { calculateTaxComparison } from "./TaxDeclarationSelfService";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -110,5 +110,74 @@ describe("TaxDeclarationSelfService", () => {
       Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Submit new version")?.click();
     });
     await vi.waitFor(() => expect(submitDeclaration).toHaveBeenCalledWith("user-1", expect.objectContaining({ financialYear: "2026-27" })));
+  });
+
+  it("displays regime guidance and prompts for landlord PAN when rent exceeds 100,000", async () => {
+    await act(async () => root.render(<TaxDeclarationSelfService />));
+    await vi.waitFor(() => expect(getDeclaration).toHaveBeenCalled());
+
+    // By default, NEW_115BAC regime guidance is shown
+    expect(container.textContent).toContain("New Tax Regime (Section 115BAC)");
+    expect(container.textContent).toContain("Standard Deduction of ₹75,000");
+
+    // Check that entering rent > 100000 flags mandatory PAN requirement
+    const inputs = container.querySelectorAll<HTMLInputElement>('input[type="number"]');
+    // Rent input is the 11th number field (index 10)
+    const rentInput = inputs[10];
+    expect(rentInput).toBeTruthy();
+
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+      setter?.call(rentInput, "150000");
+      rentInput?.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    await vi.waitFor(() => {
+      expect(container.textContent).toContain("Mandatory: CBDT mandates Landlord PAN");
+    });
+  });
+
+  it("calculates statutory regime comparison accurately including standard deduction and 87A rebate", () => {
+    // ₹12,00,000 under New Regime has ₹0 tax due to Section 87A full rebate
+    const at12L = calculateTaxComparison(1200000, {
+      sec80C: 0,
+      sec80Ccd1B: 0,
+      sec80D: 0,
+      sec24: 0,
+      sec80E: 0,
+      other: 0,
+    });
+    expect(at12L.newFinalTax).toBe(0);
+    expect(at12L.newNetTaxable).toBe(1125000); // 12L - 75k std deduction
+
+    // Marginal relief under New Regime when income slightly exceeds 12L net
+    // If gross is ₹13,00,000, net taxable = 12,25,000. Excess = 25,000.
+    const at13L = calculateTaxComparison(1300000, {
+      sec80C: 150000,
+      sec80Ccd1B: 0,
+      sec80D: 0,
+      sec24: 0,
+      sec80E: 0,
+      other: 0,
+    });
+    // Tax capped at excess income 25,000 * 1.04 cess = 26,000
+    expect(at13L.newFinalTax).toBe(26000);
+  });
+
+  it("toggles the live regime comparison simulator in the self-service form", async () => {
+    await act(async () => root.render(<TaxDeclarationSelfService />));
+    await vi.waitFor(() => expect(getDeclaration).toHaveBeenCalled());
+
+    // Click toggle button
+    const toggleButton = Array.from(container.querySelectorAll("button")).find(
+      (b) => b.textContent?.includes("Compare Old vs. New Regime")
+    );
+    expect(toggleButton).toBeTruthy();
+
+    await act(async () => toggleButton?.click());
+
+    expect(container.textContent).toContain("Live Regime Comparison Simulator");
+    expect(container.textContent).toContain("Estimated Annual Gross CTC / Salary");
+    expect(container.textContent).toContain("Recommended:");
   });
 });

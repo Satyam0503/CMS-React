@@ -1,5 +1,6 @@
 import {
   alpha,
+  Autocomplete,
   Box,
   Button,
   Chip,
@@ -9,6 +10,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   FormHelperText,
   Grid,
   IconButton,
@@ -43,6 +45,8 @@ import { getRecruitmentEnterpriseConfig } from "../../services";
 
 import { AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 import { getAllDepartments } from "../../../admin/adminservices";
+import { getAllEmployees } from "../../../employees/employeeServices";
+import { GetAllEmployeeResponseModel } from "../../../employees/models";
 import { DepartmentModel } from "../../../admin/models";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../../Redux/hooks";
@@ -132,6 +136,9 @@ export const AddEditJob: FC<PropsTypes> = ({
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector((state) => state.user.userData?.defaultLanguage) || "en";
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
+  const [activeEmployees, setActiveEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
+  const [managerSearchText, setManagerSearchText] = useState("");
+  const [loadingManagers, setLoadingManagers] = useState(false);
   const [enterpriseConfig, setEnterpriseConfig] = useState<RecruitmentEnterpriseConfig | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const [jobDescription, setJobDescription] = useState(
@@ -154,7 +161,13 @@ export const AddEditJob: FC<PropsTypes> = ({
   } = useFormik({
     initialValues,
     validationSchema: jobSchema,
-    onSubmit: (values, { setSubmitting }) => {
+      onSubmit: (values, { setSubmitting, setFieldError, setFieldTouched }) => {
+      if (enterpriseConfig?.hiringManagerReview && !values.hiringManagerUserId?.trim()) {
+        setFieldTouched("hiringManagerUserId", true, false);
+        setFieldError("hiringManagerUserId", "Choose an active hiring manager before saving this vacancy.");
+        setSubmitting(false);
+        return;
+      }
       handleAddEditJob(values, setSubmitting);
     },
   });
@@ -169,6 +182,14 @@ export const AddEditJob: FC<PropsTypes> = ({
     formik.setFieldValue(field, parseCommaSeparatedList(value));
   };
 
+  const assignedManagerFallback: GetAllEmployeeResponseModel | null = values.hiringManagerUserId
+    ? { userId: values.hiringManagerUserId, fullName: values.hiringManagerUserId, email: "", gender: "", employeeId: "", jobRole: null, department: null, phoneNumber: null, fullProfileUrl: null, dateOfBirth: null, isVerified: false }
+    : null;
+  const selectedHiringManager = activeEmployees.find((employee) => employee.userId === values.hiringManagerUserId) ?? assignedManagerFallback;
+  const managerOptions = selectedHiringManager && !activeEmployees.some((employee) => employee.userId === selectedHiringManager.userId)
+    ? [...activeEmployees, selectedHiringManager]
+    : activeEmployees;
+
   useEffect(() => {
     if (!open) return;
     setListDrafts(Object.fromEntries(
@@ -178,9 +199,28 @@ export const AddEditJob: FC<PropsTypes> = ({
       .then(({ data }) => data.success && setDepartments(data.methodResults ?? []))
       .catch(() => setDepartments([]));
     getRecruitmentEnterpriseConfig()
-      .then(({ data }) => data.success && setEnterpriseConfig(data.methodResult ?? null))
+      .then(({ data }) => {
+        const config = data.success ? data.methodResult ?? null : null;
+        setEnterpriseConfig(config);
+      })
       .catch(() => setEnterpriseConfig(null));
   }, [open]);
+
+  useEffect(() => {
+    if (!open || !enterpriseConfig?.hiringManagerReview) {
+      setActiveEmployees([]);
+      return;
+    }
+    let active = true;
+    const timer = window.setTimeout(() => {
+      setLoadingManagers(true);
+      getAllEmployees({ name: managerSearchText.trim(), pageNo: 1, records: 50, departmentId: [], gender: [], employmentStatus: "Active" })
+        .then(({ data }) => { if (active) setActiveEmployees(data.success ? data.methodResults ?? [] : []); })
+        .catch(() => { if (active) setActiveEmployees([]); })
+        .finally(() => { if (active) setLoadingManagers(false); });
+    }, managerSearchText ? 250 : 0);
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [open, enterpriseConfig?.hiringManagerReview, managerSearchText]);
 
   const departmentName = (department: DepartmentModel) =>
     department.titles[currentLanguage] ||
@@ -949,6 +989,36 @@ export const AddEditJob: FC<PropsTypes> = ({
                   </Grid>
                 </Grid>
               </Box>
+            </Box>
+          )}
+          {enterpriseConfig?.hiringManagerReview && (
+            <Box sx={{ p: 2.25, border: "1px solid", borderColor: "divider", borderRadius: "14px", bgcolor: "background.paper" }}>
+              <Typography variant="subtitle2" fontWeight={800} sx={{ mb: 0.5 }}>Hiring manager approval</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                Assign an active employee. Recruiter approval requests pause here until this manager approves or rejects the candidate.
+              </Typography>
+              <Autocomplete
+                options={managerOptions}
+                loading={loadingManagers}
+                value={selectedHiringManager}
+                inputValue={managerSearchText || selectedHiringManager?.fullName || ""}
+                getOptionLabel={(employee) => `${employee.fullName || employee.email}${employee.employeeId ? ` · ${employee.employeeId}` : ""}`}
+                isOptionEqualToValue={(option, value) => option.userId === value.userId}
+                filterOptions={(options) => options}
+                onInputChange={(_, value, reason) => { if (reason === "input" || reason === "clear") setManagerSearchText(value); }}
+                onChange={(_, employee) => {
+                  formik.setFieldValue("hiringManagerUserId", employee?.userId ?? "");
+                  setManagerSearchText(employee?.fullName ?? "");
+                }}
+                noOptionsText={loadingManagers ? "Searching active employees…" : "No active employees found"}
+                renderInput={(params) => <AppTextField {...params} label="Hiring manager" placeholder="Search active employees by name or email" fullWidth />}
+              />
+              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
+                Required when hiring-manager review is enabled. The manager needs Applications view and edit access to review assigned candidates.
+              </Typography>
+              <FormHelperText error={Boolean(touched.hiringManagerUserId && errors.hiringManagerUserId)}>
+                {touched.hiringManagerUserId && errors.hiringManagerUserId ? errors.hiringManagerUserId : "Required when hiring-manager review is enabled for this company."}
+              </FormHelperText>
             </Box>
           )}
         </Stack>

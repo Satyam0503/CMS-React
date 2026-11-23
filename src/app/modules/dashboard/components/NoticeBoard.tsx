@@ -1,15 +1,12 @@
-import { Typography, Stack, Avatar, Box } from "@mui/material";
-import { useIntl } from "react-intl";
-import { CustomCard } from "../../../shared/components/C_Card";
-import { Link } from "react-router-dom";
+import { Avatar, Box, Stack, Typography, alpha } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useIntl } from "react-intl";
+import { initialNoticeFilter, relativeTimeFormatter } from "../../../../utils/common";
+import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
+import { NoticeViewModel } from "../../noticeboard/components/NoticeViewModel";
 import { NoticeResponseModel } from "../../noticeboard/models";
 import { getAllNotices } from "../../noticeboard/services";
-import clsx from "clsx";
-import { initialNoticeFilter, relativeTimeFormatter } from "../../../../utils/common";
-import { CardSkeleton } from "./CardSkeleton";
-import { NoticeViewModel } from "../../noticeboard/components/NoticeViewModel";
-import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
+import { CardMessage, DashboardCard, ListSkeleton, ViewAllLink } from "./DashboardCard";
 
 export default function NoticeBoard() {
   const [isLoading, setLoading] = useState(true);
@@ -18,6 +15,7 @@ export default function NoticeBoard() {
   const { formatMessage } = useIntl();
 
   useEffect(() => {
+    let isMounted = true;
     (async () => {
       try {
         const { data } = await getAllNotices({
@@ -26,122 +24,144 @@ export default function NoticeBoard() {
           records: 4,
           postedBy: "",
         });
-        if (data.success) {
+        if (isMounted && data.success) {
           setNoticeList(data.methodResults);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     })();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const updateNoticeViewedStatus = (noticeId: string) => {
-    setNoticeList(noticeList.map(notice => {
-      if (notice.noticeId === noticeId) {
-        return {
-          ...notice,
-          viewedStatus: true
-        }
-      }
-      else {
-        return notice;
-      }
-    }))
-  }
+    setNoticeList((prev) =>
+      prev.map((notice) =>
+        notice.noticeId === noticeId ? { ...notice, viewedStatus: true } : notice,
+      ),
+    );
+  };
 
   if (isLoading) {
-    return <CardSkeleton />;
+    return (
+      <DashboardCard id="notice-board" title={formatMessage({ id: "PAGE.NOTICE_BOARD" })}>
+        <ListSkeleton rows={3} />
+      </DashboardCard>
+    );
   }
 
   return (
     <>
-      <CustomCard
-        label={formatMessage({ id: "PAGE.NOTICE_BOARD" })}
-        applyMinHeight={false}
+      <DashboardCard
+        id="notice-board"
+        title={formatMessage({ id: "PAGE.NOTICE_BOARD" })}
+        action={<ViewAllLink to="/noticeboard/notices" />}
       >
-        <Stack
-          className={clsx("flex-grow-1 gap-4 mt-4", {
-            "justify-content-center": noticeList.length === 0,
-          })}
-        >
-          {noticeList.length === 0 ? (
-            <Typography className="text-center">
-              {formatMessage({ id: "NOTICE.TITLES.NO_NOTICE" })}
-            </Typography>
-          ) : (
-            <>
+        {noticeList.length === 0 ? (
+          <CardMessage>
+            {formatMessage({ id: "NOTICE.TITLES.NO_NOTICE" })}
+          </CardMessage>
+        ) : (
+          <Stack
+            spacing={1.25}
+            sx={{
+              maxHeight: { xs: 320, sm: 360 },
+              overflowY: "auto",
+              overflowX: "hidden",
+              scrollbarGutter: "stable",
+              pr: 0.5,
+            }}
+          >
+            {noticeList.map((item) => (
               <Stack
-                spacing={0.8}
-                className="flex-grow-1"
+                key={item.noticeId}
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1.5}
                 sx={{
-                  maxHeight: { xs: 320, sm: 360 },
-                  overflowY: "auto",
-                  overflowX: "hidden",
-                  scrollbarGutter: "stable",
+                  p: 1.25,
+                  borderRadius: "10px",
+                  bgcolor: item.viewedStatus ? "transparent" : (theme) => alpha(theme.palette.primary.main, 0.04),
+                  border: 1,
+                  borderColor: item.viewedStatus ? "divider" : "primary.light",
+                  transition: "background-color 0.2s ease",
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                  },
                 }}
               >
-                {noticeList.map((item) => (
-                  <Stack
-                    key={item.noticeId}
-                    className={clsx("flex-row align-items-center px-2 py-1 rounded hover-secondary notice-board-row", { "unread-notice": !item.viewedStatus })}
-                  >
-                    <Box
-                      component="div"
-                      key={item.noticeId}
-                      className="d-flex flex-row align-items-center gap-2 notice-board-content"
-                    >
-                      <Avatar
-                        src={item.userProfile || DEFAULT_USER_AVATAR}
-                        alt={item.userName}
-                        sx={{
-                          width: 52,
-                          height: 52,
-                          bgcolor: "secondary.main",
-                        }}
-                      />
-                      <Stack>
-                        <Typography >{item.userName}</Typography>
-                        <Typography
-                          variant="body2"
-                          className={clsx("truncate-multi-line")}
-                          sx={{ fontSize: 14 }}
-                        >
-                          {item.noticeTitle}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          sx={{ color: "primary.main" }}
-                        >
-                          {relativeTimeFormatter(item.createdDateTime)}
-                        </Typography>
-                      </Stack>
-                    </Box>
-                    <Box
-                      component="span"
+                <Stack direction="row" alignItems="center" spacing={1.5} sx={{ minWidth: 0, flex: 1 }}>
+                  <Avatar
+                    src={item.userProfile || DEFAULT_USER_AVATAR}
+                    alt={item.userName}
+                    sx={{
+                      width: 44,
+                      height: 44,
+                      bgcolor: "secondary.main",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: "0.875rem", lineHeight: 1.2 }} noWrap>
+                      {item.userName}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.primary"
                       sx={{
-                        color: "secondary.main",
-                        ml: { xs: 0, sm: 1 },
-                        "&:hover": {
-                          color: "secondary.dark",
-                        },
-                        cursor: "pointer",
+                        fontSize: "0.8125rem",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        my: 0.25,
                       }}
-                      onClick={() => setSelectedNotice(item)}
                     >
-                      {formatMessage({ id: "BUTTON.VIEW" })}
-                    </Box>
-                  </Stack>
-                ))}
+                      {item.noticeTitle}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      color="primary.main"
+                      sx={{ fontWeight: 500, fontSize: "0.75rem" }}
+                    >
+                      {relativeTimeFormatter(item.createdDateTime)}
+                    </Typography>
+                  </Box>
+                </Stack>
+                <Box
+                  component="button"
+                  type="button"
+                  sx={{
+                    background: "none",
+                    border: "none",
+                    p: 0.5,
+                    color: "primary.main",
+                    fontWeight: 600,
+                    fontSize: "0.8125rem",
+                    cursor: "pointer",
+                    flexShrink: 0,
+                    "&:hover": {
+                      textDecoration: "underline",
+                      color: "primary.dark",
+                    },
+                  }}
+                  onClick={() => setSelectedNotice(item)}
+                >
+                  {formatMessage({ id: "BUTTON.VIEW" })}
+                </Box>
               </Stack>
-              <Link to="/noticeboard/notices">
-                {formatMessage({ id: "BUTTON.SEE_MORE" })}
-              </Link>
-            </>
-          )}
-        </Stack>
-      </CustomCard>
+            ))}
+          </Stack>
+        )}
+      </DashboardCard>
       {selectedNotice && (
         <NoticeViewModel
           noticeId={selectedNotice.noticeId}

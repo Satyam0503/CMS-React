@@ -10,6 +10,7 @@
   "MODULES": {
     "DASHBOARD": "仪表盘",
     "EMPLOYEES": "员工",
+    "EMPLOYEE_MANAGEMENT": "员工管理",
     "ATTENDANCE": "考勤",
     "ATTENDANCE_SETTINGS": "考勤设置",
     "LEAVE_MANAGEMENT": "请假管理",
@@ -29,7 +30,8 @@
     "POLICIES": "政策",
     "PAYROLL_SETTINGS": "薪资设置",
     "LIFECYCLE_MANAGEMENT": "生命周期管理",
-    "CAREER_PROFILE": "招聘资料"
+    "CAREER_PROFILE": "招聘资料",
+    "ORG_CHART": "组织架构图"
   },
   "GENDER": {
     "MALE": "男性",
@@ -1080,7 +1082,13 @@
     "SUBTITLE": "Here's what's happening in your organization today.",
     "SUBTITLE_SELF": "Here's what's coming up for you.",
     "VIEW_ALL": "View All",
-    "LOAD_ERROR": "Couldn't load this section. Try refreshing the page.",
+    "LOAD_ERROR": "无法加载此部分。",
+    "RETRY": "重试",
+    "RETRYING": "正在重试…",
+    "UNAVAILABLE": "不可用",
+    "AS_OF_DATE": "仪表板数据截至 {date}",
+    "GENERATED_AT": "报告生成时间：{time}（{timeZone}）",
+    "SOURCE_FRESHNESS_UNAVAILABLE": "此报告不包含数据源更新时间。",
     "KPI": {
       "TOTAL_EMPLOYEES": "Total Employees",
       "PRESENT_TODAY": "Present Today",
@@ -1102,9 +1110,11 @@
     },
     "TREND": {
       "TITLE": "Employee Trend",
-      "RANGE": "Last 6 Months",
+      "RANGE": "Last 12 Months",
+      "PARTIAL_MONTH": "Current month is partial through {date}.",
       "EMPTY": "Headcount history will appear here after the first month.",
-      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}."
+      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}.",
+      "ACCESSIBLE_SUMMARY": "Monthly employee headcount: {points}.{partialMonthNotice}"
     },
     "DEPARTMENTS": {
       "TITLE": "Department Overview",
@@ -1144,6 +1154,37 @@
       "HOLIDAY": "Holiday",
       "EVENT": "Event",
       "TODAY": "Today"
+    },
+    "MOVEMENT": {
+      "TITLE": "员工变动",
+      "RANGE": "最近12个月",
+      "PARTIAL": "当前月份数据截至 {date}，尚未完整。",
+      "EMPTY": "暂无员工变动数据。",
+      "SUMMARY": "每月员工变动：{points}.{partialNote}",
+      "HIRES": "入职",
+      "EXITS": "离职",
+      "NET": "净变动",
+      "MONTH": "月份",
+      "DATA_TABLE": "查看数据表",
+      "TABLE_CAPTION": "每月员工变动数据"
+    },
+    "LEAVE_COHORT": {
+      "TITLE": "按提交月份统计的请假申请",
+      "RANGE": "最近12个月",
+      "PARTIAL": "当前提交月份数据截至 {date}，尚未完整。",
+      "DEFINITION": "按提交月份分组；状态类别显示每项申请的当前状态，之后可能发生变化。",
+      "EMPTY": "暂无请假申请数据。",
+      "PENDING": "待处理",
+      "APPROVED": "已批准",
+      "REJECTED": "已拒绝",
+      "WITHDRAWN": "已撤回",
+      "OTHER": "其他状态",
+      "SUMMARY": "按提交月份和当前状态统计的请假申请：{points}.{partialNote}",
+      "REQUESTS": "项申请",
+      "MONTH": "月份",
+      "TOTAL": "申请总数",
+      "DATA_TABLE": "查看数据表",
+      "TABLE_CAPTION": "按提交月份和当前状态统计的请假申请"
     }
   }
 }
