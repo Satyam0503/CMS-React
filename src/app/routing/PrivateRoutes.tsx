@@ -28,6 +28,9 @@ const PayRollManagement = lazy(
 const PayrollSettings = lazy(
   () => import("../modules/payrollsettings/PayrollSettings.tsx"),
 );
+const TaxDeclarationReviewQueue = lazy(
+  () => import("../modules/payroll/components/TaxDeclarationReviewQueue.tsx"),
+);
 const EmployeeLifecycleManagement = lazy(
   () => import("../modules/employees/EmployeeLifecycleManagement.tsx"),
 );
@@ -96,6 +99,8 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
+        <Route path="notice-board/*" element={<Navigate to="/noticeboard" replace />} />
+        <Route path="notice-board" element={<Navigate to="/noticeboard" replace />} />
         <Route
           path="companypolicy/*"
           element={
@@ -127,6 +132,11 @@ const PrivateRoutes = () => {
               </SuspensedView>
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="employees/org-chart"
+          element={<Navigate to="/employees?view=tree" replace />}
         />
 
         <Route
@@ -174,12 +184,24 @@ const PrivateRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="leaves/*" element={<Navigate to="/leavemanagement" replace />} />
+        <Route path="leaves" element={<Navigate to="/leavemanagement" replace />} />
         <Route
           path="payroll"
           element={
             <ProtectedRoute module={ModulesName.PayRoll}>
               <SuspensedView>
                 <PayRollManagement />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="taxdeclarations"
+          element={
+            <ProtectedRoute module={ModulesName.PayRoll} permission={Permission.View}>
+              <SuspensedView>
+                <TaxDeclarationReviewQueue />
               </SuspensedView>
             </ProtectedRoute>
           }

@@ -22,6 +22,9 @@ const LeaveTracker = lazy(() =>
     default: module.LeaveTracker,
   }))
 );
+const TaxDeclarationSelfService = lazy(() =>
+  import("../modules/payroll/components/TaxDeclarationSelfService")
+);
 
 const SuspensedView = ({ children }: { children: JSX.Element }) => {
   return <Suspense fallback={null}>{children}</Suspense>;
@@ -34,6 +37,7 @@ const ProfileTabs = () => {
     const isLeaveModuleActive = modulePermission.some(p => p.startsWith("Leave_Management.") || p.startsWith("LeaveManagement."));
     const hasLeavePanelAccess = hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.View, modulePermission) || modulePermission.includes("LeaveManagement.View") || modulePermission.includes("Leave_Management.View");
     const canAccessLeave = isLeaveModuleActive && (!empId || hasLeavePanelAccess || canAccessHrManagement(roleType));
+    const canAccessTaxDeclaration = !empId && hasModuleFeaturePermission(ModulesName.PayRoll, Permission.View, modulePermission);
 
     return (
         <Routes>
@@ -43,6 +47,7 @@ const ProfileTabs = () => {
                 <Route path="performance" element={canAccessHrManagement(roleType) ? <SuspensedView><UserPerformance /></SuspensedView> : <Navigate to="about" replace />} />
                 <Route path="workhistory" element={<SuspensedView><WorkHistory /></SuspensedView>} />
                 <Route path="leave" element={canAccessLeave ? <SuspensedView><LeaveTracker /></SuspensedView> : <Navigate to="about" replace />} />
+                <Route path="taxdeclaration" element={canAccessTaxDeclaration ? <SuspensedView><TaxDeclarationSelfService /></SuspensedView> : <Navigate to="about" replace />} />
                 {
                     !empId &&
                     <Route path="setting" element={<SuspensedView><Setting /></SuspensedView>} />

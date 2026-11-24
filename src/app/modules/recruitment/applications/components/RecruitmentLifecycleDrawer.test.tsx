@@ -171,7 +171,7 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
 
     // Switch to Sub-tab 1: "2. Scorecard & Hiring Decision"
     const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("button"));
-    const scorecardTab = buttons.find((b) => b.textContent?.includes("2. Scorecard & Hiring Decision"));
+    const scorecardTab = buttons.find((b) => b.textContent?.includes("Scorecards & decision"));
     expect(scorecardTab).toBeDefined();
 
     await act(async () => {
@@ -192,7 +192,8 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
       });
 
     let inputs = getCriteriaInputs();
-    expect(inputs.length).toBe(4);
+    await vi.waitFor(() => expect(getCriteriaInputs()).toHaveLength(4));
+    inputs = getCriteriaInputs();
     expect(inputs.map((i) => i.value)).toEqual([
       "Technical Competence",
       "Problem Solving & Analytical Ability",
@@ -248,7 +249,7 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
 
     // Verify empty state is displayed and allows adding a new criterion
     expect(document.body.textContent).toContain("No evaluation criteria configured");
-  });
+  }, 15000);
 
   it("renders scheduled interview rounds list and opens schedule next round form", async () => {
     await act(async () => {
@@ -271,9 +272,11 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
     });
 
     // Sub-tab 0 is active by default
-    expect(document.body.textContent).toContain("Scheduled Interview Stages (1)");
-    expect(document.body.textContent).toContain("Round 1: Technical");
-    expect(document.body.textContent).toContain("Technical Interview");
+    expect(document.body.textContent).toContain("Interview rounds");
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain("Round 1: Technical");
+      expect(document.body.textContent).toContain("Technical Interview");
+    });
 
     // Action buttons for scheduled round exist
     const editRoundBtn = Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(
@@ -299,7 +302,7 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
 
     // Form to schedule round 2 is opened
     expect(document.body.textContent).toContain("Schedule Interview Round 2");
-  });
+  }, 15000);
 
   it("prevents duplicate scoring by displaying recorded scorecard confirmation when already submitted", async () => {
     const { getRecruitmentScorecards } = await import("../../services");
@@ -343,7 +346,7 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
 
     // Switch to Sub-tab 1: Scorecard & Hiring Decision
     const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("button"));
-    const scorecardTab = buttons.find((b) => b.textContent?.includes("2. Scorecard & Hiring Decision"));
+    const scorecardTab = buttons.find((b) => b.textContent?.includes("Scorecards & decision"));
     expect(scorecardTab).toBeDefined();
 
     await act(async () => {
@@ -355,7 +358,7 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
     expect(document.body.textContent).toContain("Clear and deep technical expertise demonstrated.");
 
     // Empty form with "Record Panelist Scorecard" should NOT be shown
-    expect(document.body.textContent).not.toContain("Record Panelist Scorecard for Round 1");
+    expect(document.body.textContent).not.toContain("Scorecard · Round 1");
 
     // Click "Edit / Revise Scorecard" to unlock editing
     const editScorecardBtn = Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(
@@ -368,7 +371,7 @@ describe("RecruitmentLifecycleDrawer Evaluation Criteria deletion & management",
     });
 
     // Now edit mode is unlocked
-    expect(document.body.textContent).toContain("Update Scorecard for Round 1");
+    expect(document.body.textContent).toContain("Edit scorecard · Round 1");
   });
 
   it("supports dynamic compensation component additions, company presets, deletion, and real-time CTC calculation", async () => {

@@ -10,6 +10,7 @@
   "MODULES": {
     "DASHBOARD": "Dashboard",
     "EMPLOYEES": "Mitarbeiter",
+    "EMPLOYEE_MANAGEMENT": "Mitarbeiterverwaltung",
     "ATTENDANCE": "Anwesenheit",
     "ATTENDANCE_SETTINGS": "Anwesenheitseinstellungen",
     "LEAVE_MANAGEMENT": "Urlaubsverwaltung",
@@ -29,7 +30,8 @@
     "POLICIES": "Richtlinien",
     "PAYROLL_SETTINGS": "Gehaltsabrechnungseinstellungen",
     "LIFECYCLE_MANAGEMENT": "Lebenszyklusverwaltung",
-    "CAREER_PROFILE": "Karriereprofil"
+    "CAREER_PROFILE": "Karriereprofil",
+    "ORG_CHART": "Organigramm"
   },
   "GENDER": {
     "MALE": "Männlich",
@@ -431,6 +433,7 @@
     "TABS": {
       "ABOUT": "Über",
       "LEAVE_TRACKER": "Urlaubsverfolgung",
+      "TAX_DECLARATION": "Steuererklärung",
       "PERFORMANCE": "Leistung",
       "WORKHISTORY": "Berufserfahrung",
       "SETTING": "Einstellungen"
@@ -1060,7 +1063,13 @@
     "SUBTITLE": "Here's what's happening in your organization today.",
     "SUBTITLE_SELF": "Here's what's coming up for you.",
     "VIEW_ALL": "View All",
-    "LOAD_ERROR": "Couldn't load this section. Try refreshing the page.",
+    "LOAD_ERROR": "Dieser Bereich konnte nicht geladen werden.",
+    "RETRY": "Erneut versuchen",
+    "RETRYING": "Wird erneut versucht…",
+    "UNAVAILABLE": "Nicht verfügbar",
+    "AS_OF_DATE": "Dashboard-Daten vom {date}",
+    "GENERATED_AT": "Bericht erstellt {time} ({timeZone})",
+    "SOURCE_FRESHNESS_UNAVAILABLE": "Aktualisierungszeiten der Quelldaten sind in diesem Bericht nicht enthalten.",
     "KPI": {
       "TOTAL_EMPLOYEES": "Total Employees",
       "PRESENT_TODAY": "Present Today",
@@ -1082,9 +1091,11 @@
     },
     "TREND": {
       "TITLE": "Employee Trend",
-      "RANGE": "Last 6 Months",
+      "RANGE": "Last 12 Months",
+      "PARTIAL_MONTH": "Current month is partial through {date}.",
       "EMPTY": "Headcount history will appear here after the first month.",
-      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}."
+      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}.",
+      "ACCESSIBLE_SUMMARY": "Monthly employee headcount: {points}.{partialMonthNotice}"
     },
     "DEPARTMENTS": {
       "TITLE": "Department Overview",
@@ -1124,6 +1135,37 @@
       "HOLIDAY": "Holiday",
       "EVENT": "Event",
       "TODAY": "Today"
+    },
+    "MOVEMENT": {
+      "TITLE": "Personalbewegung",
+      "RANGE": "Letzte 12 Monate",
+      "PARTIAL": "Der aktuelle Monat ist bis zum {date} unvollständig.",
+      "EMPTY": "Daten zur Personalbewegung sind nicht verfügbar.",
+      "SUMMARY": "Monatliche Personalbewegung: {points}.{partialNote}",
+      "HIRES": "Einstellungen",
+      "EXITS": "Austritte",
+      "NET": "Saldo",
+      "MONTH": "Monat",
+      "DATA_TABLE": "Datentabelle anzeigen",
+      "TABLE_CAPTION": "Monatliche Daten zur Personalbewegung"
+    },
+    "LEAVE_COHORT": {
+      "TITLE": "Urlaubsanträge nach Einreichungsmonat",
+      "RANGE": "Letzte 12 Monate",
+      "PARTIAL": "Der aktuelle Einreichungsmonat ist bis zum {date} unvollständig.",
+      "DEFINITION": "Gruppiert nach Einreichungsmonat; Statusgruppen zeigen den aktuellen Status jedes Antrags und können sich später ändern.",
+      "EMPTY": "Daten zu Urlaubsanträgen sind nicht verfügbar.",
+      "PENDING": "Ausstehend",
+      "APPROVED": "Genehmigt",
+      "REJECTED": "Abgelehnt",
+      "WITHDRAWN": "Zurückgezogen",
+      "OTHER": "Anderer Status",
+      "SUMMARY": "Urlaubsanträge nach Einreichungsmonat und aktuellem Status: {points}.{partialNote}",
+      "REQUESTS": "Anträge",
+      "MONTH": "Monat",
+      "TOTAL": "Anträge gesamt",
+      "DATA_TABLE": "Datentabelle anzeigen",
+      "TABLE_CAPTION": "Urlaubsanträge nach Einreichungsmonat und aktuellem Status"
     }
   }
 }

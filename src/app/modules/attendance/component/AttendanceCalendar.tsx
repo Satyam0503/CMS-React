@@ -1325,7 +1325,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         }
         if (isWeekend && !isHoliday) {
           return (
-            <FreeBreakfastIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+            <Typography variant="caption" sx={{ fontSize: "0.75rem", fontWeight: 700, color: "text.disabled", letterSpacing: "0.05em" }}>
+              WO
+            </Typography>
           );
         }
         return null;
@@ -2323,6 +2325,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       backgroundColor: "background.paper",
                       borderRight: "1px solid",
                       borderColor: "divider",
+                      boxShadow: { xs: "2px 0 8px rgba(0,0,0,0.08)", md: "none" },
                       position: "sticky",
                       left: 0,
                       zIndex: 3,

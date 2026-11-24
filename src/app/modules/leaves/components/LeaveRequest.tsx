@@ -282,6 +282,7 @@ const CreateEmployeeLeaveModal = ({ handleClose, handleRefresh }: CreateEmployee
   const [leaveBalances, setLeaveBalances] = useState<EmployeeLeaveTypeBalance[]>([]);
   const [loading, setLoading] = useState(false);
   const [showApplication, setShowApplication] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadEmployees = async () => {
@@ -301,10 +302,13 @@ const CreateEmployeeLeaveModal = ({ handleClose, handleRefresh }: CreateEmployee
   const continueToApplication = async () => {
     if (!selectedEmployee) return;
     setLoading(true);
+    setErrorMessage(null);
     try {
       const { data } = await getEmployeeLeaveBalance(selectedEmployee.userId);
       if (!data.success || data.methodResults.length === 0) {
-        toast.error(i({ id: "VALIDATION_ERR.LEAVE_TYPES_NOT_AVAILABLE" }));
+        const msg = i({ id: "VALIDATION_ERR.LEAVE_TYPES_NOT_AVAILABLE", defaultMessage: "Leave policies have not been configured for this employee." });
+        setErrorMessage(msg);
+        toast.error(msg);
         return;
       }
       setLeaveBalances(data.methodResults);
@@ -335,13 +339,21 @@ const CreateEmployeeLeaveModal = ({ handleClose, handleRefresh }: CreateEmployee
       title={i({ id: "LEAVE.SELECT_EMPLOYEE", defaultMessage: "Select Employee" })}
     >
       <Stack spacing={3}>
+        {errorMessage && (
+          <Typography color="error.main" variant="body2" sx={{ bgcolor: "error.lighter", p: 1.5, borderRadius: 1 }}>
+            {errorMessage}
+          </Typography>
+        )}
         <Autocomplete
           options={employees}
           value={selectedEmployee}
           loading={loading}
-          getOptionLabel={(option) => `${option.fullName} (${option.employeeId})`}
+          getOptionLabel={(option) => option.employeeId ? `${option.fullName} (${option.employeeId})` : option.fullName}
           isOptionEqualToValue={(option, value) => option.userId === value.userId}
-          onChange={(_event, value) => setSelectedEmployee(value)}
+          onChange={(_event, value) => {
+            setSelectedEmployee(value);
+            setErrorMessage(null);
+          }}
           renderInput={(params) => (
             <AppTextField
               {...params}

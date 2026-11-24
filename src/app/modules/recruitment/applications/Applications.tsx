@@ -15,6 +15,7 @@ import {
   initialFilterValues,
 } from "./components/ApplicationFilter";
 import RecruitmentPipelineSummaryCard from "./components/RecruitmentPipelineSummaryCard";
+import RecruitmentResumeScanHealthCard from "./components/RecruitmentResumeScanHealthCard";
 import RecruitmentOnboardingQueueCard from "./components/RecruitmentOnboardingQueueCard";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { Applicant, ApplicationPayload } from "../models";
@@ -35,6 +36,7 @@ import { setApplicationFilter } from "../../../Redux/Reducers/filterSlice";
 import RecruitmentScreeningQueueCard from "./components/RecruitmentScreeningQueueCard";
 import RecruitmentSelectedOfferQueueCard from "./components/RecruitmentSelectedOfferQueueCard";
 import RecruitmentPreboardingQueueCard from "./components/RecruitmentPreboardingQueueCard";
+import RecruitmentTalentPoolCard from "./components/RecruitmentTalentPoolCard";
 
 const CustomDataGrid = lazy(() =>
   import("../../../shared/components/C_DataGrid").then((module) => ({
@@ -315,7 +317,7 @@ export const Applications = () => {
   }, [jobId]);
 
 
-  const [activeQueueTab, setActiveQueueTab] = useState<"none" | "screening" | "offers" | "preboarding" | "onboarding" | "all">("none");
+  const [activeQueueTab, setActiveQueueTab] = useState<"none" | "screening" | "offers" | "preboarding" | "onboarding" | "talentPool" | "all">("none");
 
   const applicantLookup = useMemo(() => {
     const map: Record<string, { fullName: string; email?: string; vacancyName?: string }> = {};
@@ -345,6 +347,7 @@ export const Applications = () => {
     { id: "offers", label: "Selected & Offers" },
     { id: "preboarding", label: "Preboarding Readiness" },
     { id: "onboarding", label: "Onboarding Queue" },
+    { id: "talentPool", label: "Talent Pool Rediscovery" },
     { id: "all", label: "All Queues" },
   ];
 
@@ -444,6 +447,7 @@ export const Applications = () => {
             );
           }}
         />
+        <RecruitmentResumeScanHealthCard />
 
         {/* Operational Queue Workspace Switcher */}
         <Stack
@@ -518,6 +522,12 @@ export const Applications = () => {
         )}
         {(activeQueueTab === "onboarding" || activeQueueTab === "all") && (
           <RecruitmentOnboardingQueueCard
+            applicantLookup={applicantLookup}
+            onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)}
+          />
+        )}
+        {(activeQueueTab === "talentPool" || activeQueueTab === "all") && (
+          <RecruitmentTalentPoolCard
             applicantLookup={applicantLookup}
             onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)}
           />

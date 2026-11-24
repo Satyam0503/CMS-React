@@ -11,11 +11,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { CheckCircleOutline, WorkOutline } from "@mui/icons-material";
+import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import WorkOutline from "@mui/icons-material/WorkOutline";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { recordRecruitmentOfferView, respondToRecruitmentOffer } from "../services";
 import { RecruitmentCandidateOfferDetails } from "../models";
+import { OfferSignaturePad } from "./OfferSignaturePad";
+import {
+  clearCandidateOfferResponseIdempotencyKey,
+  getCandidateOfferResponseIdempotencyKey,
+} from "./candidateOfferIdempotency";
 
 export default function CandidateOfferResponse() {
   const [params] = useSearchParams();
@@ -23,7 +29,21 @@ export default function CandidateOfferResponse() {
   const [decision, setDecision] = useState<"Accepted" | "Declined" | "RequestOfferChange">("Accepted");
   const [message, setMessage] = useState("");
   const [offerDetails, setOfferDetails] = useState<RecruitmentCandidateOfferDetails | null>(null);
-  const [state, setState] = useState<{ loading: boolean; initialLoading: boolean; error?: string; success?: string }>({
+  const [responseIdempotencyKey, setResponseIdempotencyKey] = useState("");
+  const [signatureData, setSignatureData] = useState<{
+    signatureDataUrl: string | null;
+    signerLegalName: string;
+    consentChecked: boolean;
+  }>({
+    signatureDataUrl: null,
+    signerLegalName: "",
+    consentChecked: false,
+  });
+  const [submittedSignature, setSubmittedSignature] = useState<{
+    signatureDataUrl?: string | null;
+    signerLegalName?: string;
+  } | null>(null);
+  const [state, setState] = useState<{ loading: boolean; initialLoading: boolean; error?: string; success?: string; recoveryPending?: boolean }>({
     loading: false,
     initialLoading: true,
   });
@@ -39,14 +59,34 @@ export default function CandidateOfferResponse() {
         const { data } = await recordRecruitmentOfferView(token);
         if (data.success && data.methodResult) {
           setOfferDetails(data.methodResult);
+          if (data.methodResult.offerId && data.methodResult.version > 0) {
+            setResponseIdempotencyKey(getCandidateOfferResponseIdempotencyKey(data.methodResult.offerId, data.methodResult.version));
+          }
+          if (data.methodResult.candidateName) {
+            setSignatureData((prev) => ({
+              ...prev,
+              signerLegalName: data.methodResult.candidateName,
+            }));
+          }
           if (data.methodResult.actionType === "AcceptOffer") setDecision("Accepted");
           else if (data.methodResult.actionType === "DeclineOffer") setDecision("Declined");
           else if (data.methodResult.actionType === "RequestOfferChange") setDecision("RequestOfferChange");
         } else if (!data.success) {
-          setState((prev) => ({ ...prev, error: data.message || "This offer link is invalid or has expired." }));
+          setState((prev) => ({
+            ...prev,
+            error: data.message || "This offer link is invalid or has expired.",
+            recoveryPending: data.statusCode === 503,
+          }));
         }
       } catch (err) {
-        setState((prev) => ({ ...prev, error: (err as Error).message || "This offer link is no longer valid or accessible." }));
+        const responseStatus = (err as { response?: { status?: number } }).response?.status;
+        setState((prev) => ({
+          ...prev,
+          error: responseStatus === 503
+            ? "Your response is saved, but follow-up processing is still retrying. Reload this page to safely try again."
+            : (err as Error).message || "This offer link is no longer valid or accessible.",
+          recoveryPending: responseStatus === 503,
+        }));
       } finally {
         setState((prev) => ({ ...prev, initialLoading: false }));
       }
@@ -60,19 +100,51 @@ export default function CandidateOfferResponse() {
       setState((prev) => ({ ...prev, error: "This offer link is missing its token." }));
       return;
     }
+    if (!responseIdempotencyKey) {
+      setState((prev) => ({ ...prev, error: "The secure response could not be prepared. Please reload this offer page and try again." }));
+      return;
+    }
     if (decision === "RequestOfferChange" && !message.trim()) {
       setState((prev) => ({ ...prev, error: "Please tell the hiring team what changes you would like to request." }));
       return;
     }
+    if (decision === "Accepted") {
+      if (!signatureData.signerLegalName?.trim()) {
+        setState((prev) => ({ ...prev, error: "Please provide your full legal name for the signature." }));
+        return;
+      }
+      if (!signatureData.signatureDataUrl) {
+        setState((prev) => ({ ...prev, error: "Please draw or type your digital signature before accepting." }));
+        return;
+      }
+      if (!signatureData.consentChecked) {
+        setState((prev) => ({ ...prev, error: "Please agree to the electronic signature legal consent before submitting." }));
+        return;
+      }
+    }
+
     setState((prev) => ({ ...prev, loading: true, error: undefined }));
     try {
       const { data } = await respondToRecruitmentOffer({
         token,
         decision,
         message: message.trim() || null,
-        idempotencyKey: `${Date.now()}-candidate-offer-response`,
+        idempotencyKey: responseIdempotencyKey,
+        signatureDataUrl: decision === "Accepted" ? signatureData.signatureDataUrl : null,
+        signerLegalName: decision === "Accepted" ? signatureData.signerLegalName : null,
+        legalConsent: decision === "Accepted" ? signatureData.consentChecked : null,
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : null,
       });
       if (!data.success) throw new Error(data.message || "This offer link is no longer available.");
+      if (offerDetails) clearCandidateOfferResponseIdempotencyKey(offerDetails.offerId, offerDetails.version);
+
+      if (decision === "Accepted") {
+        setSubmittedSignature({
+          signatureDataUrl: signatureData.signatureDataUrl,
+          signerLegalName: signatureData.signerLegalName,
+        });
+      }
+
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -164,17 +236,32 @@ export default function CandidateOfferResponse() {
             </Stack>
           )}
 
-          {state.error && <Alert severity="error">{state.error}</Alert>}
+          {state.error && (
+            <Stack spacing={1}>
+              <Alert severity={state.recoveryPending ? "warning" : "error"}>{state.error}</Alert>
+              {state.recoveryPending && (
+                <Button variant="outlined" onClick={() => window.location.reload()}>
+                  Retry response recovery
+                </Button>
+              )}
+            </Stack>
+          )}
 
           {state.success ? (
-            <Stack spacing={2} sx={{ py: 3, textAlign: "center", alignItems: "center" }}>
-              <CheckCircleOutline sx={{ fontSize: 56, color: "success.main" }} />
-              <Typography variant="h6" fontWeight={700}>
-                Response Submitted
+            <Stack spacing={2.5} sx={{ py: 3, textAlign: "center", alignItems: "center" }}>
+              <CheckCircleOutline sx={{ fontSize: 60, color: "success.main" }} />
+              <Typography variant="h5" fontWeight={800} color="text.primary">
+                Response Successfully Submitted
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {state.success}
               </Typography>
+
+              {submittedSignature?.signatureDataUrl && (
+                <Alert severity="success">
+                  Electronic signature saved for <strong>{submittedSignature.signerLegalName}</strong> with this offer response.
+                </Alert>
+              )}
             </Stack>
           ) : (
             !state.initialLoading && (
@@ -240,9 +327,14 @@ export default function CandidateOfferResponse() {
                   </Box>
                 )}
 
+                {(["Accepted", "Declined", "ChangeRequested"].includes(offerDetails?.status ?? "")) ? (
+                  <Alert severity={offerDetails?.status === "Accepted" ? "success" : "info"}>
+                    Your response has already been recorded as <strong>{offerDetails?.status === "ChangeRequested" ? "Changes requested" : offerDetails?.status}</strong>. If you received an error before seeing confirmation, contact the hiring team so they can verify the next steps.
+                  </Alert>
+                ) : <>
                 <Divider />
 
-                <Stack spacing={2}>
+                <Stack spacing={2.5}>
                   <TextField
                     select
                     fullWidth
@@ -255,10 +347,19 @@ export default function CandidateOfferResponse() {
                     <MenuItem value="RequestOfferChange">Request Changes / Counter</MenuItem>
                   </TextField>
 
+                  {decision === "Accepted" && (
+                    <Box sx={{ mt: 1 }}>
+                      <OfferSignaturePad
+                        candidateDefaultName={offerDetails?.candidateName || ""}
+                        onSignatureChange={setSignatureData}
+                      />
+                    </Box>
+                  )}
+
                   <TextField
                     fullWidth
                     multiline
-                    minRows={3}
+                    minRows={2}
                     label={decision === "RequestOfferChange" ? "Requested Changes (Required)" : "Message / Comments (Optional)"}
                     placeholder={
                       decision === "RequestOfferChange"
@@ -281,9 +382,16 @@ export default function CandidateOfferResponse() {
                       textTransform: "none",
                     }}
                   >
-                    {state.loading ? <CircularProgress size={22} color="inherit" /> : "Submit Response"}
+                    {state.loading ? (
+                      <CircularProgress size={22} color="inherit" />
+                    ) : decision === "Accepted" ? (
+                      "Sign & Accept Offer"
+                    ) : (
+                      "Submit Response"
+                    )}
                   </Button>
                 </Stack>
+                </>}
               </>
             )
           )}

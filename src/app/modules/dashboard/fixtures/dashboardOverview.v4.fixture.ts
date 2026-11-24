@@ -1,0 +1,72 @@
+import { GetDashboardOverviewData } from "../model";
+
+/** Synthetic, non-personal response matching Result<DashboardOverviewDto>. */
+export const dashboardOverviewV4Fixture: GetDashboardOverviewData = {
+  success: true,
+  statusCode: 200,
+  message: "Dashboard overview loaded.",
+  totalRecords: 0,
+  items: [],
+  methodResults: [],
+  methodResult: {
+    definitionVersion: "dashboard-overview.v4",
+    asOfDate: "2026-11-17",
+    timeZone: "Asia/Kolkata",
+    generatedAtUtc: "2026-11-17T08:00:00Z",
+    sourceAvailability: {
+      employees: true,
+      attendance: true,
+      leaveManagement: true,
+      jobs: true,
+      offboarding: true,
+    },
+    totalEmployees: 6,
+    totalEmployeesChangePercent: 0,
+    presentToday: 4,
+    onLeaveToday: 2,
+    absentToday: 1,
+    attendanceBreakdown: {
+      definitionVersion: "attendance-breakdown.v1",
+      expectedEmployees: 6,
+      presentOnly: 3,
+      leaveOnly: 1,
+      presentAndOnLeave: 1,
+      explicitlyAbsent: 1,
+      otherStatus: 0,
+      unreported: 0,
+    },
+    isWorkingDay: true,
+    openPositions: 2,
+    headcountTrend: [
+      { month: "2025-12", count: 4 },
+      { month: "2026-01", count: 4 },
+      { month: "2026-02", count: 4 },
+      { month: "2026-03", count: 5 },
+      { month: "2026-04", count: 5 },
+      { month: "2026-05", count: 5 },
+      { month: "2026-06", count: 5 },
+      { month: "2026-07", count: 5 },
+      { month: "2026-08", count: 6 },
+      { month: "2026-09", count: 6 },
+      { month: "2026-10", count: 6 },
+      { month: "2026-11", count: 6 },
+    ],
+    workforceMovementTrend: [
+      { month: "2026-10", hires: 2, exits: 1, netChange: 1 },
+      { month: "2026-11", hires: 1, exits: 0, netChange: 1 },
+    ],
+    leaveRequestCohortTrend: [
+      { month: "2026-10", totalRequests: 4, pending: 1, approved: 2, rejected: 1, withdrawn: 0, otherStatus: 0 },
+      { month: "2026-11", totalRequests: 3, pending: 1, approved: 1, rejected: 0, withdrawn: 1, otherStatus: 0 },
+    ],
+    recentActivities: [
+      {
+        type: "joined",
+        employeeId: "synthetic-employee-01",
+        employeeName: "Synthetic Employee",
+        detail: "Engineering",
+        occurredAt: "2026-11-16T08:30:00Z",
+      },
+    ],
+  },
+};

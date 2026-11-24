@@ -5,10 +5,11 @@ import { PayrollRunsPanel } from "./PayrollRunsPanel";
 import * as payrollServices from "../services";
 
 vi.mock("../services", () => ({
-  approvePayrollRun: vi.fn(), calculatePayrollRun: vi.fn(), cancelPayrollRun: vi.fn(), createPayrollAdjustment: vi.fn(), createPaymentBatch: vi.fn(), createPayrollRun: vi.fn(),
+  approvePayrollRun: vi.fn(), calculatePayrollRun: vi.fn(), cancelPayrollRun: vi.fn(), createPayrollAdjustment: vi.fn(), createPayrollCorrectionRun: vi.fn(), createPaymentBatch: vi.fn(), createPayrollRun: vi.fn(),
   getPayrollRegister: vi.fn(), getPayrollRegisterCsv: vi.fn(), getPayrollReportSummary: vi.fn(), getPaymentBatch: vi.fn(), getPayrollRuns: vi.fn(),
   getPayrollAdjustments: vi.fn(), getPayrollAdjustmentComponents: vi.fn(), approvePayrollAdjustment: vi.fn(), rejectPayrollAdjustment: vi.fn(), getPayrollRunEmployees: vi.fn(), getPayrollRunReview: vi.fn(), processPayrollRun: vi.fn(), reconcilePaymentBatch: vi.fn(), recordPayrollRunReview: vi.fn(),
   submitPaymentBatch: vi.fn(), getPayrollStatutoryRegister: vi.fn(), getPayrollStatutoryRegisterCsv: vi.fn(),
+  exportPaymentBatchCsv: vi.fn(), getEpfoEcrText: vi.fn(), getEsicReturnCsv: vi.fn(), getForm16Csv: vi.fn(),
 }));
 vi.mock("../../employees/employeeServices", () => ({ getAllEmployees: vi.fn() }));
 
@@ -41,6 +42,7 @@ describe("PayrollRunsPanel workflow", () => {
     vi.mocked(payrollServices.cancelPayrollRun).mockResolvedValue({ data: { success: true } } as never);
     vi.mocked(payrollServices.approvePayrollRun).mockResolvedValue({ data: { success: true } } as never);
     vi.mocked(payrollServices.processPayrollRun).mockResolvedValue({ data: { success: true } } as never);
+    vi.mocked(payrollServices.createPayrollCorrectionRun).mockResolvedValue({ data: { success: true } } as never);
   });
   afterEach(async () => {
     if (root) await act(async () => root?.unmount());
@@ -210,6 +212,26 @@ describe("PayrollRunsPanel workflow", () => {
     expect(document.body.textContent).toContain("Salary component");
   });
 
+  it("creates a correction run from a paid run only after recording an audit reason", async () => {
+    vi.mocked(payrollServices.getPayrollRuns).mockResolvedValue({ data: [{ ...run, status: "PAID" }] } as never);
+    const container = await mount();
+    await vi.waitFor(() => expect(container.textContent).toContain("Create correction run"));
+    await act(async () => { Array.from(container.querySelectorAll("button")).find(button => button.textContent?.trim() === "Create correction run")?.click(); });
+    expect(document.body.textContent).toContain("The correction must be calculated, reviewed, approved, and processed");
+
+    const reason = document.body.querySelector<HTMLTextAreaElement>("textarea");
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")?.set;
+      setter?.call(reason, "Approved retroactive earning");
+      reason?.dispatchEvent(new Event("input", { bubbles: true }));
+      reason?.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await act(async () => { Array.from(document.body.querySelectorAll("button")).find(button => button.textContent?.trim() === "Create draft")?.click(); });
+
+    await vi.waitFor(() => expect(payrollServices.createPayrollCorrectionRun).toHaveBeenCalledWith("run-1", "Approved retroactive earning"));
+    expect(payrollServices.getPayrollRuns).toHaveBeenCalled();
+  });
+
   it("paginates adjustment history beyond the first page instead of hiding older requests", async () => {
     const manyAdjustments = Array.from({ length: 30 }, (_, index) => ({
       id: `adjustment-${index}`, originalPayrollRunId: "run-old", employeeId: `employee-${index}`,
@@ -368,5 +390,40 @@ describe("PayrollRunsPanel workflow", () => {
     expect(panels[1].hidden).toBe(false);
     await act(async () => { tabs[2].click(); });
     expect(panels[2].hidden).toBe(false);
+  });
+
+  it("exposes EPFO ECR, ESIC return, and Form 16 Part B export controls on the reports tab", async () => {
+    const fakeBlob = new Blob(["dummy"], { type: "text/plain" });
+    vi.mocked(payrollServices.getEpfoEcrText).mockResolvedValue({ data: fakeBlob } as never);
+    vi.mocked(payrollServices.getEsicReturnCsv).mockResolvedValue({ data: fakeBlob } as never);
+    vi.mocked(payrollServices.getForm16Csv).mockResolvedValue({ data: fakeBlob } as never);
+    const origCreate = URL.createObjectURL;
+    const origRevoke = URL.revokeObjectURL;
+    URL.createObjectURL = vi.fn(() => "blob:fake");
+    URL.revokeObjectURL = vi.fn();
+
+    const container = await mount();
+    const tabs = Array.from(container.querySelectorAll('[role="tab"]')) as HTMLButtonElement[];
+    await act(async () => { tabs[2].click(); });
+
+    const epfoButton = Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes("Export EPFO ECR"));
+    const esicButton = Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes("Export ESIC return"));
+    const form16Button = Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes("Export Form 16 Part B"));
+
+    expect(epfoButton).toBeTruthy();
+    expect(esicButton).toBeTruthy();
+    expect(form16Button).toBeTruthy();
+
+    await act(async () => { epfoButton?.click(); });
+    expect(payrollServices.getEpfoEcrText).toHaveBeenCalled();
+
+    await act(async () => { esicButton?.click(); });
+    expect(payrollServices.getEsicReturnCsv).toHaveBeenCalled();
+
+    await act(async () => { form16Button?.click(); });
+    expect(payrollServices.getForm16Csv).toHaveBeenCalled();
+
+    URL.createObjectURL = origCreate;
+    URL.revokeObjectURL = origRevoke;
   });
 });

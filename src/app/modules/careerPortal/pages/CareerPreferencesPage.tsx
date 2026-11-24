@@ -124,7 +124,17 @@ export const CareerPreferencesPage = () => {
           <Paper sx={{ mt: 4, p: { xs: 3, md: 5 }, maxWidth: 680, borderRadius: 5, border: "1px solid", borderColor: "divider" }}>
             <Typography variant="h4" fontWeight={900}>Start with your email</Typography>
             <Typography color="text.secondary" sx={{ mt: 1, mb: 3, lineHeight: 1.7 }}>We use double opt-in so nobody can create alerts or follow companies on your behalf.</Typography>
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}><Txt fullWidth label="Email address" type="email" value={email} onChange={(e) => setEmail(e.target.value)} /><Btn variant="contained" onClick={start} disabled={!email.trim()} sx={{ px: 3 }}>Send verification</Btn></Stack>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+              <Txt fullWidth label="Email address" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Btn
+                variant="contained"
+                onClick={start}
+                disabled={!email.trim()}
+                sx={{ px: 3.5, whiteSpace: "nowrap", flexShrink: 0, minWidth: "max-content", height: { sm: 56 } }}
+              >
+                Send verification
+              </Btn>
+            </Stack>
           </Paper>
         ) : !loading && (
           <Stack spacing={3} sx={{ mt: 4 }}>

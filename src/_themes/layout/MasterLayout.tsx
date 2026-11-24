@@ -29,9 +29,8 @@ const MasterLayout = () => {
     window.addEventListener("codeji:notification-click", handleNotificationClick);
     return () => window.removeEventListener("codeji:notification-click", handleNotificationClick);
   }, [navigate]);
-  const isSmallScreen = useMediaQuery(
-    theme.breakpoints.down(theme.breakpoints.values.md),
-  );
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const isCompactDesktop = useMediaQuery(theme.breakpoints.between("md", "lg"));
   const [isMiniSidebar, setMiniSidebar] = useState(false);
   const [isSidebarHoverExpanded, setSidebarHoverExpanded] = useState(false);
   const isSidebarExpanded = !isMiniSidebar || isSidebarHoverExpanded;
@@ -41,8 +40,9 @@ const MasterLayout = () => {
       ? "collapsed"
       : "expanded";
   const shellVariables = {
-    "--sidebar-expanded-width": "250px",
-    "--sidebar-collapsed-width": "76px",
+    "--sidebar-expanded-width": "272px",
+    "--sidebar-collapsed-width": "68px",
+    "--sidebar-transition": "320ms cubic-bezier(0.22, 1, 0.36, 1)",
     "--sidebar-current-width": isSmallScreen
       ? "0px"
       : !isSidebarExpanded
@@ -60,6 +60,11 @@ const MasterLayout = () => {
   useEffect(() => {
     if (!isSmallScreen) setOpen(false);
   }, [isSmallScreen]);
+
+  useEffect(() => {
+    setMiniSidebar(true);
+    setSidebarHoverExpanded(false);
+  }, [isCompactDesktop]);
 
   useEffect(() => {
     if (isSmallScreen) setOpen(false);
@@ -112,16 +117,10 @@ const MasterLayout = () => {
                   overflowX: "hidden",
                   overflowY: "auto",
                   overscrollBehavior: "contain",
-                  marginLeft: {
-                    xs: 0,
-                    md: "calc(var(--sidebar-current-width) + 32px)",
-                  },
-                  width: {
-                    xs: "100%",
-                    md: "calc(100% - var(--sidebar-current-width) - 48px)",
-                  },
-                  transition:
-                    "margin-left 0.28s cubic-bezier(.2, .8, .2, 1), width 0.28s cubic-bezier(.2, .8, .2, 1)",
+                  boxSizing: "border-box",
+                  paddingLeft: { xs: 0, md: "var(--sidebar-current-width)" },
+                  width: "100%",
+                  transition: "padding-left var(--sidebar-transition)",
                 }}
               >
                 <div className="main-content-wrapper">

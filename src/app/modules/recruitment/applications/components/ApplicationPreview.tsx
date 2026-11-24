@@ -28,7 +28,7 @@ export const ApplicationPreview: FC<PropsType> = ({
 
   return (
     <CustomisedModal open={open} handleClose={handleClose}
-      title={applicantData.firstName + " " + applicantData.lastName}
+      title={`${applicantData.firstName || ""} ${applicantData.lastName || ""}`.trim() || "Applicant Preview"}
     >
       <Stack spacing={2}>
         <Grid

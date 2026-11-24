@@ -116,13 +116,13 @@ describe("RecruitmentSettings Component", () => {
       root.render(<RecruitmentSettings />);
     });
 
-    // Let any async load finish
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-    });
+    await vi.waitFor(() => expect(container.querySelector("#recruitment-tab-0")).not.toBeNull());
 
     expect(container.textContent).toContain("Recruitment Settings");
     expect(container.textContent).toContain("Company override active");
+    expect(container.textContent).toContain("Interview feedback deadlines");
+    expect(container.textContent).toContain("Interviewer scorecard reminder emails");
+    expect(container.textContent).toContain("Track interview rounds with overdue interviewer scorecards.");
 
     // Check all 5 tabs exist in DOM
     const tab0 = container.querySelector("#recruitment-tab-0");
@@ -137,11 +137,135 @@ describe("RecruitmentSettings Component", () => {
     expect(tab3).not.toBeNull();
     expect(tab4).not.toBeNull();
 
-    expect(tab0?.textContent).toContain("Operating Model & Pipeline");
-    expect(tab1?.textContent).toContain("Stage Gates & Capabilities");
-    expect(tab2?.textContent).toContain("Screening & Preboarding");
+    expect(tab0?.textContent).toContain("Operating model");
+    expect(tab1?.textContent).toContain("Stage gates");
+    expect(tab2?.textContent).toContain("Screening & preboarding");
     expect(tab3?.textContent).toContain("Interview Plans & SLAs");
-    expect(tab4?.textContent).toContain("Offers & Email Templates");
+    expect(tab4?.textContent).toContain("Offers & email");
+  });
+
+  it("applies complete mode presets so switching from Enterprise to Simple clears enterprise-only capabilities", async () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    roots.push(root);
+
+    await act(async () => {
+      root.render(<RecruitmentSettings />);
+    });
+    await vi.waitFor(() => expect(container.querySelector('button[aria-label*="Enterprise"]')).not.toBeNull());
+
+    const enterpriseCard = container.querySelector('button[aria-label*="Enterprise"]') as HTMLButtonElement;
+    const saveButton = () => Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("Save settings"));
+
+    expect(enterpriseCard).not.toBeNull();
+    await act(async () => enterpriseCard.click());
+    await act(async () => saveButton()?.click());
+    const enterprisePayload = mockUpsertConfig.mock.calls[0][0];
+    expect(enterprisePayload).toMatchObject({
+      candidateSourceOptions: ["Career site", "Employee referral", "Job board", "Social media", "Search engine", "Recruitment agency", "Event", "Other", "Prefer not to say"],
+      enableSla: true,
+      enableAutomation: true,
+      requisitions: true,
+      slaTracking: true,
+      automation: true,
+      internalMobility: true,
+      rehireLinks: true,
+      parallelPanels: true,
+      offerNegotiation: true,
+    });
+
+    const simpleCard = container.querySelector('button[aria-label*="Simple"]') as HTMLButtonElement;
+    expect(simpleCard).not.toBeNull();
+    await act(async () => simpleCard.click());
+    await act(async () => saveButton()?.click());
+    const simplePayload = mockUpsertConfig.mock.calls[1][0];
+    expect(simplePayload).toMatchObject({
+      candidateSourceOptions: ["Career site", "Employee referral", "Job board", "Social media", "Search engine", "Recruitment agency", "Event", "Other", "Prefer not to say"],
+      enableSla: false,
+      enableAutomation: false,
+      requisitions: false,
+      slaTracking: false,
+      automation: false,
+      internalMobility: false,
+      rehireLinks: false,
+      parallelPanels: false,
+      offerNegotiation: false,
+    });
+  });
+
+  it("reuses the same config idempotency key after a failed response for an unchanged save", async () => {
+    mockUpsertConfig.mockRejectedValueOnce(new Error("The response was lost."));
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    roots.push(root);
+
+    await act(async () => root.render(<RecruitmentSettings />));
+    await vi.waitFor(() => expect(container.querySelector('button[aria-label*="Enterprise"]')).not.toBeNull());
+
+    const enterpriseCard = container.querySelector('button[aria-label*="Enterprise"]') as HTMLButtonElement;
+    const saveButton = () => Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("Save settings"));
+    await act(async () => enterpriseCard.click());
+    await act(async () => saveButton()?.click());
+    const firstKey = mockUpsertConfig.mock.calls[0][0].idempotencyKey;
+
+    await act(async () => saveButton()?.click());
+    const retryKey = mockUpsertConfig.mock.calls[1][0].idempotencyKey;
+
+    expect(firstKey).toBeTruthy();
+    expect(retryKey).toBe(firstKey);
+  });
+
+  it("keeps the SLA and automation controls synchronized so either setting activates the same server capability", async () => {
+    mockGetConfig.mockResolvedValueOnce({
+      data: {
+        success: true,
+        methodResult: {
+          locations: ["Remote"],
+          recruitmentMode: "Standard",
+          enableSla: false,
+          slaTracking: false,
+          enableAutomation: false,
+          automation: false,
+          candidateSourceOptions: ["Career site"],
+          screeningCriteria: ["Relevant experience"],
+          preboardingChecklist: ["candidate-details"],
+        },
+      },
+    });
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    roots.push(root);
+
+    await act(async () => root.render(<RecruitmentSettings />));
+    await vi.waitFor(() => expect(container.textContent).toContain("Interview feedback deadlines"));
+
+    const toggleForCard = (title: string) => {
+      const titleElement = Array.from(container.querySelectorAll("p")).find((element) => element.textContent?.trim() === title);
+      return titleElement?.parentElement?.parentElement?.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
+    };
+    const slaToggle = toggleForCard("Interview feedback deadlines");
+    if (!slaToggle) throw new Error("SLA card toggle was not rendered.");
+    expect(slaToggle.checked).toBe(false);
+    await act(async () => slaToggle.click());
+    expect(slaToggle.checked).toBe(true);
+    const automationToggle = toggleForCard("Interviewer scorecard reminder emails");
+    if (!automationToggle) throw new Error("Automation card toggle was not rendered.");
+    expect(automationToggle.checked).toBe(false);
+    await act(async () => automationToggle.click());
+    expect(automationToggle.checked).toBe(true);
+
+    const saveButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("Save settings"));
+    await act(async () => saveButton?.click());
+
+    expect(mockUpsertConfig).toHaveBeenCalledWith(expect.objectContaining({
+      enableSla: true,
+      slaTracking: true,
+      enableAutomation: true,
+      automation: true,
+    }));
   });
 
   it("switches to Stage Gates & Capabilities tab and shows Per-Job Customization banner", async () => {
@@ -153,9 +277,7 @@ describe("RecruitmentSettings Component", () => {
     await act(async () => {
       root.render(<RecruitmentSettings />);
     });
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-    });
+    await vi.waitFor(() => expect(container.querySelector("#recruitment-tab-1")).not.toBeNull());
 
     // Click Tab 1
     const tab1 = container.querySelector("#recruitment-tab-1") as HTMLElement;
@@ -182,9 +304,7 @@ describe("RecruitmentSettings Component", () => {
     await act(async () => {
       root.render(<RecruitmentSettings />);
     });
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-    });
+    await vi.waitFor(() => expect(container.querySelector("#recruitment-tab-2")).not.toBeNull());
 
     // Click Tab 2
     const tab2 = container.querySelector("#recruitment-tab-2") as HTMLElement;
@@ -195,7 +315,7 @@ describe("RecruitmentSettings Component", () => {
     const panel2 = container.querySelector("#recruitment-tabpanel-2") as HTMLElement;
     expect(panel2).not.toBeNull();
     expect(panel2.hidden).toBe(false);
-    expect(panel2.textContent).toContain("Screening & Preboarding Policy Configuration");
+    expect(panel2.textContent).toContain("Screening and preboarding defaults");
     expect(panel2.textContent).toContain("Minimum screening pass score (0–100%)");
   });
 
@@ -208,9 +328,7 @@ describe("RecruitmentSettings Component", () => {
     await act(async () => {
       root.render(<RecruitmentSettings />);
     });
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-    });
+    await vi.waitFor(() => expect(container.querySelector("#recruitment-tab-4")).not.toBeNull());
 
     // Click Tab 4
     const tab4 = container.querySelector("#recruitment-tab-4") as HTMLElement;
@@ -221,8 +339,9 @@ describe("RecruitmentSettings Component", () => {
     const panel4 = container.querySelector("#recruitment-tabpanel-4") as HTMLElement;
     expect(panel4).not.toBeNull();
     expect(panel4.hidden).toBe(false);
-    expect(panel4.textContent).toContain("Offer Letter Template & Candidate Preview");
-    expect(panel4.textContent).toContain("Sample Candidate Email Preview");
+    expect(panel4.textContent).toContain("Offer email subject");
+    expect(panel4.textContent).toContain("Candidate email");
+    expect(panel4.textContent).toContain("Live preview");
     expect(panel4.textContent).toContain("Visual Editor");
     expect(panel4.textContent).toContain("HTML Source");
     expect(panel4.textContent).toContain("[CandidateName]");

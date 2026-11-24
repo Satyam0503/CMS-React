@@ -9,15 +9,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import {
-  Add,
-  Drafts,
-  FileDownload,
-  FilterList,
-  GridView,
-  UploadFile,
-  ViewList,
-} from "@mui/icons-material";
+import AccountTreeRounded from "@mui/icons-material/AccountTreeRounded";
+import Add from "@mui/icons-material/Add";
+import Drafts from "@mui/icons-material/Drafts";
+import FileDownload from "@mui/icons-material/FileDownload";
+import FilterList from "@mui/icons-material/FilterList";
+import GridView from "@mui/icons-material/GridView";
+import UploadFile from "@mui/icons-material/UploadFile";
+import ViewList from "@mui/icons-material/ViewList";
 
 import { lazy, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
@@ -33,7 +32,7 @@ import {
 import { CustomIconButton } from "../../shared/components/C_IconButton";
 import { ModulesName, Permission, Roles } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
 import { EmployeeLifecycleDialog } from "./components/EmployeeLifecycleDialog";
 import { GetAllEmployeeResponseModel } from "./models";
@@ -57,13 +56,14 @@ import * as XLSX from "xlsx";
 
 import { AppButton, AppIconButton } from "../../shared/components/ui";
 import { SearchInput } from "../../shared/components/SearchInput";
+import OrgChartPage from "./orgChart/OrgChartPage";
 const CustomDataGrid = lazy(() =>
   import("../../shared/components/C_DataGrid").then((module) => ({
     default: module.CustomDataGrid,
   })),
 ) as (typeof import("../../shared/components/C_DataGrid"))["CustomDataGrid"];
 
-type ViewMode = "table" | "grid";
+type ViewMode = "table" | "grid" | "tree";
 
 const useEmployeeTableColumnList = (canManageLifecycle = false, onLifecycleSaved?: () => void): GridColDef<GetAllEmployeeResponseModel>[] => {
     const { formatMessage: i } = useIntl();
@@ -275,7 +275,26 @@ const Employees = () => {
 
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
   const userRoleType = useAppSelector((state) => state.user.userData?.roleType);
-  const [viewMode, setViewMode] = useState<ViewMode>("table");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialViewParam = searchParams.get("view");
+  const initialView: ViewMode =
+    initialViewParam === "tree"
+      ? "tree"
+      : initialViewParam === "grid"
+        ? "grid"
+        : "table";
+  const [viewMode, setViewMode] = useState<ViewMode>(initialView);
+
+  useEffect(() => {
+    const viewParam = searchParams.get("view");
+    if (viewParam === "tree" && viewMode !== "tree") {
+      setViewMode("tree");
+    } else if (viewParam === "grid" && viewMode !== "grid") {
+      setViewMode("grid");
+    } else if (!viewParam && viewMode === "tree") {
+      setViewMode("table");
+    }
+  }, [searchParams, viewMode]);
 
   const employeeFilters = useAppSelector((state) => state.filters.employee);
   const employmentStatus = canAccessHrManagement(userRoleType)
@@ -305,10 +324,20 @@ const Employees = () => {
   };
 
   const handleViewChange = (
-    event: React.MouseEvent<HTMLElement>,
-    nextView: ViewMode,
+    _event: React.MouseEvent<HTMLElement>,
+    nextView: ViewMode | null,
   ) => {
+    if (!nextView) return;
     setViewMode(nextView);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (nextView === "table") {
+        next.delete("view");
+      } else {
+        next.set("view", nextView);
+      }
+      return next;
+    });
   };
 
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -367,6 +396,10 @@ const Employees = () => {
   };
 
   useEffect(() => {
+    if (viewMode === "tree") {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const getAllEmployeesList = async () => {
       try {
@@ -389,11 +422,15 @@ const Employees = () => {
       }
     };
     getAllEmployeesList();
-  }, [paginationValues, employeeFilters, employmentStatus, isRefresh, search]);
+  }, [paginationValues, employeeFilters, employmentStatus, isRefresh, search, viewMode]);
 
   useEffect(() => {
-    setPageTitle(i({ id: "PAGE.EMPLOYEES" }));
-  }, []);
+    setPageTitle(
+      viewMode === "tree"
+        ? i({ id: "MODULES.ORG_CHART" })
+        : i({ id: "PAGE.EMPLOYEES" }),
+    );
+  }, [viewMode, i, setPageTitle]);
 
   const pageHeaderActionsTarget = pageHeaderTarget || document.getElementById("page-header-actions");
   const toolbarIconSx = {
@@ -441,12 +478,14 @@ const Employees = () => {
               py: 0.5,
             }}
           >
-            <SearchInput
-              search={search}
-              setSearch={handleSearchChange}
-              placeholder="PLACEHOLDER.SEARCH"
-              sx={{ width: { xs: "100%", sm: 200, md: 240 } }}
-            />
+            {viewMode !== "tree" && (
+              <SearchInput
+                search={search}
+                setSearch={handleSearchChange}
+                placeholder="PLACEHOLDER.SEARCH"
+                sx={{ width: { xs: "100%", sm: 200, md: 240 } }}
+              />
+            )}
             <Stack
               direction="row"
               spacing={1}
@@ -484,36 +523,49 @@ const Employees = () => {
                   },
                 }}
               >
-                <ToggleButton value="table" aria-label="table"><ViewList className="fs-20" /></ToggleButton>
-                <ToggleButton value="grid" aria-label="grid"><GridView className="fs-20" /></ToggleButton>
+                <ToggleButton value="table" aria-label="table" title="Table View">
+                  <ViewList className="fs-20" />
+                </ToggleButton>
+                <ToggleButton value="grid" aria-label="grid" title="Grid View">
+                  <GridView className="fs-20" />
+                </ToggleButton>
+                <ToggleButton value="tree" aria-label="tree" title="Organization Chart">
+                  <AccountTreeRounded className="fs-20" />
+                </ToggleButton>
               </ToggleButtonGroup>
-              <Badge
-                badgeContent={totalAppliedFilter}
-                anchorOrigin={{ horizontal: "right", vertical: "top" }}
-                color="error"
-                sx={{
-                  "& .MuiBadge-badge": {
-                    fontSize: "0.72rem",
-                    fontWeight: 700,
-                    height: 18,
-                    minWidth: 18,
-                    padding: "0 4px",
-                    boxShadow: "0 2px 5px rgba(0,0,0,0.25)",
-                  },
-                }}
-              >
-                <CustomIconButton
-                  icon={<FilterList />}
-                  ariaLabel="Filter Employee"
-                  handleClick={handleFilterClick}
-                  sx={totalAppliedFilter > 0 ? primaryToolbarIconSx : toolbarIconSx}
-                />
-              </Badge>
+              {viewMode !== "tree" && (
+                <Badge
+                  badgeContent={totalAppliedFilter}
+                  anchorOrigin={{ horizontal: "right", vertical: "top" }}
+                  color="error"
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      fontSize: "0.72rem",
+                      fontWeight: 700,
+                      height: 18,
+                      minWidth: 18,
+                      padding: "0 4px",
+                      boxShadow: "0 2px 5px rgba(0,0,0,0.25)",
+                    },
+                  }}
+                >
+                  <CustomIconButton
+                    icon={<FilterList />}
+                    ariaLabel="Filter Employee"
+                    handleClick={handleFilterClick}
+                    sx={totalAppliedFilter > 0 ? primaryToolbarIconSx : toolbarIconSx}
+                  />
+                </Badge>
+              )}
             </Stack>
             {(userRoleType === Roles.Administrator || userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`)) && (
               <Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="nowrap" sx={{ width: "auto", flexShrink: 0 }}>
-                <AppButton aria-label="Bulk import employees" title="Bulk import employees" variant="outlined" size="small" startIcon={<UploadFile />} onClick={() => setShowBulkImportModal(true)} sx={{ minHeight: 38, minWidth: { xs: 40, sm: 0 }, borderRadius: 2, px: { xs: 1, sm: 1.5 }, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: "0 0 auto", whiteSpace: "nowrap", "& .MuiButton-startIcon": { mr: { xs: 0, sm: 1 } } }}><Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Bulk Import</Box></AppButton>
-                <AppButton aria-label="Bulk export employees" title="Bulk export employees" variant="outlined" size="small" startIcon={isExporting ? <CircularProgress size={16} /> : <FileDownload />} onClick={handleBulkExport} disabled={isExporting || totalRecords === 0} sx={{ minHeight: 38, minWidth: { xs: 40, sm: 0 }, borderRadius: 2, px: { xs: 1, sm: 1.5 }, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: "0 0 auto", whiteSpace: "nowrap", "& .MuiButton-startIcon": { mr: { xs: 0, sm: 1 } } }}><Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Bulk Export</Box></AppButton>
+                {viewMode !== "tree" && (
+                  <>
+                    <AppButton aria-label="Bulk import employees" title="Bulk import employees" variant="outlined" size="small" startIcon={<UploadFile />} onClick={() => setShowBulkImportModal(true)} sx={{ minHeight: 38, minWidth: { xs: 40, sm: 0 }, borderRadius: 2, px: { xs: 1, sm: 1.5 }, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: "0 0 auto", whiteSpace: "nowrap", "& .MuiButton-startIcon": { mr: { xs: 0, sm: 1 } } }}><Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Bulk Import</Box></AppButton>
+                    <AppButton aria-label="Bulk export employees" title="Bulk export employees" variant="outlined" size="small" startIcon={isExporting ? <CircularProgress size={16} /> : <FileDownload />} onClick={handleBulkExport} disabled={isExporting || totalRecords === 0} sx={{ minHeight: 38, minWidth: { xs: 40, sm: 0 }, borderRadius: 2, px: { xs: 1, sm: 1.5 }, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: "0 0 auto", whiteSpace: "nowrap", "& .MuiButton-startIcon": { mr: { xs: 0, sm: 1 } } }}><Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Bulk Export</Box></AppButton>
+                  </>
+                )}
                 <CustomIconButton icon={<Add />} handleClick={() => setShowAddEmployeeStepper(true)} tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })} ariaLabel="Add employee" sx={primaryToolbarIconSx} />
               </Stack>
             )}
@@ -524,21 +576,20 @@ const Employees = () => {
         className="d-flex flex-column flex-grow-1"
         sx={{
           width: "100%",
-          p: { xs: 2, sm: 3, md: 4 },
-          gap: { xs: 2.5, md: 3 },
+          p: viewMode === "tree" ? { xs: 1, sm: 1.5 } : { xs: 2, sm: 3, md: 4 },
+          gap: viewMode === "tree" ? 0 : { xs: 2.5, md: 3 },
           borderRadius: 3,
           border: "1px solid",
           borderColor: "divider",
           backgroundColor: "background.paper",
           backgroundImage: "none",
-          // The page already has a defined card border. A large fixed shadow
-          // made the entire employee list look like it was floating, especially
-          // in the light Dawn theme.
           boxShadow: "none",
           overflow: "visible",
         }}
       >
-        {viewMode === "table" ? (
+        {viewMode === "tree" ? (
+          <OrgChartPage embedded={true} />
+        ) : viewMode === "table" ? (
           <CustomDataGrid
             columns={columns}
             row={employeeList}

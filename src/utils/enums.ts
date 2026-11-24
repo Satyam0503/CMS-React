@@ -61,6 +61,7 @@ export enum Modules {
   PayrollSettings = 17,
   CareerProfile = 18,
   RecruitmentSettings = 19,
+  HiringManagerReviews = 20,
 }
 
 export enum ModulesName {
@@ -84,6 +85,7 @@ export enum ModulesName {
   PayrollSettings = "Payroll_Settings",
   CareerProfile = "Career_Profile",
   RecruitmentSettings = "Recruitment_Settings",
+  HiringManagerReviews = "Hiring_Manager_Reviews",
   WorkFromHome = "Work_From_Home",
   Offboarding = "Offboarding",
 }
@@ -91,6 +93,7 @@ export enum ModulesName {
 export enum ModulesTitles {
   Dashboard = "MODULES.DASHBOARD",
   Employees = "MODULES.EMPLOYEES",
+  EmployeeManagement = "MODULES.EMPLOYEE_MANAGEMENT",
   Attendance = "MODULES.ATTENDANCE",
   AttendanceSettings = "MODULES.ATTENDANCE_SETTINGS",
   LeaveManagement = "MODULES.LEAVE_MANAGEMENT",
@@ -109,7 +112,9 @@ export enum ModulesTitles {
   PayrollSettings = "MODULES.PAYROLL_SETTINGS",
   CareerProfile = "MODULES.CAREER_PROFILE",
   RecruitmentSettings = "MODULES.RECRUITMENT_SETTINGS",
+  HiringManagerReviews = "MODULES.HIRING_MANAGER_REVIEWS",
   LifecycleManagement = "MODULES.LIFECYCLE_MANAGEMENT",
+  OrgChart = "MODULES.ORG_CHART",
   WorkFromHome = "MODULES.WORK_FROM_HOME",
 }
 

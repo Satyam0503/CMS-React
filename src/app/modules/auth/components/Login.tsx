@@ -127,8 +127,12 @@ export function Login() {
       } else {
         toast.error(data.message || "We could not send the verification email. Please try again.");
       }
-    } catch {
-      toast.error("We could not send the verification email. Please try again.");
+    } catch (err: any) {
+      if (err?.response?.status === 503) {
+        toast.error("Mail service is currently unavailable. Please contact your system administrator.");
+      } else {
+        toast.error("We could not send the verification email. Please try again.");
+      }
     } finally {
       setIsResendingVerification(false);
     }
@@ -188,7 +192,7 @@ export function Login() {
                       onClick={() => handleResendVerification(unverifiedEmail)}
                     >
                       {isResendingVerification
-                        ? "Sending verification email…"
+                        ? "Sending verification email..."
                         : "Resend verification email"}
                     </AppButton>
                   )}

@@ -10,7 +10,6 @@ export interface DepartmentResponseModel {
 export type DashboardActivityType =
   | "joined"
   | "leaveApproved"
-  | "salaryRevised"
   | "exitInitiated"
   | "jobPosted";
 
@@ -28,15 +27,59 @@ export type HeadcountPoint = {
   count: number;
 };
 
+export type WorkforceMovementPoint = {
+  /** yyyy-MM */
+  month: string;
+  hires: number;
+  exits: number;
+  netChange: number;
+};
+
+export type LeaveRequestCohortPoint = {
+  /** yyyy-MM; this is submission month and the counts show current status. */
+  month: string;
+  totalRequests: number;
+  pending: number;
+  approved: number;
+  rejected: number;
+  withdrawn: number;
+  otherStatus: number;
+};
+
+export type DashboardSourceAvailability = {
+  employees: boolean;
+  attendance: boolean;
+  leaveManagement: boolean;
+  jobs: boolean;
+  offboarding: boolean;
+};
+
 export type DashboardOverview = {
+  definitionVersion?: string;
+  asOfDate?: string | null;
+  timeZone?: string;
+  generatedAtUtc?: string | null;
+  sourceAvailability?: DashboardSourceAvailability;
   totalEmployees: number;
   totalEmployeesChangePercent: number | null;
   presentToday: number;
   onLeaveToday: number;
   absentToday: number;
+  attendanceBreakdown?: {
+    definitionVersion?: string;
+    expectedEmployees: number;
+    presentOnly: number;
+    leaveOnly: number;
+    presentAndOnLeave: number;
+    explicitlyAbsent: number;
+    otherStatus: number;
+    unreported: number;
+  } | null;
   isWorkingDay: boolean;
   openPositions: number;
   headcountTrend: HeadcountPoint[];
+  workforceMovementTrend?: WorkforceMovementPoint[];
+  leaveRequestCohortTrend?: LeaveRequestCohortPoint[];
   recentActivities: DashboardActivity[];
 };
 

@@ -1,17 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Alert,
   Autocomplete,
   Box,
   ButtonBase,
-  Card,
   Chip,
-  Divider,
   Grid,
-  IconButton,
   InputAdornment,
   LinearProgress,
   MenuItem,
@@ -27,16 +21,15 @@ import EventNoteOutlined from "@mui/icons-material/EventNoteOutlined";
 import AddRounded from "@mui/icons-material/AddRounded";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
 import SearchRounded from "@mui/icons-material/SearchRounded";
-import ExpandMoreRounded from "@mui/icons-material/ExpandMoreRounded";
 import TuneRounded from "@mui/icons-material/TuneRounded";
 import PsychologyRounded from "@mui/icons-material/PsychologyRounded";
 import LayersRounded from "@mui/icons-material/LayersRounded";
-import CheckCircleOutlineRounded from "@mui/icons-material/CheckCircleOutlineRounded";
 import { AppButton, AppSwitch, AppTextField } from "../../shared/components/ui";
 import { toast } from "react-toastify";
 import { getAllJobVacancies, getRecruitmentInterviewPlan, upsertRecruitmentInterviewPlan } from "./services";
+import RecruitmentCapabilityNotice from "./RecruitmentCapabilityNotice";
+import { isRecruitmentFeatureDisabled, responseDataFromError } from "./recruitmentCapabilityUtils";
 import {
-  JobModal,
   RecruitmentCompetencyConfig,
   RecruitmentInterviewPlanStageCommand,
   RecruitmentRatingScaleConfig,
@@ -89,7 +82,7 @@ interface VacancyOption {
 export default function RecruitmentInterviewPlanEditor() {
   const theme = useTheme();
   const isDark = useIsDark();
-  const [activeSection, setActiveSection] = useState<"scale" | "competencies" | "stages" | "all">("scale");
+  const [activeSection, setActiveSection] = useState<"scale" | "competencies" | "stages">("scale");
   const [stages, setStages] = useState<RecruitmentInterviewPlanStageCommand[]>(initialStages);
   const [ratingScale, setRatingScale] = useState<RecruitmentRatingScaleConfig>(defaultRatingScale);
   const [competencies, setCompetencies] = useState<CompetencyItem[]>(initialCompetencies);
@@ -102,6 +95,8 @@ export default function RecruitmentInterviewPlanEditor() {
   const [vacancies, setVacancies] = useState<VacancyOption[]>([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [featureDisabled, setFeatureDisabled] = useState(false);
+  const [loadError, setLoadError] = useState<string>();
 
   // Fetch active vacancies for the search bar
   useEffect(() => {
@@ -123,8 +118,19 @@ export default function RecruitmentInterviewPlanEditor() {
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoadError(undefined);
     try {
       const { data } = await getRecruitmentInterviewPlan(vacancyId.trim() || undefined);
+      if (!data.success && isRecruitmentFeatureDisabled(data)) {
+        setFeatureDisabled(true);
+        return;
+      }
+      if (!data.success) {
+        setFeatureDisabled(false);
+        setLoadError(data.message || "The interview plan could not be loaded.");
+        return;
+      }
+      setFeatureDisabled(false);
       if (data.success && data.methodResult) {
         const plan = data.methodResult;
         if (plan.stages?.length) {
@@ -175,8 +181,14 @@ export default function RecruitmentInterviewPlanEditor() {
         setRatingScale(defaultRatingScale);
         setCompetencies(initialCompetencies);
       }
-    } catch {
-      toast.info("Using system interview-plan defaults.");
+    } catch (error) {
+      const response = responseDataFromError(error) as { message?: string } | undefined;
+      if (isRecruitmentFeatureDisabled(response)) {
+        setFeatureDisabled(true);
+      } else {
+        setFeatureDisabled(false);
+        setLoadError(response?.message || (error instanceof Error ? error.message : "") || "The interview plan could not be loaded. Check your connection and try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -302,10 +314,17 @@ export default function RecruitmentInterviewPlanEditor() {
   const totalCompWeight = competencies.reduce((acc, c) => acc + (Number(c.weight) || 0), 0);
   const hasCompWeights = competencies.some((c) => (Number(c.weight) || 0) > 0);
   const compWeightValid = !hasCompWeights || Math.abs(totalCompWeight - 100) < 0.01;
+  const totalStageWeight = stages.reduce((acc, stage) => acc + (Number(stage.weight) || 0), 0);
+  const hasStageWeights = stages.some((stage) => Number(stage.weight) > 0);
+  const stageWeightValid = !hasStageWeights || Math.abs(totalStageWeight - 100) < 0.01;
 
   const save = async () => {
     if (hasCompWeights && !compWeightValid) {
       toast.error(`Competency weights sum to ${totalCompWeight}%. Total must equal 100%.`);
+      return;
+    }
+    if (hasStageWeights && !stageWeightValid) {
+      toast.error(`Round weights sum to ${totalStageWeight}%. Total must equal 100%.`);
       return;
     }
 
@@ -318,11 +337,19 @@ export default function RecruitmentInterviewPlanEditor() {
         isDefault: !scopedVacancy,
         stages,
         ratingScale,
-        competencies: competencies.map(({ _clientId, ...rest }) => rest),
+        competencies: competencies.map((competency) => {
+          const persisted = { ...competency };
+          delete persisted._clientId;
+          return persisted;
+        }),
         hiringTargetScore,
         missingScorePolicy,
         idempotencyKey: key(),
       });
+      if (!data.success && isRecruitmentFeatureDisabled(data)) {
+        setFeatureDisabled(true);
+        return;
+      }
       if (!data.success) throw new Error(data.message || "Unable to save interview plan.");
       toast.success(scopedVacancy ? "Vacancy interview plan saved." : "Default interview plan saved.");
     } catch (error) {
@@ -332,15 +359,28 @@ export default function RecruitmentInterviewPlanEditor() {
     }
   };
 
+  if (featureDisabled || loadError) {
+    return (
+      <RecruitmentCapabilityNotice
+        feature="Interview scorecard planning"
+        settingsArea="Stage gates → Structured scorecards"
+        disabled={featureDisabled}
+        errorMessage={loadError}
+        onRetry={() => void load()}
+        retrying={loading}
+      />
+    );
+  }
+
   return (
     <Box
       sx={{
         p: { xs: 2, sm: 2.5 },
         border: "1px solid",
-        borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-        borderRadius: "14px",
-        bgcolor: isDark ? "rgba(30, 41, 59, 0.3)" : "background.paper",
-        boxShadow: isDark ? "0 2px 10px rgba(0,0,0,0.2)" : "0 1px 3px rgba(0,0,0,0.02)",
+        borderColor: "divider",
+        borderRadius: "12px",
+        bgcolor: "background.paper",
+        boxShadow: "none",
         minWidth: 0,
         maxWidth: "100%",
         boxSizing: "border-box",
@@ -375,8 +415,8 @@ export default function RecruitmentInterviewPlanEditor() {
             <Typography variant="subtitle1" fontWeight={850} sx={{ fontSize: "1rem" }}>
               {vacancyId.trim() ? "Vacancy Interview Plan" : "Default Interview Plan"}
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.8rem", display: "block", mt: 0.25 }}>
-              Configure rating scales, competency rubrics, passing benchmarks, and interview round gates.
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.8rem", display: "block", mt: 0.25 }}>
+              Set the scorecard scale, skills, and interview rounds for this plan.
             </Typography>
           </Box>
         </Stack>
@@ -387,10 +427,10 @@ export default function RecruitmentInterviewPlanEditor() {
             sx={{
               display: "flex",
               p: 0.5,
-              borderRadius: "10px",
-              bgcolor: isDark ? "rgba(255,255,255,0.06)" : "#F1F5F9",
+              borderRadius: "8px",
+              bgcolor: "action.hover",
               border: "1px solid",
-              borderColor: isDark ? "rgba(255,255,255,0.1)" : "#E2E8F0",
+              borderColor: "divider",
             }}
           >
             <ButtonBase
@@ -402,13 +442,13 @@ export default function RecruitmentInterviewPlanEditor() {
               sx={{
                 px: 1.5,
                 py: 0.65,
-                borderRadius: "7px",
+              borderRadius: "6px",
                 fontSize: "0.76rem",
                 fontWeight: 750,
-                bgcolor: scopeMode === "GLOBAL" ? (isDark ? "primary.main" : "#FFFFFF") : "transparent",
-                color: scopeMode === "GLOBAL" ? (isDark ? "#FFFFFF" : "primary.main") : "text.secondary",
-                boxShadow: scopeMode === "GLOBAL" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.18s ease",
+                bgcolor: scopeMode === "GLOBAL" ? (isDark ? "primary.main" : "background.paper") : "transparent",
+                color: scopeMode === "GLOBAL" ? (isDark ? "primary.contrastText" : "primary.main") : "text.secondary",
+              boxShadow: "none",
+              transition: "background-color 160ms ease, color 160ms ease",
               }}
             >
               Company Default
@@ -418,13 +458,13 @@ export default function RecruitmentInterviewPlanEditor() {
               sx={{
                 px: 1.5,
                 py: 0.65,
-                borderRadius: "7px",
+              borderRadius: "6px",
                 fontSize: "0.76rem",
                 fontWeight: 750,
-                bgcolor: scopeMode === "VACANCY" ? (isDark ? "primary.main" : "#FFFFFF") : "transparent",
-                color: scopeMode === "VACANCY" ? (isDark ? "#FFFFFF" : "primary.main") : "text.secondary",
-                boxShadow: scopeMode === "VACANCY" ? "0 2px 6px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.18s ease",
+                bgcolor: scopeMode === "VACANCY" ? (isDark ? "primary.main" : "background.paper") : "transparent",
+                color: scopeMode === "VACANCY" ? (isDark ? "primary.contrastText" : "primary.main") : "text.secondary",
+              boxShadow: "none",
+              transition: "background-color 160ms ease, color 160ms ease",
               }}
             >
               Vacancy-Specific
@@ -444,7 +484,7 @@ export default function RecruitmentInterviewPlanEditor() {
             variant="contained"
             size="small"
             onClick={() => void save()}
-            disabled={saving || loading || (hasCompWeights && !compWeightValid)}
+            disabled={saving || loading || (hasCompWeights && !compWeightValid) || (hasStageWeights && !stageWeightValid)}
             sx={{ flex: { xs: 1, sm: "none" }, height: 36, px: 2.25, fontSize: "0.8rem", fontWeight: 750, borderRadius: "9px" }}
           >
             {loading ? "Loading…" : saving ? "Saving…" : "Save plan"}
@@ -460,8 +500,8 @@ export default function RecruitmentInterviewPlanEditor() {
             p: 2,
             borderRadius: "12px",
             border: "1px solid",
-            borderColor: isDark ? "rgba(255,255,255,0.08)" : "#E2E8F0",
-            bgcolor: isDark ? "rgba(15,23,42,0.3)" : "#F8FAFC",
+            borderColor: "divider",
+            bgcolor: "background.default",
           }}
         >
           <Autocomplete
@@ -518,12 +558,17 @@ export default function RecruitmentInterviewPlanEditor() {
           variant="scrollable"
           scrollButtons="auto"
           sx={{
-            minHeight: 44,
+            width: "100%",
+            minHeight: 42,
+            "& .MuiTabs-flexContainer": { width: { xs: "max-content", lg: "100%" } },
             "& .MuiTab-root": {
               textTransform: "none",
-              fontWeight: 750,
-              fontSize: "0.84rem",
-              minHeight: 44,
+              fontWeight: 600,
+              fontSize: "0.8rem",
+              minHeight: 42,
+              minWidth: { xs: 148, lg: 0 },
+              flex: { xs: "0 0 auto", lg: "1 1 0" },
+              whiteSpace: "nowrap",
               py: 1,
               px: { xs: 1.5, sm: 2.25 },
               gap: 1,
@@ -533,21 +578,26 @@ export default function RecruitmentInterviewPlanEditor() {
               },
             },
             "& .MuiTabs-indicator": {
-              height: 3,
-              borderRadius: "3px 3px 0 0",
+              height: 2,
+              borderRadius: "2px 2px 0 0",
             },
           }}
         >
-          <Tab value="scale" icon={<TuneRounded sx={{ fontSize: 18 }} />} iconPosition="start" label="1. Rating Scale & Benchmark" />
-          <Tab value="competencies" icon={<PsychologyRounded sx={{ fontSize: 18 }} />} iconPosition="start" label={`2. Competencies (${competencies.length})`} />
-          <Tab value="stages" icon={<LayersRounded sx={{ fontSize: 18 }} />} iconPosition="start" label={`3. Interview Stages (${stages.length})`} />
-          <Tab value="all" label={activeSection === "all" ? "Single View" : "View All Sections"} sx={{ ml: "auto" }} />
+          <Tab value="scale" icon={<TuneRounded sx={{ fontSize: 18 }} />} iconPosition="start" label="Rating scale" />
+          <Tab value="competencies" icon={<PsychologyRounded sx={{ fontSize: 18 }} />} iconPosition="start" label={`Competencies (${competencies.length})`} />
+          <Tab value="stages" icon={<LayersRounded sx={{ fontSize: 18 }} />} iconPosition="start" label={`Interview rounds (${stages.length})`} />
         </Tabs>
       </Box>
 
       {/* Section 1: Rating Scale & Scoring Engine Settings */}
-      {(activeSection === "scale" || activeSection === "all") && (
-        <Box sx={{ mb: 4, animation: `${fadeInSlideUp} 0.3s ease` }}>
+      {activeSection === "scale" && (
+        <Box
+          sx={{
+            mb: 4,
+            animation: `${fadeInSlideUp} 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) both`,
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+          }}
+        >
           <Stack direction="row" spacing={1.25} alignItems="center" sx={{ mb: 2 }}>
             <TuneRounded sx={{ fontSize: 20, color: "primary.main" }} />
             <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.96rem" }}>
@@ -562,7 +612,7 @@ export default function RecruitmentInterviewPlanEditor() {
             />
           </Stack>
           <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2.5, fontSize: "0.78rem" }}>
-            Configure standard numerical or qualitative rubrics, normalization formulas, and minimum benchmark passing targets.
+              Choose how interview ratings convert to a score and the minimum target for a Hire recommendation.
           </Typography>
 
           <Grid container spacing={2.5}>
@@ -668,8 +718,8 @@ export default function RecruitmentInterviewPlanEditor() {
       )}
 
       {/* Section 2: Competency Framework */}
-      {(activeSection === "competencies" || activeSection === "all") && (
-        <Box sx={{ mb: 4, animation: `${fadeInSlideUp} 0.3s ease` }}>
+      {activeSection === "competencies" && (
+        <Box sx={{ mb: 4, animation: `${fadeInSlideUp} 0.3s ease`, "@media (prefers-reduced-motion: reduce)": { animation: "none" } }}>
           <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }} flexWrap="wrap" gap={1}>
             <Stack direction="row" spacing={1.25} alignItems="center">
               <PsychologyRounded sx={{ fontSize: 20, color: "primary.main" }} />
@@ -695,13 +745,13 @@ export default function RecruitmentInterviewPlanEditor() {
               Add Competency
             </AppButton>
           </Stack>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, fontSize: "0.78rem" }}>
-            Assign skill evaluation criteria with individual percentage weights and minimum passing cutoffs.
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, fontSize: "0.8rem", maxWidth: 900, lineHeight: 1.55 }}>
+            Set skill weights and pass marks. A failed required skill blocks a Hire recommendation.
           </Typography>
 
           {/* Visual Weight Progress Bar */}
           {hasCompWeights && (
-            <Box sx={{ mb: 2.5, p: 1.75, borderRadius: "10px", bgcolor: isDark ? "rgba(15, 23, 42, 0.3)" : "#F1F5F9" }}>
+            <Box sx={{ mb: 2.5, p: 1.75, borderRadius: "10px", bgcolor: "background.default" }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.75 }}>
                 <Typography variant="caption" color="text.secondary" fontWeight={750} sx={{ fontSize: "0.76rem" }}>
                   Total Competency Weight Allocation (Must Equal 100%):
@@ -730,52 +780,87 @@ export default function RecruitmentInterviewPlanEditor() {
             </Alert>
           )}
 
-          <Stack spacing={2}>
+          <Stack spacing={1.5}>
             {competencies.map((comp, idx) => {
               const compKey = comp._clientId || `comp-${idx}`;
               return (
               <Box
                 key={compKey}
                 sx={{
-                  p: { xs: 1.75, sm: 2.25 },
-                  borderRadius: "12px",
+                  p: { xs: 1.5, sm: 2 },
+                  borderRadius: "14px",
                   border: "1px solid",
-                  borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-                  bgcolor: isDark ? "rgba(15, 23, 42, 0.2)" : "#F8FAFC",
-                  transition: "all 0.2s ease",
-                  "&:hover": { borderColor: "primary.main" },
+                  borderColor: "divider",
+                  bgcolor: "background.paper",
+                  transition: theme.transitions.create(["border-color", "box-shadow", "transform"], {
+                    duration: theme.transitions.duration.short,
+                  }),
+                  animation: `${fadeInSlideUp} 360ms ${theme.transitions.easing.easeOut} both`,
+                  animationDelay: `${Math.min(idx * 55, 220)}ms`,
+                  "&:hover, &:focus-within": {
+                    borderColor: "primary.main",
+                    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                    transform: "translateY(-1px)",
+                  },
+                  "@media (prefers-reduced-motion: reduce)": {
+                    animation: "none",
+                    transition: "none",
+                    "&:hover, &:focus-within": { transform: "none" },
+                  },
                 }}
               >
-                <Grid container spacing={2} alignItems="center">
-                  {/* Row 1: Competency Name, Code, and Remove Action */}
-                  <Grid size={{ xs: 12, sm: 7, md: 8 }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+                    <Typography variant="subtitle2" fontWeight={700}>
+                      Competency {idx + 1}
+                    </Typography>
+                    <Chip
+                      size="small"
+                      label={comp.isMandatory ? "Required pass gate" : "Weighted score"}
+                      color={comp.isMandatory ? "warning" : "default"}
+                      variant="outlined"
+                      sx={{ height: 22, fontSize: "0.7rem", fontWeight: 600 }}
+                    />
+                  </Stack>
+                  {competencies.length > 1 && (
+                    <AppButton
+                      size="small"
+                      variant="text"
+                      color="error"
+                      startIcon={<DeleteOutlineRounded sx={{ fontSize: 16 }} />}
+                      onClick={() => removeCompetency(comp._clientId || idx)}
+                      aria-label={`Remove competency ${comp.name || idx + 1}`}
+                      sx={{ minHeight: 32, px: 1, flexShrink: 0, fontWeight: 600 }}
+                    >
+                      Remove
+                    </AppButton>
+                  )}
+                </Stack>
+
+                <Grid container spacing={{ xs: 1.5, md: 2 }} alignItems="flex-start">
+                  <Grid size={{ xs: 12, md: 6, lg: 5 }}>
                     <AppTextField
                       label="Competency Name *"
                       size="small"
                       value={comp.name}
                       onChange={(e) => updateCompetency(idx, { name: e.target.value })}
+                      helperText="Shown to interviewers on the scorecard."
                       fullWidth
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 9, sm: 4, md: 3 }}>
+                  <Grid size={{ xs: 12, md: 6, lg: 3 }}>
                     <AppTextField
                       label="Code *"
                       size="small"
                       value={comp.code}
                       onChange={(e) => updateCompetency(idx, { code: e.target.value.toUpperCase() })}
+                      helperText="Stable key used in reports and integrations."
                       fullWidth
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 3, sm: 1, md: 1 }} textAlign="right">
-                    <IconButton size="small" color="error" onClick={() => removeCompetency(comp._clientId || idx)} sx={{ p: 0.75 }}>
-                      <DeleteOutlineRounded sx={{ fontSize: 20 }} />
-                    </IconButton>
-                  </Grid>
-
-                  {/* Row 2: Weight, Min Passing Score, and Mandatory Gate */}
-                  <Grid size={{ xs: 6, sm: 3, md: 3 }}>
+                  <Grid size={{ xs: 12, sm: 6, lg: 2 }}>
                     <AppTextField
                       label="Weight (%)"
                       type="number"
@@ -783,32 +868,58 @@ export default function RecruitmentInterviewPlanEditor() {
                       value={comp.weight}
                       onChange={(e) => updateCompetency(idx, { weight: Number(e.target.value) || 0 })}
                       inputProps={{ min: 0, max: 100 }}
+                      helperText="Scorecard weighting."
                       fullWidth
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 6, sm: 3, md: 3 }}>
+                  <Grid size={{ xs: 12, sm: 6, lg: 2 }}>
                     <AppTextField
-                      label="Min Passing Score (%)"
+                      label="Min score (%)"
                       type="number"
                       size="small"
                       value={comp.minScore ?? 60}
                       onChange={(e) => updateCompetency(idx, { minScore: Number(e.target.value) || 0 })}
                       inputProps={{ min: 0, max: 100 }}
+                      helperText="Required normalized score."
                       fullWidth
                     />
                   </Grid>
 
-                  <Grid size={{ xs: 12, sm: 6, md: 6 }}>
-                    <Stack direction="row" alignItems="center" spacing={1.25} sx={{ height: "100%", pt: { xs: 0.5, sm: 0 } }}>
+                  <Grid size={{ xs: 12 }}>
+                    <Box
+                      sx={{
+                        width: "fit-content",
+                        maxWidth: "100%",
+                        p: 1,
+                        border: "1px solid",
+                        borderColor: comp.isMandatory ? alpha(theme.palette.warning.main, 0.45) : "divider",
+                        borderRadius: 1.5,
+                        bgcolor: comp.isMandatory ? alpha(theme.palette.warning.main, 0.045) : "background.default",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.25,
+                        transition: theme.transitions.create(["background-color", "border-color"], {
+                          duration: theme.transitions.duration.short,
+                        }),
+                      }}
+                    >
                       <AppSwitch
                         checked={comp.isMandatory}
                         onChange={(e) => updateCompetency(idx, { isMandatory: e.target.checked })}
+                        inputProps={{ "aria-label": `Require ${comp.name || `competency ${idx + 1}`} to pass` }}
                       />
-                      <Typography variant="caption" fontWeight={750} color={comp.isMandatory ? "error.main" : "text.secondary"} sx={{ fontSize: "0.78rem" }}>
-                        {comp.isMandatory ? "Mandatory Gate (failure blocks Hire recommendation)" : "Optional Competency (weighted towards average)"}
-                      </Typography>
-                    </Stack>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography variant="body2" fontWeight={650} sx={{ fontSize: "0.82rem" }}>
+                          Require a pass for this skill
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 1.4 }}>
+                          {comp.isMandatory
+                            ? "Below-minimum scores block a Hire recommendation."
+                            : "Adds weight to the result without blocking Hire."}
+                        </Typography>
+                      </Box>
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>
@@ -819,8 +930,8 @@ export default function RecruitmentInterviewPlanEditor() {
       )}
 
       {/* Section 3: Interview Stages & Round Gates */}
-      {(activeSection === "stages" || activeSection === "all") && (
-        <Box sx={{ animation: `${fadeInSlideUp} 0.3s ease` }}>
+      {activeSection === "stages" && (
+        <Box sx={{ animation: `${fadeInSlideUp} 0.3s ease`, "@media (prefers-reduced-motion: reduce)": { animation: "none" } }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }} flexWrap="wrap" gap={1}>
             <Stack direction="row" spacing={1.25} alignItems="center">
               <LayersRounded sx={{ fontSize: 20, color: "primary.main" }} />
@@ -839,28 +950,67 @@ export default function RecruitmentInterviewPlanEditor() {
               Add Round
             </AppButton>
           </Stack>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, fontSize: "0.78rem" }}>
-            Sequential interview rounds, required panel quorum sizes, passing score thresholds, and SLA feedback turnaround deadlines.
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, fontSize: "0.8rem", maxWidth: 900, lineHeight: 1.55 }}>
+            Set round details, pass thresholds, and score weights.
           </Typography>
+
+          <Alert severity="info" sx={{ mb: 2, py: 0.25, borderRadius: 2, "& .MuiAlert-message": { fontSize: "0.78rem" } }}>
+            Scoring uses thresholds, weights, and required gates. Panel quorum, scorecard, and deadline settings are saved only.
+          </Alert>
+
+          {hasStageWeights && (
+            <Box sx={{ mb: 2, p: 1.5, borderRadius: 2, bgcolor: "background.default", border: "1px solid", borderColor: stageWeightValid ? "divider" : "warning.light" }}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.75 }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={700}>
+                  Round score weights (must total 100% when enabled)
+                </Typography>
+                <Typography variant="caption" fontWeight={800} color={stageWeightValid ? "success.main" : "warning.dark"}>
+                  {totalStageWeight}% / 100%
+                </Typography>
+              </Stack>
+              <LinearProgress
+                variant="determinate"
+                value={Math.min(100, totalStageWeight)}
+                color={stageWeightValid ? "success" : totalStageWeight > 100 ? "error" : "warning"}
+                sx={{ height: 6, borderRadius: 3 }}
+              />
+            </Box>
+          )}
+          {hasStageWeights && !stageWeightValid && (
+            <Alert severity="warning" sx={{ mb: 2, py: 0.5, fontSize: "0.78rem", borderRadius: 2 }}>
+              Round weights currently sum to <strong>{totalStageWeight}%</strong>. Add or adjust round weights to total 100% before saving.
+            </Alert>
+          )}
 
           <Stack spacing={2}>
             {stages.map((stage, index) => (
               <Box
                 key={stage.code || index}
                 sx={{
-                  p: { xs: 1.75, sm: 2.25 },
-                  borderRadius: "12px",
+                  p: { xs: 1.5, sm: 2.25 },
+                  borderRadius: "14px",
                   border: "1px solid",
-                  borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-                  bgcolor: isDark ? "rgba(15, 23, 42, 0.2)" : "#F8FAFC",
-                  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                  "&:hover": {
+                  borderColor: "divider",
+                  bgcolor: "background.paper",
+                  transition: theme.transitions.create(["border-color", "box-shadow", "transform"], {
+                    duration: theme.transitions.duration.short,
+                  }),
+                  animation: `${fadeInSlideUp} 360ms ${theme.transitions.easing.easeOut} both`,
+                  animationDelay: `${Math.min(index * 55, 220)}ms`,
+                  "&:hover, &:focus-within": {
                     borderColor: theme.palette.primary.main,
+                    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                    transform: "translateY(-1px)",
+                  },
+                  "@media (prefers-reduced-motion: reduce)": {
+                    animation: "none",
+                    transition: "none",
+                    "&:hover, &:focus-within": { transform: "none" },
                   },
                 }}
               >
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }} gap={1}>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap sx={{ minWidth: 0 }}>
                     <Chip
                       size="small"
                       label={`Round ${stage.order}`}
@@ -894,101 +1044,142 @@ export default function RecruitmentInterviewPlanEditor() {
                   )}
                 </Stack>
 
-                <Grid container spacing={2}>
-                  {/* Row 1: Stage Name & Interview Type */}
-                  <Grid size={{ xs: 12, sm: 7 }}>
+                <Typography variant="overline" color="text.secondary" sx={{ display: "block", mb: 0.5, fontWeight: 750, letterSpacing: "0.06em" }}>
+                  Round details
+                </Typography>
+                <Grid container spacing={{ xs: 1.5, md: 2 }} alignItems="flex-start">
+                  <Grid size={{ xs: 12, md: 7 }}>
                     <AppTextField
                       label="Stage / Round Name"
+                      size="small"
                       value={stage.name}
                       onChange={(event) => updateStage(index, { name: event.target.value })}
+                      helperText="Shown in the candidate timeline."
                       fullWidth
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 5 }}>
+                  <Grid size={{ xs: 12, md: 5 }}>
                     <AppTextField
                       label="Interview Type"
+                      size="small"
                       value={stage.type ?? ""}
                       placeholder="e.g., Technical, HR, Cultural"
                       onChange={(event) => updateStage(index, { type: event.target.value })}
+                      helperText="Used for planning."
                       fullWidth
                     />
                   </Grid>
 
-                  {/* Row 2: Four Balanced Metric Inputs */}
-                  <Grid size={{ xs: 6, sm: 3 }}>
+                </Grid>
+
+                <Typography variant="overline" color="text.secondary" sx={{ display: "block", mt: 1.25, mb: 0.5, fontWeight: 750, letterSpacing: "0.06em" }}>
+                  Scoring & response targets
+                </Typography>
+                <Grid container spacing={{ xs: 1.5, md: 2 }} alignItems="flex-start">
+                  <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <AppTextField
-                      label="Panel Size"
+                      label="Panel Quorum"
                       type="number"
+                      size="small"
                       value={stage.requiredPanelSize}
                       onChange={(event) =>
                         updateStage(index, { requiredPanelSize: Math.max(1, Number(event.target.value) || 1) })
                       }
                       inputProps={{ min: 1, max: 20 }}
+                      helperText="Shown in the score breakdown."
                       fullWidth
                     />
                   </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
+                  <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <AppTextField
                       label="Pass Score (%)"
                       type="number"
+                      size="small"
                       value={stage.passThreshold ?? 70}
                       onChange={(event) =>
                         updateStage(index, { passThreshold: Math.max(0, Math.min(100, Number(event.target.value) || 0)) })
                       }
                       inputProps={{ min: 0, max: 100 }}
+                      helperText="Minimum score to pass."
                       fullWidth
                     />
                   </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
+                  <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <AppTextField
-                      label="Weight (%)"
+                      label="Score Weight (%)"
                       type="number"
+                      size="small"
                       value={stage.weight ?? ""}
                       placeholder="Optional"
                       onChange={(event) =>
                         updateStage(index, { weight: event.target.value ? Number(event.target.value) : null })
                       }
                       inputProps={{ min: 0, max: 100 }}
+                      helperText="Final score share; weights must total 100%."
                       fullWidth
                     />
                   </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
+                  <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                     <AppTextField
                       label="Feedback SLA (hrs)"
                       type="number"
+                      size="small"
                       value={stage.feedbackDueHours}
                       onChange={(event) =>
                         updateStage(index, { feedbackDueHours: Math.max(1, Number(event.target.value) || 1) })
                       }
                       inputProps={{ min: 1, max: 720 }}
+                      helperText="Saved only; reminders do not use it yet."
                       fullWidth
                     />
                   </Grid>
                 </Grid>
 
-                <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "flex-start", sm: "center" }} spacing={{ xs: 1.25, sm: 3 }} sx={{ mt: 1.5 }}>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <AppSwitch
-                      checked={stage.scorecardRequired}
-                      onChange={(event) => updateStage(index, { scorecardRequired: event.target.checked })}
-                      inputProps={{ "aria-label": `Scorecard required for round ${stage.order}` }}
-                    />
-                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: "0.78rem" }}>
-                      Scorecard required before debrief & progression
-                    </Typography>
-                  </Stack>
-
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <AppSwitch
-                      checked={stage.isMandatory ?? false}
-                      onChange={(event) => updateStage(index, { isMandatory: event.target.checked })}
-                      inputProps={{ "aria-label": `Mandatory round ${stage.order}` }}
-                    />
-                    <Typography variant="caption" color={stage.isMandatory ? "error.main" : "text.secondary"} sx={{ fontWeight: 650, fontSize: "0.78rem" }}>
-                      Mandatory Gate (failure blocks Hire recommendation)
-                    </Typography>
-                  </Stack>
-                </Stack>
+                <Grid container spacing={1.25} sx={{ mt: 0.25 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box sx={{ height: "100%", p: 1.25, border: "1px solid", borderColor: "divider", borderRadius: 1.5, bgcolor: "background.default" }}>
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <AppSwitch
+                          checked={stage.scorecardRequired}
+                          onChange={(event) => updateStage(index, { scorecardRequired: event.target.checked })}
+                          inputProps={{ "aria-label": `Require scorecard for round ${stage.order}` }}
+                        />
+                        <Typography variant="body2" fontWeight={650} sx={{ fontSize: "0.82rem" }}>
+                          Require scorecard before progression
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box
+                      sx={{
+                        height: "100%",
+                        p: 1.25,
+                        border: "1px solid",
+                        borderColor: stage.isMandatory ? alpha(theme.palette.warning.main, 0.45) : "divider",
+                        borderRadius: 1.5,
+                        bgcolor: stage.isMandatory ? alpha(theme.palette.warning.main, 0.045) : "background.default",
+                        transition: theme.transitions.create(["background-color", "border-color"], { duration: theme.transitions.duration.short }),
+                      }}
+                    >
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <AppSwitch
+                          checked={stage.isMandatory ?? false}
+                          onChange={(event) => updateStage(index, { isMandatory: event.target.checked })}
+                          inputProps={{ "aria-label": `Make round ${stage.order} a hiring gate` }}
+                        />
+                        <Typography variant="body2" fontWeight={650} sx={{ fontSize: "0.82rem" }}>
+                          Require a pass in this round
+                        </Typography>
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: "block", pl: 6.5, lineHeight: 1.4 }}>
+                        {stage.isMandatory
+                          ? "Failed threshold blocks Hire."
+                          : "Does not block Hire by itself."}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
               </Box>
             ))}
           </Stack>

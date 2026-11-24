@@ -5,6 +5,7 @@ import {
   PublicJobApplicationResponse,
   PublicJobDetails,
   PublicJobSummary,
+  PublicApplicationStatus,
 } from "./publicCareerTypes";
 
 export const getPublicJobs = (params?: Record<string, unknown>) =>
@@ -48,3 +49,9 @@ export const uploadPublicResume = (
     true,
   );
 };
+
+export const getPublicApplicationStatus = (applicationReference: string, email: string) =>
+  postRequest<{ applicationReference: string; email: string }, ResponseData<PublicApplicationStatus>>(
+    "api/public/applications/status",
+    { applicationReference, email },
+  );

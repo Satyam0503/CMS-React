@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ImportAttendanceModal } from "./ImportAttendanceModal";
 import * as attendanceServices from "../AttendanceServices";
 
-vi.mock("@mui/icons-material", () => ({}));
+vi.mock("@mui/icons-material", () => ({ default: () => null }));
 vi.mock("@mui/icons-material/CloudUploadOutlined", () => ({ default: () => null }));
 vi.mock("@mui/icons-material/DownloadOutlined", () => ({ default: () => null }));
 vi.mock("@mui/icons-material/CheckCircleOutline", () => ({ default: () => null }));
@@ -17,6 +17,7 @@ vi.mock("react-toastify", () => ({
   toast: {
     error: vi.fn(),
     success: vi.fn(),
+    info: vi.fn(),
   },
 }));
 
@@ -297,5 +298,101 @@ describe("ImportAttendanceModal", () => {
     );
     expect(commitButton?.hasAttribute("disabled")).toBe(true);
   });
+
+  it("switches to Biometric Hardware Punch Sync tab and loads sample punches", async () => {
+    await act(async () => {
+      root!.render(
+        <ImportAttendanceModal
+          open={true}
+          handleClose={vi.fn()}
+          initialYear={2026}
+          initialMonth={10}
+        />
+      );
+    });
+
+    const biometricTab = Array.from(document.querySelectorAll<HTMLButtonElement>("button[role='tab']")).find((tab) =>
+      tab.textContent?.includes("Biometric Hardware Punch Sync")
+    );
+    expect(biometricTab).toBeDefined();
+
+    await act(async () => {
+      biometricTab!.click();
+    });
+
+    expect(document.body.textContent).toContain("Hardware Device Connection & Verification Mode");
+    expect(document.body.textContent).toContain("Ingest / Queue Punches for Synchronization");
+
+    const loadSampleBtn = Array.from(document.querySelectorAll("button")).find((btn) =>
+      btn.textContent?.includes("Load Sample Punches")
+    );
+    expect(loadSampleBtn).toBeDefined();
+
+    await act(async () => {
+      loadSampleBtn!.click();
+    });
+
+    expect(document.body.textContent).toContain("QUEUED PUNCHES (5)");
+    expect(document.body.textContent).toContain("EMP001");
+    expect(document.body.textContent).toContain("EMP002");
+  });
+
+  it("executes biometric sync and displays deduplication breakdown", async () => {
+    const syncMock = vi.spyOn(attendanceServices, "syncBiometricPunches").mockResolvedValue({
+      data: {
+        success: true,
+        message: "Successfully synchronized 4 biometric punches.",
+        totalReceived: 5,
+        processedCount: 4,
+        duplicateCount: 1,
+        unmatchedEmployeeCount: 0,
+        errors: [],
+      },
+    } as any);
+
+    const onImportSuccess = vi.fn();
+
+    await act(async () => {
+      root!.render(
+        <ImportAttendanceModal
+          open={true}
+          handleClose={vi.fn()}
+          initialYear={2026}
+          initialMonth={10}
+          onImportSuccess={onImportSuccess}
+        />
+      );
+    });
+
+    const biometricTab = Array.from(document.querySelectorAll<HTMLButtonElement>("button[role='tab']")).find((tab) =>
+      tab.textContent?.includes("Biometric Hardware Punch Sync")
+    );
+    await act(async () => {
+      biometricTab!.click();
+    });
+
+    const loadSampleBtn = Array.from(document.querySelectorAll("button")).find((btn) =>
+      btn.textContent?.includes("Load Sample Punches")
+    );
+    await act(async () => {
+      loadSampleBtn!.click();
+    });
+
+    const syncButton = Array.from(document.querySelectorAll("button")).find((btn) =>
+      btn.textContent?.includes("Sync 5 Hardware Punches")
+    );
+    expect(syncButton).toBeDefined();
+
+    await act(async () => {
+      syncButton!.click();
+    });
+
+    expect(syncMock).toHaveBeenCalledTimes(1);
+    expect(document.body.textContent).toContain("Total Received: 5");
+    expect(document.body.textContent).toContain("Processed: 4");
+    expect(document.body.textContent).toContain("Deduplicated: 1");
+    expect(onImportSuccess).toHaveBeenCalledTimes(1);
+  });
 });
+
 

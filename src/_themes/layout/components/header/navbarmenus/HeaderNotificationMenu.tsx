@@ -281,7 +281,17 @@ export default function HeaderNotificationMenu() {
           <AppIconButton
             onClick={handleClick}
             aria-describedby={id}
-            sx={{ border: 0, p: 0 }}
+            sx={{
+              border: 0,
+              p: 0,
+              width: 36,
+              height: 36,
+              borderRadius: 2,
+              color: "text.secondary",
+              transition: "background-color 160ms ease, color 160ms ease",
+              "&:hover": { bgcolor: "action.hover", color: "primary.main" },
+              "& .MuiSvgIcon-root": { fontSize: 20 },
+            }}
             role="button"
             aria-label="notification menu"
           >

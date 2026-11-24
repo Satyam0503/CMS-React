@@ -1191,6 +1191,95 @@ export default function AddLeavePolicy(props: Props) {
                           </Grid>
                         </Grid>
                       </PolicyCardSection>
+
+                      {/* Sandwich Rule Policy Engine */}
+                      <PolicyCardSection
+                        title="Sandwich Leave Rules"
+                        subtitle="Automatically count intervening weekends or holidays as leave when enclosed by applied leaves."
+                      >
+                        <Grid container spacing={2.5}>
+                          <Grid size={{ xs: 12, sm: 6 }}>
+                            <AppTextField
+                              select
+                              fullWidth
+                              label="Sandwich Rule Policy"
+                              value={values.enableSandwichRules ? 1 : 0}
+                              onChange={(e) => setFieldValue("enableSandwichRules", Number(e.target.value) === 1)}
+                              helperText="When enabled, non-working days sandwiched between leaves are counted as leave."
+                            >
+                              <MenuItem value={1}>Enabled (Apply Sandwich Rule)</MenuItem>
+                              <MenuItem value={0}>Disabled (Ignore intervening off-days)</MenuItem>
+                            </AppTextField>
+                          </Grid>
+
+                          {values.enableSandwichRules && (
+                            <>
+                              <Grid size={{ xs: 12, sm: 6 }}>
+                                <AppTextField
+                                  select
+                                  fullWidth
+                                  label="Include Sandwiched Weekends"
+                                  value={values.includeWeekendsInSandwich ? 1 : 0}
+                                  onChange={(e) => setFieldValue("includeWeekendsInSandwich", Number(e.target.value) === 1)}
+                                  helperText="Count Saturday/Sunday between applied leaves as consumed leave."
+                                >
+                                  <MenuItem value={1}>Yes - Count sandwiched weekends as leave</MenuItem>
+                                  <MenuItem value={0}>No - Exclude weekends from sandwich</MenuItem>
+                                </AppTextField>
+                              </Grid>
+
+                              <Grid size={{ xs: 12, sm: 6 }}>
+                                <AppTextField
+                                  select
+                                  fullWidth
+                                  label="Include Sandwiched Holidays"
+                                  value={values.includeHolidaysInSandwich ? 1 : 0}
+                                  onChange={(e) => setFieldValue("includeHolidaysInSandwich", Number(e.target.value) === 1)}
+                                  helperText="Count public holidays between applied leaves as consumed leave."
+                                >
+                                  <MenuItem value={1}>Yes - Count sandwiched holidays as leave</MenuItem>
+                                  <MenuItem value={0}>No - Exclude holidays from sandwich</MenuItem>
+                                </AppTextField>
+                              </Grid>
+                            </>
+                          )}
+                        </Grid>
+                      </PolicyCardSection>
+
+                      {/* Compensatory Off (Comp-Off) Policy */}
+                      <PolicyCardSection
+                        title="Comp-Off (Compensatory Off) Credits"
+                        subtitle="Allow employees to earn compensatory leave credits for overtime work on weekends and official holidays."
+                      >
+                        <Grid container spacing={2.5}>
+                          <Grid size={{ xs: 12, sm: 6 }}>
+                            <AppTextField
+                              select
+                              fullWidth
+                              label="Comp-Off Earning Policy"
+                              value={values.enableCompOffEarning ? 1 : 0}
+                              onChange={(e) => setFieldValue("enableCompOffEarning", Number(e.target.value) === 1)}
+                              helperText="Enable employees to request compensatory leave credits for weekend/holiday overtime."
+                            >
+                              <MenuItem value={1}>Enabled (Employees can earn Comp-Off)</MenuItem>
+                              <MenuItem value={0}>Disabled</MenuItem>
+                            </AppTextField>
+                          </Grid>
+
+                          {values.enableCompOffEarning && (
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <AppTextField
+                                fullWidth
+                                type="number"
+                                label="Comp-Off Credit Validity (Days)"
+                                value={values.compOffValidityDays || 60}
+                                onChange={(e) => setFieldValue("compOffValidityDays", Number(e.target.value))}
+                                helperText="Number of calendar days before an earned comp-off credit expires."
+                              />
+                            </Grid>
+                          )}
+                        </Grid>
+                      </PolicyCardSection>
                     </Stack>
                   )}
 

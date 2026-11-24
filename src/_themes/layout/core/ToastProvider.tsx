@@ -64,6 +64,7 @@ export const ToastProvider = () => {
     <ToastContainer
       position={config.position}
       autoClose={config.autoClose}
+      style={{ top: 72 }}
       hideProgressBar={false}
       newestOnTop={config.newestOnTop}
       // Notification content can include actions. Keep dismissal explicit so

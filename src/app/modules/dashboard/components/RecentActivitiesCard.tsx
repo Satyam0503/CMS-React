@@ -1,4 +1,4 @@
-import { CampaignOutlined, CheckCircleOutline, LogoutOutlined, PersonAddAlt1Outlined, TrendingUpOutlined } from "@mui/icons-material";
+import { CampaignOutlined, CheckCircleOutline, LogoutOutlined, PersonAddAlt1Outlined } from "@mui/icons-material";
 import { Stack, Typography } from "@mui/material";
 import { ReactNode } from "react";
 import { useIntl } from "react-intl";
@@ -10,7 +10,6 @@ import { CardMessage, DashboardCard, IconTile, ListSkeleton, LoadError, TileColo
 const ACTIVITY: Record<DashboardActivityType, { icon: ReactNode; color: TileColor; key: string; detailKey?: string }> = {
   joined: { icon: <PersonAddAlt1Outlined />, color: "primary", key: "DASHBOARD.ACTIVITY.JOINED", detailKey: "DASHBOARD.ACTIVITY.JOINED_AS" },
   leaveApproved: { icon: <CheckCircleOutline />, color: "success", key: "DASHBOARD.ACTIVITY.LEAVE_APPROVED" },
-  salaryRevised: { icon: <TrendingUpOutlined />, color: "warning", key: "DASHBOARD.ACTIVITY.SALARY_REVISED" },
   exitInitiated: { icon: <LogoutOutlined />, color: "error", key: "DASHBOARD.ACTIVITY.EXIT_INITIATED" },
   jobPosted: { icon: <CampaignOutlined />, color: "info", key: "DASHBOARD.ACTIVITY.JOB_POSTED", detailKey: "DASHBOARD.ACTIVITY.JOB_POSTED_AS" },
 };

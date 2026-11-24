@@ -10,6 +10,7 @@
   "MODULES": {
     "DASHBOARD": "Tableau de bord",
     "EMPLOYEES": "Employés",
+    "EMPLOYEE_MANAGEMENT": "Gestion des Employés",
     "ATTENDANCE": "Présence",
     "ATTENDANCE_SETTINGS": "Paramètres de présence",
     "LEAVE_MANAGEMENT": "Gestion des congés",
@@ -29,7 +30,8 @@
     "POLICIES": "Politiques",
     "PAYROLL_SETTINGS": "Paramètres de paie",
     "LIFECYCLE_MANAGEMENT": "Gestion du cycle de vie",
-    "CAREER_PROFILE": "Profil de carrière"
+    "CAREER_PROFILE": "Profil de carrière",
+    "ORG_CHART": "Organigramme"
   },
   "GENDER": {
     "MALE": "Masculin",
@@ -431,6 +433,7 @@
     "TABS": {
       "ABOUT": "À propos",
       "LEAVE_TRACKER": "Suivi des congés",
+      "TAX_DECLARATION": "Déclaration fiscale",
       "PERFORMANCE": "Performance",
       "WORKHISTORY": "Historique professionnel",
       "SETTING": "Paramètres"
@@ -1059,7 +1062,13 @@
     "SUBTITLE": "Here's what's happening in your organization today.",
     "SUBTITLE_SELF": "Here's what's coming up for you.",
     "VIEW_ALL": "View All",
-    "LOAD_ERROR": "Couldn't load this section. Try refreshing the page.",
+    "LOAD_ERROR": "Cette section n’a pas pu être chargée.",
+    "RETRY": "Réessayer",
+    "RETRYING": "Nouvelle tentative…",
+    "UNAVAILABLE": "Indisponible",
+    "AS_OF_DATE": "Données du tableau de bord au {date}",
+    "GENERATED_AT": "Rapport généré le {time} ({timeZone})",
+    "SOURCE_FRESHNESS_UNAVAILABLE": "Ce rapport n'indique pas l'heure de mise à jour des sources.",
     "KPI": {
       "TOTAL_EMPLOYEES": "Total Employees",
       "PRESENT_TODAY": "Present Today",
@@ -1081,9 +1090,11 @@
     },
     "TREND": {
       "TITLE": "Employee Trend",
-      "RANGE": "Last 6 Months",
+      "RANGE": "Last 12 Months",
+      "PARTIAL_MONTH": "Current month is partial through {date}.",
       "EMPTY": "Headcount history will appear here after the first month.",
-      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}."
+      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}.",
+      "ACCESSIBLE_SUMMARY": "Monthly employee headcount: {points}.{partialMonthNotice}"
     },
     "DEPARTMENTS": {
       "TITLE": "Department Overview",
@@ -1123,6 +1134,37 @@
       "HOLIDAY": "Holiday",
       "EVENT": "Event",
       "TODAY": "Today"
+    },
+    "MOVEMENT": {
+      "TITLE": "Mouvements du personnel",
+      "RANGE": "12 derniers mois",
+      "PARTIAL": "Le mois en cours est partiel jusqu’au {date}.",
+      "EMPTY": "Les données sur les mouvements du personnel sont indisponibles.",
+      "SUMMARY": "Mouvements mensuels du personnel : {points}.{partialNote}",
+      "HIRES": "Embauches",
+      "EXITS": "Départs",
+      "NET": "Solde",
+      "MONTH": "Mois",
+      "DATA_TABLE": "Afficher le tableau de données",
+      "TABLE_CAPTION": "Données mensuelles des mouvements du personnel"
+    },
+    "LEAVE_COHORT": {
+      "TITLE": "Demandes de congé par mois de soumission",
+      "RANGE": "12 derniers mois",
+      "PARTIAL": "Le mois de soumission en cours est partiel jusqu’au {date}.",
+      "DEFINITION": "Regroupées par mois de soumission ; les statuts indiquent le statut actuel de chaque demande et peuvent changer.",
+      "EMPTY": "Les données des demandes de congé sont indisponibles.",
+      "PENDING": "En attente",
+      "APPROVED": "Approuvées",
+      "REJECTED": "Refusées",
+      "WITHDRAWN": "Retirées",
+      "OTHER": "Autre statut",
+      "SUMMARY": "Demandes de congé par mois de soumission et statut actuel : {points}.{partialNote}",
+      "REQUESTS": "demandes",
+      "MONTH": "Mois",
+      "TOTAL": "Total des demandes",
+      "DATA_TABLE": "Afficher le tableau de données",
+      "TABLE_CAPTION": "Demandes de congé par mois de soumission et statut actuel"
     }
   }
 }

@@ -11,6 +11,7 @@
   "MODULES": {
     "DASHBOARD": "Dashboard",
     "EMPLOYEES": "Employees",
+    "EMPLOYEE_MANAGEMENT": "Employee Management",
     "ATTENDANCE": "Attendance",
     "ATTENDANCE_SETTINGS": "Attendance Settings",
     "LEAVE_MANAGEMENT": "Leave Management",
@@ -19,21 +20,23 @@
     "RECRUITMENT_SETTINGS": "Recruitment Settings",
     "ADMIN": "Admin",
     "HOLIDAYS": "Holidays",
-    "NOTICE_BOARD": "Notice board",
+    "NOTICE_BOARD": "Notice Board",
     "JOBS": "Jobs",
     "APPLICATIONS": "Applications",
     "PERMISSIONS": "Roles & Permissions",
     "PROCESS_LOG": "Process Log",
     "COMPANY_MASTER": "Company Master",
     "COMPANY_DETAILS": "Company Details",
-    "PAYROLL": "PayRoll",
+    "PAYROLL": "Payroll",
     "CALENDAR": "Calendar",
     "POLICIES": "Policies",
     "PAYROLL_SETTINGS": "Payroll Settings",
     "LIFECYCLE_MANAGEMENT": "Employee Lifecycle",
     "CAREER_PROFILE": "Career Profile",
     "WORK_FROM_HOME": "Work From Home",
-    "OFFBOARDING": "Offboarding"
+    "OFFBOARDING": "Offboarding",
+    "ORG_CHART": "Organization Chart",
+    "HIRING_MANAGER_REVIEWS": "Hiring Manager Reviews"
   },
   "GENDER": {
     "MALE": "Male",
@@ -51,6 +54,7 @@
     "POST_NOTICE": "Post Notice",
     "NOTIFICATIONS": "Notifications",
     "VIEW_CV": "View CV",
+    "VIEW_JOB_DETAILS": "View Job Details",
     "EDIT_APPLICANT": "Edit Applicant",
     "ADD_HOLIDAY": "Add Holidays",
     "FILTER_HOLIDAY": "Filter Holidays",
@@ -270,8 +274,8 @@
   },
   "AUTH": {
     "REGISTRATION_TITLE": "Register Your Company",
-    "ALREADY_REGISTERED": "Already Register ?",
-    "NOT_REGISTERED": "Not a Member yet ?",
+    "ALREADY_REGISTERED": "Already registered?",
+    "NOT_REGISTERED": "Not a member yet?",
     "REGISTER": "Register",
     "SIGNIN": "Sign In",
     "T&C": "I Accept the Terms & Conditions",
@@ -465,6 +469,7 @@
     "TABS": {
       "ABOUT": "About",
       "LEAVE_TRACKER": "Leave Tracker",
+      "TAX_DECLARATION": "Tax declaration",
       "PERFORMANCE": "Performance",
       "WORKHISTORY": "Work History",
       "SETTING": "Setting"
@@ -718,7 +723,7 @@
       "NO_NOTICE": "No Notice Available",
       "EDIT_NOTICE": "Edit Notice",
       "POST_NOTICE": "Post Notice",
-      "MY_NOTICE": "My Notice"
+      "MY_NOTICE": "My Notices"
     },
     "TYPES": {
       "GENERAL": "General",
@@ -782,7 +787,7 @@
     "UNAUTHORIZED_ACCESS": "Unauthorized Access",
     "SOMETHING_WRONG": "Something Went Wrong",
     "SYSTEM_ERROR": "System Error",
-    "OPPS": "Opps!",
+    "OPPS": "Oops!",
     "DOC_LOAD_FAILED": "failed to load document"
   },
   "VALIDATION_ERR": {
@@ -1118,7 +1123,8 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Manages the complete hiring lifecycle including job postings, candidate applications, interview stages, evaluations, and detailed process logs. Provides end-to-end visibility into recruitment progress, actions taken, and hiring decisions to streamline and track the talent acquisition process.",
     "CAREER_PROFILE": "Career Profile",
     "WORK_FROM_HOME": "Work From Home",
-    "OFFBOARDING": "Offboarding"
+    "OFFBOARDING": "Offboarding",
+    "ORG_CHART": "Organization Chart"
   },
   "OFFBOARDING": {
     "ACTION_BUTTON": "Offboard employee",
@@ -1153,7 +1159,13 @@
     "SUBTITLE": "Here's what's happening in your organization today.",
     "SUBTITLE_SELF": "Here's what's coming up for you.",
     "VIEW_ALL": "View All",
-    "LOAD_ERROR": "Couldn't load this section. Try refreshing the page.",
+    "LOAD_ERROR": "Couldn't load this section.",
+    "RETRY": "Retry",
+    "RETRYING": "Retrying…",
+    "UNAVAILABLE": "Unavailable",
+    "AS_OF_DATE": "Dashboard data for {date}",
+    "GENERATED_AT": "Report generated {time} ({timeZone})",
+    "SOURCE_FRESHNESS_UNAVAILABLE": "Source update times aren't included in this report.",
     "KPI": {
       "TOTAL_EMPLOYEES": "Total Employees",
       "PRESENT_TODAY": "Present Today",
@@ -1163,21 +1175,31 @@
       "SHARE_HINT": "Share of total employees"
     },
     "ATTENDANCE": {
-      "TITLE": "Attendance Overview",
+      "TITLE": "Attendance",
       "TODAY": "Today",
       "PRESENT": "Present",
       "ON_LEAVE": "On Leave",
       "ABSENT": "Absent",
+      "PRESENT_ONLY": "Present only",
+      "LEAVE_ONLY": "On leave only",
+      "PRESENT_AND_LEAVE": "Present & on leave",
+      "OTHER_STATUS": "Other recorded status",
+      "UNREPORTED": "Not recorded",
+      "BREAKDOWN_UNAVAILABLE": "Attendance breakdown is unavailable for this response.",
+      "LOADING": "Loading attendance summary",
+      "SUMMARY_V2": "Today's expected workforce: {expected}. Present: {present}; on leave: {leave}; absent: {absent}; other status: {other}; no attendance record: {unreported}.",
       "EMPTY": "No attendance recorded yet today.",
       "NON_WORKING_TITLE": "No attendance today",
       "NON_WORKING_BODY": "Today is a holiday or weekly off for your organization.",
-      "SUMMARY": "Today: {present} present, {leave} on leave, {absent} absent."
+      "SUMMARY": "Expected today: {expected}. Present: {present}; on leave: {leave}; explicitly absent: {absent}; not reported: {unreported}."
     },
     "TREND": {
       "TITLE": "Employee Trend",
-      "RANGE": "Last 6 Months",
+      "RANGE": "Last 12 Months",
+      "PARTIAL_MONTH": "Current month is partial through {date}.",
       "EMPTY": "Headcount history will appear here after the first month.",
-      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}."
+      "SUMMARY": "Headcount went from {from} in {fromMonth} to {to} in {toMonth}.",
+      "ACCESSIBLE_SUMMARY": "Monthly employee headcount: {points}.{partialMonthNotice}"
     },
     "DEPARTMENTS": {
       "TITLE": "Department Overview",
@@ -1217,6 +1239,37 @@
       "HOLIDAY": "Holiday",
       "EVENT": "Event",
       "TODAY": "Today"
+    },
+    "MOVEMENT": {
+      "TITLE": "Workforce movement",
+      "RANGE": "Last 12 months",
+      "PARTIAL": "Current month is partial through {date}.",
+      "EMPTY": "Workforce movement data is unavailable.",
+      "SUMMARY": "Monthly workforce movement: {points}.{partialNote}",
+      "HIRES": "Hires",
+      "EXITS": "Exits",
+      "NET": "Net",
+      "MONTH": "Month",
+      "DATA_TABLE": "View data table",
+      "TABLE_CAPTION": "Monthly workforce movement data"
+    },
+    "LEAVE_COHORT": {
+      "TITLE": "Leave request cohorts",
+      "RANGE": "Last 12 months",
+      "PARTIAL": "Current submission month is partial through {date}.",
+      "DEFINITION": "Grouped by submission month; status buckets show each request's current status, which can change later.",
+      "EMPTY": "Leave request cohort data is unavailable.",
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "WITHDRAWN": "Withdrawn",
+      "OTHER": "Other status",
+      "SUMMARY": "Leave requests by submission month and current status: {points}.{partialNote}",
+      "REQUESTS": "requests",
+      "MONTH": "Month",
+      "TOTAL": "Total requests",
+      "DATA_TABLE": "View data table",
+      "TABLE_CAPTION": "Leave requests by submission month and current status"
     }
   }
 }

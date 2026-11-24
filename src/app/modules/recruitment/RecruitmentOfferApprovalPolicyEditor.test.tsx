@@ -167,8 +167,8 @@ describe("RecruitmentOfferApprovalPolicyEditor", () => {
     });
 
     expect(container.textContent).toContain("Offer Approval & Compensation Governance");
-    expect(container.textContent).toContain("Company-wide Policy");
-    expect(container.textContent).toContain("Vacancy-Specific Override");
+    expect(container.textContent).toContain("Company policy");
+    expect(container.textContent).toContain("Vacancy override");
     expect(container.textContent).toContain("Active Delegation");
     expect(container.textContent).toContain("Sarah Connor");
   });
@@ -184,9 +184,10 @@ describe("RecruitmentOfferApprovalPolicyEditor", () => {
       await Promise.resolve();
     });
 
-    expect(container.textContent).toContain("Active Governance Enforcement Rule");
+    expect(container.textContent).toContain("Policy summary");
+    expect(container.textContent).toContain("Approval trigger");
     expect(container.textContent).toContain("Sarah Connor");
-    expect(container.textContent).toContain("₹ 10,00,000");
+    expect(container.textContent).toContain("10,00,000");
   });
 
   it("switches to Vacancy-Specific Override mode and shows vacancy search input", async () => {
@@ -201,7 +202,7 @@ describe("RecruitmentOfferApprovalPolicyEditor", () => {
     });
 
     const vacancyChip = Array.from(container.querySelectorAll(".MuiChip-root")).find(
-      (el) => el.textContent?.includes("Vacancy-Specific Override")
+      (el) => el.textContent?.includes("Vacancy override")
     );
     expect(vacancyChip).toBeDefined();
 
@@ -238,6 +239,45 @@ describe("RecruitmentOfferApprovalPolicyEditor", () => {
     expect(payload.approvalThreshold).toBe(1000000);
     expect(payload.requireApprovalReference).toBe(true);
     expect(payload.delegatedApproverUserId).toBe("usr-42");
+  });
+
+  it("explains when offer approval policies are disabled and prevents editing", async () => {
+    mockGetOfferPolicy.mockResolvedValueOnce({
+      data: {
+        success: false,
+        errorCode: "REC_FEATURE_DISABLED",
+        message: "Offer approval policies is not enabled for this company.",
+      },
+    });
+    const { root, container } = renderComponent();
+
+    await act(async () => {
+      root.render(<RecruitmentOfferApprovalPolicyEditor />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(container.textContent).toContain("Offer approval policy is turned off for this company");
+    expect(container.textContent).toContain("Recruitment Settings");
+    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.includes("Save policy"))).toBe(false);
+    expect(container.textContent).toContain("Check again");
+  });
+
+  it("does not present default approval settings as loaded when the API is unavailable", async () => {
+    mockGetOfferPolicy.mockRejectedValueOnce(new Error("Policy service unavailable"));
+    const { root, container } = renderComponent();
+
+    await act(async () => {
+      root.render(<RecruitmentOfferApprovalPolicyEditor />);
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(container.textContent).toContain("Offer approval policy is unavailable");
+    expect(container.textContent).toContain("Policy service unavailable");
+    expect(Array.from(container.querySelectorAll("button")).some((button) => button.textContent?.includes("Save policy"))).toBe(false);
   });
 });
 

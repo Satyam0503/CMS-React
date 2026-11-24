@@ -1,7 +1,7 @@
 import axios from "axios";
 import { postRequest, deleteRequest, getRequest } from "../../../server/axios"; 
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
-import { AdminAttendanceCreateDto, AttendanceImportCommitResult, AttendanceImportValidationResult, AttendanceModel, AttendancePayload, GetAllAttendanceData } from "./AttendanceModels";
+import { AdminAttendanceCreateDto, AttendanceImportCommitResult, AttendanceImportValidationResult, AttendanceModel, AttendancePayload, GetAllAttendanceData, BiometricSyncRequest, BiometricSyncResult } from "./AttendanceModels";
 import { ServiceUrl } from "../../../utils/constant/Constant"
 
 // export const ServiceUrl = {
@@ -116,4 +116,12 @@ export const commitAttendanceImport = async (
     true
   );
 };
+
+export const syncBiometricPunches = async (payload: BiometricSyncRequest) => {
+  return postRequest<BiometricSyncRequest, BiometricSyncResult>(
+    "api/admin/attendance/biometric-sync",
+    payload
+  );
+};
+
 

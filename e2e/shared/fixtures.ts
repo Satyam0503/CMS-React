@@ -13,6 +13,10 @@ interface AuthState {
   user: Record<string, unknown>;
 }
 
+// Keep API login traffic under the account-sensitive rate limit while each
+// Playwright test still gets its own isolated browser context.
+const authByEmail = new Map<string, AuthState>();
+
 export class TestHelpers {
   constructor(private page: Page) {}
 
@@ -26,21 +30,30 @@ export class TestHelpers {
       );
     }
 
-    const response = await this.page.request.post(`${API_URL}/api/account/login`, {
-      data: { email, password },
-    });
-    expect(response.ok()).toBeTruthy();
-    const body = await response.json();
-    if (!body.success) {
-      throw new Error(
-        `Test login failed (status ${body.statusCode ?? "unknown"}). Verify QA_EMAIL and QA_PASSWORD for ${API_URL}.`
-      );
+    const cacheKey = email.toLocaleLowerCase();
+    let auth = authByEmail.get(cacheKey);
+    if (!auth) {
+      const response = await this.page.request.post(`${API_URL}/api/account/login`, {
+        data: { email, password },
+      });
+      expect(response.ok()).toBeTruthy();
+      const body = await response.json();
+      if (!body.success) {
+        throw new Error(
+          `Test login failed (status ${body.statusCode ?? "unknown"}). Verify QA_EMAIL and QA_PASSWORD for ${API_URL}.`
+        );
+      }
+
+      auth = body.methodResult as AuthState;
+      authByEmail.set(cacheKey, auth);
     }
 
-    const auth: AuthState = body.methodResult;
     await this.page.goto("/");
     await this.page.evaluate((authData) => {
       localStorage.setItem("kt-auth-react-v", JSON.stringify(authData));
+      // A fresh Playwright context has no reminder history. Seed the cooldown so
+      // the global offboarding dialog does not cover the page each test visits.
+      localStorage.setItem("codeji:offboarding-reminder:last-shown", String(Date.now()));
     }, auth);
 
     return auth;

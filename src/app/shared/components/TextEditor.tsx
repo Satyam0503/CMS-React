@@ -219,7 +219,6 @@ const TextEditor = memo(
         "list",
         "blockquote",
         "link",
-        "clean",
       ];
 
       const minHeightPx =

@@ -12,6 +12,7 @@ import {
 } from "@mui/icons-material";
 import {
   Alert,
+  alpha,
   Box,
   Button,
   Chip,
@@ -229,7 +230,10 @@ export const AlumniAuthView = ({
               flexDirection: "column",
               justifyContent: "space-between",
               p: { md: 4, lg: 5 },
-              background: "linear-gradient(145deg, #042f2e 0%, #0d9488 60%, #115e59 100%)",
+              background: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "linear-gradient(145deg, #090d16 0%, #1e1b4b 60%, #0f172a 100%)"
+                  : "linear-gradient(145deg, #1e1b4b 0%, #4338ca 60%, #312e81 100%)",
               color: "white",
               position: "relative",
               overflow: "hidden",
@@ -248,12 +252,12 @@ export const AlumniAuthView = ({
           >
             <Box sx={{ position: "relative", zIndex: 1 }}>
               <Chip
-                icon={<VerifiedUserRounded sx={{ fontSize: 15, color: "#0d9488 !important" }} />}
+                icon={<VerifiedUserRounded sx={{ fontSize: 15, color: "primary.main !important" }} />}
                 label="Official Alumni Gateway"
                 size="small"
                 sx={{
-                  bgcolor: "white",
-                  color: "#0f766e",
+                  bgcolor: "background.paper",
+                  color: "primary.main",
                   fontWeight: 750,
                   fontSize: "0.72rem",
                   mb: 2.5,
@@ -318,13 +322,13 @@ export const AlumniAuthView = ({
               }}
             >
               <Typography variant="caption" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontWeight: 650 }}>
-                <CheckCircleRounded sx={{ fontSize: 14, color: "#6ee7b7" }} /> SOC2 Compliant
+                <CheckCircleRounded sx={{ fontSize: 14, color: "success.light" }} /> SOC2 Compliant
               </Typography>
               <Typography variant="caption" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontWeight: 650 }}>
-                <CheckCircleRounded sx={{ fontSize: 14, color: "#6ee7b7" }} /> 256-Bit TLS
+                <CheckCircleRounded sx={{ fontSize: 14, color: "success.light" }} /> 256-Bit TLS
               </Typography>
               <Typography variant="caption" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontWeight: 650 }}>
-                <CheckCircleRounded sx={{ fontSize: 14, color: "#6ee7b7" }} /> Audit-Logged
+                <CheckCircleRounded sx={{ fontSize: 14, color: "success.light" }} /> Audit-Logged
               </Typography>
             </Stack>
           </Box>
@@ -342,12 +346,12 @@ export const AlumniAuthView = ({
             {/* Mobile Header (Visible only on < 900px) */}
             <Box sx={{ display: { xs: "block", md: "none" }, textAlign: "center", mb: 2 }}>
               <Chip
-                icon={<VerifiedUserRounded sx={{ fontSize: 14, color: "#0d9488 !important" }} />}
+                icon={<VerifiedUserRounded sx={{ fontSize: 14, color: "primary.main !important" }} />}
                 label="Official Alumni Gateway"
                 size="small"
                 sx={{
-                  bgcolor: "rgba(13, 148, 136, 0.1)",
-                  color: "#0f766e",
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                  color: "primary.main",
                   fontWeight: 750,
                   fontSize: "0.7rem",
                   mb: 1,
@@ -373,9 +377,10 @@ export const AlumniAuthView = ({
                       mx: "auto",
                       display: "grid",
                       placeItems: "center",
-                      background: "linear-gradient(135deg, #0d9488 0%, #0f766e 100%)",
+                      background: (theme) =>
+                        `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                       color: "white",
-                      boxShadow: "0 6px 18px rgba(13, 148, 136, 0.28)",
+                      boxShadow: (theme) => `0 6px 18px ${alpha(theme.palette.primary.main, 0.28)}`,
                       position: "relative",
                     }}
                   >
@@ -404,8 +409,8 @@ export const AlumniAuthView = ({
                     label="Protected Sign In"
                     sx={{
                       mt: 1.5,
-                      bgcolor: "rgba(13, 148, 136, 0.08)",
-                      color: "#0f766e",
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                      color: "primary.main",
                       fontWeight: 750,
                       fontSize: "0.72rem",
                       height: 22,
@@ -464,8 +469,8 @@ export const AlumniAuthView = ({
                                 width: 32,
                                 height: 32,
                                 borderRadius: 1.75,
-                                bgcolor: "rgba(13, 148, 136, 0.08)",
-                                color: "#0d9488",
+                                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                                color: "primary.main",
                                 display: "grid",
                                 placeItems: "center",
                               }}
@@ -489,7 +494,7 @@ export const AlumniAuthView = ({
                             borderColor: "primary.main",
                           },
                           "&.Mui-focused fieldset": {
-                            borderColor: "#0d9488",
+                            borderColor: "primary.main",
                             borderWidth: "2px",
                           },
                         },
@@ -516,12 +521,14 @@ export const AlumniAuthView = ({
                       fontWeight: 750,
                       textTransform: "none",
                       borderRadius: 2.5,
-                      background: "linear-gradient(90deg, #0d9488, #0f766e) !important",
+                      background: (theme) =>
+                        `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark}) !important`,
                       color: "#ffffff !important",
-                      boxShadow: "0 6px 18px rgba(13, 148, 136, 0.32)",
+                      boxShadow: (theme) => `0 6px 18px ${alpha(theme.palette.primary.main, 0.32)}`,
                       "&:hover": {
-                        background: "linear-gradient(90deg, #0f766e, #115e59) !important",
-                        boxShadow: "0 8px 22px rgba(13, 148, 136, 0.42)",
+                        background: (theme) =>
+                          `linear-gradient(90deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main}) !important`,
+                        boxShadow: (theme) => `0 8px 22px ${alpha(theme.palette.primary.main, 0.42)}`,
                         transform: "translateY(-1px)",
                       },
                       "&:disabled": {
@@ -571,13 +578,13 @@ export const AlumniAuthView = ({
                     divider={<Divider orientation="vertical" flexItem />}
                     sx={{ pt: 0.25 }}
                   >
-                    <Typography variant="caption" fontWeight={700} sx={{ color: "#0d9488", fontSize: "0.72rem" }}>
+                    <Typography variant="caption" fontWeight={700} sx={{ color: "text.secondary", fontSize: "0.72rem" }}>
                       ◈ 256-Bit TLS
                     </Typography>
-                    <Typography variant="caption" fontWeight={700} sx={{ color: "#0d9488", fontSize: "0.72rem" }}>
+                    <Typography variant="caption" fontWeight={700} sx={{ color: "text.secondary", fontSize: "0.72rem" }}>
                       ▣ Single-Use OTP
                     </Typography>
-                    <Typography variant="caption" fontWeight={700} sx={{ color: "#0d9488", fontSize: "0.72rem" }}>
+                    <Typography variant="caption" fontWeight={700} sx={{ color: "text.secondary", fontSize: "0.72rem" }}>
                       ◉ Audit Logged
                     </Typography>
                   </Stack>
@@ -656,11 +663,13 @@ export const AlumniAuthView = ({
                       fontWeight: 750,
                       textTransform: "none",
                       borderRadius: 2.5,
-                      background: "linear-gradient(90deg, #0d9488, #0f766e) !important",
+                      background: (theme) =>
+                        `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark}) !important`,
                       color: "#ffffff !important",
-                      boxShadow: "0 6px 18px rgba(13, 148, 136, 0.32)",
+                      boxShadow: (theme) => `0 6px 18px ${alpha(theme.palette.primary.main, 0.32)}`,
                       "&:hover": {
-                        background: "linear-gradient(90deg, #0f766e, #115e59) !important",
+                        background: (theme) =>
+                          `linear-gradient(90deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main}) !important`,
                       },
                     }}
                   >
@@ -785,7 +794,8 @@ export const AlumniAuthView = ({
                 mt: 1,
                 textTransform: "none",
                 fontWeight: 750,
-                background: "linear-gradient(90deg, #0d9488, #0f766e)",
+                background: (theme) =>
+                  `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
                 color: "#ffffff !important",
               }}
             >
@@ -917,7 +927,7 @@ const OtpInputField = ({
                 borderWidth: "1.5px",
               },
               "&.Mui-focused fieldset": {
-                borderColor: "#0d9488",
+                borderColor: "primary.main",
                 borderWidth: "2px",
               },
             },

@@ -71,6 +71,10 @@ export const rawPostRequest = async <RequestData, ResponseData>(
   });
 };
 
+/** Fetch a protected file through the same authenticated client as API calls. */
+export const getBinaryRequest = (path: string) =>
+  instance.get<Blob>(path, { responseType: "blob" });
+
 // function to get new access token
 export const refreshToken = async (): Promise<string | null> => {
   if (refreshTokenPromise) {

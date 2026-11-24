@@ -10,6 +10,7 @@ import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 import { useEffect, lazy } from "react";
 const RecruitmentSettings = lazy(() => import("../modules/recruitment/RecruitmentSettings"));
 import { CareerProfileAdminPage } from "../modules/careerPortal/pages/CareerProfileAdminPage";
+import HiringManagerReviewQueue from "../modules/recruitment/HiringManagerReviewQueue";
 
 const recruitmentBreadcrumb: Array<Breadcrumb> = [
   {
@@ -42,6 +43,7 @@ const recruitmentBreadcrumb: Array<Breadcrumb> = [
     path: "/recruitment/settings",
     parent: "/",
   },
+  { label: "Hiring manager reviews", path: "/recruitment/manager-reviews", parent: "/" },
 
 ];
 
@@ -71,6 +73,7 @@ const RecruitmentRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="manager-reviews" element={<ProtectedRoute module={ModulesName.Applications}><HiringManagerReviewQueue /></ProtectedRoute>} />
         <Route
           path="applicant/:applicantid"
           element={

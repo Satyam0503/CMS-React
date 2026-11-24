@@ -1,44 +1,96 @@
-import { useEffect, useState } from "react";
-import { Alert, Box, Chip, Divider, Grid, Stack, Typography, alpha, useTheme } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, Box, Chip, Grid, LinearProgress, Stack, Typography, alpha, useTheme } from "@mui/material";
 import TimerOutlined from "@mui/icons-material/TimerOutlined";
 import NotificationImportantRounded from "@mui/icons-material/NotificationImportantRounded";
 import { AppButton } from "../../shared/components/ui";
 import { getRecruitmentFeedbackSla, queueRecruitmentFeedbackReminders } from "./services";
 import { toast } from "react-toastify";
 import { RecruitmentFeedbackSlaReport } from "./models";
-import { useIsDark } from "../theme/useIsDark";
 import dayjs from "dayjs";
+import RecruitmentCapabilityNotice from "./RecruitmentCapabilityNotice";
+import { isRecruitmentFeatureDisabled, responseDataFromError } from "./recruitmentCapabilityUtils";
 
 export default function RecruitmentFeedbackSlaCard() {
   const theme = useTheme();
-  const isDark = useIsDark();
   const [report, setReport] = useState<RecruitmentFeedbackSlaReport>();
   const [queueing, setQueueing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [featureDisabled, setFeatureDisabled] = useState(false);
+  const [loadError, setLoadError] = useState<string>();
+
+  const loadReport = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await getRecruitmentFeedbackSla();
+      if (!data.success) {
+        setReport(undefined);
+        if (isRecruitmentFeatureDisabled(data)) {
+          setFeatureDisabled(true);
+          setLoadError(undefined);
+        } else {
+          setFeatureDisabled(false);
+          setLoadError(data.message || "The SLA report could not be loaded.");
+        }
+        return;
+      }
+      setFeatureDisabled(false);
+      setLoadError(data.methodResult ? undefined : "The SLA report returned no data.");
+      setReport(data.methodResult ?? undefined);
+    } catch (error) {
+      setReport(undefined);
+      const response = responseDataFromError(error);
+      if (isRecruitmentFeatureDisabled(response)) {
+        setFeatureDisabled(true);
+        setLoadError(undefined);
+      } else {
+        setFeatureDisabled(false);
+        setLoadError((response as { message?: string } | undefined)?.message || "The SLA report could not be loaded. Check your connection and try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const queueReminders = async () => {
     setQueueing(true);
     try {
       const { data } = await queueRecruitmentFeedbackReminders();
+      if (!data.success && isRecruitmentFeatureDisabled(data)) {
+        toast.info(data.message || "Interviewer reminder emails are turned off in Recruitment Settings.");
+        return;
+      }
       if (!data.success) throw new Error(data.message || "Unable to queue reminders.");
       toast.success(data.message || "Feedback reminders queued.");
-      const refreshed = await getRecruitmentFeedbackSla();
-      if (refreshed.data.success) setReport(refreshed.data.methodResult ?? undefined);
+      await loadReport();
     } catch (error) {
-      toast.error((error as Error).message || "Unable to queue reminders.");
+      const response = responseDataFromError(error);
+      if (isRecruitmentFeatureDisabled(response)) {
+        toast.info((response as { message?: string } | undefined)?.message || "Interviewer reminder emails are turned off in Recruitment Settings.");
+      } else {
+        toast.error((error as Error).message || "Unable to queue reminders.");
+      }
     } finally {
       setQueueing(false);
     }
   };
 
   useEffect(() => {
-    void getRecruitmentFeedbackSla()
-      .then(({ data }) => {
-        if (data.success) setReport(data.methodResult ?? undefined);
-      })
-      .catch(() => undefined);
-  }, []);
+    void loadReport();
+  }, [loadReport]);
 
-  if (!report) return null;
+  if (loading) return <LinearProgress aria-label="Loading interviewer feedback SLA report" />;
+  if (featureDisabled || loadError || !report) {
+    return (
+      <RecruitmentCapabilityNotice
+        feature="Interviewer feedback SLA tracking"
+        settingsArea="Operating model → Interview feedback deadlines, and Enterprise Operations → Interview feedback SLA"
+        disabled={featureDisabled}
+        errorMessage={loadError}
+        onRetry={() => void loadReport()}
+        retrying={loading}
+      />
+    );
+  }
 
   const hasOverdue = (report.overdueRounds || 0) > 0;
 
@@ -47,22 +99,10 @@ export default function RecruitmentFeedbackSlaCard() {
       sx={{
         p: { xs: 2, sm: 2.5 },
         border: "1px solid",
-        borderColor: hasOverdue
-          ? isDark
-            ? "rgba(245, 158, 11, 0.4)"
-            : "rgba(245, 158, 11, 0.35)"
-          : isDark
-          ? "rgba(255, 255, 255, 0.08)"
-          : "#E2E8F0",
-        borderRadius: "14px",
-        bgcolor: hasOverdue
-          ? isDark
-            ? "rgba(245, 158, 11, 0.05)"
-            : "rgba(245, 158, 11, 0.02)"
-          : isDark
-          ? "rgba(30, 41, 59, 0.3)"
-          : "background.paper",
-        boxShadow: isDark ? "0 2px 10px rgba(0,0,0,0.2)" : "0 1px 3px rgba(0,0,0,0.02)",
+        borderColor: hasOverdue ? alpha(theme.palette.warning.main, 0.4) : "divider",
+        borderRadius: "12px",
+        bgcolor: hasOverdue ? alpha(theme.palette.warning.main, 0.05) : "background.paper",
+        boxShadow: "none",
         minWidth: 0,
         maxWidth: "100%",
         boxSizing: "border-box",
@@ -84,8 +124,8 @@ export default function RecruitmentFeedbackSlaCard() {
               borderRadius: "10px",
               display: "grid",
               placeItems: "center",
-              bgcolor: hasOverdue ? alpha("#F59E0B", 0.12) : alpha(theme.palette.primary.main, 0.1),
-              color: hasOverdue ? "#D97706" : "primary.main",
+              bgcolor: hasOverdue ? alpha(theme.palette.warning.main, 0.12) : alpha(theme.palette.primary.main, 0.1),
+              color: hasOverdue ? "warning.dark" : "primary.main",
               flexShrink: 0,
             }}
           >
@@ -96,7 +136,7 @@ export default function RecruitmentFeedbackSlaCard() {
               Interviewer Feedback SLA Tracking
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.78rem" }}>
-              Monitor scorecard turnaround times and trigger automated panel reminders.
+              Track overdue scorecards and follow up with interviewers who have not submitted feedback.
             </Typography>
           </Box>
         </Stack>
@@ -138,7 +178,7 @@ export default function RecruitmentFeedbackSlaCard() {
             borderRadius: "10px",
             fontSize: "0.8rem",
             border: "1px solid",
-            borderColor: isDark ? "rgba(245, 158, 11, 0.3)" : "rgba(245, 158, 11, 0.2)",
+            borderColor: alpha(theme.palette.warning.main, 0.35),
           }}
         >
           Overdue interview scorecards detected. Please notify interviewers or complete the debrief review.
@@ -158,20 +198,8 @@ export default function RecruitmentFeedbackSlaCard() {
                     p: 1.5,
                     borderRadius: "10px",
                     border: "1px solid",
-                    borderColor: item.overdue
-                      ? isDark
-                        ? "rgba(245, 158, 11, 0.3)"
-                        : "#FDE68A"
-                      : isDark
-                      ? "rgba(255, 255, 255, 0.06)"
-                      : "#E2E8F0",
-                    bgcolor: item.overdue
-                      ? isDark
-                        ? "rgba(245, 158, 11, 0.08)"
-                        : "#FFFBEB"
-                      : isDark
-                      ? "rgba(15, 23, 42, 0.25)"
-                      : "#F8FAFC",
+                    borderColor: item.overdue ? alpha(theme.palette.warning.main, 0.35) : "divider",
+                    bgcolor: item.overdue ? alpha(theme.palette.warning.main, 0.06) : "background.default",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",

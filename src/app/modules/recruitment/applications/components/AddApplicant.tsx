@@ -76,8 +76,6 @@ export const AddApplicant: FC<PropsTypes> = ({
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    const formData = new FormData();
-    formData.append("File", values.resume as File);
     const payload = {
       ...values,
       activityType: ApplicationStatus.New,
@@ -88,9 +86,15 @@ export const AddApplicant: FC<PropsTypes> = ({
       if (!data.success) throw new Error(String(data.statusCode));
       const applicantId = data.resourceId;
       if (!applicantId) throw new Error("The created applicant identity was not returned.");
-      const uploadResumeResponse = await uploadResumeForApplicant(applicantId, formData);
-      const responseData = uploadResumeResponse.data;
-      if (!responseData.success) throw new Error(String(data.statusCode));
+
+      if (values.resume instanceof File && values.resume.size > 0) {
+        const formData = new FormData();
+        formData.append("File", values.resume);
+        const uploadResumeResponse = await uploadResumeForApplicant(applicantId, formData);
+        const responseData = uploadResumeResponse.data;
+        if (!responseData.success) throw new Error(String(responseData.statusCode));
+      }
+
       toast.success(i({ id: "TOAST.SUCCESS.ADD_APPLICANT" }));
       setRefresh(!refresh);
       handleClose();

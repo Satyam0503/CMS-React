@@ -3,42 +3,31 @@
 .sidebar {
   & .sidebar-paper {
     width: var(--sidebar-current-width);
-    top: calc(var(--app-header-height) + 14px) !important;
-    bottom: 16px !important;
-    left: 16px !important;
+    top: calc(var(--app-header-height) + 12px) !important;
+    bottom: 12px !important;
+    left: 12px !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    height: calc(100dvh - var(--app-header-height) - 30px) !important;
-    max-height: calc(100dvh - var(--app-header-height) - 30px) !important;
+    height: calc(100dvh - var(--app-header-height) - 24px) !important;
+    max-height: calc(100dvh - var(--app-header-height) - 24px) !important;
     overflow: hidden;
     white-space: nowrap;
-    border: 1px solid rgba(255, 255, 255, 0.88) !important;
-    border-radius: 38px !important;
+    border: 1px solid var(--mui-palette-divider) !important;
+    border-radius: 20px !important;
     background-clip: padding-box;
     isolation: isolate;
-    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-    backdrop-filter: blur(20px) saturate(180%) !important;
-    background: linear-gradient(
-      140deg,
-      rgba(255, 255, 255, 0.78) 0%,
-      rgba(255, 255, 255, 0.62) 100%
-    ) !important;
+    background: var(--mui-palette-background-paper) !important;
     box-shadow:
-      0 10px 30px 0 rgba(11, 92, 171, 0.06),
-      0 2px 8px 0 rgba(15, 23, 42, 0.03),
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important;
-    transform: none !important;
+      0 8px 24px rgba(15, 23, 42, 0.08),
+      0 1px 3px rgba(15, 23, 42, 0.04) !important;
     will-change: width;
     transition:
-      width 0.28s cubic-bezier(.2, .8, .2, 1),
-      box-shadow 0.28s cubic-bezier(.2, .8, .2, 1);
+      width var(--sidebar-transition, 320ms cubic-bezier(0.22, 1, 0.36, 1)),
+      box-shadow var(--sidebar-transition, 320ms cubic-bezier(0.22, 1, 0.36, 1)),
+      transform 225ms cubic-bezier(0, 0, 0.2, 1);
 
     &:hover {
-      transform: none !important;
-      box-shadow:
-        0 14px 36px rgba(15, 23, 42, 0.07),
-        0 4px 12px rgba(11, 92, 171, 0.05) !important;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1) !important;
     }
   }
 
@@ -62,7 +51,7 @@
     height: 32px;
     min-width: 32px;
     padding: 0;
-    color: #94a3b8;
+    color: var(--mui-palette-text-secondary);
     background: transparent;
     border-radius: 50%;
     border: 0 !important;
@@ -81,14 +70,14 @@
 
     & .MuiSvgIcon-root {
       font-size: 18px;
-      color: #94a3b8;
+      color: var(--mui-palette-text-secondary);
       transition: transform 0.28s ease, color 180ms ease;
     }
 
     &:hover,
     &:focus-visible {
-      color: var(--mui-palette-primary-main, #0B5CAB);
-      background: var(--mui-palette-action-hover, rgba(11, 92, 171, 0.08));
+      color: var(--mui-palette-primary-main);
+      background: var(--mui-palette-action-hover);
 
       & .MuiSvgIcon-root {
         color: var(--mui-palette-primary-main, #0B5CAB);
@@ -119,7 +108,7 @@
   // Hairline divider between user block and menu list.
   & .sidebar-divider {
     height: 1px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--mui-palette-divider);
     margin-block: 0.2rem 0.65rem;
   }
 
@@ -163,10 +152,11 @@
       align-items: center;
       flex-direction: row;
       position: relative;
-      padding: 10px 14px;
-      margin-block: 3px;
-      border-radius: 12px;
-      color: #475569;
+      min-height: 44px;
+      padding: 8px 12px;
+      margin-block: 2px;
+      border-radius: 10px;
+      color: var(--mui-palette-text-primary);
       background: transparent;
       transition:
         background-color 180ms ease,
@@ -178,7 +168,7 @@
       & .MuiTypography-root {
         font-weight: 500 !important;
         font-size: 13.5px;
-        color: #475569;
+        color: var(--mui-palette-text-primary);
         opacity: 1;
         white-space: nowrap;
         overflow: hidden;
@@ -186,8 +176,8 @@
         transition: opacity 180ms ease, color 180ms ease;
       }
       & .MuiListItemIcon-root {
-        color: #64748b;
-        margin-inline-end: 12px;
+        color: var(--mui-palette-text-secondary);
+        margin-inline-end: 10px;
         min-width: 22px;
         display: flex;
         align-items: center;
@@ -196,7 +186,7 @@
       }
       & .MuiSvgIcon-root {
         font-size: 20px;
-        color: #64748b;
+        color: var(--mui-palette-text-secondary);
         transition: transform 200ms ease, color 180ms ease;
       }
 
@@ -208,27 +198,27 @@
       }
 
       &:hover {
-        background: rgba(11, 92, 171, 0.06);
-        color: var(--mui-palette-primary-main, #0B5CAB);
+        background: var(--mui-palette-action-hover);
+        color: var(--mui-palette-primary-main);
 
         & .MuiTypography-root {
-          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          color: var(--mui-palette-primary-main) !important;
         }
 
         & .MuiListItemIcon-root,
         & .MuiSvgIcon-root {
-          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          color: var(--mui-palette-primary-main) !important;
         }
 
         & .menu-arrow {
-          color: var(--mui-palette-primary-main, #0B5CAB);
+          color: var(--mui-palette-primary-main);
         }
       }
 
       &.Mui-selected {
         position: relative;
-        background: #EBF3FA !important;
-        color: var(--mui-palette-primary-main, #0B5CAB) !important;
+        background: color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent) !important;
+        color: var(--mui-palette-primary-main) !important;
 
         &::before {
           content: "";
@@ -239,45 +229,45 @@
           width: 3.5px;
           height: 22px;
           border-radius: 0 4px 4px 0;
-          background-color: var(--mui-palette-primary-main, #0B5CAB);
+          background-color: var(--mui-palette-primary-main);
         }
 
         & .MuiTypography-root {
-          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          color: var(--mui-palette-primary-main) !important;
           font-weight: 600 !important;
         }
 
         & .MuiListItemIcon-root,
         & .MuiSvgIcon-root {
-          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          color: var(--mui-palette-primary-main) !important;
         }
 
         & .menu-arrow {
-          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          color: var(--mui-palette-primary-main) !important;
         }
       }
 
       // Parent menu items (e.g. PayRoll, Admin) when a sub-item is active
       &.sidebar-parent-item.Mui-selected {
-        background: rgba(11, 92, 171, 0.04) !important;
-        color: var(--mui-palette-primary-main, #0B5CAB) !important;
+        background: color-mix(in srgb, var(--mui-palette-primary-main) 5%, transparent) !important;
+        color: var(--mui-palette-primary-main) !important;
 
         &::before {
           display: none !important;
         }
 
         & .MuiTypography-root {
-          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          color: var(--mui-palette-primary-main) !important;
           font-weight: 600 !important;
         }
 
         & .MuiListItemIcon-root,
         & .MuiSvgIcon-root {
-          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          color: var(--mui-palette-primary-main) !important;
         }
 
         & .menu-arrow {
-          color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          color: var(--mui-palette-primary-main) !important;
         }
       }
     }
@@ -290,25 +280,17 @@
   &[data-sidebar-mini="true"] {
     & .sidebar-paper {
       width: var(--sidebar-current-width) !important;
-      top: calc(var(--app-header-height) + 14px) !important;
-      bottom: 16px !important;
-      left: 16px !important;
-      height: calc(100dvh - var(--app-header-height) - 30px) !important;
-      max-height: calc(100dvh - var(--app-header-height) - 30px) !important;
-      border-radius: 38px !important;
-      border: 1px solid rgba(255, 255, 255, 0.88) !important;
+      top: calc(var(--app-header-height) + 12px) !important;
+      bottom: 12px !important;
+      left: 12px !important;
+      height: calc(100dvh - var(--app-header-height) - 24px) !important;
+      max-height: calc(100dvh - var(--app-header-height) - 24px) !important;
+      border-radius: 20px !important;
+      border: 1px solid var(--mui-palette-divider) !important;
+      background: var(--mui-palette-background-paper) !important;
       box-shadow:
-        0 10px 30px 0 rgba(11, 92, 171, 0.06),
-        0 2px 8px 0 rgba(15, 23, 42, 0.03),
-        inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
-        inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important;
-      background: linear-gradient(
-        140deg,
-        rgba(255, 255, 255, 0.78) 0%,
-        rgba(255, 255, 255, 0.62) 100%
-      ) !important;
-      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-      backdrop-filter: blur(20px) saturate(180%) !important;
+        0 8px 24px rgba(15, 23, 42, 0.07),
+        0 1px 3px rgba(15, 23, 42, 0.035) !important;
     }
     & .user-block-info {
       display: none;
@@ -317,8 +299,19 @@
       justify-content: center;
     }
     & .sidebar-footer {
+      position: relative;
       justify-content: center;
-      padding: 6px 4px;
+      padding: 10px 4px 6px;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 8px;
+        right: 8px;
+        height: 1px;
+        background: var(--mui-palette-divider);
+      }
     }
     & .sidebar-edge-toggle {
       width: 32px;
@@ -331,9 +324,6 @@
     & .sidebar-edge-toggle-label {
       display: none !important;
     }
-    & .MuiCollapse-root {
-      display: none !important;
-    }
     & .MuiList-root {
       padding-inline-start: 0 !important;
       padding-left: 0 !important;
@@ -343,10 +333,10 @@
       padding: 4px 4px !important;
 
       & .sidebar-menu-item {
-        width: 44px !important;
-        height: 44px !important;
-        min-height: 44px !important;
-        margin: 4px auto !important;
+        width: 42px !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        margin: 3px auto !important;
         padding: 0 !important;
         justify-content: center !important;
         border-radius: 12px !important;
@@ -355,13 +345,6 @@
           display: none !important;
         }
 
-        & .MuiListItemText-root {
-          display: none !important;
-        }
-        & .MuiTypography-root {
-          opacity: 0 !important;
-          display: none !important;
-        }
         & .menu-arrow {
           display: none !important;
         }
@@ -373,7 +356,7 @@
         }
 
         &:hover {
-          background: rgba(11, 92, 171, 0.06);
+          background: var(--mui-palette-action-hover);
           & .MuiListItemIcon-root,
           & .MuiSvgIcon-root {
             color: var(--mui-palette-primary-main, #0B5CAB) !important;
@@ -381,8 +364,9 @@
         }
 
         &.Mui-selected {
-          background: #EBF3FA !important;
+          background: color-mix(in srgb, var(--mui-palette-primary-main) 8%, transparent) !important;
           color: var(--mui-palette-primary-main, #0B5CAB) !important;
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent);
 
           & .MuiListItemIcon-root,
           & .MuiSvgIcon-root {
@@ -397,24 +381,21 @@
 @media (max-width: 959.95px) {
   .sidebar {
     & .sidebar-paper {
+      position: fixed !important;
       top: 0 !important;
+      right: auto !important;
       bottom: 0 !important;
       left: 0 !important;
+      margin: 0 !important;
       height: 100dvh !important;
       max-height: 100dvh !important;
-      transform: none !important;
       width: min(290px, 85vw) !important;
+      box-sizing: border-box !important;
       border-radius: 0 16px 16px 0 !important;
       border: none !important;
-      border-right: 1px solid rgba(255, 255, 255, 0.88) !important;
-      box-shadow: 12px 0 36px rgba(15, 23, 42, 0.16) !important;
-      background: linear-gradient(
-        140deg,
-        rgba(255, 255, 255, 0.88) 0%,
-        rgba(255, 255, 255, 0.74) 100%
-      ) !important;
-      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-      backdrop-filter: blur(20px) saturate(180%) !important;
+      border-right: 1px solid var(--mui-palette-divider) !important;
+      box-shadow: 12px 0 32px rgba(15, 23, 42, 0.14) !important;
+      background: var(--mui-palette-background-paper) !important;
     }
   }
 }
@@ -439,7 +420,7 @@
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     backdrop-filter: blur(20px) saturate(180%) !important;
     border: 1px solid rgba(255, 255, 255, 0.88) !important;
-    border-radius: 38px !important;
+    border-radius: 20px !important;
     box-shadow:
       0 10px 30px 0 rgba(11, 92, 171, 0.06),
       0 2px 8px 0 rgba(15, 23, 42, 0.03),
@@ -485,7 +466,7 @@
 .sidebar[data-sidebar-style="aurora"] .sidebar-paper {
   background: linear-gradient(180deg, #07192F 0%, #0B3866 50%, #08284d 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 38px !important;
+  border-radius: 20px !important;
   box-shadow: 0 10px 30px rgba(7, 25, 47, 0.3) !important;
 }
 
@@ -513,7 +494,7 @@
     -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
     backdrop-filter: blur(24px) saturate(180%) !important;
     border: 1px solid #E2E8F0 !important;
-    border-radius: 38px !important;
+    border-radius: 20px !important;
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
   }
 
@@ -561,7 +542,7 @@
     -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
     backdrop-filter: blur(24px) saturate(190%) !important;
     border: 1px solid rgba(200, 180, 215, 0.5) !important;
-    border-radius: 38px !important;
+    border-radius: 20px !important;
     box-shadow: 0 10px 30px rgba(105, 65, 124, 0.06) !important;
   }
 
@@ -605,7 +586,7 @@
     -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
     backdrop-filter: blur(24px) saturate(190%) !important;
     border: 1px solid rgba(225, 185, 205, 0.5) !important;
-    border-radius: 38px !important;
+    border-radius: 20px !important;
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
   }
 
@@ -642,7 +623,7 @@
   & .sidebar-paper {
     background: var(--mui-palette-background-paper) !important;
     border: 1px solid var(--mui-palette-divider) !important;
-    border-radius: 38px !important;
+    border-radius: 20px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
   }
 
@@ -707,7 +688,7 @@
 [data-bs-theme="dark"],
 .dark {
   & .sidebar .sidebar-paper {
-    border-radius: 38px !important;
+    border-radius: 20px !important;
   }
 
   & .sidebar .sidebar-menu-item.Mui-selected {
@@ -857,7 +838,15 @@
   }
 }
 
+@media (max-width: 959.95px) {
+  :root .sidebar[data-sidebar-style] .sidebar-paper {
+    border-radius: 0 16px 16px 0 !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .app-shell .app-header,
+  .app-shell .app-main-viewport,
   .sidebar .sidebar-paper,
   .sidebar .sidebar-menu-item,
   .sidebar .sidebar-menu-item .MuiSvgIcon-root,

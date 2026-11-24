@@ -101,6 +101,7 @@ export const ApplicantDetails = () => {
   const canEditApplicant = currentUser?.roleType === Roles.Administrator || hasModuleFeaturePermission(ModulesName.Applications, Permission.Edit, userPermissions);
 
   useEffect(() => {
+    setLoading(true);
     getApplicantById(applicantId)
       .then(({ data }) => {
         if (data.success && data.statusCode === 200) {
@@ -115,6 +116,9 @@ export const ApplicantDetails = () => {
       .catch((error) => {
         console.error(error);
         navigate("/error", { replace: true });
+      })
+      .finally(() => {
+        setLoading(false);
       });
     getRecruitmentOfferByApplicant(applicantId)
       .then(({ data }) => {
@@ -322,17 +326,11 @@ export const ApplicantDetails = () => {
       <Card
         sx={{
           p: { xs: 2.25, sm: 3, md: 3.5 },
-          borderRadius: 4,
+          borderRadius: 3,
           border: "1px solid",
           borderColor: "divider",
-          boxShadow: (t) =>
-            t.palette.mode === "dark"
-              ? "0 16px 40px rgba(0,0,0,.35)"
-              : "0 12px 36px rgba(15,23,42,.07)",
-          background: (t) =>
-            t.palette.mode === "dark"
-              ? "linear-gradient(180deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.9) 100%)"
-              : "linear-gradient(180deg, #FFFFFF 0%, #FAFAFC 100%)",
+          boxShadow: "none",
+          bgcolor: "background.paper",
           overflow: "hidden",
         }}
       >
@@ -352,11 +350,8 @@ export const ApplicantDetails = () => {
                   height: { xs: 58, sm: 68 },
                   fontSize: { xs: "1.35rem", sm: "1.55rem" },
                   fontWeight: 850,
-                  color: "#FFFFFF",
-                  background: "linear-gradient(135deg, #2563EB 0%, #4F46E5 100%)",
-                  boxShadow: "0 8px 20px rgba(37,99,235,0.35)",
-                  border: "2px solid",
-                  borderColor: (t) => alpha(t.palette.common.white, 0.8),
+                  color: "primary.contrastText",
+                  bgcolor: "primary.main",
                   flexShrink: 0,
                 }}
               >
@@ -370,7 +365,7 @@ export const ApplicantDetails = () => {
                     variant="h5"
                     fontWeight={850}
                     color="text.primary"
-                    sx={{ letterSpacing: "-0.02em", whiteSpace: "nowrap", fontSize: { xs: "1.3rem", sm: "1.55rem" } }}
+                    sx={{ letterSpacing: "-0.02em", overflowWrap: "anywhere", fontSize: { xs: "1.3rem", sm: "1.55rem" } }}
                   >
                     {applicant?.firstName ? `${applicant.firstName} ${applicant.lastName || ""}` : "Candidate"}
                   </Typography>
@@ -405,6 +400,14 @@ export const ApplicantDetails = () => {
                       whiteSpace: "nowrap",
                     }}
                   />
+                  {applicant.candidateReportedSource && <Tooltip title={["Candidate-reported source.", applicant.attributionSource && `Campaign source: ${applicant.attributionSource}`, applicant.attributionMedium && `Medium: ${applicant.attributionMedium}`, applicant.attributionCampaign && `Campaign: ${applicant.attributionCampaign}`, applicant.referrerHost && `Referrer: ${applicant.referrerHost}`].filter(Boolean).join(" · ")}>
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={`Source: ${applicant.candidateReportedSource}${applicant.candidateReportedSourceDetail ? ` · ${applicant.candidateReportedSourceDetail}` : ""}`}
+                      sx={{ fontWeight: 700, fontSize: "0.74rem", height: 26, borderRadius: 2, maxWidth: { xs: "100%", sm: 360 } }}
+                    />
+                  </Tooltip>}
                   {applicant.finalInterviewScore != null && applicant.finalInterviewScore > 0 && (
                     <Chip
                       size="small"
@@ -906,14 +909,7 @@ export const ApplicantDetails = () => {
                     justifyContent: "space-between",
                     bgcolor: (t) => alpha(t.palette.background.paper, 0.75),
                     borderColor: "divider",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                    "&:hover": {
-                      transform: "translateY(-2px)",
-                      boxShadow: (t) =>
-                        t.palette.mode === "dark"
-                          ? "0 10px 28px rgba(0,0,0,0.3)"
-                          : "0 10px 28px rgba(15,23,42,0.06)",
-                    },
+                    boxShadow: "none",
                   }}
                 >
                   <Box>
@@ -935,10 +931,10 @@ export const ApplicantDetails = () => {
                       </Box>
                       <Box>
                         <Typography variant="subtitle1" fontWeight={850} color="text.primary">
-                          Interview & Technical Benchmark
+                          Interview feedback
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          Consolidated panel scorecards and substantive round benchmarks
+                          Review scorecards and interview results.
                         </Typography>
                       </Box>
                     </Stack>
@@ -1037,14 +1033,7 @@ export const ApplicantDetails = () => {
                     justifyContent: "space-between",
                     bgcolor: (t) => alpha(t.palette.background.paper, 0.75),
                     borderColor: "divider",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                    "&:hover": {
-                      transform: "translateY(-2px)",
-                      boxShadow: (t) =>
-                        t.palette.mode === "dark"
-                          ? "0 10px 28px rgba(0,0,0,0.3)"
-                          : "0 10px 28px rgba(15,23,42,0.06)",
-                    },
+                    boxShadow: "none",
                   }}
                 >
                   <Box>
@@ -1066,10 +1055,10 @@ export const ApplicantDetails = () => {
                       </Box>
                       <Box>
                         <Typography variant="subtitle1" fontWeight={850} color="text.primary">
-                          Hiring Lifecycle & Offer Pipeline
+                          Hiring progress
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          Recruitment workflow progression, stage gates, and compensation offers
+                          Manage the candidate’s next step.
                         </Typography>
                       </Box>
                     </Stack>
@@ -1154,17 +1143,11 @@ export const ApplicantDetails = () => {
         <Card
           sx={{
             p: { xs: 2.25, sm: 3.25 },
-            borderRadius: 4,
+            borderRadius: 3,
             border: "1px solid",
             borderColor: "divider",
-            boxShadow: (t) =>
-              t.palette.mode === "dark"
-                ? "0 16px 40px rgba(0,0,0,.35)"
-                : "0 12px 36px rgba(15,23,42,.07)",
-            background: (t) =>
-              t.palette.mode === "dark"
-                ? "linear-gradient(180deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.9) 100%)"
-                : "linear-gradient(180deg, #FFFFFF 0%, #FAFAFC 100%)",
+            boxShadow: "none",
+            bgcolor: "background.paper",
             overflow: "hidden",
           }}
         >

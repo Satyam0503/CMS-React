@@ -168,12 +168,12 @@ describe("ApplicantDetails Bento Profile & Responsive Layout", () => {
     expect(bodyText).toContain("1.0 year");
 
     // Bento Card 1: Interview & Technical Benchmark
-    expect(bodyText).toContain("Interview & Technical Benchmark");
+    expect(bodyText).toContain("Interview feedback");
     expect(bodyText).toContain("2 substantive technical rounds evaluated with panel consensus.");
     expect(bodyText).toContain("View Scorecards & Debrief");
 
     // Bento Card 2: Hiring Lifecycle & Offer Pipeline
-    expect(bodyText).toContain("Hiring Lifecycle & Offer Pipeline");
+    expect(bodyText).toContain("Hiring progress");
     expect(bodyText).toContain("Offer Sent: INR 57,000");
 
     // Status switch active

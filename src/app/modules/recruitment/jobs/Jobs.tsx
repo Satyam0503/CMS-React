@@ -78,6 +78,7 @@ const initialValues: JobModal = {
   shiftType: "",
   workingDays: "",
   recruiterContactEmail: "",
+  hiringManagerUserId: "",
   applicationDeadline: null,
   publishToCareerPortal: true,
   publishToMasterPortal: false,
@@ -136,14 +137,16 @@ const useJobTableColumnList = (
     },
     {
       field: "jobType",
-      headerName: i({ id: "JOB.TYPE" }),
-      description: i({ id: "JOB.TYPE" }),
+      headerName: i({ id: "JOB.TYPE", defaultMessage: "Job Type" }),
+      description: i({ id: "JOB.TYPE", defaultMessage: "Job Type" }),
       minWidth: 180,
       hideable: false,
       flex: 1,
       renderCell: (params: any) => {
         const values = jobTypeDecoder[params.row.jobType];
-        return <Box component={"p"}>{i({ id: values })}</Box>;
+        const defaultLabel =
+          params.row.jobType === 1 ? "Onsite" : params.row.jobType === 2 ? "Hybrid" : params.row.jobType === 3 ? "Remote" : "Standard";
+        return <Box component={"span"}>{values ? i({ id: values, defaultMessage: defaultLabel }) : defaultLabel}</Box>;
       },
     },
   ];
@@ -275,12 +278,8 @@ const useJobTableColumnList = (
 
 function ActionsCell(props: GridRenderCellParams) {
   const { formatMessage: i } = useIntl();
-  const [view, setView] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobModal | undefined>();
-  const closePreview = () => {
-    setView(false);
-  };
 
   const handleJobDetailView = (job: JobModal) => {
     setSelectedJob(job);
@@ -292,15 +291,12 @@ function ActionsCell(props: GridRenderCellParams) {
       <GridActionsCell {...props}>
         <GridActionsCellItem
           icon={
-            <Tooltip title={i({ id: "TOOLTIP.VIEW_CV" })}>
+            <Tooltip title={i({ id: "TOOLTIP.VIEW_JOB_DETAILS", defaultMessage: "View Job Details" })}>
               <AssignmentOutlined />
             </Tooltip>
           }
-          label={i({ id: "TOOLTIP.VIEW_CV" })}
+          label={i({ id: "TOOLTIP.VIEW_JOB_DETAILS", defaultMessage: "View Job Details" })}
           onClick={(e) => {
-            console.log(props);
-
-            setView(true);
             handleJobDetailView(props.row);
             e.stopPropagation();
           }}

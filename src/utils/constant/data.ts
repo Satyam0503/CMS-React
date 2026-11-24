@@ -13,9 +13,26 @@ import {
   TIME_PERIOD_MAP,
 } from "../enums";
 
-const rawBaseUrl =
-  import.meta.env.VITE_BASEURL ?? import.meta.env.VITE_BASE_URL ?? "";
-export const BaseUrl = rawBaseUrl.trim().replace(/\/+$/, "");
+const configuredBaseUrl = (
+  import.meta.env.VITE_BASEURL || import.meta.env.VITE_BASE_URL || ""
+).trim();
+const runtimeApiFallbacks: Record<string, string> = {
+  
+  "depapp.codeji.in": "https://depapi.codeji.in",
+};
+const runtimeHost =
+  typeof window === "undefined" ? "" : window.location.hostname.toLowerCase();
+const fallbackBaseUrl = import.meta.env.DEV
+  ? "http://localhost:5036"
+  : runtimeApiFallbacks[runtimeHost] || "";
+
+export const BaseUrl = (configuredBaseUrl || fallbackBaseUrl).replace(/\/+$/, "");
+
+if (!BaseUrl && !import.meta.env.DEV) {
+  throw new Error(
+    "VITE_BASEURL is missing. Configure the API URL for this deployment before building the frontend."
+  );
+}
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";
 export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
@@ -57,6 +74,8 @@ export const ServiceUrl = {
   PUBLISH_PAYROLL_MONTH: `api/PayRoll/ProcessPayrollMonth`,
 
   GET_NEXT_EMPLOYEE_ID: "api/User/GetNextEmployeeId",
+  GET_ORGANIZATION_CHART: "api/User/GetOrganizationChart",
+  GET_REPORTING_CHAIN: "api/User/GetReportingChain",
   GET_EMPLOYEE_ID_SEQUENCE: "api/User/EmployeeIdSequence",
   SKIP_EMPLOYEE_IDS: "api/User/EmployeeIdSequence/Skip",
   START_EMPLOYEE_ID_SEQUENCE: "api/User/EmployeeIdSequence/StartFrom",
@@ -137,16 +156,20 @@ export const ServiceUrl = {
   GET_ONBOARDING_QUEUE: `api/RecruitmentOnboarding/Queue`,
   UPDATE_ONBOARDING: `api/RecruitmentOnboarding/Update`,
   RETRY_ONBOARDING_ACTIVATION: `api/RecruitmentOnboarding/RetryActivation`,
+  GET_REQUISITION: `api/RecruitmentPlanning/Requisition`,
   UPSERT_REQUISITION: `api/RecruitmentPlanning/UpsertRequisition`,
   UPSERT_SCORECARD: `api/RecruitmentPlanning/UpsertScorecard`,
   UPSERT_SCREENING: `api/RecruitmentPlanning/UpsertScreening`,
   BULK_SCREENING: `api/RecruitmentPlanning/BulkScreening`,
   RECRUITMENT_SCREENING_QUEUE: `api/RecruitmentScreening/Queue`,
+  GET_TALENT_POOL_MEMBERS: `api/RecruitmentPlanning/TalentPoolMembers`,
   UPSERT_TALENT_POOL: `api/RecruitmentPlanning/UpsertTalentPoolMember`,
   FIND_DUPLICATES: `api/RecruitmentDuplicate/Find`,
   MERGE_APPLICANTS: `api/RecruitmentEnterprise/MergeApplicants`,
   RECRUITMENT_ANALYTICS: `api/RecruitmentEnterprise/Analytics`,
   RECRUITMENT_FEEDBACK_SLA: `api/RecruitmentEnterprise/FeedbackSla`,
+  RECRUITMENT_STAGE_SLA: `api/RecruitmentEnterprise/StageSla`,
+  RECRUITMENT_SLA_POLICIES: `api/RecruitmentEnterprise/SlaPolicies`,
   RECRUITMENT_DEBRIEF_PENDING: `api/RecruitmentEnterprise/DebriefPending`,
   RECRUITMENT_SELECTED_CANDIDATES: `api/RecruitmentEnterprise/SelectedCandidates`,
   RECRUITMENT_PENDING_OFFERS: `api/RecruitmentEnterprise/PendingOffers`,

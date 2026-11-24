@@ -90,7 +90,7 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
             xs: 8,
             md: 6
           }}>
-          <Typography>{i({ id: JobTypeMapper[jobData.jobType] })}</Typography>
+          <Typography>{JobTypeMapper[jobData.jobType] ? i({ id: JobTypeMapper[jobData.jobType], defaultMessage: "Standard" }) : "Standard"}</Typography>
         </Grid>
 
         <Grid
@@ -116,7 +116,7 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
         </Grid>
         <Grid
           size={{
-            xs: 8,
+            xs: 4,
             md: 6
           }}>
           <Typography variant="body1" sx={{ fontWeight: 600 }}>{i({ id: "JOB.TOTAL_SUBMISSION" })}</Typography>

@@ -18,6 +18,8 @@ import {
   EmployeePayrollAssignmentModel,
   EmployeeSalaryImportRowModel,
   EmployeeSalaryImportPreviewRowModel,
+  EmployeeTaxDeclarationModel,
+  SubmitTaxDeclarationPayload,
 } from "./models";
 
 type GetPayRollPayload = {
@@ -99,7 +101,37 @@ export const createPayrollRun = (payload: CreatePayrollRunPayload) =>
 
 export const getPayrollRuns = () =>
   getRequest<PayrollRunModel[]>("api/payroll/runs");
-import type { CreatePayrollRunPayload, PayrollAdjustmentComponentModel, PayrollAdjustmentModel, PayrollRegisterRowModel, PayrollReportQuery, PayrollReportSummaryModel, PayrollRunEmployeeModel, PayrollRunModel, PayrollRunReviewModel } from "./models";
+
+export const getEmployeeTaxDeclaration = (employeeId: string, financialYear: string) =>
+  getRequest<ResponseData<EmployeeTaxDeclarationModel>>(
+    `api/payroll/tax-declarations/employee/${encodeURIComponent(employeeId)}/year/${encodeURIComponent(financialYear)}`,
+  );
+export const submitEmployeeTaxDeclaration = (employeeId: string, payload: SubmitTaxDeclarationPayload) =>
+  postRequest<SubmitTaxDeclarationPayload, ResponseData<EmployeeTaxDeclarationModel>>(
+    `api/payroll/tax-declarations/employee/${encodeURIComponent(employeeId)}/submit`, payload,
+  );
+export const getCompanyTaxDeclarations = (financialYear: string, status?: string) => {
+  const query = status ? `?status=${encodeURIComponent(status)}` : "";
+  return getRequest<ResponseData<EmployeeTaxDeclarationModel[]>>(
+    `api/payroll/tax-declarations/company/${encodeURIComponent(financialYear)}${query}`,
+  );
+};
+export const reviewEmployeeTaxDeclaration = (declarationId: string, payload: {
+  decision: "APPROVE" | "REJECT";
+  reviewRemarks?: string;
+  rejectionReason?: string;
+  approvedHraExemption?: number;
+  approvedSection80C?: number;
+  approvedSection80Ccd1B?: number;
+  approvedSection80D?: number;
+  approvedSection24HomeLoanInterest?: number;
+  approvedSection80E?: number;
+  approvedOtherDeductions?: number;
+  verifiedAttachmentIds?: string[];
+}) => postRequest<typeof payload, ResponseData<EmployeeTaxDeclarationModel>>(
+  `api/payroll/tax-declarations/${encodeURIComponent(declarationId)}/review`, payload,
+);
+import type { CreatePayrollRunPayload, Form16CertificateModel, PayrollAdjustmentComponentModel, PayrollAdjustmentModel, PayrollRegisterRowModel, PayrollReportQuery, PayrollReportSummaryModel, PayrollRunEmployeeModel, PayrollRunModel, PayrollRunReviewModel } from "./models";
 
 export const getPayrollAdjustments = () =>
   getRequest<ResponseData<PayrollAdjustmentModel[]>>("api/payroll/adjustments");
@@ -123,13 +155,18 @@ export const processPayrollRun = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/runs/${runId}/process`, undefined);
 export const createPaymentBatch = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/payment-batches/from-run/${runId}`, undefined);
-export const createPayrollAdjustment = (payload: { originalPayrollRunId: string; employeeId: string; componentCode: string; targetPeriod: string; type: "ARREARS" | "CORRECTION" | "REVERSAL"; amount: number; reason: string }) =>
+export const createPayrollAdjustment = (payload: { originalPayrollRunId: string; employeeId: string; componentCode: string; targetPeriod: string; type: "ARREARS" | "CORRECTION"; amount: number; reason: string }) =>
   postRequest<typeof payload, ApiResponse>("api/payroll/adjustments", payload);
+export const createPayrollCorrectionRun = (runId: string, reason: string, payDate?: string) =>
+  postRequest<{ reason: string; payDate?: string }, ApiResponse>(`api/payroll/runs/${encodeURIComponent(runId)}/correction`, { reason, payDate });
 export type PayrollPaymentBatchModel = { id: string; payrollRunId: string; status: "DRAFT" | "SUBMITTED" | "RECONCILING" | "RECONCILED"; providerReference?: string | null; reconciliationNote?: string | null; employeeCount: number; totalNetAmount: number };
 export const getPaymentBatch = (runId: string) => getRequest<PayrollPaymentBatchModel>(`api/payroll/payment-batches/from-run/${runId}`);
 export const submitPaymentBatch = (batchId: string, providerReference: string) => postRequest<{ providerReference: string }, ApiResponse>(`api/payroll/payment-batches/${batchId}/submit`, { providerReference });
 export const reconcilePaymentBatch = (batchId: string, note: string, paymentConfirmed: boolean) => postRequest<{ note: string; paymentConfirmed: boolean }, ApiResponse>(`api/payroll/payment-batches/${batchId}/reconcile`, { note, paymentConfirmed });
 
+
+export const exportPaymentBatchCsv = (batchId: string) =>
+  getBlobRequest(`api/payroll/payment-batches/${encodeURIComponent(batchId)}/export-csv`);
 
 export const calculatePayrollRun = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/runs/${runId}/calculate`, undefined);
@@ -165,6 +202,16 @@ export const getPayrollStatutoryRegister = (query: PayrollReportQuery) =>
   getRequest<ResponseData<PayrollStatutoryRegisterRowModel[]>>(`api/payroll/reports/statutory/register?${payrollReportQuery(query)}`);
 export const getPayrollStatutoryRegisterCsv = (query: PayrollReportQuery) =>
   getBlobRequest(`api/payroll/reports/statutory/register.csv?${payrollReportQuery(query)}`);
+export const getEpfoEcrText = (query: PayrollReportQuery) =>
+  getBlobRequest(`api/payroll/reports/statutory/epfo-ecr.txt?${payrollReportQuery(query)}`);
+export const getEsicReturnCsv = (query: PayrollReportQuery) =>
+  getBlobRequest(`api/payroll/reports/statutory/esic-return.csv?${payrollReportQuery(query)}`);
+export const getForm16Certificates = (financialYear: string, employeeId?: string) => {
+  const query = employeeId ? `?financialYear=${encodeURIComponent(financialYear)}&employeeId=${encodeURIComponent(employeeId)}` : `?financialYear=${encodeURIComponent(financialYear)}`;
+  return getRequest<ResponseData<Form16CertificateModel[]>>(`api/payroll/reports/form16${query}`);
+};
+export const getForm16Csv = (financialYear: string) =>
+  getBlobRequest(`api/payroll/reports/form16/export.csv?financialYear=${encodeURIComponent(financialYear)}`);
 export const getEmployeeSalaryHistory = (employeeId: string) =>
   getRequest<EmployeeSalaryStructureModel[]>(`api/payroll/configuration/employee-salaries/${encodeURIComponent(employeeId)}`);
 export const getPendingEmployeeSalaryStructures = () =>

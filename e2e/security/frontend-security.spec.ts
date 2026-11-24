@@ -7,7 +7,7 @@ test.describe("Frontend Security — XSS Prevention", () => {
 
   test("search input sanitizes XSS payloads", async ({ page }) => {
     await page.goto("/employees");
-    const searchInput = page.getByPlaceholder(/search/i);
+    const searchInput = page.getByPlaceholder("Search ...", { exact: true });
     if (await searchInput.isVisible()) {
       const xssPayloads = [
         '<script>alert("xss")</script>',

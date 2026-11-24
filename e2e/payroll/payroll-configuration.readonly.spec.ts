@@ -1,11 +1,12 @@
 import { test, expect } from '../shared/fixtures';
 
-// Run ONLY against tools/PayrollReadOnlyValidation, never the normal writable API.
-const api = process.env.API_URL ?? 'http://localhost:5036';
+// This probe exists only on tools/PayrollReadOnlyValidation, never the normal writable API.
+const api = process.env.PAYROLL_READONLY_API_URL ?? '';
 test.use({ trace: 'off', video: 'off' });
 
 test.describe('Payroll configuration read-only UAT', () => {
   test('inspects real configuration and responsive tabs without changing records', async ({ page, helpers }) => {
+    test.skip(!api, 'Set PAYROLL_READONLY_API_URL to the dedicated read-only validation host.');
     // The guard must be present before attempting authentication or page navigation.
     const guard = await page.request.get(`${api}/readonly-validation-probe`);
     expect(guard.status()).toBe(403);

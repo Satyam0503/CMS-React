@@ -1,14 +1,13 @@
 import {
+  Alert,
   Box,
   Card,
   Chip,
   Divider,
   Grid,
-  MenuItem,
   Stack,
   Tab,
   Tabs,
-  Tooltip,
   Typography,
   alpha,
   useTheme,
@@ -18,22 +17,20 @@ import SettingsSuggestOutlined from "@mui/icons-material/SettingsSuggestOutlined
 import RestoreOutlined from "@mui/icons-material/RestoreOutlined";
 import SaveOutlined from "@mui/icons-material/SaveOutlined";
 import CheckCircleOutlineRounded from "@mui/icons-material/CheckCircleOutlineRounded";
-import CheckCircleRounded from "@mui/icons-material/CheckCircleRounded";
-import ArrowForwardRounded from "@mui/icons-material/ArrowForwardRounded";
 import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
 import MarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 import TuneRounded from "@mui/icons-material/TuneRounded";
 import BusinessOutlined from "@mui/icons-material/BusinessOutlined";
-import PublicOutlined from "@mui/icons-material/PublicOutlined";
 import AccessTimeOutlined from "@mui/icons-material/AccessTimeOutlined";
 import RuleOutlined from "@mui/icons-material/RuleOutlined";
 import AssignmentTurnedInOutlined from "@mui/icons-material/AssignmentTurnedInOutlined";
 import DisplaySettingsOutlined from "@mui/icons-material/DisplaySettingsOutlined";
 import SpeedRounded from "@mui/icons-material/SpeedRounded";
-import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import FiberManualRecordRounded from "@mui/icons-material/FiberManualRecordRounded";
 import CheckRounded from "@mui/icons-material/CheckRounded";
-import { useEffect, useMemo, useState } from "react";
+import EditNoteOutlined from "@mui/icons-material/EditNoteOutlined";
+import ErrorOutlineOutlined from "@mui/icons-material/ErrorOutlineOutlined";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { getRecruitmentEnterpriseConfig, upsertRecruitmentEnterpriseConfig } from "./services";
 import { RecruitmentEnterpriseConfig, RecruitmentEnterpriseConfigCommand } from "./models";
@@ -44,10 +41,12 @@ import { useIsDark } from "../theme/useIsDark";
 
 import RecruitmentInterviewPlanEditor from "./RecruitmentInterviewPlanEditor";
 import RecruitmentFeedbackSlaCard from "./RecruitmentFeedbackSlaCard";
+import RecruitmentStageSlaCard from "./RecruitmentStageSlaCard";
 import RecruitmentOfferApprovalPolicyEditor from "./RecruitmentOfferApprovalPolicyEditor";
+import { RecruitmentModeCard, RecruitmentPipeline, ScrollReveal } from "./RecruitmentSettingsPresentation";
 import TextEditor from "../../shared/components/TextEditor";
 
-// Keyframe Animations for Smooth Delightful UI
+// Keep section transitions brief and turn them off for reduced-motion preferences.
 const fadeInSlideUp = keyframes`
   0% {
     opacity: 0;
@@ -56,29 +55,6 @@ const fadeInSlideUp = keyframes`
   100% {
     opacity: 1;
     transform: translateY(0);
-  }
-`;
-
-const pulseGlow = keyframes`
-  0% {
-    box-shadow: 0 0 0 0 rgba(32, 128, 125, 0.45);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(32, 128, 125, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(32, 128, 125, 0);
-  }
-`;
-
-const pulseLiveDot = keyframes`
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 0.6;
   }
 `;
 
@@ -106,6 +82,7 @@ const defaults: RecruitmentEnterpriseConfig = {
   allowMultiVacancyApplications: true,
   allowJobWorkflowCustomization: false,
   screeningCriteria: ["Relevant experience", "Required skills", "Communication"],
+  candidateSourceOptions: ["Career site", "Employee referral", "Job board", "Social media", "Search engine", "Recruitment agency", "Event", "Other", "Prefer not to say"],
   screeningPassScore: 60,
   preboardingChecklist: ["candidate-details", "documents", "verification"],
   defaultTimezone: "UTC",
@@ -115,9 +92,11 @@ const defaults: RecruitmentEnterpriseConfig = {
   compensationCurrency: "INR",
   compensationComponents: {},
   defaultCandidateRetentionDays: 730,
+  candidatePrivacyNoticeText: "",
+  candidatePrivacyNoticeVersion: "",
   offerLetterSubjectTemplate: "Formal Offer of Employment: [JobTitle] - [CandidateName]",
   offerLetterBodyTemplate:
-    "<p>Dear [CandidateName],</p><p>We are pleased to extend this formal offer of employment for the position of <strong>[JobTitle]</strong>.</p><p><strong>Compensation (Total CTC):</strong> [Currency] [TotalCtc]</p><p>Please review the terms of this offer. To confirm your acceptance, kindly reply directly to this email with your written confirmation and signed offer letter.</p><p>Sincerely,<br/><strong>Human Resources & Talent Acquisition</strong></p>",
+    "<p>Dear [CandidateName],</p><p>We are pleased to extend this formal offer of employment for the position of <strong>[JobTitle]</strong>.</p><p><strong>Compensation (Total CTC):</strong> [Currency] [TotalCtc]</p><p>Please review the terms and submit your response using the secure candidate link in this email.</p><p>Sincerely,<br/><strong>Human Resources & Talent Acquisition</strong></p>",
 };
 
 const idempotencyKey = () => `${Date.now()}-${Math.random().toString(36).slice(2)}-recruitment-settings`;
@@ -128,7 +107,7 @@ const modes: Record<
     title: string;
     subtitle: string;
     badge: string;
-    accentColor: string;
+    accentPalette: "primary" | "secondary" | "success";
     icon: typeof SpeedRounded;
     features: string[];
     flow: string[];
@@ -139,7 +118,7 @@ const modes: Record<
     title: "Simple (Startup & Agile)",
     subtitle: "Fast-track hiring with minimal approval bottlenecks",
     badge: "Agile / Startup",
-    accentColor: "#10B981",
+    accentPalette: "success",
     icon: SpeedRounded,
     features: [
       "Direct offer creation without multi-tier sign-off",
@@ -149,6 +128,8 @@ const modes: Record<
     ],
     flow: ["Apply", "Review", "Interview (Optional)", "Fast Offer", "Hire"],
     preset: {
+      enableSla: false,
+      enableAutomation: false,
       applicationReview: true,
       hiringManagerReview: false,
       interviewRounds: false,
@@ -158,6 +139,10 @@ const modes: Record<
       offerNegotiation: false,
       candidateEmailActions: true,
       requisitions: false,
+      slaTracking: false,
+      automation: false,
+      internalMobility: false,
+      rehireLinks: false,
       autoAdvanceOnScreening: true,
       requireInterviewBeforeDecision: false,
       requirePreboardingBeforeHandoff: false,
@@ -169,7 +154,7 @@ const modes: Record<
     title: "Standard (Mid-Market & Scaling)",
     subtitle: "Structured hiring with scorecards and offer controls",
     badge: "Scaling / Growth",
-    accentColor: "#3B82F6",
+    accentPalette: "primary",
     icon: TuneRounded,
     features: [
       "Structured screening criteria & pass thresholds",
@@ -179,6 +164,8 @@ const modes: Record<
     ],
     flow: ["Apply", "Screen", "Interview + Scorecards", "Approve Offer", "Preboard + Hire"],
     preset: {
+      enableSla: false,
+      enableAutomation: false,
       applicationReview: true,
       hiringManagerReview: true,
       interviewRounds: true,
@@ -188,6 +175,10 @@ const modes: Record<
       offerNegotiation: false,
       candidateEmailActions: true,
       requisitions: false,
+      slaTracking: false,
+      automation: false,
+      internalMobility: false,
+      rehireLinks: false,
       autoAdvanceOnScreening: true,
       requireInterviewBeforeDecision: true,
       requirePreboardingBeforeHandoff: true,
@@ -199,7 +190,7 @@ const modes: Record<
     title: "Enterprise (Global Governance)",
     subtitle: "Full compliance, requisitions, panel debriefs & SLA audit",
     badge: "Full Governance",
-    accentColor: "#8B5CF6",
+    accentPalette: "secondary",
     icon: ShieldOutlined,
     features: [
       "Mandatory interview panels, scorecards & debrief quorum",
@@ -209,6 +200,8 @@ const modes: Record<
     ],
     flow: ["Requisition", "Screen", "Panel + Debrief", "Approve + Negotiate", "Preboard + Audit"],
     preset: {
+      enableSla: true,
+      enableAutomation: true,
       applicationReview: true,
       hiringManagerReview: true,
       interviewRounds: true,
@@ -218,6 +211,8 @@ const modes: Record<
       offerNegotiation: true,
       candidateEmailActions: true,
       requisitions: true,
+      slaTracking: true,
+      automation: true,
       internalMobility: true,
       rehireLinks: true,
       autoAdvanceOnScreening: true,
@@ -269,8 +264,6 @@ const capabilityGroups: Array<{
     description: "Enable additional controls for multi-entity or distributed teams.",
     fields: [
       { key: "requisitions", label: "Requisitions and head-count approvals", help: "Requires an approved requisition before publishing job openings." },
-      { key: "slaTracking", label: "Stage SLA tracking", help: "Monitors time spent in each pipeline stage with aging indicators." },
-      { key: "automation", label: "Workflow automation", help: "Dispatches automated reminders, interviewer alerts, and updates." },
       { key: "internalMobility", label: "Internal mobility", help: "Links internal employee applicants to active recruitment requisitions." },
       { key: "rehireLinks", label: "Rehire candidate links", help: "Detects former employees and links past performance records." },
     ],
@@ -282,14 +275,20 @@ export default function RecruitmentSettings() {
   const isDark = useIsDark();
   const { setPageTitle } = usePageData();
   const [activeTab, setActiveTab] = useState(0);
+  const [activeOfferSection, setActiveOfferSection] = useState<"policy" | "template">("policy");
   const [config, setConfig] = useState<RecruitmentEnterpriseConfig>(defaults);
   const [locationsText, setLocationsText] = useState("");
   const [criteriaText, setCriteriaText] = useState("Relevant experience, Required skills, Communication");
+  const [candidateSourceOptionsText, setCandidateSourceOptionsText] = useState((defaults.candidateSourceOptions ?? []).join(", "));
   const [checklistText, setChecklistText] = useState("candidate-details, documents, verification");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const pendingConfigCommand = useRef<{ fingerprint: string; key: string } | null>(null);
 
   const selectedMode = modes[config.recruitmentMode] || modes.Simple;
+  const selectedModeAccentColor = theme.palette[selectedMode.accentPalette].main;
 
   const parsedCriteriaList = useMemo(
     () => criteriaText.split(",").map((s) => s.trim()).filter(Boolean),
@@ -318,15 +317,25 @@ export default function RecruitmentSettings() {
 
   const load = async () => {
     setLoading(true);
+    setLoadFailed(false);
     try {
       const { data } = await getRecruitmentEnterpriseConfig();
       if (!data.success) throw new Error(data.message || "Unable to load recruitment settings.");
       const merged = { ...defaults, ...(data.methodResult ?? {}) };
+      const slaEnabled = Boolean(merged.slaTracking || merged.enableSla);
+      const automationEnabled = Boolean(merged.automation || merged.enableAutomation);
+      merged.slaTracking = slaEnabled;
+      merged.enableSla = slaEnabled;
+      merged.automation = automationEnabled;
+      merged.enableAutomation = automationEnabled;
       setConfig(merged);
       setLocationsText((merged.locations ?? []).join(", "));
       setCriteriaText((merged.screeningCriteria ?? defaults.screeningCriteria ?? []).join(", "));
+      setCandidateSourceOptionsText((merged.candidateSourceOptions ?? defaults.candidateSourceOptions ?? []).join(", "));
       setChecklistText((merged.preboardingChecklist ?? defaults.preboardingChecklist ?? []).join(", "));
+      setHasUnsavedChanges(false);
     } catch (error) {
+      setLoadFailed(true);
       toast.error((error as Error).message || "Unable to load recruitment settings.");
     } finally {
       setLoading(false);
@@ -341,6 +350,7 @@ export default function RecruitmentSettings() {
 
   const selectModePreset = (mode: RecruitmentEnterpriseConfig["recruitmentMode"]) => {
     const preset = modes[mode]?.preset ?? {};
+    setHasUnsavedChanges(true);
     setConfig((current) => ({
       ...current,
       recruitmentMode: mode,
@@ -367,13 +377,21 @@ export default function RecruitmentSettings() {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean);
+      const parsedCandidateSourceOptions = candidateSourceOptionsText
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .filter((item, index, all) => all.findIndex((candidate) => candidate.toLocaleLowerCase() === item.toLocaleLowerCase()) === index);
+      if (!resetToDefaults && (parsedCandidateSourceOptions.length < 1 || parsedCandidateSourceOptions.length > 20 || parsedCandidateSourceOptions.some((item) => item.length > 60))) {
+        throw new Error("Enter 1 to 20 candidate source labels, each 60 characters or fewer.");
+      }
 
       const retentionDays = Number(config.defaultCandidateRetentionDays ?? 730);
       if (!Number.isInteger(retentionDays) || retentionDays < 30 || retentionDays > 3650) {
         throw new Error("Candidate retention must be a whole number between 30 and 3650 days.");
       }
 
-      const payload: RecruitmentEnterpriseConfigCommand = {
+      const payloadValues: Omit<RecruitmentEnterpriseConfigCommand, "idempotencyKey"> = {
         locations: resetToDefaults ? [] : parsedLocations,
         recruitmentMode: resetToDefaults ? "Simple" : config.recruitmentMode,
         enableSla: resetToDefaults ? false : config.enableSla,
@@ -397,19 +415,26 @@ export default function RecruitmentSettings() {
         allowMultiVacancyApplications: resetToDefaults ? true : config.allowMultiVacancyApplications,
         allowJobWorkflowCustomization: resetToDefaults ? false : Boolean(config.allowJobWorkflowCustomization),
         screeningCriteria: resetToDefaults ? defaults.screeningCriteria : parsedCriteria,
+        candidateSourceOptions: resetToDefaults ? defaults.candidateSourceOptions : parsedCandidateSourceOptions,
         screeningPassScore: resetToDefaults ? 60 : Number(config.screeningPassScore ?? 60),
         preboardingChecklist: resetToDefaults ? defaults.preboardingChecklist : parsedChecklist,
         compensationSchemeName: resetToDefaults ? "Standard" : config.compensationSchemeName,
         compensationCurrency: resetToDefaults ? "INR" : config.compensationCurrency,
         defaultTimezone: resetToDefaults ? "UTC" : config.defaultTimezone?.trim() || "UTC",
         defaultCandidateRetentionDays: resetToDefaults ? 730 : retentionDays,
+        candidatePrivacyNoticeText: resetToDefaults ? "" : config.candidatePrivacyNoticeText?.trim() || "",
+        candidatePrivacyNoticeVersion: resetToDefaults ? "" : config.candidatePrivacyNoticeVersion?.trim() || "",
         offerLetterSubjectTemplate: resetToDefaults
           ? defaults.offerLetterSubjectTemplate
           : config.offerLetterSubjectTemplate,
         offerLetterBodyTemplate: resetToDefaults ? defaults.offerLetterBodyTemplate : config.offerLetterBodyTemplate,
         resetToDefaults,
-        idempotencyKey: idempotencyKey(),
       };
+      const fingerprint = JSON.stringify(payloadValues);
+      const pending = pendingConfigCommand.current;
+      const key = pending?.fingerprint === fingerprint ? pending.key : idempotencyKey();
+      pendingConfigCommand.current = { fingerprint, key };
+      const payload: RecruitmentEnterpriseConfigCommand = { ...payloadValues, idempotencyKey: key };
       const { data } = await upsertRecruitmentEnterpriseConfig(payload);
       if (!data.success) throw new Error(data.message || "Unable to save recruitment settings.");
       toast.success(resetToDefaults ? "Recruitment defaults restored." : "Recruitment settings saved.");
@@ -421,29 +446,44 @@ export default function RecruitmentSettings() {
     }
   };
 
-  const update = <K extends keyof RecruitmentEnterpriseConfig>(field: K, value: RecruitmentEnterpriseConfig[K]) =>
-    setConfig((current) => ({ ...current, [field]: value }));
+  const update = <K extends keyof RecruitmentEnterpriseConfig>(field: K, value: RecruitmentEnterpriseConfig[K]) => {
+    setHasUnsavedChanges(true);
+    setConfig((current) => {
+      if (field === "enableSla" || field === "slaTracking") {
+        const enabled = Boolean(value);
+        return { ...current, enableSla: enabled, slaTracking: enabled };
+      }
+      if (field === "enableAutomation" || field === "automation") {
+        const enabled = Boolean(value);
+        return { ...current, enableAutomation: enabled, automation: enabled };
+      }
+      return { ...current, [field]: value };
+    });
+  };
+
+  const updateText = (setter: (value: string) => void, value: string) => {
+    setHasUnsavedChanges(true);
+    setter(value);
+  };
 
   return (
     <Card
       sx={{
-        p: { xs: 2.5, sm: 3.5, md: 4 },
+        p: { xs: 1.5, sm: 2.5, md: 3 },
         mb: 4,
-        borderRadius: "20px",
+        borderRadius: { xs: 2, sm: 2.5 },
         border: "1px solid",
-        borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "#E2E8F0",
-        bgcolor: isDark ? "rgba(15, 23, 42, 0.6)" : "#FFFFFF",
-        backdropFilter: "blur(12px)",
-        boxShadow: isDark
-          ? "0 20px 40px -15px rgba(0, 0, 0, 0.6)"
-          : "0 10px 30px -10px rgba(15, 23, 42, 0.08)",
+        borderColor: "divider",
+        bgcolor: "background.paper",
+        boxShadow: 1,
         overflow: "hidden",
         width: "100%",
         maxWidth: "100%",
         boxSizing: "border-box",
+        minHeight: { xs: "auto", md: "calc(100dvh - 250px)" },
       }}
     >
-      <Stack spacing={3}>
+      <Stack spacing={{ xs: 2.25, md: 2.75 }}>
         {/* Top Header & Action Bar */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
@@ -466,16 +506,14 @@ export default function RecruitmentSettings() {
                 color: "primary.main",
                 border: "1px solid",
                 borderColor: alpha(theme.palette.primary.main, 0.25),
-                boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.2)}`,
-                transition: "transform 0.25s ease",
-                "&:hover": { transform: "rotate(15deg) scale(1.05)" },
+                transition: "background-color 160ms ease, color 160ms ease",
               }}
             >
-              <SettingsSuggestOutlined sx={{ fontSize: 26 }} />
+              <SettingsSuggestOutlined sx={{ fontSize: 22 }} />
             </Box>
             <Box>
               <Stack direction="row" spacing={1.25} alignItems="center" flexWrap="wrap">
-                <Typography variant="h5" fontWeight={850} sx={{ letterSpacing: "-0.02em", fontSize: { xs: "1.2rem", sm: "1.45rem" } }}>
+                <Typography variant="h5" fontWeight={700} sx={{ letterSpacing: "-0.02em", fontSize: { xs: "1.2rem", sm: "1.45rem" } }}>
                   Recruitment Settings
                 </Typography>
                 <Chip
@@ -484,8 +522,8 @@ export default function RecruitmentSettings() {
                     <FiberManualRecordRounded
                       sx={{
                         fontSize: "10px !important",
-                        color: `${selectedMode.accentColor} !important`,
-                        animation: `${pulseLiveDot} 1.8s ease-in-out infinite`,
+                        color: `${selectedModeAccentColor} !important`,
+                        animation: "none",
                       }}
                     />
                   }
@@ -495,15 +533,24 @@ export default function RecruitmentSettings() {
                     fontWeight: 750,
                     fontSize: "0.72rem",
                     borderRadius: "8px",
-                    bgcolor: alpha(selectedMode.accentColor, 0.12),
-                    color: selectedMode.accentColor,
+                    bgcolor: alpha(selectedModeAccentColor, 0.12),
+                    color: selectedModeAccentColor,
                     border: "1px solid",
-                    borderColor: alpha(selectedMode.accentColor, 0.28),
+                    borderColor: alpha(selectedModeAccentColor, 0.28),
                   }}
+                />
+                <Chip
+                  size="small"
+                  aria-live="polite"
+                  icon={loadFailed ? <ErrorOutlineOutlined /> : loading ? <AccessTimeOutlined /> : hasUnsavedChanges ? <EditNoteOutlined /> : <CheckCircleOutlineRounded />}
+                  label={loadFailed ? "Settings unavailable" : loading ? "Loading settings" : hasUnsavedChanges ? "Unsaved company settings" : "Company settings saved"}
+                  color={loadFailed ? "error" : loading ? "default" : hasUnsavedChanges ? "warning" : "success"}
+                  variant={hasUnsavedChanges ? "filled" : "outlined"}
+                  sx={{ height: 24, fontWeight: 700, fontSize: "0.7rem", borderRadius: "8px" }}
                 />
               </Stack>
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.825rem", mt: 0.35 }}>
-                Configure company recruitment operating model, stage gates, scoring rubrics, and automated candidate workflows.
+                Set the hiring workflow used across your vacancies.
               </Typography>
             </Box>
           </Stack>
@@ -521,10 +568,9 @@ export default function RecruitmentSettings() {
                 px: 2.25,
                 fontSize: "0.82rem",
                 fontWeight: 650,
-                borderRadius: "10px",
+                borderRadius: "8px",
                 borderColor: isDark ? "rgba(255,255,255,0.15)" : "#CBD5E1",
-                transition: "all 0.2s ease",
-                "&:hover": { transform: "translateY(-1px)" },
+                transition: "background-color 160ms ease, border-color 160ms ease",
               }}
             >
               Reset defaults
@@ -533,7 +579,7 @@ export default function RecruitmentSettings() {
               variant="contained"
               size="small"
               startIcon={<SaveOutlined sx={{ fontSize: 16 }} />}
-              disabled={saving || loading}
+              disabled={saving || loading || loadFailed}
               onClick={() => void save()}
               sx={{
                 flex: { xs: 1, sm: "none" },
@@ -541,10 +587,9 @@ export default function RecruitmentSettings() {
                 px: 2.75,
                 fontSize: "0.82rem",
                 fontWeight: 750,
-                borderRadius: "10px",
-                boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.35)}`,
-                transition: "all 0.2s ease",
-                "&:hover": { transform: "translateY(-1px)", boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.45)}` },
+                borderRadius: "8px",
+                boxShadow: "none",
+                transition: "background-color 160ms ease",
               }}
             >
               {saving ? "Saving…" : "Save settings"}
@@ -555,9 +600,9 @@ export default function RecruitmentSettings() {
         {/* Tenant Status Banner */}
         <Box
           sx={{
-            py: 1.25,
+            py: 1,
             px: 2,
-            borderRadius: "12px",
+            borderRadius: "8px",
             bgcolor: isDark ? "rgba(15, 23, 42, 0.4)" : alpha(theme.palette.primary.main, 0.03),
             border: "1px solid",
             borderColor: isDark ? "rgba(255,255,255,0.06)" : alpha(theme.palette.primary.main, 0.1),
@@ -578,13 +623,30 @@ export default function RecruitmentSettings() {
           </Typography>
         </Box>
 
-        {/* Animated Categorized Navigation Tabs */}
+        {hasUnsavedChanges && (
+          <Alert
+            severity="warning"
+            icon={<EditNoteOutlined fontSize="small" />}
+            sx={{ borderRadius: "12px", py: 0.25 }}
+          >
+            Company settings edits are still a draft. Save settings to apply them; vacancy-specific overrides can continue to take precedence.
+          </Alert>
+        )}
+        {loadFailed && (
+          <Alert severity="error" sx={{ borderRadius: "12px", py: 0.25 }}>
+            Company settings could not be loaded. Saving is disabled until the current settings are available; use Reset defaults only if you intend to replace them.
+          </Alert>
+        )}
+
+        {/* Recruitment settings sections */}
         <Box
           sx={{
             borderBottom: 1,
             borderColor: "divider",
-            mt: 0.5,
-            "& .MuiTabs-root": { minHeight: 52 },
+            mt: 0.25,
+            "& .MuiTabs-root": { minHeight: 48 },
+            "& .MuiTabs-scroller": { scrollbarWidth: "none" },
+            "& .MuiTabs-scroller::-webkit-scrollbar": { display: "none" },
           }}
         >
           <Tabs
@@ -595,16 +657,23 @@ export default function RecruitmentSettings() {
             allowScrollButtonsMobile
             aria-label="recruitment configuration sections"
             sx={{
+              width: "100%",
+              "& .MuiTabs-flexContainer": { width: { xs: "max-content", lg: "100%" } },
               "& .MuiTab-root": {
                 textTransform: "none",
-                minHeight: 52,
-                fontWeight: 700,
-                fontSize: "0.86rem",
-                px: { xs: 2, sm: 2.75 },
-                py: 1.5,
-                gap: 1.25,
-                borderRadius: "12px 12px 0 0",
-                transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                minHeight: 48,
+                minWidth: { xs: 160, lg: 0 },
+                maxWidth: { xs: 250, lg: "none" },
+                flex: { xs: "0 0 auto", lg: "1 1 0" },
+                whiteSpace: "nowrap",
+                fontWeight: 600,
+                fontSize: "0.82rem",
+                px: { xs: 1.5, sm: 2 },
+                py: 1.25,
+                gap: 1,
+                borderRadius: "8px 8px 0 0",
+                transition: theme.transitions.create(["color", "background-color"], { duration: 180 }),
+                justifyContent: { xs: "flex-start", lg: "center" },
                 color: "text.secondary",
                 "&:hover": {
                   color: "primary.main",
@@ -612,34 +681,33 @@ export default function RecruitmentSettings() {
                 },
                 "&.Mui-selected": {
                   color: "primary.main",
-                  fontWeight: 850,
+                  fontWeight: 700,
                 },
               },
               "& .MuiTabs-indicator": {
-                height: 3,
-                borderRadius: "3px 3px 0 0",
-                boxShadow: `0 -1px 8px ${theme.palette.primary.main}`,
+                height: 2,
+                borderRadius: "2px 2px 0 0",
               },
             }}
           >
             <Tab
               icon={<TuneRounded sx={{ fontSize: 18 }} />}
               iconPosition="start"
-              label="Operating Model & Pipeline"
+              label="Operating model"
               id="recruitment-tab-0"
               aria-controls="recruitment-tabpanel-0"
             />
             <Tab
               icon={<ShieldOutlined sx={{ fontSize: 18 }} />}
               iconPosition="start"
-              label="Stage Gates & Capabilities"
+              label="Stage gates"
               id="recruitment-tab-1"
               aria-controls="recruitment-tabpanel-1"
             />
             <Tab
               icon={<RuleOutlined sx={{ fontSize: 18 }} />}
               iconPosition="start"
-              label="Screening & Preboarding"
+              label="Screening & preboarding"
               id="recruitment-tab-2"
               aria-controls="recruitment-tabpanel-2"
             />
@@ -653,7 +721,7 @@ export default function RecruitmentSettings() {
             <Tab
               icon={<MarkEmailReadOutlined sx={{ fontSize: 18 }} />}
               iconPosition="start"
-              label="Offers & Email Templates"
+              label="Offers & email"
               id="recruitment-tab-4"
               aria-controls="recruitment-tabpanel-4"
             />
@@ -669,14 +737,15 @@ export default function RecruitmentSettings() {
           sx={{
             display: activeTab === 0 ? "block" : "none",
             animation: `${fadeInSlideUp} 0.35s cubic-bezier(0.16, 1, 0.3, 1)`,
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
           }}
         >
-          <Stack spacing={3.5}>
+              <Stack spacing={{ xs: 2.5, md: 3 }}>
             {/* Operating Model Selector */}
             <Box>
-              <Stack spacing={0.5} sx={{ mb: 2.25 }}>
-                <Typography variant="subtitle1" fontWeight={850} sx={{ letterSpacing: "-0.015em", fontSize: "1.05rem" }}>
-                  Recruitment Operating Model
+              <Stack spacing={0.5} sx={{ mb: 2 }}>
+                <Typography variant="subtitle1" fontWeight={700} sx={{ letterSpacing: "-0.015em", fontSize: "1.05rem" }}>
+                  Choose a hiring model
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.84rem" }}>
                   Select a baseline operating model. You can customize individual stage gates and capability switches anytime.
@@ -688,315 +757,46 @@ export default function RecruitmentSettings() {
                   display: "grid",
                   gridTemplateColumns: {
                     xs: "1fr",
+                    sm: "repeat(auto-fit, minmax(260px, 1fr))",
                     md: "repeat(auto-fit, minmax(280px, 1fr))",
                   },
-                  gap: 3,
+                  gap: 2,
                 }}
               >
-                {(Object.keys(modes) as RecruitmentEnterpriseConfig["recruitmentMode"][]).map((mode) => {
-                  const item = modes[mode];
-                  const active = config.recruitmentMode === mode;
-                  const IconComponent = item.icon;
-                  return (
-                    <Box
-                      key={mode}
-                      role="button"
-                        tabIndex={0}
-                        onClick={() => selectModePreset(mode)}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") selectModePreset(mode);
-                        }}
-                        sx={{
-                          p: 3,
-                          height: "100%",
-                          minHeight: 280,
-                          border: active ? "2px solid" : "1px solid",
-                          borderColor: active
-                            ? item.accentColor
-                            : isDark
-                            ? "rgba(255, 255, 255, 0.1)"
-                            : "#E2E8F0",
-                          borderRadius: "18px",
-                          bgcolor: active
-                            ? isDark
-                              ? alpha(item.accentColor, 0.14)
-                              : alpha(item.accentColor, 0.05)
-                            : isDark
-                            ? "rgba(30, 41, 59, 0.35)"
-                            : "#FFFFFF",
-                          cursor: "pointer",
-                          position: "relative",
-                          overflow: "hidden",
-                          transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          boxSizing: "border-box",
-                          boxShadow: active
-                            ? `0 12px 30px -8px ${alpha(item.accentColor, 0.35)}`
-                            : isDark
-                            ? "0 4px 12px rgba(0,0,0,0.2)"
-                            : "0 2px 8px rgba(15,23,42,0.03)",
-                          "&:hover": {
-                            transform: "translateY(-4px)",
-                            borderColor: item.accentColor,
-                            boxShadow: `0 14px 34px -8px ${alpha(item.accentColor, 0.3)}`,
-                          },
-                          "&:focus-visible": { outline: "2px solid", outlineColor: item.accentColor, outlineOffset: 2 },
-                        }}
-                      >
-                        {/* Top Accent Gradient Bar */}
-                        <Box
-                          sx={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: 4,
-                            bgcolor: item.accentColor,
-                            opacity: active ? 1 : 0.4,
-                          }}
-                        />
-
-                        <Box sx={{ width: "100%" }}>
-                          <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            alignItems="flex-start"
-                            flexWrap="wrap"
-                            useFlexGap
-                            gap={1}
-                            sx={{ mb: 1.75, mt: 0.5 }}
-                          >
-                            <Stack direction="row" spacing={1.5} alignItems="center">
-                              <Box
-                                sx={{
-                                  width: 38,
-                                  height: 38,
-                                  borderRadius: "10px",
-                                  display: "grid",
-                                  placeItems: "center",
-                                  bgcolor: alpha(item.accentColor, 0.15),
-                                  color: item.accentColor,
-                                }}
-                              >
-                                <IconComponent sx={{ fontSize: 22 }} />
-                              </Box>
-                              <Box sx={{ minWidth: 0 }}>
-                                <Typography fontWeight={850} sx={{ fontSize: "0.98rem", color: active ? item.accentColor : "text.primary" }}>
-                                  {item.title}
-                                </Typography>
-                                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.25, fontSize: "0.78rem", lineHeight: 1.4 }}>
-                                  {item.subtitle}
-                                </Typography>
-                              </Box>
-                            </Stack>
-
-                            {active ? (
-                              <Chip
-                                size="small"
-                                icon={<CheckCircleRounded sx={{ fontSize: "14px !important", color: "#FFFFFF !important" }} />}
-                                label="Selected"
-                                sx={{
-                                  height: 24,
-                                  fontWeight: 800,
-                                  fontSize: "0.72rem",
-                                  borderRadius: "6px",
-                                  bgcolor: item.accentColor,
-                                  color: "#FFFFFF",
-                                  flexShrink: 0,
-                                  animation: `${pulseGlow} 2s infinite`,
-                                }}
-                              />
-                            ) : (
-                              <Chip
-                                size="small"
-                                variant="outlined"
-                                label={item.badge}
-                                sx={{ height: 24, fontWeight: 650, fontSize: "0.7rem", borderRadius: "6px", borderColor: "divider", flexShrink: 0 }}
-                              />
-                            )}
-                          </Stack>
-
-                          <Divider sx={{ my: 1.75, opacity: 0.6 }} />
-
-                          <Stack spacing={1.25}>
-                            {item.features.map((feature) => (
-                              <Stack direction="row" spacing={1.25} alignItems="flex-start" key={feature}>
-                                <CheckCircleOutlineRounded
-                                  sx={{
-                                    fontSize: 16,
-                                    mt: 0.2,
-                                    flexShrink: 0,
-                                    color: active ? item.accentColor : "text.disabled",
-                                  }}
-                                />
-                                <Typography
-                                  variant="caption"
-                                  sx={{
-                                    fontSize: "0.78rem",
-                                    lineHeight: 1.5,
-                                    color: active ? "text.primary" : "text.secondary",
-                                    fontWeight: active ? 650 : 400,
-                                  }}
-                                >
-                                  {feature}
-                                </Typography>
-                              </Stack>
-                            ))}
-                          </Stack>
-                        </Box>
-                      </Box>
-                    );
-                  })}
+                {(Object.keys(modes) as RecruitmentEnterpriseConfig["recruitmentMode"][]).map((mode, index) => (
+                  <RecruitmentModeCard
+                    key={mode}
+                    {...modes[mode]}
+                    active={config.recruitmentMode === mode}
+                    index={index}
+                    onSelect={() => selectModePreset(mode)}
+                  />
+                ))}
                 </Box>
               </Box>
 
-            {/* Interactive Animated Pipeline Flow Strip */}
-            <Box
-              sx={{
-                p: { xs: 2.25, sm: 3 },
-                borderRadius: "18px",
-                border: "1px solid",
-                borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-                bgcolor: isDark ? "rgba(30, 41, 59, 0.35)" : "#F8FAFC",
-                boxShadow: isDark ? "0 4px 16px rgba(0,0,0,0.2)" : "0 2px 10px rgba(15,23,42,0.02)",
-              }}
-            >
-              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }} flexWrap="wrap" gap={1}>
-                <Box>
-                  <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.92rem" }}>
-                    Active Recruitment Pipeline Flow ({config.recruitmentMode} Mode)
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.78rem" }}>
-                    Candidates advance through these stages according to your company's gate policies.
-                  </Typography>
-                </Box>
-                <Chip
-                  size="small"
-                  icon={<AutoAwesomeOutlined sx={{ fontSize: 14 }} />}
-                  label={`${selectedMode.flow.length} Configured Stages`}
-                  color="primary"
-                  variant="outlined"
-                  sx={{ fontWeight: 750, height: 26, fontSize: "0.72rem", borderRadius: "6px" }}
-                />
-              </Stack>
-
-              {/* Step Roadmap with Smooth Connected Flow Track */}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.25,
-                  overflowX: "auto",
-                  py: 1,
-                  px: 0.5,
-                  "&::-webkit-scrollbar": { height: 6 },
-                  "&::-webkit-scrollbar-thumb": {
-                    bgcolor: isDark ? "rgba(255,255,255,0.15)" : "#CBD5E1",
-                    borderRadius: 3,
-                  },
-                }}
-              >
-                {selectedMode.flow.map((step, index) => {
-                  const isLast = index === selectedMode.flow.length - 1;
-                  return (
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      spacing={1.25}
-                      key={step}
-                      sx={{ flexShrink: 0 }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1.25,
-                          py: 1,
-                          px: 1.75,
-                          borderRadius: "10px",
-                          bgcolor: isLast
-                            ? alpha("#10B981", 0.12)
-                            : isDark
-                            ? "rgba(15, 23, 42, 0.4)"
-                            : "#FFFFFF",
-                          border: "1px solid",
-                          borderColor: isLast
-                            ? "#10B981"
-                            : isDark
-                            ? "rgba(255,255,255,0.12)"
-                            : "#CBD5E1",
-                          boxShadow: isLast
-                            ? "0 4px 12px rgba(16, 185, 129, 0.2)"
-                            : "0 1px 3px rgba(0,0,0,0.02)",
-                          transition: "all 0.2s ease",
-                          "&:hover": {
-                            transform: "translateY(-1px)",
-                            borderColor: "primary.main",
-                          },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            width: 22,
-                            height: 22,
-                            borderRadius: "50%",
-                            display: "grid",
-                            placeItems: "center",
-                            fontSize: "0.7rem",
-                            fontWeight: 800,
-                            bgcolor: isLast ? "#10B981" : "primary.main",
-                            color: "#FFFFFF",
-                            flexShrink: 0,
-                          }}
-                        >
-                          {index + 1}
-                        </Box>
-                        <Typography
-                          variant="caption"
-                          fontWeight={800}
-                          sx={{
-                            fontSize: "0.82rem",
-                            color: isLast ? "#10B981" : "text.primary",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {step}
-                        </Typography>
-                      </Box>
-                      {!isLast && (
-                        <ArrowForwardRounded
-                          sx={{
-                            fontSize: 18,
-                            color: "text.disabled",
-                            flexShrink: 0,
-                          }}
-                        />
-                      )}
-                    </Stack>
-                  );
-                })}
-              </Box>
-            </Box>
+            <ScrollReveal>
+              <RecruitmentPipeline mode={config.recruitmentMode} steps={selectedMode.flow} />
+            </ScrollReveal>
 
             {/* Global Locations, Timezone & Automations Card */}
+            <ScrollReveal delay={80}>
             <Box
               sx={{
-                p: { xs: 2.25, sm: 3 },
+                p: { xs: 2, sm: 2.5 },
                 border: "1px solid",
                 borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-                borderRadius: "18px",
+                borderRadius: "12px",
                 bgcolor: isDark ? "rgba(30, 41, 59, 0.35)" : "background.paper",
-                boxShadow: isDark ? "0 4px 16px rgba(0,0,0,0.2)" : "0 2px 8px rgba(15,23,42,0.02)",
+                boxShadow: "none",
               }}
             >
-              <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2.5 }}>
+              <Stack direction="row" spacing={1.25} alignItems="center" sx={{ mb: 2 }}>
                 <Box
                   sx={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: "12px",
+                    width: 36,
+                    height: 36,
+                    borderRadius: "9px",
                     display: "grid",
                     placeItems: "center",
                     bgcolor: alpha(theme.palette.primary.main, 0.1),
@@ -1004,11 +804,11 @@ export default function RecruitmentSettings() {
                     flexShrink: 0,
                   }}
                 >
-                  <BusinessOutlined sx={{ fontSize: 22 }} />
+                  <BusinessOutlined sx={{ fontSize: 20 }} />
                 </Box>
                 <Box>
-                  <Typography variant="subtitle1" fontWeight={850} sx={{ fontSize: "0.98rem" }}>
-                    Hiring Locations, Timezone & Automations
+                  <Typography variant="subtitle1" fontWeight={700} sx={{ fontSize: "0.96rem" }}>
+                    Hiring locations and timezone
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
                     Company-wide defaults for job creation and automated notifications.
@@ -1016,19 +816,19 @@ export default function RecruitmentSettings() {
                 </Box>
               </Stack>
 
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 6 }}>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <AppTextField
                     label="Hiring locations (comma-separated)"
                     value={locationsText}
                     disabled={loading || saving}
-                    onChange={(e) => setLocationsText(e.target.value)}
+                    onChange={(e) => updateText(setLocationsText, e.target.value)}
                     placeholder="Bengaluru, Mumbai, Remote"
                     helperText="Locations available when creating jobs. At least one required before publishing."
                     fullWidth
                   />
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <AppTextField
                     label="Recruitment timezone"
                     value={config.defaultTimezone ?? "UTC"}
@@ -1039,7 +839,7 @@ export default function RecruitmentSettings() {
                     fullWidth
                   />
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Box
                     sx={{
                       p: 2.25,
@@ -1060,10 +860,10 @@ export default function RecruitmentSettings() {
                   >
                     <Box minWidth={0} sx={{ flex: 1 }}>
                       <Typography variant="body2" fontWeight={800} sx={{ fontSize: "0.88rem" }}>
-                        SLA and stage aging alerts
+                        Interview feedback deadlines
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.76rem", lineHeight: 1.45, mt: 0.25 }}>
-                        Alert recruiters when applications remain in a stage beyond configured threshold.
+                        Track interview rounds with overdue interviewer scorecards.
                       </Typography>
                     </Box>
                     <AppSwitch
@@ -1074,7 +874,7 @@ export default function RecruitmentSettings() {
                     />
                   </Box>
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Box
                     sx={{
                       p: 2.25,
@@ -1095,10 +895,10 @@ export default function RecruitmentSettings() {
                   >
                     <Box minWidth={0} sx={{ flex: 1 }}>
                       <Typography variant="body2" fontWeight={800} sx={{ fontSize: "0.88rem" }}>
-                        Recruitment automation queue
+                        Interviewer scorecard reminder emails
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.76rem", lineHeight: 1.45, mt: 0.25 }}>
-                        Automatically queue candidate reminders and approval notifications.
+                        Allow recruiters to queue follow-up emails for interviewers with outstanding scorecards.
                       </Typography>
                     </Box>
                     <AppSwitch
@@ -1111,6 +911,7 @@ export default function RecruitmentSettings() {
                 </Grid>
               </Grid>
             </Box>
+            </ScrollReveal>
 
             {/* Included in Current Mode Summary */}
             <Box
@@ -1119,10 +920,10 @@ export default function RecruitmentSettings() {
                 borderRadius: "16px",
                 border: "1px dashed",
                 borderColor: isDark ? "rgba(255, 255, 255, 0.15)" : "#CBD5E1",
-                bgcolor: isDark ? "rgba(15, 23, 42, 0.2)" : alpha(selectedMode.accentColor, 0.02),
+                bgcolor: isDark ? "background.default" : alpha(selectedModeAccentColor, 0.02),
               }}
             >
-              <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.88rem", color: selectedMode.accentColor }}>
+              <Typography variant="subtitle2" fontWeight={700} sx={{ fontSize: "0.88rem", color: selectedModeAccentColor }}>
                 Included in {config.recruitmentMode} Mode
               </Typography>
               <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 1.5 }}>
@@ -1155,15 +956,17 @@ export default function RecruitmentSettings() {
           sx={{
             display: activeTab === 1 ? "block" : "none",
             animation: `${fadeInSlideUp} 0.35s cubic-bezier(0.16, 1, 0.3, 1)`,
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
           }}
         >
-          <Stack spacing={3.5}>
+          <Stack spacing={{ xs: 2.5, md: 3 }}>
             {/* Featured Highlight Card: Per-Job Hiring Workflow Customization */}
+            <ScrollReveal>
             <Box
               sx={{
-                p: { xs: 2.5, sm: 3 },
-                borderRadius: "18px",
-                border: "2px solid",
+                p: { xs: 2, sm: 2.5 },
+                borderRadius: "12px",
+                border: "1px solid",
                 borderColor: config.allowJobWorkflowCustomization
                   ? "primary.main"
                   : isDark
@@ -1176,10 +979,8 @@ export default function RecruitmentSettings() {
                   : isDark
                   ? "rgba(30, 41, 59, 0.35)"
                   : "#F8FAFC",
-                boxShadow: config.allowJobWorkflowCustomization
-                  ? `0 8px 24px -4px ${alpha(theme.palette.primary.main, 0.25)}`
-                  : "none",
-                transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                boxShadow: "none",
+                transition: "background-color 160ms ease, border-color 160ms ease",
               }}
             >
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={2.5}>
@@ -1209,8 +1010,8 @@ export default function RecruitmentSettings() {
                           <FiberManualRecordRounded
                             sx={{
                               fontSize: "10px !important",
-                              color: config.allowJobWorkflowCustomization ? "#10B981 !important" : "#94A3B8 !important",
-                              animation: config.allowJobWorkflowCustomization ? `${pulseLiveDot} 1.8s infinite` : "none",
+                              color: config.allowJobWorkflowCustomization ? `${theme.palette.success.main} !important` : "inherit",
+                              animation: "none",
                             }}
                           />
                         }
@@ -1233,21 +1034,22 @@ export default function RecruitmentSettings() {
                 />
               </Stack>
             </Box>
+            </ScrollReveal>
 
             {/* Fine-Grained Capability Groups with Responsive Fluid Grid */}
-            {capabilityGroups.map((group) => (
+            {capabilityGroups.map((group, index) => (
+              <ScrollReveal key={group.title} delay={index * 50}>
               <Box
-                key={group.title}
                 sx={{
-                  p: { xs: 2.25, sm: 3 },
+                  p: { xs: 2, sm: 2.5 },
                   border: "1px solid",
-                  borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-                  borderRadius: "18px",
-                  bgcolor: isDark ? "rgba(30, 41, 59, 0.35)" : "background.paper",
-                  boxShadow: isDark ? "0 4px 16px rgba(0,0,0,0.2)" : "0 2px 8px rgba(15,23,42,0.02)",
+                  borderColor: "divider",
+                  borderRadius: "12px",
+                  bgcolor: "background.paper",
+                  boxShadow: "none",
                 }}
               >
-                <Typography variant="subtitle2" fontWeight={850} sx={{ fontSize: "0.96rem" }}>
+                <Typography variant="subtitle2" fontWeight={700} sx={{ fontSize: "0.96rem" }}>
                   {group.title}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2.5, fontSize: "0.78rem" }}>
@@ -1259,7 +1061,7 @@ export default function RecruitmentSettings() {
                     display: "grid",
                     gridTemplateColumns: {
                       xs: "1fr",
-                      md: "repeat(2, 1fr)",
+                      sm: "repeat(2, minmax(0, 1fr))",
                     },
                     gap: 2,
                   }}
@@ -1270,9 +1072,9 @@ export default function RecruitmentSettings() {
                       <Box
                         key={String(field.key)}
                         sx={{
-                          p: 2.25,
+                          p: 1.75,
                           minHeight: 88,
-                          borderRadius: "14px",
+                          borderRadius: "10px",
                           border: "1px solid",
                           borderColor: isChecked
                             ? alpha(theme.palette.primary.main, 0.45)
@@ -1292,18 +1094,17 @@ export default function RecruitmentSettings() {
                           gap: 2,
                           height: "100%",
                           boxSizing: "border-box",
-                          transition: "all 0.2s ease",
+                          transition: "border-color 160ms ease, background-color 160ms ease",
                           "&:hover": {
                             borderColor: theme.palette.primary.main,
-                            transform: "translateY(-1px)",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
                           },
+                          "@media (prefers-reduced-motion: reduce)": { transition: "none" },
                         }}
                       >
                         <Box minWidth={0} sx={{ flex: 1, pr: 1 }}>
                           <Typography
                             variant="body2"
-                            fontWeight={800}
+                            fontWeight={650}
                             sx={{
                               fontSize: "0.86rem",
                               lineHeight: 1.35,
@@ -1341,6 +1142,7 @@ export default function RecruitmentSettings() {
                   })}
                 </Box>
               </Box>
+              </ScrollReveal>
             ))}
           </Stack>
         </Box>
@@ -1354,26 +1156,27 @@ export default function RecruitmentSettings() {
           sx={{
             display: activeTab === 2 ? "block" : "none",
             animation: `${fadeInSlideUp} 0.35s cubic-bezier(0.16, 1, 0.3, 1)`,
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
           }}
         >
-          <Stack spacing={3.5}>
+          <Stack spacing={{ xs: 2.5, md: 3 }}>
             {/* Header Box */}
             <Box
               sx={{
-                p: { xs: 2.5, sm: 3.5 },
+                p: { xs: 2, sm: 2.5 },
                 border: "1px solid",
-                borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-                borderRadius: "18px",
-                bgcolor: isDark ? "rgba(30, 41, 59, 0.35)" : "background.paper",
-                boxShadow: isDark ? "0 4px 16px rgba(0,0,0,0.2)" : "0 2px 8px rgba(15,23,42,0.02)",
+                borderColor: "divider",
+                borderRadius: "12px",
+                bgcolor: "background.paper",
+                boxShadow: "none",
               }}
             >
-              <Stack direction="row" spacing={1.75} alignItems="center" sx={{ mb: 3 }}>
+              <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2.25 }}>
                 <Box
                   sx={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: "12px",
+                    width: 38,
+                    height: 38,
+                    borderRadius: "9px",
                     display: "grid",
                     placeItems: "center",
                     bgcolor: alpha(theme.palette.primary.main, 0.1),
@@ -1381,11 +1184,11 @@ export default function RecruitmentSettings() {
                     flexShrink: 0,
                   }}
                 >
-                  <RuleOutlined sx={{ fontSize: 24 }} />
+                  <RuleOutlined sx={{ fontSize: 21 }} />
                 </Box>
                 <Box>
-                  <Typography variant="subtitle1" fontWeight={850} sx={{ fontSize: "1rem" }}>
-                    Screening & Preboarding Policy Configuration
+                  <Typography variant="subtitle1" fontWeight={700} sx={{ fontSize: "0.98rem" }}>
+                    Screening and preboarding defaults
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
                     Define company-wide screening evaluation pass thresholds, criteria rubrics, and mandatory preboarding tasks.
@@ -1394,12 +1197,13 @@ export default function RecruitmentSettings() {
               </Stack>
 
               {/* Section 1: Threshold & Numerical Settings */}
-              <Grid container spacing={2.5} sx={{ mb: 3.5 }}>
+              <ScrollReveal>
+              <Grid container spacing={1.75} sx={{ mb: 2.5 }}>
                 <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
                   <Box
                     sx={{
-                      p: 2.5,
-                      borderRadius: "14px",
+                      p: 2,
+                      borderRadius: "10px",
                       border: "1px solid",
                       borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
                       bgcolor: isDark ? "rgba(15, 23, 42, 0.25)" : "#F8FAFC",
@@ -1442,8 +1246,8 @@ export default function RecruitmentSettings() {
                 <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
                   <Box
                     sx={{
-                      p: 2.5,
-                      borderRadius: "14px",
+                      p: 2,
+                      borderRadius: "10px",
                       border: "1px solid",
                       borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
                       bgcolor: isDark ? "rgba(15, 23, 42, 0.25)" : "#F8FAFC",
@@ -1484,8 +1288,8 @@ export default function RecruitmentSettings() {
                 <Grid size={{ xs: 12, sm: 12, lg: 4 }}>
                   <Box
                     sx={{
-                      p: 2.5,
-                      borderRadius: "14px",
+                      p: 2,
+                      borderRadius: "10px",
                       border: "1px solid",
                       borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
                       bgcolor: isDark ? "rgba(15, 23, 42, 0.25)" : "#F8FAFC",
@@ -1504,7 +1308,7 @@ export default function RecruitmentSettings() {
                         disabled={loading || saving}
                         onChange={(e) => update("defaultCandidateRetentionDays", Number(e.target.value))}
                         inputProps={{ min: 30, max: 3650, step: 1 }}
-                        helperText="GDPR/privacy retention window (30–3650 days)."
+                        helperText="Candidate record retention period (30–3650 days). Align it with your approved policy."
                         fullWidth
                       />
                     </Box>
@@ -1525,16 +1329,68 @@ export default function RecruitmentSettings() {
                   </Box>
                 </Grid>
               </Grid>
+              </ScrollReveal>
 
-              <Divider sx={{ my: 3 }} />
+              <ScrollReveal delay={80}>
+                <Box sx={{ mt: 2.5, p: { xs: 2, md: 2.5 }, borderRadius: 2.5, border: "1px solid", borderColor: isDark ? "rgba(255,255,255,.1)" : "#E2E8F0", bgcolor: isDark ? "rgba(15,23,42,.25)" : "#F8FAFC" }}>
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                    <ShieldOutlined color="primary" />
+                    <Typography variant="subtitle1" fontWeight={800}>Candidate privacy notice</Typography>
+                  </Stack>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Candidates must acknowledge this company notice before submitting an application. Use your approved privacy wording. Increment the version whenever the notice changes; new applications are paused until both fields are configured.
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, md: 8 }}>
+                      <AppTextField
+                        label="Privacy notice text"
+                        value={config.candidatePrivacyNoticeText ?? ""}
+                        disabled={loading || saving}
+                        onChange={(e) => update("candidatePrivacyNoticeText", e.target.value)}
+                        multiline
+                        minRows={5}
+                        maxRows={10}
+                        inputProps={{ maxLength: 8000 }}
+                        helperText={`${(config.candidatePrivacyNoticeText ?? "").length}/8000 characters. Plain text is shown to applicants.`}
+                        fullWidth
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 4 }}>
+                      <AppTextField
+                        label="Notice version"
+                        value={config.candidatePrivacyNoticeVersion ?? ""}
+                        disabled={loading || saving}
+                        onChange={(e) => update("candidatePrivacyNoticeVersion", e.target.value)}
+                        inputProps={{ maxLength: 40, pattern: "[A-Za-z0-9._-]+" }}
+                        helperText="For example: 2026-11 or policy-3. Use a new version when the text changes."
+                        fullWidth
+                      />
+                    </Grid>
+                  </Grid>
+                  <AppTextField
+                    label="Candidate source choices"
+                    value={candidateSourceOptionsText}
+                    disabled={loading || saving}
+                    onChange={(e) => updateText(setCandidateSourceOptionsText, e.target.value)}
+                    placeholder="Career site, Employee referral, Job board"
+                    helperText="Comma-separated choices shown on the public application form. Keep labels short; up to 20 choices."
+                    inputProps={{ maxLength: 1400 }}
+                    fullWidth
+                    sx={{ mt: 2 }}
+                  />
+                </Box>
+              </ScrollReveal>
+
+              <Divider sx={{ my: 2.5 }} />
 
               {/* Section 2: Criteria & Checklist Side-by-Side Cards */}
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 6 }}>
+              <ScrollReveal delay={60}>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Box
                     sx={{
-                      p: 2.75,
-                      borderRadius: "16px",
+                      p: 2.25,
+                      borderRadius: "10px",
                       border: "1px solid",
                       borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
                       bgcolor: isDark ? "rgba(15, 23, 42, 0.25)" : "#F8FAFC",
@@ -1555,7 +1411,7 @@ export default function RecruitmentSettings() {
                         label="Screening criteria (comma-separated)"
                         value={criteriaText}
                         disabled={loading || saving}
-                        onChange={(e) => setCriteriaText(e.target.value)}
+                        onChange={(e) => updateText(setCriteriaText, e.target.value)}
                         fullWidth
                       />
                     </Box>
@@ -1582,11 +1438,11 @@ export default function RecruitmentSettings() {
                   </Box>
                 </Grid>
 
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Box
                     sx={{
-                      p: 2.75,
-                      borderRadius: "16px",
+                      p: 2.25,
+                      borderRadius: "10px",
                       border: "1px solid",
                       borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
                       bgcolor: isDark ? "rgba(15, 23, 42, 0.25)" : "#F8FAFC",
@@ -1607,7 +1463,7 @@ export default function RecruitmentSettings() {
                         label="Preboarding tasks (comma-separated)"
                         value={checklistText}
                         disabled={loading || saving}
-                        onChange={(e) => setChecklistText(e.target.value)}
+                        onChange={(e) => updateText(setChecklistText, e.target.value)}
                         fullWidth
                       />
                     </Box>
@@ -1634,6 +1490,7 @@ export default function RecruitmentSettings() {
                   </Box>
                 </Grid>
               </Grid>
+              </ScrollReveal>
             </Box>
           </Stack>
         </Box>
@@ -1647,14 +1504,22 @@ export default function RecruitmentSettings() {
           sx={{
             display: activeTab === 3 ? "block" : "none",
             animation: `${fadeInSlideUp} 0.35s cubic-bezier(0.16, 1, 0.3, 1)`,
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
           }}
         >
-          <Stack spacing={3.5}>
+          <Stack spacing={{ xs: 2.5, md: 3 }}>
             {/* Default Interview Plan Editor */}
-            <RecruitmentInterviewPlanEditor />
+            <ScrollReveal>
+              <RecruitmentInterviewPlanEditor />
+            </ScrollReveal>
 
             {/* Interviewer Feedback SLA Card */}
-            <RecruitmentFeedbackSlaCard />
+            <ScrollReveal delay={80}>
+              <RecruitmentFeedbackSlaCard />
+            </ScrollReveal>
+            <ScrollReveal delay={120}>
+              <RecruitmentStageSlaCard />
+            </ScrollReveal>
           </Stack>
         </Box>
 
@@ -1667,21 +1532,62 @@ export default function RecruitmentSettings() {
           sx={{
             display: activeTab === 4 ? "block" : "none",
             animation: `${fadeInSlideUp} 0.35s cubic-bezier(0.16, 1, 0.3, 1)`,
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
           }}
         >
-          <Stack spacing={3.5}>
-            {/* Offer Approval Policy Editor */}
-            <RecruitmentOfferApprovalPolicyEditor />
+          <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2.5 }}>
+            <Tabs
+              value={activeOfferSection}
+              onChange={(_, value) => setActiveOfferSection(value)}
+              variant="scrollable"
+              scrollButtons="auto"
+              aria-label="Offer settings sections"
+              sx={{
+                minHeight: 44,
+                "& .MuiTabs-flexContainer": { width: { xs: "max-content", md: "100%" } },
+                "& .MuiTab-root": {
+                  minHeight: 44,
+                  minWidth: { xs: 145, md: 180 },
+                  px: 2,
+                  textTransform: "none",
+                  fontWeight: 650,
+                  fontSize: "0.84rem",
+                },
+              }}
+            >
+              <Tab id="offer-settings-policy-tab" aria-controls="offer-settings-policy-panel" value="policy" label="Approval policy" />
+              <Tab id="offer-settings-template-tab" aria-controls="offer-settings-template-panel" value="template" label="Offer email template" />
+            </Tabs>
+          </Box>
 
-            {/* Offer Letter Template & Live Preview */}
+          <Box
+            role="tabpanel"
+            id="offer-settings-policy-panel"
+            aria-labelledby="offer-settings-policy-tab"
+            hidden={activeOfferSection !== "policy"}
+            sx={{ display: activeOfferSection === "policy" ? "block" : "none" }}
+          >
+            <ScrollReveal>
+              <RecruitmentOfferApprovalPolicyEditor />
+            </ScrollReveal>
+          </Box>
+
+          <Box
+            role="tabpanel"
+            id="offer-settings-template-panel"
+            aria-labelledby="offer-settings-template-tab"
+            hidden={activeOfferSection !== "template"}
+            sx={{ display: activeOfferSection === "template" ? "block" : "none" }}
+          >
+            <ScrollReveal delay={80}>
             <Box
               sx={{
-                p: { xs: 2.5, sm: 3.5 },
+                p: { xs: 2, sm: 2.5 },
                 border: "1px solid",
-                borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0",
-                borderRadius: "18px",
-                bgcolor: isDark ? "rgba(30, 41, 59, 0.35)" : "background.paper",
-                boxShadow: isDark ? "0 4px 16px rgba(0,0,0,0.2)" : "0 2px 8px rgba(15,23,42,0.02)",
+                borderColor: "divider",
+                borderRadius: "12px",
+                bgcolor: "background.paper",
+                boxShadow: "none",
                 minWidth: 0,
                 maxWidth: "100%",
                 boxSizing: "border-box",
@@ -1704,10 +1610,10 @@ export default function RecruitmentSettings() {
                 </Box>
                 <Box minWidth={0}>
                   <Typography variant="subtitle1" fontWeight={850} sx={{ fontSize: "1rem" }}>
-                    Offer Letter Template & Candidate Preview
+                    Offer email
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
-                    Tokens: [CandidateName], [JobTitle], [Currency], and [TotalCtc] are merged automatically.
+                    Edit the message candidates receive with an offer.
                   </Typography>
                 </Box>
               </Stack>
@@ -1721,7 +1627,7 @@ export default function RecruitmentSettings() {
                       disabled={loading || saving}
                       onChange={(e) => update("offerLetterSubjectTemplate", e.target.value)}
                       inputProps={{ maxLength: 160 }}
-                      helperText="Tokens [JobTitle] and [CandidateName] are personalized automatically."
+                      helperText="Candidate and job tokens are filled in automatically."
                       fullWidth
                     />
                     <TextEditor
@@ -1737,12 +1643,12 @@ export default function RecruitmentSettings() {
                         { token: "[TotalCtc]", label: "[TotalCtc]", desc: "Total Offered Cost to Company" },
                       ]}
                       onResetDefault={() => {
-                        const defaultTemplate = `<p>Dear [CandidateName],</p><p>We are pleased to extend this formal offer of employment for the position of <strong>[JobTitle]</strong>.</p><p><strong>Compensation (Total CTC):</strong> [Currency] [TotalCtc]</p><p>Please review the terms of this offer. To confirm your acceptance, kindly reply directly to this email with your written confirmation and signed offer letter.</p><p>Sincerely,<br/><strong>Human Resources &amp; Talent Acquisition</strong></p>`;
+                        const defaultTemplate = `<p>Dear [CandidateName],</p><p>We are pleased to extend this formal offer of employment for the position of <strong>[JobTitle]</strong>.</p><p><strong>Compensation (Total CTC):</strong> [Currency] [TotalCtc]</p><p>Please review the terms and submit your response using the secure candidate link in this email.</p><p>Sincerely,<br/><strong>Human Resources &amp; Talent Acquisition</strong></p>`;
                         update("offerLetterBodyTemplate", defaultTemplate);
                         toast.info("Restored standard offer letter template");
                       }}
                       resetDefaultLabel="Restore standard template"
-                      helperText="Candidate tokens are sanitized and securely merged upon candidate offer release."
+                      helperText="Use the tokens above to personalize the message."
                       minHeight={250}
                     />
                   </Stack>
@@ -1757,7 +1663,7 @@ export default function RecruitmentSettings() {
                       border: "1px solid",
                       borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "#E2E8F0",
                       height: "100%",
-                      minHeight: { xs: 300, lg: 380 },
+                      minHeight: { xs: 320, lg: 380 },
                       display: "flex",
                       flexDirection: "column",
                       overflow: "hidden",
@@ -1769,7 +1675,7 @@ export default function RecruitmentSettings() {
                     {/* Mockup Titlebar */}
                     <Box
                       sx={{
-                        px: 2.25,
+                        px: { xs: 1.25, sm: 2.25 },
                         py: 1.5,
                         bgcolor: isDark ? "rgba(30, 41, 59, 0.7)" : "#F1F5F9",
                         borderBottom: "1px solid",
@@ -1777,17 +1683,19 @@ export default function RecruitmentSettings() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        gap: 1,
                       }}
                     >
-                      <Stack direction="row" spacing={0.85} alignItems="center">
+                      <Stack direction="row" spacing={0.85} alignItems="center" sx={{ minWidth: 0, flex: "1 1 160px" }}>
                         <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: "#EF4444" }} />
                         <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: "#F59E0B" }} />
                         <Box sx={{ width: 10, height: 10, borderRadius: "50%", bgcolor: "#10B981" }} />
-                        <Typography variant="caption" sx={{ ml: 1, fontWeight: 700, fontSize: "0.72rem", color: "text.secondary" }}>
-                          Sample Candidate Email Preview
+                        <Typography variant="caption" noWrap sx={{ ml: 1, minWidth: 0, fontWeight: 700, fontSize: "0.72rem", color: "text.secondary" }}>
+                          Candidate email
                         </Typography>
                       </Stack>
-                      <Chip size="small" label="Live Render" color="primary" sx={{ height: 20, fontSize: "0.66rem", fontWeight: 750 }} />
+                      <Chip size="small" label="Live preview" color="primary" sx={{ height: 20, fontSize: "0.66rem", fontWeight: 750 }} />
                     </Box>
 
                     {/* Subject Line */}
@@ -1810,9 +1718,9 @@ export default function RecruitmentSettings() {
                     {/* Email Body Content */}
                     <Box
                       sx={{
-                        p: 2.5,
+                        p: { xs: 1.5, sm: 2.5 },
                         flex: 1,
-                        minHeight: 200,
+                        minHeight: { xs: 160, lg: 200 },
                         color: "text.primary",
                         fontSize: "0.88rem",
                         lineHeight: 1.75,
@@ -1833,14 +1741,15 @@ export default function RecruitmentSettings() {
                       }}
                     >
                       <Typography variant="caption" color="text.secondary" sx={{ display: "block", fontSize: "0.75rem", lineHeight: 1.5 }}>
-                        ✉️ <strong>Official HRMS Delivery:</strong> Delivered directly to candidate's email. Candidate replies with written confirmation or signed offer letter. No external magic links or separate acceptance portal required.
+                        Sent from HRMS. Candidates submit their response through the secure offer link in the email.
                       </Typography>
                     </Box>
                   </Box>
                 </Grid>
               </Grid>
             </Box>
-          </Stack>
+            </ScrollReveal>
+          </Box>
         </Box>
       </Stack>
     </Card>

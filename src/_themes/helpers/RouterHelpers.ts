@@ -16,6 +16,11 @@ export function checkIsActive(pathname: string, url: string) {
     return current === "/";
   }
 
+  // Prevent parent /employees from being active when nested under /employees/org-chart
+  if (url === "/employees" && current.startsWith("/employees/org-chart")) {
+    return false;
+  }
+
   const prefix = url.endsWith("/") ? url : `${url}/`;
   return current.startsWith(prefix);
 }

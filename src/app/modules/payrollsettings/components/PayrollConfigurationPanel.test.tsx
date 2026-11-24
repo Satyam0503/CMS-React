@@ -317,6 +317,27 @@ describe("PayrollConfigurationPanel effective-dated assignment approvals", () =>
 });
 
 describe("PayrollConfigurationPanel optional salary components", () => {
+  it("saves company statutory wage classifications with the effective component version", async () => {
+    components = [];
+    const { container, root } = renderPanel();
+    await act(async () => root.render(<PayrollConfigurationPanel canEdit canApprove={false} />));
+    const tab = Array.from(container.querySelectorAll<HTMLElement>('[role="tab"]')).find((item) => item.textContent?.includes("Salary Components"));
+    await act(async () => tab?.click());
+    const hraChip = Array.from(container.querySelectorAll<HTMLElement>(".MuiChip-root")).find((chip) => chip.textContent?.includes("HRA"));
+    expect(hraChip).toBeDefined();
+    await act(async () => hraChip?.click());
+
+    expect(container.querySelector<HTMLInputElement>('input[aria-label="Include in PF wages"]')?.checked).toBe(false);
+    expect(container.querySelector<HTMLInputElement>('input[aria-label="Include in ESI wages"]')?.checked).toBe(true);
+    expect(container.querySelector<HTMLInputElement>('input[aria-label="Include in Professional tax wages"]')?.checked).toBe(true);
+    const save = Array.from(container.querySelectorAll<HTMLButtonElement>("button")).find((button) => button.textContent?.includes("Add component"));
+    await act(async () => save?.click());
+
+    expect(postRequestMock).toHaveBeenCalledWith("api/payroll/configuration/components", expect.objectContaining({
+      code: "HRA", includeInPfWage: false, includeInEsiWage: true, includeInPtWage: true,
+    }));
+  });
+
   it("lets a company include a bonus from the feature selector using a new effective-dated version", async () => {
     components = [{
       id: "component-bonus-v1", code: "BONUS", name: "Performance bonus", kind: "EARNING",

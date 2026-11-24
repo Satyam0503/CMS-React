@@ -5,6 +5,7 @@ import {
     Box,
     Card,
     Popover,
+    Stack,
     Tooltip,
     Typography,
     useColorScheme,
@@ -15,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { CalendarItem } from "../models";
 import dayjs, { Dayjs } from "dayjs";
 import { CalendarToday } from "@mui/icons-material";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import clsx from "clsx";
 import { calendarItemStyleMapper, dateFormatter, formatServerDate, getOrdinalSuffix } from "../../../../utils/common";
 
@@ -55,6 +57,14 @@ export default function CalendarDays(props: Props) {
 
         for (let i: number = 1; i <= daysInCurrentMonth; i++) {
             days.push(i);
+        }
+
+        const remainder = days.length % 7;
+        if (remainder !== 0) {
+            const trailingCount = 7 - remainder;
+            for (let i = 0; i < trailingCount; i++) {
+                days.push(" ");
+            }
         }
         return days;
     }
@@ -194,7 +204,7 @@ export default function CalendarDays(props: Props) {
                                     }
                                 }}
                             >
-                                {typeof day === "number" ? day.toString().padStart(2, "0") : day}
+                                {day}
                             </Typography>
                             <Box component={'div'}
                                 className=
@@ -251,12 +261,22 @@ export default function CalendarDays(props: Props) {
                                                                 }}
                                                             >
 
-                                                                {holiday.name.length > 10
-                                                                    ? holiday.name
-                                                                        .split("")
-                                                                        .splice(0, 9)
-                                                                        .join("") + "..."
-                                                                    : holiday.name}
+                                                                <Typography
+                                                                    variant="caption"
+                                                                    component="span"
+                                                                    sx={{
+                                                                        display: "block",
+                                                                        overflow: "hidden",
+                                                                        textOverflow: "ellipsis",
+                                                                        whiteSpace: "nowrap",
+                                                                        width: "100%",
+                                                                        fontSize: "inherit",
+                                                                        fontWeight: "inherit",
+                                                                        lineHeight: "inherit",
+                                                                    }}
+                                                                >
+                                                                    {holiday.name}
+                                                                </Typography>
                                                             </Box>
                                                             : <Box
                                                                 key={index}
@@ -347,7 +367,12 @@ export default function CalendarDays(props: Props) {
                                         wordBreak: "break-word"
                                     }}
                                 >
-                                    {meta.isInterview ? "📋 Click to open Interview Dossier & Scorecard" : occ.description}
+                                    {meta.isInterview ? (
+                                        <Stack direction="row" alignItems="center" spacing={0.5} component="span">
+                                            <AssignmentOutlinedIcon sx={{ fontSize: 14 }} />
+                                            <span>Click to open Interview Dossier & Scorecard</span>
+                                        </Stack>
+                                    ) : occ.description}
                                 </Typography>
                             </Box>
                         </Box>)
@@ -400,7 +425,12 @@ const ToolTipPopOver = ({ holiday }: PropType) => {
             <Box component={"div"} className="d-flex flex-column ">
                 <Typography variant="body1" sx={{ wordBreak: "break-all" }}>{holiday.name}</Typography>
                 <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
-                    {meta.isInterview ? "📋 Click item to open Interview Dossier & Scorecard" : holiday.description}
+                    {meta.isInterview ? (
+                        <Stack direction="row" alignItems="center" spacing={0.5} component="span">
+                            <AssignmentOutlinedIcon sx={{ fontSize: 14 }} />
+                            <span>Click item to open Interview Dossier & Scorecard</span>
+                        </Stack>
+                    ) : holiday.description}
                 </Typography>
             </Box>
         </Box>

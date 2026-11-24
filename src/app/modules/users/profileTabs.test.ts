@@ -44,4 +44,10 @@ describe("profile tabs visibility", () => {
     expect(getProfileTabs([], "employee-1", Roles.HRExecutive).find((tab) => tab.to === "performance")).toBeDefined();
     expect(getProfileTabs([], "employee-1", Roles.Administrator).find((tab) => tab.to === "performance")).toBeDefined();
   });
+
+  it("shows tax self service only on the current user's profile when payroll view is allowed", () => {
+    expect(getProfileTabs(["PayRoll.View"]).some((tab) => tab.to === "taxdeclaration")).toBe(true);
+    expect(getProfileTabs(["PayRoll.View"], "another-employee").some((tab) => tab.to === "taxdeclaration")).toBe(false);
+    expect(getProfileTabs(["LeaveManagement.View"]).some((tab) => tab.to === "taxdeclaration")).toBe(false);
+  });
 });

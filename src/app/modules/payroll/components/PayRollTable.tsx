@@ -188,8 +188,11 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
           border: "1px solid",
           borderColor: "divider",
           overflow: "hidden",
-          bgcolor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.55)",
-          backdropFilter: "blur(12px)",
+          bgcolor: "background.paper",
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? "0 4px 20px rgba(0, 0, 0, 0.25)"
+              : "0 2px 12px rgba(15, 23, 42, 0.06)",
         }}
       >
         <TableContainer

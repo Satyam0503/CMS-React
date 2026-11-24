@@ -30,6 +30,10 @@ import {
   LeavePolicyModel,
   EmployeeLeaveBalanceFilter,
   EmployeeLeaveBalanceData,
+  CompOffCreditRequestDto,
+  ReviewCompOffCreditDto,
+  CompOffCreditResponseDto,
+  SandwichEvaluationResult,
 } from "./model";
 
 export const canApplyForWorkFromHome = (modulePermissions: string[]) =>
@@ -283,4 +287,30 @@ export const getAllEmployeeLeaveBalance = (
     EmployeeLeaveBalanceFilter,
     ResponseData<EmployeeLeaveBalanceData>
   >(ServiceUrl.GET_ALL_EMPLOYEE_LEAVE_BALANCE, payload);
+};
+
+export const evaluateSandwichPreview = (leavePolicyId: string, startDate: string, endDate: string) => {
+  return getRequest<ResponseData<SandwichEvaluationResult>>(
+    `api/LeaveManagement/EvaluateSandwichPreview?leavePolicyId=${encodeURIComponent(leavePolicyId)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`
+  );
+};
+
+export const requestCompOffCredit = (payload: CompOffCreditRequestDto) => {
+  return postRequest<CompOffCreditRequestDto, ResponseData<string>>(
+    "api/LeaveManagement/RequestCompOffCredit",
+    payload
+  );
+};
+
+export const getCompOffRequests = (userId?: string) => {
+  return getRequest<ResponseData<CompOffCreditResponseDto[]>>(
+    `api/LeaveManagement/GetCompOffRequests${userId ? `?userId=${encodeURIComponent(userId)}` : ""}`
+  );
+};
+
+export const reviewCompOffCredit = (payload: ReviewCompOffCreditDto) => {
+  return postRequest<ReviewCompOffCreditDto, ResponseData<string>>(
+    "api/LeaveManagement/ReviewCompOffCredit",
+    payload
+  );
 };

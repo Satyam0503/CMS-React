@@ -1,9 +1,8 @@
 import { AccountBalanceWallet, EditCalendar, HomeWork } from "@mui/icons-material";
 import { Box, Card, Stack } from "@mui/material"
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import { TabModel } from "../../../../utils/common_types";
 import clsx from "clsx";
-import { checkIsActive } from "../../../../_themes/helpers";
 import PolicyIcon from '@mui/icons-material/Policy';
 import { useIntl } from "react-intl";
 
@@ -45,6 +44,7 @@ const tabsRoutes: TabModel[] = [
 export const LeaveManagementTabs = () => {
     const { formatMessage: i } = useIntl();
     const navigate = useNavigate();
+    const location = useLocation();
     const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
     const hasWfhAccess = modulePermissions.some((p) => p.startsWith("Work_From_Home."));
 
@@ -69,14 +69,19 @@ export const LeaveManagementTabs = () => {
                 }}
             >
                 {visibleTabs.map((tab) => {
+                    const tabPath = `/leavemanagement/${tab.to}`;
+                    const currentPath = location.pathname.replace(/\/+$/, "").toLowerCase();
+                    const normalizedTabPath = tabPath.replace(/\/+$/, "").toLowerCase();
+                    const isActive = currentPath === normalizedTabPath || currentPath.startsWith(`${normalizedTabPath}/`);
+
                     return (
                         <Box
                             component="div"
                             key={tab.tabId}
                             className={clsx("tab-box", {
-                                tab_active: checkIsActive(location.pathname, tab.to),
+                                tab_active: isActive,
                             })}
-                            onClick={() => navigate(tab.to)}
+                            onClick={() => navigate(tabPath)}
                             sx={{ color: "text.secondary" }}
                         >
                             {tab.icon}

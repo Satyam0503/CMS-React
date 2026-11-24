@@ -14,10 +14,8 @@ import {
   Alert,
   Box,
   Chip,
-  CircularProgress,
   Container,
   Divider,
-  IconButton,
   Paper,
   Snackbar,
   Stack,
@@ -191,14 +189,14 @@ export const CareerJobDetails = () => {
                       to={`/careers/${job.companyPublicCode}`}
                       direction="row"
                       alignItems="center"
-                      spacing={1.5}
+                      spacing={{ xs: 1, sm: 1.5 }}
                       aria-label={`View ${job.companyName} company profile`}
                       sx={{ minWidth: 0, color: "inherit", textDecoration: "none", borderRadius: 2, "&:hover": { color: "primary.main" }, "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 4 } }}
                     >
-                      <CompanyLogo src={job.companyLogo} name={job.companyName} size={60} />
+                      <CompanyLogo src={job.companyLogo} name={job.companyName} size={48} />
                       <Box sx={{ minWidth: 0 }}>
-                        <Typography fontWeight={800} sx={{ lineHeight: 1.2 }}>{job.companyName}</Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
+                        <Typography noWrap fontWeight={800} sx={{ lineHeight: 1.2 }}>{job.companyName}</Typography>
+                        <Typography noWrap variant="body2" color="text.secondary" sx={{ mt: 0.4, fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                           View company profile
                         </Typography>
                       </Box>
@@ -212,7 +210,7 @@ export const CareerJobDetails = () => {
                       startIcon={isFollowing ? <CheckCircleOutlineRounded /> : undefined}
                       sx={{
                         flexShrink: 0,
-                        px: 2,
+                        px: { xs: 1.25, sm: 2 },
                         py: 1,
                         borderRadius: 999,
                         fontWeight: 800,
@@ -270,10 +268,12 @@ export const CareerJobDetails = () => {
                 <BusinessRounded color="primary" />
                 <Typography variant="h5" fontWeight={900} sx={{ mt: 1.5 }}>Ready for your next move?</Typography>
                 <Typography color="text.secondary" sx={{ mt: 1, mb: 3, lineHeight: 1.65 }}>Your application goes directly to the hiring team for this role.</Typography>
-                {job.applicationClosedReason && <Alert severity="warning" sx={{ mb: 2 }}>{job.applicationClosedReason}</Alert>}
+                {!job.canApply && <Alert severity="warning" sx={{ mb: 2 }}>
+                  {job.applicationClosedReason?.trim() || "Applications are paused for this role right now. Set a job alert to hear when hiring reopens."}
+                </Alert>}
                 {job.applicationMode === "External" && job.externalApplicationUrl
-                  ? <Btn fullWidth href={job.externalApplicationUrl} target="_blank" rel="noopener noreferrer" variant="contained" endIcon={<ArrowOutwardRounded />} disabled={!job.canApply} onClick={() => trackCareerEvent("ExternalApplyClicked", getCareerVisitorToken(), job.publicJobId, companyCode)}>Apply on company site</Btn>
-                  : <Btn fullWidth variant="contained" size="large" onClick={() => { trackCareerEvent("ApplyClicked", getCareerVisitorToken(), job.publicJobId, companyCode); setApplyOpen(true); }} disabled={!job.canApply} sx={{ py: 1.4 }}>Apply now</Btn>}
+                  ? <Btn fullWidth href={job.externalApplicationUrl} target="_blank" rel="noopener noreferrer" variant="contained" endIcon={job.canApply ? <ArrowOutwardRounded /> : undefined} disabled={!job.canApply} onClick={() => trackCareerEvent("ExternalApplyClicked", getCareerVisitorToken(), job.publicJobId, companyCode)} sx={{ "&.Mui-disabled": { color: "text.secondary", backgroundColor: "action.disabledBackground", backgroundImage: "none", boxShadow: "none" } }}>{job.canApply ? "Apply on company site" : "Applications paused"}</Btn>
+                  : <Btn fullWidth variant="contained" size="large" onClick={() => { trackCareerEvent("ApplyClicked", getCareerVisitorToken(), job.publicJobId, companyCode); setApplyOpen(true); }} disabled={!job.canApply} sx={{ py: 1.4, "&.Mui-disabled": { color: "text.secondary", backgroundColor: "action.disabledBackground", backgroundImage: "none", boxShadow: "none" } }}>{job.canApply ? "Apply now" : "Applications paused"}</Btn>}
                 <Btn fullWidth component={Link} to={`/careers/${companyCode}`} sx={{ mt: 1.2 }}>More at {job.companyName}</Btn>
               </Paper>
             </Stack>

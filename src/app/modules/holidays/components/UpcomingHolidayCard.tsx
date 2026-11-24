@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import { CalendarItem } from "../models";
 import { calendarItemStyleMapper, dateFormatter, formatServerDate, getOrdinalSuffix, hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
@@ -193,7 +194,12 @@ export const UpcomingHolidayCard = (props: Props) => {
           }}>
             <Typography variant="body1" className="text-truncate">{props.occasion.name} </Typography>
             <Typography variant="body2" className="text-truncate">
-              {interviewMeta.isInterview ? "📋 Click to open Interview Dossier & Scorecard" : props.occasion.description}
+              {interviewMeta.isInterview ? (
+                <Stack direction="row" alignItems="center" spacing={0.5} component="span">
+                  <AssignmentOutlinedIcon sx={{ fontSize: 14 }} />
+                  <span>Click to open Interview Dossier & Scorecard</span>
+                </Stack>
+              ) : props.occasion.description}
             </Typography>
           </Box>
         </Box>

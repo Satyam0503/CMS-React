@@ -7,13 +7,11 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Autocomplete,
 } from "@mui/material";
 import { Grid, Stack } from "@mui/system";
 import { Formik } from "formik";
 import {
   experienceCategoryList,
-  indianStates,
 } from "../../../../utils/constant/Constant";
 import { applicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
 import CustomisedButton from "../../../shared/components/C_Button";
@@ -172,7 +170,10 @@ export default function ApplyJobForm(props: Props) {
                     fullWidth
                     label={i({ id: "FORM.PHONE" })}
                     error={touched.phone && Boolean(errors.phone)}
-                    type="text"
+                    type="tel"
+                    placeholder="+1 415 555 0132"
+                    helperText="Include a country code when needed."
+                    inputProps={{ maxLength: 25, autoComplete: "tel" }}
                     {...getFieldProps("phone")}
                   />
                 </Grid>
@@ -258,21 +259,16 @@ export default function ApplyJobForm(props: Props) {
                   </SelectInput>
                 </Grid>
                 <Grid size={12}>
-                  <Autocomplete
-                    id="state-dropdown"
-                    size="small"
-                    value={indianStates.find(
-                      (state) => state.value === values.state
-                    )}
-                    options={indianStates}
-                    onChange={(event, value) => {
+                  <AppTextField
+                    name="state"
+                    label="State, province, or region"
+                    value={values.state}
+                    onChange={(event) => {
                       setFieldTouched("state", true);
-                      setFieldValue("state", value?.value);
+                      setFieldValue("state", event.target.value);
                     }}
-                    renderInput={(param) => (
-                      <AppTextField {...param} label={"Select State"} />
-                    )}
-                    getOptionLabel={(option) => option.label}
+                    inputProps={{ maxLength: 120 }}
+                    fullWidth
                   />
                   {touched.state && errors.state && (
                     <ErrorLabel errorLabel={errors.state} />

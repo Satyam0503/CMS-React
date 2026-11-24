@@ -18,6 +18,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PolicyIcon from "@mui/icons-material/Policy";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import AccountTreeRounded from "@mui/icons-material/AccountTreeRounded";
+import AssignmentTurnedInOutlined from "@mui/icons-material/AssignmentTurnedInOutlined";
 import { Modules, ModulesName, ModulesTitles, Permission } from "../enums";
 import { SideBarTabListProps } from "../common_types";
 
@@ -33,16 +34,37 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Employees,
     constant: ModulesName.Employees,
-    title: ModulesTitles.Employees,
+    title: ModulesTitles.EmployeeManagement,
     route: "/employees",
     icon: <Person />,
+    hasSubTabs: true,
     isDefault: false,
+    subTabs: [
+      {
+        id: Modules.Employees,
+        constant: ModulesName.Employees,
+        title: ModulesTitles.Employees,
+        permission: Permission.View,
+        route: "/employees",
+        icon: <Person />,
+        isDefault: false,
+      },
+      {
+        id: Modules.Employees,
+        title: ModulesTitles.LifecycleManagement,
+        constant: ModulesName.Employees,
+        permission: Permission.Edit,
+        route: "/lifecycle-management",
+        icon: <AssignmentTurnedInOutlined />,
+        isDefault: false,
+      },
+    ],
   },
   {
     id: Modules.PayRoll,
     constant: ModulesName.PayRoll,
     title: ModulesTitles.PayRoll,
-    route: "/",
+    route: "/payroll",
     icon: <Contacts />,
     hasSubTabs: true,
     isDefault: false,
@@ -79,15 +101,6 @@ export const SideBarTabList: SideBarTabListProps[] = [
         icon: <ReceiptLongIcon />,
         isDefault: false,
       },
-      {
-        id: Modules.Employees,
-        title: ModulesTitles.LifecycleManagement,
-        constant: ModulesName.Employees,
-        permission: Permission.Edit,
-        route: "/lifecycle-management",
-        icon: <AccountTreeRounded />,
-        isDefault: false,
-      },
     ],
   },
   {
@@ -113,6 +126,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.Applications,
         route: "/recruitment/applications",
         icon: <Mail />,
+        isDefault: false,
+      },
+      {
+        id: Modules.HiringManagerReviews,
+        title: ModulesTitles.HiringManagerReviews,
+        constant: ModulesName.Applications,
+        route: "/recruitment/manager-reviews",
+        icon: <AssignmentTurnedInOutlined />,
         isDefault: false,
       },
       {

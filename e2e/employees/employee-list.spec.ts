@@ -12,7 +12,7 @@ test.describe("Employee List @smoke", () => {
   });
 
   test("displays data grid with employee records", async ({ page }) => {
-    const grid = page.locator('[role="grid"], .MuiDataGrid-root');
+    const grid = page.locator('[role="grid"], .MuiDataGrid-root').first();
     await expect(grid).toBeVisible({ timeout: 15_000 });
   });
 
@@ -22,7 +22,7 @@ test.describe("Employee List @smoke", () => {
       await searchInput.fill("test");
       await page.waitForTimeout(1000);
       // Grid should update — no crash or empty error
-      const grid = page.locator('[role="grid"], .MuiDataGrid-root');
+      const grid = page.locator('[role="grid"], .MuiDataGrid-root').first();
       await expect(grid).toBeVisible();
     }
   });

@@ -5,7 +5,7 @@ import { filterSideBarTabs } from "../../../../../utils/common";
 import { useIntl } from "react-intl";
 import { Box, Stack } from "@mui/material";
 import { FC, useEffect, useMemo } from "react";
-import { useLocation } from "react-router";
+import { useLocation } from "react-router-dom";
 import { checkIsActive } from "../../../../helpers";
 import { ModulesTitles } from "../../../../../utils/enums";
 
@@ -25,7 +25,28 @@ export const SidebarMenuMain: FC<Props> = ({
   const { formatMessage } = useIntl();
   const getTabTitle = (titleKey?: string) => {
     if (!titleKey) return "";
-    return formatMessage({ id: titleKey });
+    try {
+      const translated = formatMessage({ id: titleKey });
+      if (translated && translated !== titleKey) return translated;
+    } catch {
+      // ignore
+    }
+    if (titleKey === ModulesTitles.OrgChart || titleKey === "MODULES.ORG_CHART") {
+      return "Organization Chart";
+    }
+    if (
+      titleKey === ModulesTitles.EmployeeManagement ||
+      titleKey === "MODULES.EMPLOYEE_MANAGEMENT"
+    ) {
+      return "Employee Management";
+    }
+    if (
+      titleKey === ModulesTitles.LifecycleManagement ||
+      titleKey === "MODULES.LIFECYCLE_MANAGEMENT"
+    ) {
+      return "Employee Lifecycle";
+    }
+    return titleKey;
   };
   const { pathname } = useLocation();
   const modulePermission = useAppSelector(
@@ -58,6 +79,9 @@ export const SidebarMenuMain: FC<Props> = ({
 
   return (
     <Box
+      component="nav"
+      aria-label="Primary navigation"
+      tabIndex={0}
       className="sidebar-menu-main"
       sx={{
         flex: "1 1 auto",
@@ -66,6 +90,8 @@ export const SidebarMenuMain: FC<Props> = ({
         flexDirection: "column",
         my: 0,
         overflowY: "auto",
+        overscrollBehaviorY: "contain",
+        touchAction: "pan-y",
       }}
     >
       <Stack sx={{ width: "100%", gap: 0.25 }}>
