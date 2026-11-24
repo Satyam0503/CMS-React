@@ -150,6 +150,7 @@ stages:
                 # "﻿VITE_BASEURL", drops it, and the app calls its own host instead of the API.
                 [System.IO.File]::WriteAllLines($envFile, [string[]]$envLines, (New-Object System.Text.UTF8Encoding $false))
                 Write-Host "Wrote $envFile with VITE_BASEURL=$viteBase"
+                Write-Host "##vso[task.setvariable variable=VITE_BASEURL]$viteBase"
             env:
               APPSETTINGS_APIURL: $(AppSettings.APIUrl)
               API_URL: $(APIUrl)
@@ -166,6 +167,7 @@ stages:
               workingDir: "$(Build.SourcesDirectory)"
             env:
               NODE_ENV: "development"
+              VITE_BASEURL: $(AppSettings.APIUrl)
 
           - task: Npm@1
             displayName: "Build for Production"
@@ -176,6 +178,7 @@ stages:
               workingDir: "$(Build.SourcesDirectory)"
             env:
               NODE_ENV: "production"
+              VITE_BASEURL: $(AppSettings.APIUrl)
 
           - task: ArchiveFiles@2
             displayName: "Archive dist folder"
