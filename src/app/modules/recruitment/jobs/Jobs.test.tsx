@@ -35,6 +35,15 @@ vi.mock("../../../Context/PageDataProvider", () => ({
   usePageData: () => ({ setPageTitle: vi.fn() }),
 }));
 
+const testMessages = {
+  ACTION: "Action",
+  STATUS: "Status",
+  "PAGE.JOBS": "Jobs",
+  "JOB.JOB_TITLE": "Job Title",
+  "JOB.NO_OF_VACANCIES": "No of Vacancies",
+  "JOB.TYPE": "Job Type",
+};
+
 vi.mock("../../../shared/components/C_DataGrid", () => ({
   CustomDataGrid: (props: any) => {
     const rows = props.row || props.rows || [];
@@ -170,7 +179,7 @@ describe("Jobs Component - Flexible Screening Threshold Column", () => {
 
     await act(async () => {
       root!.render(
-        <IntlProvider locale="en" messages={{}}>
+        <IntlProvider locale="en" messages={testMessages}>
           <Jobs />
         </IntlProvider>
       );
@@ -217,7 +226,7 @@ describe("Jobs Component - Flexible Screening Threshold Column", () => {
 
     await act(async () => {
       root!.render(
-        <IntlProvider locale="en" messages={{}}>
+        <IntlProvider locale="en" messages={testMessages}>
           <Jobs />
         </IntlProvider>
       );
@@ -270,7 +279,7 @@ describe("Jobs Component - Flexible Screening Threshold Column", () => {
 
     await act(async () => {
       root!.render(
-        <IntlProvider locale="en" messages={{}}>
+        <IntlProvider locale="en" messages={testMessages}>
           <Jobs />
         </IntlProvider>
       );

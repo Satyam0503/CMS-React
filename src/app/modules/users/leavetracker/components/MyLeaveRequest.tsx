@@ -154,7 +154,7 @@ export const MyLeaveRequests = ({
                 <TableCell>{i({ id: "LEAVE.APPROVAL_STATUS" })}</TableCell>
                 <TableCell>{i({ id: "LEAVE.APPROVED_BY" })}</TableCell>
                 <TableCell>{i({ id: "LEAVE.COMMENT" })}</TableCell>
-                <TableCell>{i({ id: "ACTION" })}</TableCell>
+                <TableCell>{i({ id: "ACTION", defaultMessage: "Action" })}</TableCell>
               </TableRow>
             </TableHead>
             {loading ? (

@@ -115,8 +115,8 @@ const useJobTableColumnList = (
   const columns: GridColDef<JobModal>[] = [
     {
       field: "title",
-      headerName: i({ id: "JOB.JOB_TITLE" }),
-      description: i({ id: "JOB.JOB_TITLE" }),
+      headerName: i({ id: "JOB.JOB_TITLE", defaultMessage: "Job Title" }),
+      description: i({ id: "JOB.JOB_TITLE", defaultMessage: "Job Title" }),
       minWidth: 240,
       hideable: false,
       flex: 1,
@@ -126,8 +126,8 @@ const useJobTableColumnList = (
     },
     {
       field: "vacancies",
-      headerName: i({ id: "JOB.NO_OF_VACANCIES" }),
-      description: i({ id: "JOB.NO_OF_VACANCIES" }),
+      headerName: i({ id: "JOB.NO_OF_VACANCIES", defaultMessage: "No of Vacancies" }),
+      description: i({ id: "JOB.NO_OF_VACANCIES", defaultMessage: "No of Vacancies" }),
       minWidth: 180,
       hideable: false,
       flex: 1,
@@ -243,8 +243,8 @@ const useJobTableColumnList = (
   columns.push(
     {
       field: "status",
-      headerName: i({ id: "STATUS" }),
-      description: i({ id: "STATUS" }),
+      headerName: i({ id: "STATUS", defaultMessage: "Status" }),
+      description: i({ id: "STATUS", defaultMessage: "Status" }),
       minWidth: 100,
       hideable: false,
       flex: 1,
@@ -262,8 +262,8 @@ const useJobTableColumnList = (
     },
     {
       field: "action",
-      headerName: i({ id: "ACTION" }),
-      description: i({ id: "ACTION" }),
+      headerName: i({ id: "ACTION", defaultMessage: "Action" }),
+      description: i({ id: "ACTION", defaultMessage: "Action" }),
       minWidth: 100,
       resizable: false,
       sortable: false,
@@ -522,7 +522,7 @@ export default function Jobs() {
   }, [isRefresh, paginationValues, search, jobFilters]);
 
   useEffect(() => {
-    setPageTitle(i({ id: "PAGE.JOBS" }));
+    setPageTitle(i({ id: "PAGE.JOBS", defaultMessage: "Jobs" }));
   }, []);
 
   return (

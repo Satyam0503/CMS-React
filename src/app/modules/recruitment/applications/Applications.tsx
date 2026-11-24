@@ -148,8 +148,8 @@ const useApplicantTableColumnList = (onOpenLifecycle?: (app: Applicant) => void)
     },
     {
       field: "action",
-      headerName: i({ id: "ACTION", }),
-      description: i({ id: "ACTION", }),
+      headerName: i({ id: "ACTION", defaultMessage: "Action" }),
+      description: i({ id: "ACTION", defaultMessage: "Action" }),
       minWidth: 100,
       disableColumnMenu: true,
       resizable: false,

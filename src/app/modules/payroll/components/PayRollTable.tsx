@@ -251,7 +251,7 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                 const isStickyId = col.id === "employeeId";
                 const isStickyName = col.id === "employeeName";
                 const headerText = col.id === "actions"
-                  ? "ACTION"
+                  ? i({ id: "ACTION", defaultMessage: "Action" })
                   : col.label === "PAYROLL.TABLE.PAYMENT_STATUS"
                   ? i({ id: col.label, defaultMessage: "Payment Status" })
                   : i({ id: col.label, defaultMessage: col.label.split(".").pop()?.replace(/_/g, " ") });

@@ -155,7 +155,7 @@ export const LeaveRequest = () => {
               <TableCell>{i({ id: "LEAVE.REASON" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.APPROVED_BY" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.APPROVAL_STATUS" })}</TableCell>
-              {canCreateForEmployee && <TableCell>{i({ id: "ACTION" })}</TableCell>}
+              {canCreateForEmployee && <TableCell>{i({ id: "ACTION", defaultMessage: "Action" })}</TableCell>}
             </TableRow>
           </TableHead>
           {isLoading ? (

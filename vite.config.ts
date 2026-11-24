@@ -1,6 +1,11 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+
+const currentDir = typeof import.meta.dirname !== 'undefined'
+  ? import.meta.dirname
+  : (import.meta.url ? path.dirname(fileURLToPath(import.meta.url)) : process.cwd())
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,7 +16,7 @@ export default defineConfig({
       ? [
           {
             find: /^@mui\/icons-material($|\/.*)/,
-            replacement: path.resolve(import.meta.dirname, 'src/test/iconMock.tsx'),
+            replacement: path.resolve(currentDir, 'src/test/iconMock.tsx'),
           },
         ]
       : [],
@@ -30,7 +35,7 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    setupFiles: [path.resolve(import.meta.dirname, 'src/test/setup.ts')],
+    setupFiles: [path.resolve(currentDir, 'src/test/setup.ts')],
     include: ["src/**/*.test.{ts,tsx}"],
     pool: "threads",
     // Keep local runs parallel, but avoid exhausting file handles on the
